@@ -10,6 +10,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXTRACT_FILES = PROJECT_ROOT / "extract" / "files"
 UNPACKED = PROJECT_ROOT / "build" / "unpacked"
 
+logger = logging.getLogger(__name__)
+
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
@@ -19,4 +21,4 @@ def main() -> None:
     args = parser.parse_args()
     if args.command == "unpack":
         unpack_all(EXTRACT_FILES, UNPACKED)
-        logging.info("unpacked to %s", UNPACKED)
+        logger.info("unpacked to %s", UNPACKED)
