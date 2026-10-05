@@ -22,6 +22,10 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 
 ## Test notes
 
+- Parallel runs: build each ROM to its own name and folder (`uv run python -m dsde.patches --output build/par_a/dsde_a.nds`)
+  and run with `--out build/par_a` (and `--save` for the fast start). Each ROM name gets its own battery save, so several
+  emulators can run at once.
+
 - Fast start: `include boot_from_save` and run with `--save` loads an in-game save made right after the
   intro (about 2200 frames instead of 16000). The save lives in build/emu/saves/start.SaveRAM; recreate it with
   emu/plans/make_save.plan. A battery save only holds progress, so unlike savestates it is safe across builds.
