@@ -1,4 +1,4 @@
 load intro2
-include warp6
 include cheats_strong
+include warp6
 include battle_auto

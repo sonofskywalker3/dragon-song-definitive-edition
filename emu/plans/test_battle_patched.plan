@@ -1,6 +1,6 @@
 include boot_to_field
-include warp6
 include cheats_strong
+include warp6
 peek u16 0x020B4906 map_index
 include battle_auto
 peek u16 0x020B4906 map_index
