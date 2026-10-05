@@ -591,3 +591,43 @@ helpers, `tgt_state` as `.word 0` / `.byte` data) and AsmPatch entries of one wo
    round's item list works (mode byte dropped).
 7. A boss fight with adds (Caucus with Orcus and Morus): labels and names correct.
 8. One-enemy battle: Attack confirms at once, no list.
+
+## Findings from the emulator (2026-10-05)
+
+Built as `manual-targeting` in `src/dsde/feat_targeting.py` (execution hooks C and D, list order),
+`feat_targeting_menu.py` (hooks A and B) and `feat_targeting_picker.py` (the grid). What turned out
+different from the plan above:
+
+- **Page 4 is a grid of icons, not a list of name rows.** Each "row" button is a 32 x 32 cell showing the
+  item image; for a card id that is a small picture of the enemy. Six cells per page in three columns of
+  two (cell i at x = 0x70 + (i >> 1) * 0x2A, y = 0x68 + (i & 1) * 0x20, centres). The highlighted cell is
+  covered by the red OK stamp, and the bottom bar prints the highlighted enemy's name, with NO (B) and OK (A)
+  at its ends. The vanilla D-pad handler moves +-2 for Left/Right and +-1 for Up/Down inside a column.
+- **Layout follows the battle screen** (Jeff's request after the first build): top grid row = back-row
+  enemies (battlers 4..7), bottom grid row = front-row enemies (8..11), each left to right. Cell 2c holds the
+  c-th back-row enemy, cell 2c + 1 the c-th front-row enemy; empty cells are holes. Two extra hooks make
+  holes work: the three calls of func_02035310 (0x02034E7C, 0x02039948, 0x0203A004) go through a wrapper that
+  zeroes the hole buttons, and the key handler call at 0x0203A680 (the plan's optional L/R site) goes to our
+  own D-pad handler while the picker is up (Left/Right along the row skipping holes, Up/Down to the nearest
+  column with an enemy). A member who reaches only the front row gets a bottom row with an empty top row.
+  The first highlighted cell is the first real one (top-left, or bottom-left if the top row is empty).
+- **Position axis confirmed**: battler `+0xD4` is the horizontal screen position, lower = further left
+  (73 and 118 for the two enemies of each row in the temple battle).
+- **Dead targets are usually replaced, not left empty**: when a front-row enemy dies, a back-row enemy is
+  copied into its battler slot (seen as battler 6 becoming battler 10). A chosen slot whose enemy died
+  therefore often holds the enemy that stepped forward, and the attack hits that one. The "next enemy in
+  the list" redirect runs when the slot stays dead (no back row left), verified both before the attack
+  (`tgt_redirect_pick`: 9 dead -> attack on 10) and between target resolution and the hit
+  (`tgt_redirect_hit`: hit moved to 10, its HP 32 -> 0). Hook D's frame offsets were right.
+- **Character id 3 is Flora**, not Rufus (docs/re-field-battle.md). She reaches both rows. The multi-hit roll
+  could not be forced: byte 0x0213B919 read 1 at the roll even with the address pinned to 4, so a real
+  2+ hit attack is not tested yet. Later hits use the same hook D path that was verified.
+- **Touch**: tapping a cell highlights it; tapping the same cell again comes back to the button hook with the
+  same row and confirms (the OK stamp does not intercept). The harness could not tap anywhere before: the
+  BizHawk config binds the mouse to the touch axes, which overrides the Lua position (the game always saw
+  the centre). `dsde.emu` now runs EmuHawk with a copy of the config without that binding.
+- Menu field `+0x2C` is set to 1 by the list-page builder itself (`[0xb] = 1`), it is not a leftover A press.
+- The picker sets the member's `+0x8C` to -1 when Fight is opened, so a stale ally index never survives.
+- Unverified: boss name images (Gideon shows as "Gideon 2"/"Gideon 3" by name string), row 156 (the Blue
+  Dragon's summons) shows as "Jian", 4 enemies in one row (the 4th column lands on page 2), mic Run while the
+  picker is up.
