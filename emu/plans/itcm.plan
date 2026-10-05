@@ -1,0 +1,4 @@
+wait 1800
+dump 0x01FF82F0 0x30 itcm
+peek u32 0x01FF8300 marker
+shot itcm_boot

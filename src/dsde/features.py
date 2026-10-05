@@ -1,6 +1,6 @@
 """Every design change as a named Feature. See docs/design.md for the why."""
 
-from dsde.patching import ARM_NOP, AsmPatch, DataPatch, Feature, Patch
+from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
 
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
 # 8-bit counter at +0x40 bits 5..12 (the old HP drain counter): 0 = ready, 1..RUN_TICKS =
@@ -211,6 +211,48 @@ FIX_SAVE_GLITCH = Feature(
     ),
 )
 
+# Silver from battles (design 3). At the EXP step func_02052fb8 fetches the battle's EXP pool
+# (before the game doubles it); the hook adds the same amount of silver. Tune SILVER_PER_EXP later.
+SILVER = 0x020B4824
+SILVER_CAP = 999_999
+GET_EXP_POOL = 0x0202AF34
+SILVER_HOOK = 0x02052FE0
+SILVER_DROPS = Feature(
+    "silver-drops",
+    (
+        CaveCode(
+            "cave_silver",
+            f"""
+    push  {{r4, lr}}
+    bl    {GET_EXP_POOL:#x}
+    mov   r4, r0
+    ldr   r1, silver
+    ldr   r2, [r1]
+    add   r2, r2, r4
+    ldr   r3, silver_cap
+    cmp   r2, r3
+    movhi r2, r3
+    str   r2, [r1]
+    mov   r0, r4
+    pop   {{r4, pc}}
+silver:
+    .word {SILVER:#x}
+silver_cap:
+    .word {SILVER_CAP:#x}
+""",
+            "battle EXP pool -> silver",
+        ),
+        AsmPatch(
+            SILVER_HOOK,
+            SILVER_HOOK + 4,
+            0xEBFF5FD3,
+            0xEBFF5FD3,
+            "bl ${cave_silver}",
+            "EXP step also pays silver",
+        ),
+    ),
+)
+
 FEATURES: tuple[Feature, ...] = (
     NO_RUN_HP_COST,
     TIMED_RUN,
@@ -220,6 +262,7 @@ FEATURES: tuple[Feature, ...] = (
     RESTOCK_ON_ENTRY,
     NO_CLEAR_REFILL,
     FIX_SAVE_GLITCH,
+    SILVER_DROPS,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -228,4 +271,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     RESTOCK_ON_ENTRY.name,
     NO_CLEAR_REFILL.name,
     FIX_SAVE_GLITCH.name,
+    SILVER_DROPS.name,
 )

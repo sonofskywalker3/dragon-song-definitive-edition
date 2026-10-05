@@ -2,12 +2,13 @@
 
 import argparse
 import logging
+import re
 import shutil
 import subprocess
 from pathlib import Path
 
 from dsde.features import DEFAULT_FEATURES, FEATURES
-from dsde.patching import PatchError, apply_arm9, apply_data
+from dsde.patching import PatchError, apply_arm9, apply_data, build_itcm, layout_cave
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXTRACT = PROJECT_ROOT / "extract"
@@ -28,11 +29,19 @@ def build(feature_names: list[str], output: Path = OUTPUT_ROM) -> Path:
     if MOD_EXTRACT.exists():
         shutil.rmtree(MOD_EXTRACT)
     shutil.copytree(EXTRACT, MOD_EXTRACT)
+    symbols = layout_cave(chosen)
     arm9_path = MOD_EXTRACT / "arm9" / "arm9.bin"
     arm9 = bytearray(arm9_path.read_bytes())
     for feature in chosen:
-        apply_arm9(arm9, feature)
+        apply_arm9(arm9, feature, symbols)
     arm9_path.write_bytes(arm9)
+    itcm_path = MOD_EXTRACT / "arm9" / "itcm.bin"
+    itcm = build_itcm(itcm_path.read_bytes(), chosen, symbols)
+    itcm_path.write_bytes(itcm)
+    itcm_yaml = MOD_EXTRACT / "arm9" / "itcm.yaml"
+    itcm_yaml.write_text(
+        re.sub(r"code_size: \d+", f"code_size: {len(itcm)}", itcm_yaml.read_text())
+    )
     apply_data(MOD_EXTRACT / "files", chosen)
     config = MOD_EXTRACT / "config.yaml"
     subprocess.run(
