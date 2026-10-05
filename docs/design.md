@@ -26,7 +26,9 @@ The battle system itself stays non-positional. It was different from Lunar 1 and
 - Enemies respawn when you leave an area and come back, not instantly.
 - The HP/MP recovery for clearing an area is removed.
 - Blue chests stay locked until every enemy in the area is beaten, at your own pace.
-- EXP amounts stay unchanged to start. Enemies reportedly scale with the party's level, so faster leveling
+- Bosses give EXP (in the original they give none, and their EXP values are 1 to 10 placeholders). Starting
+  value: about ten regular enemies' worth at the boss's level, tuned in playtesting.
+- EXP amounts for regular enemies stay unchanged to start. Enemies reportedly scale with the party's level, so faster leveling
   should not break the balance. Item drops are the bigger balance risk; trim them only if playtesting says so.
 
 ## 3. Money
@@ -44,8 +46,12 @@ The battle system itself stays non-positional. It was different from Lunar 1 and
 
 - Free swapping of who is in the three party slots. Swapping only near the end of the game is the fallback if
   the story cannot handle free swapping.
-- Characters out of the party keep earning full EXP, provided leveling never asks for a choice that would have
-  to be made on their behalf.
+- Characters out of the party (benched, or away in the story) earn the same EXP as the party. Leveling never
+  asks for a choice, so this is safe. Needed because the game does not scale anyone up on rejoining: a
+  character comes back at the level they left with.
+- Party members knocked out at the end of a battle still earn nothing, as in the original.
+- Since the story never has more than 3 characters available at once, free swapping only matters if the story
+  changes. Build the benched EXP first; revisit swapping with the story work.
 - Characters the story requires are locked in. Characters who die in the story stay gone.
 - Characters who leave in the story come back by talking to them in a hub city, at a point that makes sense.
   This is new map content and new dialogue in each character's voice.
