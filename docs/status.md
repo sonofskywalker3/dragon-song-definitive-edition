@@ -12,15 +12,19 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 | 2. Virtue clock removed | `no-virtue-clock` | Verified: clock stays 0 after a kill (original: +1 per frame, 3600 = 60 s) |
 | 2. Respawn on re-entry | `restock-on-entry` | Built, not verified (needs a door inside a dungeon) |
 | 2. No area-clear refill | `no-clear-refill` | Built, not verified (needs an area clear) |
-| 2. Bosses give EXP | none yet | Todo |
-| 3. Silver from battles | none yet | Todo, new code |
+| 2. Bosses give EXP | `boss-exp` | Built: mode -1 (boss/scripted) battles take the EXP path; every boss gets 10x the average regular enemy EXP (77 at level 0, 13048 at level 98, before doubling). Regular battles regression-tested; no boss fight tested yet |
+| 3. Silver from battles | `silver-drops` | Verified: the EXP step adds the battle's EXP pool as silver (150 -> 251 for a pool of 101). No on-screen message yet |
 | 4. Manual targeting | none yet | Todo, new UI code |
 | 5. Benched characters earn EXP | none yet | Todo |
-| 6. Broken gear back after battle | none yet | Todo |
-| 6. Stolen items back if the thief dies | none yet | Todo |
+| 6. Broken gear back after battle | `gear-and-theft-return` | Verified with a simulated break (weapon swapped to its replacement mid-battle is back after the battle). Not yet seen with a real breaker enemy |
+| 6. Stolen items back if the thief dies | `gear-and-theft-return` | Verified with temple enemies forced to steal: Fossil stolen mid-battle, returned on the win. Implemented as "a won battle returns all thefts" because enemies change battler slots mid-fight; equivalent since enemies never flee |
 | Save glitch (Flora's tunnel line) | `fix-save-glitch` | Script edit verified in the built archive; the game boots and plays with the rebuilt archive. Not yet played through to Flora |
 
 ## Test notes
+
+- BizHawk's DS clock is fixed (`UseRealTime: false` in tools/bizhawk/config.ini). With the real clock the game's
+  randomness changed every run and battles did not always start.
+- The inventory is indexed by item id minus one: item N's count is at 0x0213B930 + N - 1.
 
 - Savestates hold game code in RAM, so patched builds must be tested from power-on (`include boot_to_field`),
   not from a savestate made on the original ROM.
