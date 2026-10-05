@@ -1,5 +1,6 @@
 -- Runs a plan file of simple commands against the game, then quits.
--- The plan path comes from build/emu/plan_path.txt (written by the Python runner).
+-- The plan path comes from <out>/plan_path.txt (written by the Python runner), where <out> is
+-- $DSDE_EMU_OUT or build/emu. Separate out dirs let several emulators run at once.
 -- Commands, one per line (# starts a comment):
 --   wait N                       advance N frames
 --   press BTN[,BTN...] N         hold buttons for N frames, then release for 2 frames
@@ -15,7 +16,7 @@
 --   trace ADDR LABEL             log CPU registers whenever ADDR is written
 --   speed PERCENT                emulation speed (default 800)
 --   include NAME                 run emu/plans/NAME.plan (same folder as the plan) inline
-local ROOT = "C:/Users/Jeff/Documents/Projects/Dragon Song Definitive Edition/build/emu/"
+local ROOT = (os.getenv("DSDE_EMU_OUT") or "C:/Users/Jeff/Documents/Projects/Dragon Song Definitive Edition/build/emu"):gsub("\\", "/") .. "/"
 local BUS = "ARM9 System Bus"
 
 local plan_path = io.open(ROOT .. "plan_path.txt"):read("*l")
