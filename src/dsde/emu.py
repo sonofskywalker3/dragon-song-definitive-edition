@@ -3,6 +3,7 @@
 import argparse
 import json
 import logging
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -15,6 +16,10 @@ EMUHAWK_CONFIG = EMUHAWK.parent / "config.ini"
 HARNESS_CONFIG = EMU_OUT / "harness_config.ini"
 TOUCH_AXES = ("Touch X", "Touch Y")
 TIMEOUT_SECONDS = 600
+SAVERAM_DIR = EMUHAWK.parent / "NDS" / "SaveRAM"
+# In-game save made right after the intro (slot 1, Jian in his room). Plans that start with
+# `include boot_from_save` load it from the title screen instead of replaying the intro.
+START_SAVE = EMU_OUT / "saves" / "start.SaveRAM"
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +38,16 @@ def write_harness_config() -> Path:
     return HARNESS_CONFIG
 
 
-def run_plan(plan: Path, rom: Path = DEFAULT_ROM) -> str:
+def install_save(save: Path, rom: Path) -> None:
+    """Put a battery save in place for the ROM, replacing whatever the last run left there."""
+    SAVERAM_DIR.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(save, SAVERAM_DIR / f"{rom.stem}.SaveRAM")
+
+
+def run_plan(plan: Path, rom: Path = DEFAULT_ROM, save: Path | None = None) -> str:
     """Run one plan to completion and return the run log text."""
+    if save is not None:
+        install_save(save, rom)
     (EMU_OUT / "states").mkdir(parents=True, exist_ok=True)
     (EMU_OUT / "plan_path.txt").write_text(str(plan.resolve()).replace("\\", "/"))
     log_path = EMU_OUT / "run.log"
@@ -61,8 +74,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="dsde.emu")
     parser.add_argument("plan", type=Path)
     parser.add_argument("--rom", type=Path, default=DEFAULT_ROM)
+    parser.add_argument(
+        "--save",
+        type=Path,
+        nargs="?",
+        const=START_SAVE,
+        help="install a battery save first (default: the post-intro save)",
+    )
     args = parser.parse_args()
-    logger.info(run_plan(args.plan, args.rom))
+    logger.info(run_plan(args.plan, args.rom, args.save))
 
 
 if __name__ == "__main__":
