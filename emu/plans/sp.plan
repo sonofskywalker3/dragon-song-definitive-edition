@@ -1,0 +1,7 @@
+load temple6
+peek u16 0x020B77F8 sp0x
+peek u16 0x020B77FA sp0y
+peek u16 0x020B77FC sp1x
+peek u16 0x020B77FE sp1y
+peek u16 0x020B7800 sp2x
+peek u16 0x020B7802 sp2y

@@ -7,8 +7,11 @@
 --   shot NAME                    screenshot to build/emu/NAME.png
 --   save NAME / load NAME        savestate to/from build/emu/states/NAME.State
 --   peek u8|u16|u32 ADDR LABEL   log a value from the ARM9 bus
+--   dump ADDR LEN LABEL          log LEN bytes as u32 words
 --   poke u8|u16|u32 ADDR VALUE   write a value to the ARM9 bus
 --   watch u8|u16|u32 ADDR LABEL  log the value every frame it changes from now on
+--   pin u8|u16|u32 ADDR VALUE    write a value before every frame until unpin
+--   unpin                        drop all pins
 --   speed PERCENT                emulation speed (default 800)
 --   include NAME                 run emu/plans/NAME.plan (same folder as the plan) inline
 local ROOT = "C:/Users/Jeff/Documents/Projects/Dragon Song Definitive Edition/build/emu/"
@@ -18,6 +21,7 @@ local plan_path = io.open(ROOT .. "plan_path.txt"):read("*l")
 local log = io.open(ROOT .. "run.log", "w")
 local frame = 0
 local watches = {}
+local pins = {}
 
 local function say(msg)
 	log:write(string.format("[%6d] %s\n", frame, msg))
@@ -38,6 +42,9 @@ local writers = {
 local function step(input)
 	if input then
 		joypad.set(input)
+	end
+	for _, pin in ipairs(pins) do
+		writers[pin.kind](pin.addr, pin.value)
 	end
 	emu.frameadvance()
 	frame = frame + 1
@@ -90,6 +97,13 @@ for line in io.lines(path) do
 	elseif cmd == "peek" then
 		local v = readers[words[2]](tonumber(words[3]))
 		say(string.format("peek %s = %d (0x%X)", words[4] or words[3], v, v))
+	elseif cmd == "dump" then
+		local addr, len = tonumber(words[2]), tonumber(words[3])
+		local parts = {}
+		for i = 0, len - 1, 4 do
+			parts[#parts + 1] = string.format("%08X", memory.read_u32_le(addr + i, BUS))
+		end
+		say(string.format("dump %s %08X: %s", words[4] or "", addr, table.concat(parts, " ")))
 	elseif cmd == "poke" then
 		writers[words[2]](tonumber(words[3]), tonumber(words[4]))
 		say("poke " .. words[3] .. " = " .. words[4])
@@ -98,6 +112,12 @@ for line in io.lines(path) do
 		w.last = readers[w.kind](w.addr)
 		say(string.format("watch %s starts at %d (0x%X)", w.label, w.last, w.last))
 		watches[#watches + 1] = w
+	elseif cmd == "pin" then
+		pins[#pins + 1] = { kind = words[2], addr = tonumber(words[3]), value = tonumber(words[4]) }
+		say("pin " .. words[3] .. " = " .. words[4])
+	elseif cmd == "unpin" then
+		pins = {}
+		say("unpin all")
 	elseif cmd == "speed" then
 		client.speedmode(tonumber(words[2]))
 	elseif cmd == "include" then

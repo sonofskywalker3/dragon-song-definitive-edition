@@ -1,0 +1,11 @@
+# From Jian's room, take the door to map 6 (Delrich Temple, has enemies)
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+poke u32 0x020B6CB4 0x208000
+poke u32 0x020B6CB8 0xD4000
+wait 30

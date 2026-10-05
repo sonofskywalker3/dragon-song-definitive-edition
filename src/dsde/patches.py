@@ -168,8 +168,99 @@ TIMED_RUN = Feature(
     ),
 )
 
-FEATURES: tuple[Feature, ...] = (NO_RUN_HP_COST, TIMED_RUN)
-DEFAULT_FEATURES: tuple[str, ...] = (TIMED_RUN.name,)
+# One battle mode, see docs/re-field-battle.md section 2.9. Mode flag 0x020B4848: 1 = Virtue (EXP).
+ARM_NOP = 0xE1A00000
+ONE_BATTLE_MODE = Feature(
+    "one-battle-mode",
+    (
+        Patch(
+            0x0201F128,
+            0x0A00004C,
+            0xEA00004C,
+            "beq -> b: R and the touch button no longer toggle the mode",
+        ),
+        Patch(
+            0x020298E0,
+            0xE5D00298,
+            0xE3A00001,
+            "ldrb flag -> mov r0, #1: battles use Virtue rules",
+        ),
+        Patch(
+            0x02029984,
+            0xE5D00298,
+            0xE3A00001,
+            "ldrb flag -> mov r0, #1: battles use Virtue rules",
+        ),
+        Patch(
+            0x02053680,
+            0xEA000013,
+            0xEA000011,
+            "EXP kills also fall into the item drop roll",
+        ),
+    ),
+)
+
+RESULT_ITEM_LIST = Feature(
+    "result-item-list",
+    (
+        Patch(
+            0x0203B0E4, 0x0A0000B3, ARM_NOP, "result screen lists items in Virtue too"
+        ),
+    ),
+)
+
+NO_VIRTUE_CLOCK = Feature(
+    "no-virtue-clock",
+    (
+        Patch(
+            0x02021F80,
+            0x0A000015,
+            0xEA000015,
+            "beq -> b: the clock never revives a defeated enemy",
+        ),
+    ),
+)
+
+RESTOCK_ON_ENTRY = Feature(
+    "restock-on-entry",
+    (
+        Patch(
+            0x0201E0F4,
+            0x1A000008,
+            ARM_NOP,
+            "every fresh map entry rerolls enemies and zeroes kills",
+        ),
+    ),
+)
+
+NO_CLEAR_REFILL = Feature(
+    "no-clear-refill",
+    (
+        Patch(
+            0x0202096C,
+            0x05C01C64,
+            ARM_NOP,
+            "never set the area-cleared flag, so no 30% HP/MP refill",
+        ),
+    ),
+)
+
+FEATURES: tuple[Feature, ...] = (
+    NO_RUN_HP_COST,
+    TIMED_RUN,
+    ONE_BATTLE_MODE,
+    RESULT_ITEM_LIST,
+    NO_VIRTUE_CLOCK,
+    RESTOCK_ON_ENTRY,
+    NO_CLEAR_REFILL,
+)
+DEFAULT_FEATURES: tuple[str, ...] = (
+    TIMED_RUN.name,
+    ONE_BATTLE_MODE.name,
+    NO_VIRTUE_CLOCK.name,
+    RESTOCK_ON_ENTRY.name,
+    NO_CLEAR_REFILL.name,
+)
 
 
 def _check_word(arm9: bytearray, feature: Feature, addr: int, expected: int) -> None:
