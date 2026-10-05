@@ -1,0 +1,846 @@
+# Power-on to Jian in control in his room (deterministic input replay)
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 25
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30

@@ -1,0 +1,18 @@
+# Measure HP drain while running (vanilla). Jian HP at 0x020B4668.
+load intro2
+peek u16 0x020B4668 jian_hp
+peek u16 0x020B466C jian_maxhp
+watch u16 0x020B4668 jian_hp
+press Down 60
+press Right 60
+peek u16 0x020B4668 hp_after_walk
+press B,Up 90
+press B,Left 90
+press B,Down 90
+press B,Right 90
+press B,Up 90
+press B,Left 90
+press B,Down 90
+press B,Right 90
+shot run_end
+peek u16 0x020B4668 hp_after_run
