@@ -1,0 +1,46 @@
+# Enemy picker (Jian alone): B cancels, the item list still works after the picker,
+# a tap highlights a cell and a tap on the highlighted cell (the OK stamp) confirms.
+include boot_to_field
+include cheats_strong
+include warp6
+wait 270
+exec 0x02051C48 attack_target
+watch u16 0x020B8808 page
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+shot h1
+press B 3
+wait 60
+shot h2
+press Right 3
+wait 20
+press Down 3
+wait 20
+press A 3
+wait 60
+press A 3
+wait 60
+shot h3
+press B 3
+wait 60
+press B 3
+wait 60
+press Up 3
+wait 20
+press Left 3
+wait 20
+shot h4
+press A 3
+wait 60
+shot h5
+touch 154 136 3
+wait 30
+shot h6
+touch 154 136 3
+wait 60
+shot h7
+wait 600

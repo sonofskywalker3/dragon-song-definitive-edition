@@ -1,0 +1,34 @@
+# Dead chosen target, no back row to refill it: Jian picks the left front enemy (9), which then
+# dies (HP poked to 0) before he acts; his attack must go to the next enemy in the list (10).
+# The back row (5, 6) is killed first so nobody steps into slot 9.
+include boot_to_field
+include cheats_strong
+include warp6
+poke u16 0x020B4650 3
+poke u16 0x020B4780 999
+poke u16 0x020B477C 999
+wait 270
+poke u16 0x0228EBD0 0
+poke u16 0x0228EC3C 0
+exec 0x02051C48 attack_target
+exec 0x02030BC8 hit_alive
+watch u16 0x020B8834 member
+watch u16 0x0228ED80 hp_rec9
+watch u16 0x0228EDEC hp_rec10
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+shot r1
+dump 0x01FF85E0 12 tgt_state
+press A 3
+wait 60
+poke u16 0x0228ED80 0
+press A 3
+wait 60
+shot r2
+dump 0x01FF85E0 12 tgt_state
+wait 600
+battlers

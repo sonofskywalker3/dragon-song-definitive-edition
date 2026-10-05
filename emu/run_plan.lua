@@ -40,9 +40,13 @@ local writers = {
 	u32 = function(a, v) memory.write_u32_le(a, v, BUS) end,
 }
 
-local function step(input)
+local function step(input, analog)
 	if input then
 		joypad.set(input)
+	end
+	if analog then
+		-- touch coordinates are analog axes; joypad.set ignores them
+		joypad.setanalog(analog)
 	end
 	for _, pin in ipairs(pins) do
 		writers[pin.kind](pin.addr, pin.value)
@@ -58,9 +62,9 @@ local function step(input)
 	end
 end
 
-local function hold(input, n)
+local function hold(input, n, analog)
 	for _ = 1, n do
-		step(input)
+		step(input, analog)
 	end
 end
 
@@ -84,7 +88,8 @@ for line in io.lines(path) do
 		hold(input, tonumber(words[3]))
 		hold(nil, 2)
 	elseif cmd == "touch" then
-		hold({ Touch = true, ["Touch X"] = tonumber(words[2]), ["Touch Y"] = tonumber(words[3]) }, tonumber(words[4]))
+		local xy = { ["Touch X"] = tonumber(words[2]), ["Touch Y"] = tonumber(words[3]) }
+		hold({ Touch = true }, tonumber(words[4]), xy)
 		hold(nil, 2)
 	elseif cmd == "shot" then
 		client.screenshot(ROOT .. words[2] .. ".png")
