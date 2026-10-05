@@ -1,0 +1,732 @@
+include boot_from_save
+include cheats_strong
+include warp6
+watch u32 0x020B8610 exp_pool
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u16 0x020B85C4 battle_result
+dump 0x020B4658 0x5C jian_before
+dump 0x0213B930 0x200 inv_before
+wait 300
+press A 3
+shot rs_001
+wait 20
+press A 3
+shot rs_002
+wait 20
+press A 3
+shot rs_003
+wait 20
+press A 3
+shot rs_004
+wait 20
+press A 3
+shot rs_005
+wait 20
+press A 3
+shot rs_006
+wait 20
+press A 3
+shot rs_007
+wait 20
+press A 3
+shot rs_008
+wait 20
+press A 3
+shot rs_009
+wait 20
+press A 3
+shot rs_010
+wait 20
+press A 3
+shot rs_011
+wait 20
+press A 3
+shot rs_012
+wait 20
+press A 3
+shot rs_013
+wait 20
+press A 3
+shot rs_014
+wait 20
+press A 3
+shot rs_015
+wait 20
+press A 3
+shot rs_016
+wait 20
+press A 3
+shot rs_017
+wait 20
+press A 3
+shot rs_018
+wait 20
+press A 3
+shot rs_019
+wait 20
+press A 3
+shot rs_020
+wait 20
+press A 3
+shot rs_021
+wait 20
+press A 3
+shot rs_022
+wait 20
+press A 3
+shot rs_023
+wait 20
+press A 3
+shot rs_024
+wait 20
+press A 3
+shot rs_025
+wait 20
+press A 3
+shot rs_026
+wait 20
+press A 3
+shot rs_027
+wait 20
+press A 3
+shot rs_028
+wait 20
+press A 3
+shot rs_029
+wait 20
+press A 3
+shot rs_030
+wait 20
+press A 3
+shot rs_031
+wait 20
+press A 3
+shot rs_032
+wait 20
+press A 3
+shot rs_033
+wait 20
+press A 3
+shot rs_034
+wait 20
+press A 3
+shot rs_035
+wait 20
+press A 3
+shot rs_036
+wait 20
+press A 3
+shot rs_037
+wait 20
+press A 3
+shot rs_038
+wait 20
+press A 3
+shot rs_039
+wait 20
+press A 3
+shot rs_040
+wait 20
+press A 3
+shot rs_041
+wait 20
+press A 3
+shot rs_042
+wait 20
+press A 3
+shot rs_043
+wait 20
+press A 3
+shot rs_044
+wait 20
+press A 3
+shot rs_045
+wait 20
+press A 3
+shot rs_046
+wait 20
+press A 3
+shot rs_047
+wait 20
+press A 3
+shot rs_048
+wait 20
+press A 3
+shot rs_049
+wait 20
+press A 3
+shot rs_050
+wait 20
+press A 3
+shot rs_051
+wait 20
+press A 3
+shot rs_052
+wait 20
+press A 3
+shot rs_053
+wait 20
+press A 3
+shot rs_054
+wait 20
+press A 3
+shot rs_055
+wait 20
+press A 3
+shot rs_056
+wait 20
+press A 3
+shot rs_057
+wait 20
+press A 3
+shot rs_058
+wait 20
+press A 3
+shot rs_059
+wait 20
+press A 3
+shot rs_060
+wait 20
+press A 3
+shot rs_061
+wait 20
+press A 3
+shot rs_062
+wait 20
+press A 3
+shot rs_063
+wait 20
+press A 3
+shot rs_064
+wait 20
+press A 3
+shot rs_065
+wait 20
+press A 3
+shot rs_066
+wait 20
+press A 3
+shot rs_067
+wait 20
+press A 3
+shot rs_068
+wait 20
+press A 3
+shot rs_069
+wait 20
+press A 3
+shot rs_070
+wait 20
+press A 3
+shot rs_071
+wait 20
+press A 3
+shot rs_072
+wait 20
+press A 3
+shot rs_073
+wait 20
+press A 3
+shot rs_074
+wait 20
+press A 3
+shot rs_075
+wait 20
+press A 3
+shot rs_076
+wait 20
+press A 3
+shot rs_077
+wait 20
+press A 3
+shot rs_078
+wait 20
+press A 3
+shot rs_079
+wait 20
+press A 3
+shot rs_080
+wait 20
+press A 3
+shot rs_081
+wait 20
+press A 3
+shot rs_082
+wait 20
+press A 3
+shot rs_083
+wait 20
+press A 3
+shot rs_084
+wait 20
+press A 3
+shot rs_085
+wait 20
+press A 3
+shot rs_086
+wait 20
+press A 3
+shot rs_087
+wait 20
+press A 3
+shot rs_088
+wait 20
+press A 3
+shot rs_089
+wait 20
+press A 3
+shot rs_090
+wait 20
+press A 3
+shot rs_091
+wait 20
+press A 3
+shot rs_092
+wait 20
+press A 3
+shot rs_093
+wait 20
+press A 3
+shot rs_094
+wait 20
+press A 3
+shot rs_095
+wait 20
+press A 3
+shot rs_096
+wait 20
+press A 3
+shot rs_097
+wait 20
+press A 3
+shot rs_098
+wait 20
+press A 3
+shot rs_099
+wait 20
+press A 3
+shot rs_100
+wait 20
+press A 3
+shot rs_101
+wait 20
+press A 3
+shot rs_102
+wait 20
+press A 3
+shot rs_103
+wait 20
+press A 3
+shot rs_104
+wait 20
+press A 3
+shot rs_105
+wait 20
+press A 3
+shot rs_106
+wait 20
+press A 3
+shot rs_107
+wait 20
+press A 3
+shot rs_108
+wait 20
+press A 3
+shot rs_109
+wait 20
+press A 3
+shot rs_110
+wait 20
+press A 3
+shot rs_111
+wait 20
+press A 3
+shot rs_112
+wait 20
+press A 3
+shot rs_113
+wait 20
+press A 3
+shot rs_114
+wait 20
+press A 3
+shot rs_115
+wait 20
+press A 3
+shot rs_116
+wait 20
+press A 3
+shot rs_117
+wait 20
+press A 3
+shot rs_118
+wait 20
+press A 3
+shot rs_119
+wait 20
+press A 3
+shot rs_120
+wait 20
+press A 3
+shot rs_121
+wait 20
+press A 3
+shot rs_122
+wait 20
+press A 3
+shot rs_123
+wait 20
+press A 3
+shot rs_124
+wait 20
+press A 3
+shot rs_125
+wait 20
+press A 3
+shot rs_126
+wait 20
+press A 3
+shot rs_127
+wait 20
+press A 3
+shot rs_128
+wait 20
+press A 3
+shot rs_129
+wait 20
+press A 3
+shot rs_130
+wait 20
+press A 3
+shot rs_131
+wait 20
+press A 3
+shot rs_132
+wait 20
+press A 3
+shot rs_133
+wait 20
+press A 3
+shot rs_134
+wait 20
+press A 3
+shot rs_135
+wait 20
+press A 3
+shot rs_136
+wait 20
+press A 3
+shot rs_137
+wait 20
+press A 3
+shot rs_138
+wait 20
+press A 3
+shot rs_139
+wait 20
+press A 3
+shot rs_140
+wait 20
+press A 3
+shot rs_141
+wait 20
+press A 3
+shot rs_142
+wait 20
+press A 3
+shot rs_143
+wait 20
+press A 3
+shot rs_144
+wait 20
+press A 3
+shot rs_145
+wait 20
+press A 3
+shot rs_146
+wait 20
+press A 3
+shot rs_147
+wait 20
+press A 3
+shot rs_148
+wait 20
+press A 3
+shot rs_149
+wait 20
+press A 3
+shot rs_150
+wait 20
+press A 3
+shot rs_151
+wait 20
+press A 3
+shot rs_152
+wait 20
+press A 3
+shot rs_153
+wait 20
+press A 3
+shot rs_154
+wait 20
+press A 3
+shot rs_155
+wait 20
+press A 3
+shot rs_156
+wait 20
+press A 3
+shot rs_157
+wait 20
+press A 3
+shot rs_158
+wait 20
+press A 3
+shot rs_159
+wait 20
+press A 3
+shot rs_160
+wait 20
+press A 3
+shot rs_161
+wait 20
+press A 3
+shot rs_162
+wait 20
+press A 3
+shot rs_163
+wait 20
+press A 3
+shot rs_164
+wait 20
+press A 3
+shot rs_165
+wait 20
+press A 3
+shot rs_166
+wait 20
+press A 3
+shot rs_167
+wait 20
+press A 3
+shot rs_168
+wait 20
+press A 3
+shot rs_169
+wait 20
+press A 3
+shot rs_170
+wait 20
+press A 3
+shot rs_171
+wait 20
+press A 3
+shot rs_172
+wait 20
+press A 3
+shot rs_173
+wait 20
+press A 3
+shot rs_174
+wait 20
+press A 3
+shot rs_175
+wait 20
+press A 3
+shot rs_176
+wait 20
+press A 3
+shot rs_177
+wait 20
+press A 3
+shot rs_178
+wait 20
+press A 3
+shot rs_179
+wait 20
+press A 3
+shot rs_180
+wait 20
+press A 3
+shot rs_181
+wait 20
+press A 3
+shot rs_182
+wait 20
+press A 3
+shot rs_183
+wait 20
+press A 3
+shot rs_184
+wait 20
+press A 3
+shot rs_185
+wait 20
+press A 3
+shot rs_186
+wait 20
+press A 3
+shot rs_187
+wait 20
+press A 3
+shot rs_188
+wait 20
+press A 3
+shot rs_189
+wait 20
+press A 3
+shot rs_190
+wait 20
+press A 3
+shot rs_191
+wait 20
+press A 3
+shot rs_192
+wait 20
+press A 3
+shot rs_193
+wait 20
+press A 3
+shot rs_194
+wait 20
+press A 3
+shot rs_195
+wait 20
+press A 3
+shot rs_196
+wait 20
+press A 3
+shot rs_197
+wait 20
+press A 3
+shot rs_198
+wait 20
+press A 3
+shot rs_199
+wait 20
+press A 3
+shot rs_200
+wait 20
+press A 3
+shot rs_201
+wait 20
+press A 3
+shot rs_202
+wait 20
+press A 3
+shot rs_203
+wait 20
+press A 3
+shot rs_204
+wait 20
+press A 3
+shot rs_205
+wait 20
+press A 3
+shot rs_206
+wait 20
+press A 3
+shot rs_207
+wait 20
+press A 3
+shot rs_208
+wait 20
+press A 3
+shot rs_209
+wait 20
+press A 3
+shot rs_210
+wait 20
+press A 3
+shot rs_211
+wait 20
+press A 3
+shot rs_212
+wait 20
+press A 3
+shot rs_213
+wait 20
+press A 3
+shot rs_214
+wait 20
+press A 3
+shot rs_215
+wait 20
+press A 3
+shot rs_216
+wait 20
+press A 3
+shot rs_217
+wait 20
+press A 3
+shot rs_218
+wait 20
+press A 3
+shot rs_219
+wait 20
+press A 3
+shot rs_220
+wait 20
+press A 3
+shot rs_221
+wait 20
+press A 3
+shot rs_222
+wait 20
+press A 3
+shot rs_223
+wait 20
+press A 3
+shot rs_224
+wait 20
+press A 3
+shot rs_225
+wait 20
+press A 3
+shot rs_226
+wait 20
+press A 3
+shot rs_227
+wait 20
+press A 3
+shot rs_228
+wait 20
+press A 3
+shot rs_229
+wait 20
+press A 3
+shot rs_230
+wait 20
+press A 3
+shot rs_231
+wait 20
+press A 3
+shot rs_232
+wait 20
+press A 3
+shot rs_233
+wait 20
+press A 3
+shot rs_234
+wait 20
+press A 3
+shot rs_235
+wait 20
+press A 3
+shot rs_236
+wait 20
+press A 3
+shot rs_237
+wait 20
+press A 3
+shot rs_238
+wait 20
+press A 3
+shot rs_239
+wait 20
+press A 3
+shot rs_240
+wait 20
+dump 0x020B4658 0x5C jian_after
+dump 0x0213B930 0x200 inv_after
