@@ -22,6 +22,10 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 
 ## Test notes
 
+- Fast start: `include boot_from_save` and run with `--save` loads an in-game save made right after the
+  intro (about 2200 frames instead of 16000). The save lives in build/emu/saves/start.SaveRAM; recreate it with
+  emu/plans/make_save.plan. A battery save only holds progress, so unlike savestates it is safe across builds.
+
 - BizHawk's DS clock is fixed (`UseRealTime: false` in tools/bizhawk/config.ini). With the real clock the game's
   randomness changed every run and battles did not always start.
 - The inventory is indexed by item id minus one: item N's count is at 0x0213B930 + N - 1.

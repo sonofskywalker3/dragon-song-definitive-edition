@@ -1,0 +1,11 @@
+# Power-on, Load Game, slot 1: Jian in his room after the intro (needs --save; about 2200 frames
+# instead of 16000 for boot_to_field)
+wait 1500
+touch 128 108 5
+wait 120
+press A 3
+wait 60
+press A 3
+wait 300
+press A 3
+wait 120

@@ -1,0 +1,16 @@
+# Make the post-intro save used by boot_from_save: replay the intro, open Menu > System > Save,
+# save to slot 1. Afterwards copy tools/bizhawk/NDS/SaveRAM/dsde.SaveRAM to build/emu/saves/start.SaveRAM
+include boot_to_field
+touch 165 45 5
+wait 200
+touch 190 118 5
+wait 60
+touch 127 57 5
+wait 120
+shot m0
+press A 3
+wait 120
+shot m1
+press A 3
+wait 120
+shot m2
