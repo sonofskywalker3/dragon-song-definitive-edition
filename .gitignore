@@ -8,3 +8,7 @@ build/
 
 # Downloaded tool binaries
 tools/
+
+# Python
+.venv/
+__pycache__/
