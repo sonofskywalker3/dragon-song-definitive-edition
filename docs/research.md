@@ -5,12 +5,12 @@ Each item is something to learn from the game itself before the matching fix in 
 | # | Question | Needed for | Status |
 |---|---|---|---|
 | 1 | Do enemies scale with the party's level, and how (caps, rate)? Source so far: TV Tropes only | Battle rewards | Open |
-| 2 | Does leveling up ever ask the player to choose something (skills, stats)? | Party: benched EXP | Open |
+| 2 | Does leveling up ever ask the player to choose something (skills, stats)? | Party: benched EXP | Fan sources say no: spells are learned automatically. Code check pending |
 | 3 | In the original game, what happens when a character's target dies before their attack: switch or miss? | Targeting | Open |
-| 4 | Who joins, leaves and dies in the story, and when? Where could returning characters wait? | Party | Open |
-| 5 | Exact run time and cooldown of the Eternal Blue Complete (PS1) dash | Running | Open |
+| 4 | Who joins, leaves and dies in the story, and when? Where could returning characters wait? | Party | Answered from fan sources, see [story-party-timeline.md](story-party-timeline.md). Never more than 3 characters available at once; Lucia leaves for good, Rufus dies |
+| 5 | Exact run time and cooldown of the Eternal Blue Complete (PS1) dash | Running | Reviews say about 3 s run, 3 s cooldown. Exact timing still to be measured |
 | 6 | Do thieves run away after stealing in the original game, and how often? Morus is a known thief | Stealing | Open |
-| 7 | What is the GameFAQs "Save Glitch FAQ" about, and is it a bug worth fixing? | Possible new fix | Open |
+| 7 | What is the GameFAQs "Save Glitch FAQ" about, and is it a bug worth fixing? | Possible new fix | Answered, see [research-bugs-thieves.md](research-bugs-thieves.md). US-only: saving disabled until power-off after Flora leaves. Root cause in code still open |
 | 8 | Enemy EXP values, to base the new silver drops on | Money | Open |
 
 ## Starting points
