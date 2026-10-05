@@ -1,6 +1,7 @@
 """Runs a plan file in BizHawk (EmuHawk) through emu/run_plan.lua and returns its log."""
 
 import argparse
+import json
 import logging
 import subprocess
 from pathlib import Path
@@ -10,9 +11,26 @@ EMUHAWK = PROJECT_ROOT / "tools" / "bizhawk" / "EmuHawk.exe"
 RUNNER = PROJECT_ROOT / "emu" / "run_plan.lua"
 EMU_OUT = PROJECT_ROOT / "build" / "emu"
 DEFAULT_ROM = PROJECT_ROOT / "rom" / "Lunar - Dragon Song (USA).nds"
+EMUHAWK_CONFIG = EMUHAWK.parent / "config.ini"
+HARNESS_CONFIG = EMU_OUT / "harness_config.ini"
+TOUCH_AXES = ("Touch X", "Touch Y")
 TIMEOUT_SECONDS = 600
 
 logger = logging.getLogger(__name__)
+
+
+def write_harness_config() -> Path:
+    """Copy EmuHawk's config with the mouse unbound from the DS touch axes.
+
+    The mouse binding overrides the touch position a Lua script sets, so plans could only
+    touch the screen centre. The user's own config is left as it is.
+    """
+    config = json.loads(EMUHAWK_CONFIG.read_text(encoding="utf-8-sig"))
+    nds_axes = config["AllTrollersAnalog"]["NDS Controller"]
+    for axis in TOUCH_AXES:
+        nds_axes[axis]["Value"] = ""
+    HARNESS_CONFIG.write_text(json.dumps(config, indent=2), encoding="utf-8")
+    return HARNESS_CONFIG
 
 
 def run_plan(plan: Path, rom: Path = DEFAULT_ROM) -> str:
@@ -23,7 +41,12 @@ def run_plan(plan: Path, rom: Path = DEFAULT_ROM) -> str:
     log_path.unlink(missing_ok=True)
     try:
         subprocess.run(
-            [str(EMUHAWK), f"--lua={RUNNER}", str(rom)],
+            [
+                str(EMUHAWK),
+                f"--config={write_harness_config()}",
+                f"--lua={RUNNER}",
+                str(rom),
+            ],
             timeout=TIMEOUT_SECONDS,
             check=False,
         )

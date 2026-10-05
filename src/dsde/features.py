@@ -4,6 +4,7 @@ from pathlib import Path
 
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
 from dsde.feat_battle_end import BATTLE_END_RULES
+from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
 
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
@@ -350,6 +351,7 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
     ONE_BATTLE_MODE.name,
     NO_VIRTUE_CLOCK.name,
+    MANUAL_TARGETING,
     RESTOCK_ON_ENTRY.name,
     NO_CLEAR_REFILL.name,
     FIX_SAVE_GLITCH.name,
@@ -357,3 +359,4 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     BOSS_EXP.name,
     BATTLE_END_RULES.name,
 )
+    MANUAL_TARGETING.name,
