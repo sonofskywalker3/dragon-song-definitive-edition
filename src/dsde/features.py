@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
-from dsde.feat_gear import GEAR_AND_THEFT_RETURN
+from dsde.feat_battle_end import BATTLE_END_RULES
 from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
 
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
@@ -344,7 +344,7 @@ FEATURES: tuple[Feature, ...] = (
     FIX_SAVE_GLITCH,
     SILVER_DROPS,
     BOSS_EXP,
-    GEAR_AND_THEFT_RETURN,
+    BATTLE_END_RULES,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -355,5 +355,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     FIX_SAVE_GLITCH.name,
     SILVER_DROPS.name,
     BOSS_EXP.name,
-    GEAR_AND_THEFT_RETURN.name,
+    BATTLE_END_RULES.name,
 )

@@ -15,9 +15,9 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 | 2. Bosses give EXP | `boss-exp` | Built: mode -1 (boss/scripted) battles take the EXP path; every boss gets 10x the average regular enemy EXP (77 at level 0, 13048 at level 98, before doubling). Regular battles regression-tested; no boss fight tested yet |
 | 3. Silver from battles | `silver-drops` | Verified: the EXP step adds the battle's EXP pool as silver (150 -> 251 for a pool of 101). No on-screen message yet |
 | 4. Manual targeting | none yet | Todo, new UI code |
-| 5. Benched characters earn EXP | none yet | Todo |
-| 6. Broken gear back after battle | `gear-and-theft-return` | Verified with a simulated break (weapon swapped to its replacement mid-battle is back after the battle). Not yet seen with a real breaker enemy |
-| 6. Stolen items back if the thief dies | `gear-and-theft-return` | Verified with temple enemies forced to steal: Fossil stolen mid-battle, returned on the win. Implemented as "a won battle returns all thefts" because enemies change battler slots mid-fight; equivalent since enemies never flee |
+| 5. Benched characters earn EXP | `battle-end-rules` | Verified: with Jian alone, Lucia, Gabryel and Flora each gained the same 152 EXP, levels and stats recomputed by the game's own routines; Rufus too |
+| 6. Broken gear back after battle | `battle-end-rules` | Verified with a simulated break (weapon swapped to its replacement mid-battle is back after the battle). Not yet seen with a real breaker enemy |
+| 6. Stolen items back if the thief dies | `battle-end-rules` | Verified with temple enemies forced to steal: Fossil stolen mid-battle, returned on the win. Implemented as "a won battle returns all thefts" because enemies change battler slots mid-fight; equivalent since enemies never flee |
 | Save glitch (Flora's tunnel line) | `fix-save-glitch` | Script edit verified in the built archive; the game boots and plays with the rebuilt archive. Not yet played through to Flora |
 
 ## Test notes
