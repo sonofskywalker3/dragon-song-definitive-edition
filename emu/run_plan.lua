@@ -12,6 +12,7 @@
 --   watch u8|u16|u32 ADDR LABEL  log the value every frame it changes from now on
 --   pin u8|u16|u32 ADDR VALUE    write a value before every frame until unpin
 --   unpin                        drop all pins
+--   trace ADDR LABEL             log CPU registers whenever ADDR is written
 --   speed PERCENT                emulation speed (default 800)
 --   include NAME                 run emu/plans/NAME.plan (same folder as the plan) inline
 local ROOT = "C:/Users/Jeff/Documents/Projects/Dragon Song Definitive Edition/build/emu/"
@@ -118,6 +119,40 @@ for line in io.lines(path) do
 	elseif cmd == "unpin" then
 		pins = {}
 		say("unpin all")
+	elseif cmd == "trace" then
+		-- log CPU registers on every write to ADDR
+		local label = words[3] or words[2]
+		event.on_bus_write(function(addr)
+			local r = emu.getregisters()
+			local parts = {}
+			for _, k in ipairs({ "ARM9 r15", "ARM9 r14", "ARM9 r0", "ARM9 r1", "ARM9 r2" }) do
+				parts[#parts + 1] = string.format("%s=%08X", k, r[k] or 0)
+			end
+			say("trace " .. label .. " " .. table.concat(parts, " "))
+		end, tonumber(words[2]), label)
+		say("trace on " .. words[2])
+	elseif cmd == "exec" then
+		-- log registers whenever the CPU executes ADDR
+		local label = words[3] or words[2]
+		event.on_bus_exec(function()
+			local r = emu.getregisters()
+			local parts = {}
+			for _, k in ipairs({ "ARM9 r0", "ARM9 r1", "ARM9 r4", "ARM9 r5", "ARM9 r6", "ARM9 r7", "ARM9 r14" }) do
+				parts[#parts + 1] = string.format("%s=%08X", k:sub(6), r[k] or 0)
+			end
+			say("exec " .. label .. " " .. table.concat(parts, " "))
+		end, tonumber(words[2]), label)
+		say("exec on " .. words[2])
+	elseif cmd == "battlers" then
+		-- battler objects: 300 bytes each from the pointer at 0x020B8640
+		local base = memory.read_u32_le(0x020B8640, BUS)
+		local parts = {}
+		for i = 0, 13 do
+			local o = base + i * 300
+			parts[#parts + 1] = string.format("%d:f%08X/c%d/r%d", i, memory.read_u32_le(o, BUS),
+				memory.read_u32_le(o + 4, BUS), memory.read_u32_le(o + 0x10, BUS))
+		end
+		say("battlers " .. table.concat(parts, " "))
 	elseif cmd == "speed" then
 		client.speedmode(tonumber(words[2]))
 	elseif cmd == "include" then

@@ -1,5 +1,9 @@
 """Every design change as a named Feature. See docs/design.md for the why."""
 
+from pathlib import Path
+
+from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
+from dsde.feat_gear import GEAR_AND_THEFT_RETURN
 from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
 
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
@@ -253,6 +257,82 @@ silver_cap:
     ),
 )
 
+# Bosses give EXP (design 2). Vanilla boss and scripted battles run with battle mode -1, and four
+# checks require mode == 1 for EXP; they become mode != 0. Boss EXP fields are 1 to 10 placeholders,
+# so each boss gets BOSS_EXP_FACTOR times the average regular enemy's EXP at the same level.
+VANILLA_ARM9 = Path(__file__).resolve().parents[2] / "extract" / "arm9" / "arm9.bin"
+BOSS_EXP_FACTOR = 10
+EXP_MIN_OFFSET = 0x14
+EXP_MAX_OFFSET = 0x28
+FIRST_BOSS = 136
+LAST_BOSS = 155  # Ignatius; row 156 is not a real boss fight
+
+
+def _boss_exp_patches() -> tuple[Patch, ...]:
+    enemies = read_enemies(VANILLA_ARM9.read_bytes())
+    regular = [e for e in enemies if not e.boss]
+    exp_min = round(BOSS_EXP_FACTOR * sum(e.exp_min for e in regular) / len(regular))
+    exp_max = round(BOSS_EXP_FACTOR * sum(e.exp_max for e in regular) / len(regular))
+    patches = []
+    for enemy in enemies[FIRST_BOSS : LAST_BOSS + 1]:
+        row = ENEMY_TABLE + enemy.row * ENEMY_ROW_SIZE
+        note = f"{enemy.name} EXP"
+        patches.append(
+            Patch(row + EXP_MIN_OFFSET, enemy.exp_min, exp_min, note + " at level 0")
+        )
+        patches.append(
+            Patch(row + EXP_MAX_OFFSET, enemy.exp_max, exp_max, note + " at level 98")
+        )
+    return tuple(patches)
+
+
+CMP_MODE_1 = 0xE3500001
+CMP_MODE_0 = 0xE3500000
+BOSS_EXP = Feature(
+    "boss-exp",
+    (
+        Patch(0x0205361C, CMP_MODE_1, CMP_MODE_0, "enemy death: EXP when mode != 0"),
+        Patch(0x02053620, 0x1A000017, 0x0A000017, "enemy death: EXP when mode != 0"),
+        Patch(
+            0x0202A8E4,
+            CMP_MODE_1,
+            CMP_MODE_0,
+            "result routing: EXP screen when mode != 0",
+        ),
+        Patch(
+            0x0202A8E8,
+            0x1A000003,
+            0x0A000003,
+            "result routing: EXP screen when mode != 0",
+        ),
+        Patch(
+            0x0202A9F8,
+            CMP_MODE_1,
+            CMP_MODE_0,
+            "result routing: EXP screen when mode != 0",
+        ),
+        Patch(
+            0x0202A9FC,
+            0x1A000003,
+            0x0A000003,
+            "result routing: EXP screen when mode != 0",
+        ),
+        Patch(
+            0x0203B0E0,
+            CMP_MODE_1,
+            CMP_MODE_0,
+            "result item list: skipped whenever EXP is shown",
+        ),
+        Patch(
+            0x0203B0E4,
+            0x0A0000B3,
+            0x1A0000B3,
+            "result item list: skipped whenever EXP is shown",
+        ),
+        *_boss_exp_patches(),
+    ),
+)
+
 FEATURES: tuple[Feature, ...] = (
     NO_RUN_HP_COST,
     TIMED_RUN,
@@ -263,6 +343,8 @@ FEATURES: tuple[Feature, ...] = (
     NO_CLEAR_REFILL,
     FIX_SAVE_GLITCH,
     SILVER_DROPS,
+    BOSS_EXP,
+    GEAR_AND_THEFT_RETURN,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -272,4 +354,6 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     NO_CLEAR_REFILL.name,
     FIX_SAVE_GLITCH.name,
     SILVER_DROPS.name,
+    BOSS_EXP.name,
+    GEAR_AND_THEFT_RETURN.name,
 )
