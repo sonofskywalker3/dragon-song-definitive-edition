@@ -10,6 +10,8 @@ from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
 # 8-bit counter at +0x40 bits 5..12 (the old HP drain counter): 0 = ready, 1..RUN_TICKS =
 # running, then cooldown until RUN_TICKS + COOLDOWN_TICKS. One tick = 2 frames at 60 fps.
+# As in Lunar 1 and 2, holding B runs once: after the cooldown the state waits at its end until B is
+# released, so running again needs a fresh press.
 FRAMES_PER_TICK = 2
 RUN_TICKS = 90  # 3 seconds
 COOLDOWN_TICKS = 90  # 3 seconds
@@ -53,7 +55,10 @@ tick:
     tst   r12, #{FRAMES_PER_TICK - 1}
     addeq r3, r3, #1
     cmp   r3, #{RUN_TICKS + COOLDOWN_TICKS}
-    movhi r3, #0
+    bls   store
+    cmp   r0, #0
+    movne r3, #{RUN_TICKS + COOLDOWN_TICKS}
+    moveq r3, #0
 store:
     bic   r1, r1, #{COUNTER_MASK_HIGH:#x}
     bic   r1, r1, #{COUNTER_MASK_LOW:#x}
@@ -346,17 +351,17 @@ FEATURES: tuple[Feature, ...] = (
     SILVER_DROPS,
     BOSS_EXP,
     BATTLE_END_RULES,
+    MANUAL_TARGETING,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
     ONE_BATTLE_MODE.name,
     NO_VIRTUE_CLOCK.name,
-    MANUAL_TARGETING,
     RESTOCK_ON_ENTRY.name,
     NO_CLEAR_REFILL.name,
     FIX_SAVE_GLITCH.name,
     SILVER_DROPS.name,
     BOSS_EXP.name,
     BATTLE_END_RULES.name,
-)
     MANUAL_TARGETING.name,
+)
