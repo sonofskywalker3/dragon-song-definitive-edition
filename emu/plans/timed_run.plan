@@ -1,4 +1,5 @@
-# Timed run: state = player flags (0x020B6CB0 + 0x40) bits 5..12; 1..90 running, 91..180 cooldown
+# Timed run: state = player flags (0x020B6CB0 + 0x40) bits 5..12; 1..90 running, 91..180 cooldown.
+# Holding B runs once; after the cooldown the state waits at 180 until B is released.
 include boot_to_field
 watch u32 0x020B6CF0 player_flags
 press B,Down 450

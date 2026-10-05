@@ -6,7 +6,7 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 
 | Design item | Feature | State |
 |---|---|---|
-| 1. Running | `timed-run` | Verified in emulator: no HP cost; 179 frames running, 180 frames cooldown, runs again if B stays held |
+| 1. Running | `timed-run` | Verified in emulator: no HP cost; 179 frames running, 180 frames cooldown; holding B runs once, a fresh press is needed to run again (as in Lunar 1 and 2) |
 | 2. One battle mode | `one-battle-mode` | Verified: battles use Virtue rules (EXP, kills count) and every kill also rolls items; field mode toggle disabled |
 | 2. Result screen item list | `result-item-list` | Off. NOP at 0x0203B0E4 makes the result screen skip the EXP step. Items are granted, just not listed. Needs a different fix |
 | 2. Virtue clock removed | `no-virtue-clock` | Verified: clock stays 0 after a kill (original: +1 per frame, 3600 = 60 s) |
