@@ -1,0 +1,60 @@
+# Design
+
+Decided 2026-10-05.
+
+## Guiding rule
+
+Play outside of battle should feel like Lunar 1 and 2 (Silver Star Story Complete and Eternal Blue Complete).
+Every change to systems outside of battle is judged against that.
+
+The battle system itself stays non-positional. It was different from Lunar 1 and 2 on purpose, and that is fine.
+
+## 1. Running
+
+- Running no longer costs HP.
+- It copies the Eternal Blue Complete (PS1) dash: you run for a short time, then drop back to walking,
+  and running is unavailable for a short cooldown. No visible stamina bar.
+- Reviews put both times at about 3 seconds. Measure the real timings from Eternal Blue Complete and copy them.
+- Watch in playtesting: Eternal Blue was criticized because enemies never tire, so they were hard to dodge.
+  Dragon Song also shows enemies on the map. Start with the exact Eternal Blue timings and tune from there.
+
+## 2. Battle rewards and area clearing
+
+- One mode. The Combat/Virtue switch is removed.
+- Every battle gives EXP (Althena Conduct), items and silver.
+- The Virtue mode clock is removed.
+- Enemies respawn when you leave an area and come back, not instantly.
+- The HP/MP recovery for clearing an area is removed.
+- Blue chests stay locked until every enemy in the area is beaten, at your own pace.
+- EXP amounts stay unchanged to start. Enemies reportedly scale with the party's level, so faster leveling
+  should not break the balance. Item drops are the bigger balance risk; trim them only if playtesting says so.
+
+## 3. Money
+
+- Battles drop silver. Each enemy's silver is based on its EXP value, tuned in playtesting.
+- Gad's Express delivery jobs stay as they are, now optional extra income.
+
+## 4. Targeting
+
+- The player picks the target of each attack on the touch screen, like Lunar 1 and 2.
+- If the chosen enemy is already dead when the attack happens, the attack moves to the next enemy in the list.
+  An attack is never wasted.
+
+## 5. Party
+
+- Free swapping of who is in the three party slots. Swapping only near the end of the game is the fallback if
+  the story cannot handle free swapping.
+- Characters out of the party keep earning full EXP, provided leveling never asks for a choice that would have
+  to be made on their behalf.
+- Characters the story requires are locked in. Characters who die in the story stay gone.
+- Characters who leave in the story come back by talking to them in a hub city, at a point that makes sense.
+  This is new map content and new dialogue in each character's voice.
+- Stat buffs for Lucia, Gabryel, Flora and Rufus are on hold until targeting and swapping have been played.
+
+## 6. Gear breaking and stealing
+
+- Breaking: enemies can still break a piece of gear, but only for the rest of that battle. It comes back when
+  the battle ends. The battle cards that block breaking stay useful.
+- Stealing: kill the thief and you get the item back. If the thief escapes, or the party runs from the battle,
+  the item is gone. No special protection for unique items for now.
+- Saving is already allowed anywhere (menu, System, Save), which softens losing an item to a thief.
