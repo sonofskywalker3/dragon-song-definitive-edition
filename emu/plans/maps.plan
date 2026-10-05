@@ -1,0 +1,176 @@
+load intro2
+pin u16 0x020B77EC 5
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_5
+load intro2
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_6
+load intro2
+pin u16 0x020B77EC 7
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_7
+load intro2
+pin u16 0x020B77EC 8
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_8
+load intro2
+pin u16 0x020B77EC 9
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_9
+load intro2
+pin u16 0x020B77EC 10
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_10
+load intro2
+pin u16 0x020B77EC 12
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_12
+load intro2
+pin u16 0x020B77EC 14
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_14
+load intro2
+pin u16 0x020B77EC 20
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_20
+load intro2
+pin u16 0x020B77EC 21
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_21
+load intro2
+pin u16 0x020B77EC 25
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_25
+load intro2
+pin u16 0x020B77EC 31
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_31
+load intro2
+pin u16 0x020B77EC 35
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_35
+load intro2
+pin u16 0x020B77EC 38
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_38
+load intro2
+pin u16 0x020B77EC 45
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_45
+load intro2
+pin u16 0x020B77EC 53
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawns
+shot m_53

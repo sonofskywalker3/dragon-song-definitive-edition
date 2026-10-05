@@ -1,0 +1,10 @@
+include boot_to_field
+include warp6
+include cheats_strong
+peek u16 0x020B4906 map_index
+include battle_auto
+peek u16 0x020B4906 map_index
+peek u8 0x020B490C kills_idx0
+peek u8 0x020B490D total_idx0
+peek u8 0x020B4912 kills_idx1
+peek u8 0x020B4913 total_idx1

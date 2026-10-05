@@ -1,0 +1,13 @@
+load intro2
+watch u16 0x020B6BE4 map
+watch u16 0x020B77EC dest
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+shot ex0
+wait 120
+shot ex1
+press Down 40
+wait 120
+shot ex2

@@ -1,0 +1,17 @@
+load intro2
+include warp6
+save temple6
+include cheats_strong
+watch u16 0x020B4694 jian_exp
+watch u16 0x020B85C0 battle_mode
+shot b0
+wait 200
+shot b1
+wait 200
+shot b2
+wait 200
+shot b3
+wait 200
+shot b4
+wait 200
+shot b5
