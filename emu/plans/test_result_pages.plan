@@ -1,0 +1,25 @@
+# Result screens: the EXP page, then A opens the item page (items and silver), then A leaves.
+# Run with --save. Shots: rp_exp (EXP page waiting for A), rp_items* (item page), rp_field (after).
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B8610 exp_pool
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u32 0x01FF8344 silver_gained
+include battle_to_victory
+wait 700
+shot rp_exp
+wait 120
+shot rp_exp_idle
+press A 3
+wait 10
+shot rp_items_open
+wait 50
+shot rp_items
+wait 240
+shot rp_items_idle
+press A 3
+wait 60
+shot rp_leaving
+wait 200
+shot rp_field
+dump 0x0213B930 0x200 inv_after
