@@ -1,0 +1,12 @@
+# Title screen to the first controllable moment of a new game
+wait 1800
+touch 40 108 5
+shot ng_a
+wait 300
+shot ng_b
+press A 5
+wait 300
+shot ng_c
+press A 5
+wait 300
+shot ng_d
