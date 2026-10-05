@@ -1,11 +1,10 @@
-include boot_to_field
+load intro2
 include cheats_strong
 include warp6
+poke u8 0x020B4848 1
 watch u32 0x020B8610 exp_pool
 watch u32 0x020B4694 jian_exp32
 watch u16 0x020B85C4 battle_result
-dump 0x020B4658 0x5C jian_before
-dump 0x0213B930 0x200 inv_before
 wait 300
 press A 3
 wait 20
@@ -15,7 +14,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q1
 press A 3
 wait 20
 press A 3
@@ -24,7 +22,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q2
 press A 3
 wait 20
 press A 3
@@ -33,7 +30,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q3
 press A 3
 wait 20
 press A 3
@@ -42,7 +38,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q4
 press A 3
 wait 20
 press A 3
@@ -51,7 +46,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q5
 press A 3
 wait 20
 press A 3
@@ -60,7 +54,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q6
 press A 3
 wait 20
 press A 3
@@ -69,7 +62,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q7
 press A 3
 wait 20
 press A 3
@@ -78,7 +70,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q8
 press A 3
 wait 20
 press A 3
@@ -87,7 +78,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q9
 press A 3
 wait 20
 press A 3
@@ -96,7 +86,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q10
 press A 3
 wait 20
 press A 3
@@ -105,7 +94,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q11
 press A 3
 wait 20
 press A 3
@@ -114,7 +102,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q12
 press A 3
 wait 20
 press A 3
@@ -123,7 +110,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q13
 press A 3
 wait 20
 press A 3
@@ -132,7 +118,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q14
 press A 3
 wait 20
 press A 3
@@ -141,7 +126,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q15
 press A 3
 wait 20
 press A 3
@@ -150,7 +134,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q16
 press A 3
 wait 20
 press A 3
@@ -159,7 +142,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q17
 press A 3
 wait 20
 press A 3
@@ -168,7 +150,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q18
 press A 3
 wait 20
 press A 3
@@ -177,7 +158,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q19
 press A 3
 wait 20
 press A 3
@@ -186,7 +166,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q20
 press A 3
 wait 20
 press A 3
@@ -195,7 +174,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q21
 press A 3
 wait 20
 press A 3
@@ -204,7 +182,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q22
 press A 3
 wait 20
 press A 3
@@ -213,7 +190,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q23
 press A 3
 wait 20
 press A 3
@@ -222,7 +198,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q24
 press A 3
 wait 20
 press A 3
@@ -231,7 +206,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q25
 press A 3
 wait 20
 press A 3
@@ -240,7 +214,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q26
 press A 3
 wait 20
 press A 3
@@ -249,7 +222,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q27
 press A 3
 wait 20
 press A 3
@@ -258,7 +230,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q28
 press A 3
 wait 20
 press A 3
@@ -267,7 +238,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q29
 press A 3
 wait 20
 press A 3
@@ -276,7 +246,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q30
 press A 3
 wait 20
 press A 3
@@ -285,7 +254,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q31
 press A 3
 wait 20
 press A 3
@@ -294,7 +262,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q32
 press A 3
 wait 20
 press A 3
@@ -303,7 +270,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q33
 press A 3
 wait 20
 press A 3
@@ -312,7 +278,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q34
 press A 3
 wait 20
 press A 3
@@ -321,7 +286,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q35
 press A 3
 wait 20
 press A 3
@@ -330,7 +294,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q36
 press A 3
 wait 20
 press A 3
@@ -339,7 +302,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q37
 press A 3
 wait 20
 press A 3
@@ -348,7 +310,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q38
 press A 3
 wait 20
 press A 3
@@ -357,7 +318,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q39
 press A 3
 wait 20
 press A 3
@@ -366,7 +326,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q40
 press A 3
 wait 20
 press A 3
@@ -375,7 +334,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q41
 press A 3
 wait 20
 press A 3
@@ -384,7 +342,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q42
 press A 3
 wait 20
 press A 3
@@ -393,7 +350,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q43
 press A 3
 wait 20
 press A 3
@@ -402,7 +358,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q44
 press A 3
 wait 20
 press A 3
@@ -411,7 +366,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q45
 press A 3
 wait 20
 press A 3
@@ -420,7 +374,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q46
 press A 3
 wait 20
 press A 3
@@ -429,7 +382,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q47
 press A 3
 wait 20
 press A 3
@@ -438,7 +390,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q48
 press A 3
 wait 20
 press A 3
@@ -447,7 +398,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q49
 press A 3
 wait 20
 press A 3
@@ -456,7 +406,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q50
 press A 3
 wait 20
 press A 3
@@ -465,7 +414,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q51
 press A 3
 wait 20
 press A 3
@@ -474,7 +422,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q52
 press A 3
 wait 20
 press A 3
@@ -483,7 +430,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q53
 press A 3
 wait 20
 press A 3
@@ -492,7 +438,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q54
 press A 3
 wait 20
 press A 3
@@ -501,7 +446,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q55
 press A 3
 wait 20
 press A 3
@@ -510,7 +454,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q56
 press A 3
 wait 20
 press A 3
@@ -519,7 +462,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q57
 press A 3
 wait 20
 press A 3
@@ -528,7 +470,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q58
 press A 3
 wait 20
 press A 3
@@ -537,7 +478,6 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q59
 press A 3
 wait 20
 press A 3
@@ -546,6 +486,19 @@ press A 3
 wait 20
 press A 3
 wait 20
-shot q60
-dump 0x020B4658 0x5C jian_after
-dump 0x0213B930 0x200 inv_after
+peek u16 0x020B490E clock
+peek u8 0x020B4912 kills
+press Left 40
+press Right 40
+press Left 40
+press Right 40
+press Left 40
+press Right 40
+press Left 40
+press Right 40
+press Left 40
+press Right 40
+press Left 40
+press Right 40
+peek u16 0x020B490E clock
+peek u8 0x020B4912 kills

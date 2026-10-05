@@ -1,0 +1,231 @@
+"""Every design change as a named Feature. See docs/design.md for the why."""
+
+from dsde.patching import ARM_NOP, AsmPatch, DataPatch, Feature, Patch
+
+# Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
+# 8-bit counter at +0x40 bits 5..12 (the old HP drain counter): 0 = ready, 1..RUN_TICKS =
+# running, then cooldown until RUN_TICKS + COOLDOWN_TICKS. One tick = 2 frames at 60 fps.
+FRAMES_PER_TICK = 2
+RUN_TICKS = 90  # 3 seconds
+COOLDOWN_TICKS = 90  # 3 seconds
+FRAME_COUNTER = 0x020B05BC
+TIMED_RUN_BODY_ADDR = 0x020251AC
+TIMED_RUN_EXIT = 0x02024C58
+DPAD_MASK = 0xF0
+# Bits 5..12 (0x1FE0) is not an ARM immediate, so it is cleared in two parts
+COUNTER_MASK_HIGH = 0x1FC0
+COUNTER_MASK_LOW = 0x20
+
+# Part 1 sits in the freed too-tired check block: load the run state, then jump to part 2.
+TIMED_RUN_ASM_ENTRY = f"""
+    ldr   r1, [r2]
+    mov   r3, r1, lsl #19
+    mov   r3, r3, lsr #24
+    ldr   r0, [sp, #8]
+    ldr   r12, frame_counter
+    ldrh  r12, [r12]
+    b     {TIMED_RUN_BODY_ADDR:#x}
+frame_counter:
+    .word {FRAME_COUNTER:#x}
+"""
+
+# Part 2 sits in the freed HP drain block. In: r0 = B held, r1 = player flags, r2 = &flags,
+# r3 = run state, r5 = held keys, r12 = frame counter.
+TIMED_RUN_ASM_BODY = f"""
+    cmp   r3, #0
+    bne   active
+    cmp   r0, #0
+    tstne r5, #{DPAD_MASK:#x}
+    movne r3, #1
+    b     store
+active:
+    cmp   r3, #{RUN_TICKS}
+    bhi   tick
+    cmp   r0, #0
+    moveq r3, #{RUN_TICKS + 1}
+    beq   store
+tick:
+    tst   r12, #{FRAMES_PER_TICK - 1}
+    addeq r3, r3, #1
+    cmp   r3, #{RUN_TICKS + COOLDOWN_TICKS}
+    movhi r3, #0
+store:
+    bic   r1, r1, #{COUNTER_MASK_HIGH:#x}
+    bic   r1, r1, #{COUNTER_MASK_LOW:#x}
+    orr   r1, r1, r3, lsl #5
+    str   r1, [r2]
+    sub   r0, r3, #1
+    cmp   r0, #{RUN_TICKS}
+    movlo r0, #1
+    movhs r0, #0
+    str   r0, [sp, #8]
+    b     {TIMED_RUN_EXIT:#x}
+"""
+
+# Branch encodings: 0xEA000000 | ((target - (addr + 8)) >> 2).
+NO_RUN_HP_COST = Feature(
+    "no-run-hp-cost",
+    (
+        Patch(
+            0x020251A8,
+            0x1A00001E,
+            0xEA00001E,
+            "bne -> b: skip the drain counter and 180-frame HP drain",
+        ),
+        Patch(
+            0x02024BF8,
+            0x0A000016,
+            0xEA000016,
+            "beq -> b: skip the HP <= 1/3 too-tired check",
+        ),
+    ),
+)
+
+TIMED_RUN = Feature(
+    "timed-run",
+    (
+        Patch(
+            0x020251A8,
+            0x1A00001E,
+            0xEA00001E,
+            "bne -> b: skip the drain counter and 180-frame HP drain",
+        ),
+        AsmPatch(
+            0x02024BF8,
+            0x02024C58,
+            0x0A000016,
+            0xBAFFFFEA,
+            TIMED_RUN_ASM_ENTRY,
+            "load run state",
+        ),
+        AsmPatch(
+            TIMED_RUN_BODY_ADDR,
+            0x02025228,
+            0xE5902000,
+            0xEB013188,
+            TIMED_RUN_ASM_BODY,
+            "3 s run, 3 s cooldown",
+        ),
+    ),
+)
+
+# One battle mode, see docs/re-field-battle.md section 2.9. Mode flag 0x020B4848: 1 = Virtue (EXP).
+ONE_BATTLE_MODE = Feature(
+    "one-battle-mode",
+    (
+        Patch(
+            0x0201F128,
+            0x0A00004C,
+            0xEA00004C,
+            "beq -> b: R and the touch button no longer toggle the mode",
+        ),
+        Patch(
+            0x020298E0,
+            0xE5D00298,
+            0xE3A00001,
+            "ldrb flag -> mov r0, #1: battles use Virtue rules",
+        ),
+        Patch(
+            0x02029984,
+            0xE5D00298,
+            0xE3A00001,
+            "ldrb flag -> mov r0, #1: battles use Virtue rules",
+        ),
+        Patch(
+            0x02053680,
+            0xEA000013,
+            0xEA000011,
+            "EXP kills also fall into the item drop roll",
+        ),
+    ),
+)
+
+RESULT_ITEM_LIST = Feature(
+    "result-item-list",
+    (
+        Patch(
+            0x0203B0E4, 0x0A0000B3, ARM_NOP, "result screen lists items in Virtue too"
+        ),
+    ),
+)
+
+NO_VIRTUE_CLOCK = Feature(
+    "no-virtue-clock",
+    (
+        Patch(
+            0x02021F80,
+            0x0A000015,
+            0xEA000015,
+            "beq -> b: the clock never revives a defeated enemy",
+        ),
+    ),
+)
+
+RESTOCK_ON_ENTRY = Feature(
+    "restock-on-entry",
+    (
+        Patch(
+            0x0201E0F4,
+            0x1A000008,
+            ARM_NOP,
+            "every fresh map entry rerolls enemies and zeroes kills",
+        ),
+    ),
+)
+
+NO_CLEAR_REFILL = Feature(
+    "no-clear-refill",
+    (
+        Patch(
+            0x0202096C,
+            0x05C01C64,
+            ARM_NOP,
+            "never set the area-cleared flag, so no 30% HP/MP refill",
+        ),
+    ),
+)
+
+# US save glitch, see docs/re-field-battle.md section 5. Flora's Underground Tunnel line in script 010
+# marks itself as said with story flag 0xCF, which is the endgame save lock, and nothing clears it.
+SAVE_LOCK_FLAG = 0xCF
+FLORA_LINE_FLAG = 0x5E  # unused by every script and by engine code
+FIX_SAVE_GLITCH = Feature(
+    "fix-save-glitch",
+    (
+        DataPatch(
+            "script",
+            10,
+            0x3F34,
+            SAVE_LOCK_FLAG.to_bytes(4, "little"),
+            FLORA_LINE_FLAG.to_bytes(4, "little"),
+            "Flora's tunnel line checks its own flag, not the save lock",
+        ),
+        DataPatch(
+            "script",
+            10,
+            0x3F52,
+            SAVE_LOCK_FLAG.to_bytes(2, "little"),
+            FLORA_LINE_FLAG.to_bytes(2, "little"),
+            "Flora's tunnel line sets its own flag, not the save lock",
+        ),
+    ),
+)
+
+FEATURES: tuple[Feature, ...] = (
+    NO_RUN_HP_COST,
+    TIMED_RUN,
+    ONE_BATTLE_MODE,
+    RESULT_ITEM_LIST,
+    NO_VIRTUE_CLOCK,
+    RESTOCK_ON_ENTRY,
+    NO_CLEAR_REFILL,
+    FIX_SAVE_GLITCH,
+)
+DEFAULT_FEATURES: tuple[str, ...] = (
+    TIMED_RUN.name,
+    ONE_BATTLE_MODE.name,
+    NO_VIRTUE_CLOCK.name,
+    RESTOCK_ON_ENTRY.name,
+    NO_CLEAR_REFILL.name,
+    FIX_SAVE_GLITCH.name,
+)

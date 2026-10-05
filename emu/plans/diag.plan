@@ -1,0 +1,8 @@
+include boot_to_field
+shot d0
+peek u16 0x020B6BE4 map
+include warp6
+shot d1
+peek u16 0x020B6BE4 map
+wait 300
+shot d2
