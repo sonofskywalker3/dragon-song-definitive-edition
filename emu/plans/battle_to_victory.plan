@@ -1,0 +1,354 @@
+# Fights the first Delrich Temple battle by pressing A every 25 frames until the victory starts
+include boot_from_save
+include cheats_strong
+include warp6
+dump 0x0213B930 0x200 inv_before
+wait 300
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20

@@ -4,6 +4,7 @@ from pathlib import Path
 
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
 from dsde.feat_battle_end import BATTLE_END_RULES
+from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
 
@@ -150,15 +151,6 @@ ONE_BATTLE_MODE = Feature(
     ),
 )
 
-RESULT_ITEM_LIST = Feature(
-    "result-item-list",
-    (
-        Patch(
-            0x0203B0E4, 0x0A0000B3, ARM_NOP, "result screen lists items in Virtue too"
-        ),
-    ),
-)
-
 NO_VIRTUE_CLOCK = Feature(
     "no-virtue-clock",
     (
@@ -223,6 +215,7 @@ FIX_SAVE_GLITCH = Feature(
 
 # Silver from battles (design 3). At the EXP step func_02052fb8 fetches the battle's EXP pool
 # (before the game doubles it); the hook adds the same amount of silver. Tune SILVER_PER_EXP later.
+# The amount is also kept in cave_silver_gained for the result-screens item page.
 SILVER = 0x020B4824
 SILVER_CAP = 999_999
 GET_EXP_POOL = 0x0202AF34
@@ -236,6 +229,8 @@ SILVER_DROPS = Feature(
     push  {{r4, lr}}
     bl    {GET_EXP_POOL:#x}
     mov   r4, r0
+    ldr   r1, silver_gained
+    str   r4, [r1]
     ldr   r1, silver
     ldr   r2, [r1]
     add   r2, r2, r4
@@ -249,9 +244,12 @@ silver:
     .word {SILVER:#x}
 silver_cap:
     .word {SILVER_CAP:#x}
+silver_gained:
+    .word ${{cave_silver_gained}}
 """,
             "battle EXP pool -> silver",
         ),
+        CaveCode("cave_silver_gained", "    .word 0", "silver gained this battle"),
         AsmPatch(
             SILVER_HOOK,
             SILVER_HOOK + 4,
@@ -327,13 +325,13 @@ BOSS_EXP = Feature(
             0x0203B0E0,
             CMP_MODE_1,
             CMP_MODE_0,
-            "result item list: skipped whenever EXP is shown",
+            "result setup: EXP windows whenever EXP is shown",
         ),
         Patch(
             0x0203B0E4,
             0x0A0000B3,
             0x1A0000B3,
-            "result item list: skipped whenever EXP is shown",
+            "result setup: EXP windows whenever EXP is shown",
         ),
         *_boss_exp_patches(),
     ),
@@ -343,7 +341,7 @@ FEATURES: tuple[Feature, ...] = (
     NO_RUN_HP_COST,
     TIMED_RUN,
     ONE_BATTLE_MODE,
-    RESULT_ITEM_LIST,
+    RESULT_SCREENS,
     NO_VIRTUE_CLOCK,
     RESTOCK_ON_ENTRY,
     NO_CLEAR_REFILL,
@@ -362,6 +360,7 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     FIX_SAVE_GLITCH.name,
     SILVER_DROPS.name,
     BOSS_EXP.name,
+    RESULT_SCREENS.name,
     BATTLE_END_RULES.name,
     MANUAL_TARGETING.name,
 )

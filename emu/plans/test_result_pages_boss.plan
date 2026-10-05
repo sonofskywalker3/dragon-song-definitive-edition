@@ -1,0 +1,379 @@
+# Result screens with the battle mode pinned to -1 (boss/scripted rules): the EXP page, then A opens the item page (items and silver), then A leaves.
+# Run with --save. Shots: rpb_exp (EXP page waiting for A), rpb_items* (item page), rpb_field (after).
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B8610 exp_pool
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u32 0x01FF8344 silver_gained
+include boot_from_save
+include cheats_strong
+include warp6
+dump 0x0213B930 0x200 inv_before
+pin u16 0x020B85C0 65535
+wait 300
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+wait 700
+shot rpb_exp
+wait 120
+shot rpb_exp_idle
+press A 3
+wait 10
+shot rpb_items_open
+wait 50
+shot rpb_items
+wait 240
+shot rpb_items_idle
+press A 3
+wait 60
+shot rpb_leaving
+unpin
+wait 200
+shot rpb_field
+dump 0x0213B930 0x200 inv_after
