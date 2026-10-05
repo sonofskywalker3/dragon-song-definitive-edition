@@ -5,6 +5,7 @@ build or the wrong address fails loudly instead of corrupting the game.
 """
 
 import logging
+import string
 import struct
 from collections import defaultdict
 from dataclasses import dataclass
@@ -16,6 +17,12 @@ from dsde.archive import compress_stored, decompress, read_archive, write_archiv
 
 ARM9_BASE = 0x02000000
 ARM_NOP = 0xE1A00000
+# New code goes in ITCM after the game's own 0x2E0 bytes. The game sets up an ITCM arena there
+# but never allocates from it (only arena 0 is used, see func_02004c18 callers).
+ITCM_BASE = 0x01FF8000
+ITCM_CAVE = 0x01FF8300
+ITCM_END = 0x02000000
+LAYOUT_PLACEHOLDER = ITCM_CAVE
 
 logger = logging.getLogger(__name__)
 
@@ -62,11 +69,62 @@ class DataPatch:
 
 
 @dataclass(frozen=True)
+class CaveCode:
+    """New ARM code placed in ITCM. Other asm refers to it as ${label}."""
+
+    label: str
+    asm: str
+    note: str
+
+
+@dataclass(frozen=True)
 class Feature:
     """A named group of patches that together make one design change."""
 
     name: str
-    patches: tuple[Patch | AsmPatch | DataPatch, ...]
+    patches: tuple[Patch | AsmPatch | DataPatch | CaveCode, ...]
+
+
+def _caves(features: list[Feature]) -> list[CaveCode]:
+    return [p for f in features for p in f.patches if isinstance(p, CaveCode)]
+
+
+def substitute(asm: str, symbols: dict[str, int]) -> str:
+    """Replace ${label} references to cave code with addresses."""
+    return string.Template(asm).substitute({k: f"{v:#x}" for k, v in symbols.items()})
+
+
+def layout_cave(features: list[Feature]) -> dict[str, int]:
+    """Give every CaveCode block an ITCM address (4-byte aligned, in feature order)."""
+    caves = _caves(features)
+    placeholder = {c.label: LAYOUT_PLACEHOLDER for c in caves}
+    symbols: dict[str, int] = {}
+    addr = ITCM_CAVE
+    for cave in caves:
+        symbols[cave.label] = addr
+        addr += len(assemble(substitute(cave.asm, placeholder), addr))
+        addr = (addr + 3) & ~3
+    if addr > ITCM_END:
+        raise PatchError(f"cave code overflows ITCM by {addr - ITCM_END} bytes")
+    return symbols
+
+
+def build_itcm(itcm: bytes, features: list[Feature], symbols: dict[str, int]) -> bytes:
+    """Return itcm.bin with every CaveCode block assembled at its address."""
+    caves = _caves(features)
+    if not caves:
+        return itcm
+    image = bytearray(itcm) + bytearray(ITCM_CAVE - ITCM_BASE - len(itcm))
+    for cave in caves:
+        addr = symbols[cave.label]
+        code = assemble(substitute(cave.asm, symbols), addr)
+        offset = addr - ITCM_BASE
+        image += bytearray(offset - len(image))
+        image[offset : offset + len(code)] = code
+        logger.info(
+            "cave %s @ %#010x: %s (%d bytes)", cave.label, addr, cave.note, len(code)
+        )
+    return bytes(image + bytearray(-len(image) % 4))
 
 
 def assemble(asm: str, addr: int) -> bytes:
@@ -83,13 +141,13 @@ def _check_word(arm9: bytearray, feature: Feature, addr: int, expected: int) -> 
         )
 
 
-def apply_arm9(arm9: bytearray, feature: Feature) -> None:
+def apply_arm9(arm9: bytearray, feature: Feature, symbols: dict[str, int]) -> None:
     """Apply the code patches of a feature to an arm9.bin image in place."""
     for patch in feature.patches:
         if isinstance(patch, AsmPatch):
             _check_word(arm9, feature, patch.addr, patch.first)
             _check_word(arm9, feature, patch.end - 4, patch.last)
-            code = assemble(patch.asm, patch.addr)
+            code = assemble(substitute(patch.asm, symbols), patch.addr)
             if len(code) > patch.end - patch.addr:
                 raise PatchError(
                     f"{feature.name}: {len(code)} bytes do not fit in {patch.end - patch.addr}"
