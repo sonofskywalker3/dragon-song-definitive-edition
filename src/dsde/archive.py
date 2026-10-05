@@ -33,7 +33,10 @@ def read_archive(data: bytes) -> list[bytes]:
     """Split an archive into its raw (still compressed) entries."""
     (count,) = struct.unpack_from("<I", data, 0)
     offsets = struct.unpack_from(f"<{count + 1}I", data, 4)
-    return [data[offsets[i] * BLOCK_SIZE : offsets[i + 1] * BLOCK_SIZE] for i in range(count)]
+    return [
+        data[offsets[i] * BLOCK_SIZE : offsets[i + 1] * BLOCK_SIZE]
+        for i in range(count)
+    ]
 
 
 def write_archive(entries: list[bytes]) -> bytes:
