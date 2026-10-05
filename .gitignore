@@ -1,0 +1,10 @@
+# Game data is copyrighted: never commit the ROM or anything extracted from it
+rom/
+extract/
+build/
+*.nds
+*.sav
+*.dsv
+
+# Downloaded tool binaries
+tools/
