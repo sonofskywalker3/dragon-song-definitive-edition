@@ -29,6 +29,17 @@ Jeff: some of it is redundant with the intro and some is "just cringe"; wants su
 after there are tone and style rules built from the PS1 Lunar scripts (Silver Star Story Complete and
 Eternal Blue Complete).
 
+Jeff (follow-up): the whole thing is jarring. Unless the PS1 games have a self-introduction of their
+own (Hiro talks while running around the ruins at the start of Lunar 2, but to Ruby), drop it
+entirely. No "talking out loud to myself" narration or setup; rather have someone else tell Jian to
+get his butt to work. Do not build yet.
+
+Proposed (not agreed yet): replace his waking lines and the monologue with one or two text boxes from
+an off-screen speaker (named, calling from downstairs or outside), plus at most one short reply from
+Jian. Text only, no new actors or event scripting. Before writing it, check who the player meets next
+and whether Gad's Express, the recent partnership with Lucia, standing on his head, and the crush come
+up again later.
+
 Notes:
 - Almost every fact repeats the intro's last page, which the player read seconds before (script 026:
   "A youth who loves acrobatics, named 'Jian Campbell', is making a living here as a 'courier', along
