@@ -647,8 +647,12 @@ different from the plan above:
   game never names them on screen (no target selection, no summon message); fan walkthroughs call them
   bubbles (lparchive.org Lunar: Dragon Song update 14, retromaggedon.com walkthrough), and they are drawn
   as white and purple bubbles. `feat_targeting_names.py` shows row 156 as item 0x19C, an unused
-  placeholder named "K26", renamed "Bubble" (its string runs on into K27's, and K27 points at K28's) with
-  a copy of the Blue Orb icon (sysmenupack entry 0x36). The info window (func_02044c00) prints no name
+  placeholder named "K26", renamed "Bubble" (its string runs on into K27's, and K27 points at K28's). Its
+  icon (sysmenupack entry 0x36: a 256-color BGR555 palette, then 16x16 8bpp icons of four 8x8 tiles) is
+  made at build time from the bubbles' battle sprite: the species table at 0x02096EDC (0x1C bytes per
+  species, +0x10) names their btldata entry, 0xDD, an MCE0 sprite file (format in `src/dsde/mce.py`);
+  its cell 3, a 15 x 14 frame of the wobble, is copied unscaled with each color mapped to the nearest
+  icon palette color. The info window (func_02044c00) prints no name
   for ids 0x1A0 and up and a count after anything outside 0xD8..0x113, so 0x19C is treated as a card at
   0x02044CE4. Verified in a scripted Blue Dragon fight (`tgt_bluedragon`): "Blue Dragon", then "Bubble"
   twice for the front-row bubbles.
