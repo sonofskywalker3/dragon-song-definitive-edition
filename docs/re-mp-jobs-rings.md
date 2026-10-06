@@ -277,6 +277,111 @@ Cross-check of all 240 templates against every enemy drop row (0x02097588) and e
 retarget the late-only items in the first three offices' templates. Leave one-job-at-a-time alone: with battle
 silver the jobs are optional, and multiple slots is the only expensive change here.
 
+### 2.5 Item availability by towns visited
+
+For design 9 (rank = min(4, towns visited), up to 3 obtainable jobs plus one future job at 1.5x). Code:
+`src/dsde/gad_jobs.py`, `template_town_counts(data)` returns {template: earliest town count}; `uv run python -m
+dsde.gad_jobs` prints the per-office summary below (`--templates` lists every template, `--frontier-open` uses
+the lenient Frontier rule). Static analysis only.
+
+**Method.**
+
+- **Town count** is the number of set unlock bytes at 0x020B486A. `func_02041d38` sets byte i on entering hub map
+  0x11D + k. The hubs are named by their exit lists **[confirmed]**: table 0x020A3B20 + (map - 0x104) * 0xC holds
+  {u32 exit list, s16 count, ...}; each 0xC-byte exit is {u16 map, u16 x, u16 y, u16, u8, u8, u16 label}, and the
+  label indexes the place-name list in ARM9 (Port Olbeage, Leephon City, ...; the Gad place ids 0x29..0x3A are
+  these labels). The overworld maps 0x104 to 0x11C name the dungeon maps the same way.
+- **Area groups** come from the dungeon group table 0x02091C78 (map ranges) and are named by those exit lists
+  **[confirmed]**. Each group's regular enemy rows are its formation pools plus lead rows (`boss_exp.rom_area_rows`).
+- **Story order** of first entry is from docs/story-party-timeline.md, checked against the town script numbers
+  (001, 003, 004/005, 007, 008/009, 010, 011, 012 are the towns in story order) and the area minimum levels,
+  which rise with the count in the table below.
+- **Sources**: every slot of every town's shop lists (section 1.4, sundries shops and the 0xE0 accessory shop
+  included) and every drop slot with a nonzero chance (items and cards) of the regular rows of each area group.
+  Bosses, chests and events are ignored: every one of the 100 distinct job items (ids 287 to 386, no cards) already
+  has a shop or regular-enemy source, so none of them is needed. Package jobs (templates 1, 41, 81, 121, 161,
+  201) need no items and count from 1.
+- A template's town count is the highest count among its items.
+
+**Town order** (hub map: place id):
+
+| Count | Town | Hubs (k) | Script | How it is reached |
+|---|---|---|---|---|
+| 1 | Port Searis | 0x11D (0): place 0 | 001 | game start |
+| 2 | Perit Village | 0x120 (3): 0x29 | 003 | through Thieves' Woods |
+| 3 | Healriz | 0x11E, 0x11F (1, 2): 0x2A | 004, 005 | after Delrich Temple; 0x11F is the San Coliseum side |
+| 4 | Port Olbeage | 0x121 (4): 0x36 | 007 | ferry after the Coliseum |
+| 5 | Leephon City | 0x122, 0x123 (5, 6): 0x37 | 008, 009 | through the Cathedral; 0x123 is Zethos Castle |
+| (5) | Lind Village | 0x124 (7): 0x38, sets no byte | 010 | Frontier; not a destination, does not count |
+| 6 | Noapeace | 0x125 (8): 0x39 | 011 | dragon trials, through Meryod Submarine Cave |
+| 7 | Rebric Village | 0x126 (9): 0x3A | 012 | through Moto Rainforest |
+
+**Area group to town count** (area minimum level from docs/re-enemies.md; "F" = Frontier):
+
+| Group | Place (maps) | Min level | Count |
+|---|---|---|---|
+| 0 | Thieves' Woods (0-4) | 0-8 | 1 |
+| 1 | Delrich Temple (5-19) | 4-6 | 2 |
+| 3 | Roland Forest (31-34) | 10 (map 32: 28) | 3 |
+| 18 | Cathedral of Althena (140-150) | 10 | 4 |
+| 2 | Sungrid Bridge (20-30), F | 11 | 5 |
+| 6 | Underground Tunnel, Guystole Mine (45-52), F | 12-13 | 5 |
+| 7 | Sandra Desert (53-57), F | 15 | 5 |
+| 8 | Elda Canyon (58-60), F | 16 | 5 |
+| 9 | Vile Castle, first visit (61-84), F | 18-21 | 5 |
+| 4 | Barrel Desert (35-37) | 22 | 5 |
+| 12 | Red Dragon Cave (94-99) | 23 | 5 |
+| 13 | White Dragon Cave (100-105) | 24 | 5 |
+| 5 | Meryod Submarine Cave (38-44) | 25 | 5 |
+| 10 | Valley of Neza (85-87) | 25 | 6 |
+| 14 | Black Dragon Cave (106-111) | 28 | 6 |
+| 11 | Moto Rainforest (88-93) | 29 | 6 |
+| 16 | Tower of Kirlis (121-128) | 32 | 7 |
+| 17 | Negri Ocean Lab (129-139) | 34 | 7 |
+| 15 | Blue Dragon Cave (112-120) | 36 | 7 |
+| 19 | Vile Castle return, after flag 0xC9 (61-84) | 25-40 (mostly 37-40) | 7 |
+
+Shops: Searis 1, Perit 2, Healriz 3, Olbeage 4 (includes the sundries lists), Leephon accessories 5, Lind 5 (F,
+sundries list), Noapeace 6, Rebric 7.
+
+**The Frontier rule (default).** No Gad office is in the Frontier, and after the Ignatius fight the Frontier is
+closed until the airship (after the Blue Dragon). So at count 5 an office visit never has Frontier items at hand
+unless they were farmed before. The default table counts Frontier sources (groups 2, 6, 7, 8, 9 and Lind's shop)
+from 7. `--frontier-open` counts them from 5.
+
+**Result: obtainable / rank-allowed templates** per office and town count (rank = min(4, count); counts in
+parentheses are before the office's own town is reached):
+
+| Office | Town (count) | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
+|---|---|---|---|---|---|---|---|---|
+| 0x9A | Port Searis (1) | 5/10 | 7/20 | 12/30 | 13/40 | 16/40 | 27/40 | 40/40 |
+| 0xA9 | Perit Village (2) | (4/10) | 7/20 | 10/30 | 13/40 | 22/40 | 31/40 | 40/40 |
+| 0xBD | Healriz (3) | (3/10) | (8/20) | 10/30 | 15/40 | 21/40 | 28/40 | 40/40 |
+| 0xCA | Port Olbeage (4) | (1/10) | (3/20) | (4/30) | 11/40 | 20/40 | 28/40 | 40/40 |
+| 0xEC | Noapeace (6) | (2/10) | (5/20) | (7/30) | (16/40) | (20/40) | 24/40 | 40/40 |
+| 0xFC | Rebric Village (7) | (4/10) | (7/20) | (9/30) | (12/40) | (21/40) | (30/40) | 40/40 |
+
+With `--frontier-open` only the 5 and 6 columns change (Searis 25 and 36, Perit 29 and 39, Healriz 28 and 36,
+Olbeage 29 and 36, Noapeace 38 at 6). Templates by earliest count (default): 20, 17, 15, 28, 40, 48, 72 for
+counts 1 to 7. **No office ever has fewer than 3 obtainable jobs** once its town is reached; the tightest are
+Searis at count 1 (5 of 10), Perit and Searis at count 2 (7 of 20) and Healriz at count 3 (10 of 30).
+
+**Uncertain:**
+
+- Town order is from walkthroughs. Perit and Healriz both open off Thieves' Woods (overworld maps 0x106 and
+  0x105); if the story lets the player reach Healriz first, counts 2 and 3 swap their sources (Delrich Temple and
+  Roland Forest too).
+- Moto Rainforest leads to both Rebric (0x115) and the Blue Dragon Cave (0x11A). The cave is set to 7; if it can
+  be entered before Rebric it is really 6. Tower of Kirlis is also reachable from the rainforest (0x116); its
+  enemy levels (32) are below the Blue Dragon Cave's (36).
+- Port Searis is counted from the start; the byte is only set when hub 0x11D is entered, which happens before the
+  player can leave town.
+- Whether the Leephon end of Sungrid Bridge (group 2) stays open after the Ignatius fight; the default treats the
+  whole bridge as Frontier.
+- Roland Forest map 32 has area minimum 28, so part of the forest may be a later visit; the group's enemy rows
+  are the same.
+- Drop "tier" in groups 6 to 8 (docs/re-enemies.md) can cancel some drops by story flag, never all.
+
 ---
 
 ## 3. Equipment slots and Dragon Magic rings

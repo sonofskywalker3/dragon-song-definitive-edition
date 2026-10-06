@@ -9,6 +9,7 @@ in feat_text.py.
 import struct
 from pathlib import Path
 
+from dsde.feat_gad_jobs import job_patches
 from dsde.feat_text import encode_text
 from dsde.patching import ARM9_BASE, Feature, Patch
 
@@ -54,4 +55,4 @@ def _menu_name_patches() -> tuple[Patch, ...]:
 
 GAD_NAME_PATCHES = _menu_name_patches()
 
-GAD_EXPRESS = Feature("gad-express", GAD_NAME_PATCHES)
+GAD_EXPRESS = Feature("gad-express", GAD_NAME_PATCHES + job_patches())

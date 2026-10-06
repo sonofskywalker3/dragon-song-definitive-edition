@@ -1,0 +1,25 @@
+# gad-express: offers at the first office (map 0x9A) with 4 towns visited. Logs the fee before the
+# future-job cave (exec at the fee store, r8 = slot, r3 = fee), the 4 offers (0x02139E28, 0x24 each:
+# fee +0x1C, template +0x22) and the rank. Compare templates with dsde.gad_jobs.template_town_counts.
+include boot_from_save
+pin u16 0x020B77EC 0x9A
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+poke u8 0x020B4871 1
+poke u8 0x20B486A 1
+poke u8 0x20B486B 1
+poke u8 0x20B486C 1
+poke u8 0x20B486D 1
+dump 0x020B486A 8 unlocks
+exec 0x0206CEE8 fee_store
+poke u16 0x020B7838 0
+poke u32 0x020B0010 0x68
+wait 120
+press A 8
+wait 60
+dump 0x02139E28 0x90 offers
+shot go_list
