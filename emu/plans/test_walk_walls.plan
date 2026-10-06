@@ -1,0 +1,23 @@
+# walk-speed: walking into walls and corners at 1.25x stays inside the room and slides along walls,
+# and the room's door still works (map 6 through warp6's path)
+include boot_from_save
+hold Down,Left
+wait 90
+release
+shot ww_corner1
+peek u32 0x020B6CB4 x1
+peek u32 0x020B6CB8 y1
+hold Up
+wait 120
+release
+shot ww_wall_up
+peek u32 0x020B6CB4 x2
+peek u32 0x020B6CB8 y2
+hold Up,Right
+wait 120
+release
+shot ww_slide
+peek u32 0x020B6CB4 x3
+peek u32 0x020B6CB8 y3
+release
+wait 30
