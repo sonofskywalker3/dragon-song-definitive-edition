@@ -47,4 +47,4 @@ the message.
 | Esthel / Esther (012) | エステル | Esuteru | Esther |
 
 Three names that agree in English differ from the Japanese: Jose is ホセア (Hosea), Ira is アイエラ, Hagar is
-ゲイル (Gail). Optional fixes, not decided.
+ゲイル (Gail). Jeff (2026-10-06): keep the English names for these three.
