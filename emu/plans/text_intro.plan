@@ -1,0 +1,59 @@
+# The intro text after New Game: one screenshot per page (text edits in feat_text.py).
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+wait 600
+shot intro_page1
+press A 3
+wait 400
+shot intro_page2
+press A 3
+wait 400
+shot intro_page3
+press A 3
+wait 400
+shot intro_page4
+press A 3
+wait 400
+shot intro_page5
+press A 3
+wait 400
+shot intro_page6
+press A 3
+wait 400
+shot intro_page7
+press A 3
+wait 400
+shot intro_page8
+press A 3
+wait 400
+shot intro_page9
+press A 3
+wait 400
+shot intro_page10
+press A 3
+wait 400
+shot intro_page11
+press A 3
+wait 400
+shot intro_page12
+press A 3
+wait 400
+shot intro_page13
+press A 3
+wait 400
+shot intro_page14
+press A 3
+wait 400
+shot intro_page15
+press A 3
+wait 400
+shot intro_page16
+press A 3
+wait 400
+shot intro_page17
+press A 3
+wait 400
+shot intro_page18
