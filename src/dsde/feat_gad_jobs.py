@@ -3,7 +3,7 @@
 Vanilla: an office's rank rises every 5 deliveries made from it, and func_0206cf28 picks 4 random templates from
 the first rank * 10 of the office's 40. Now:
 
-- Rank (func_02071fa8) = min(4, towns visited), at least 1. Towns visited = set bytes among the 7 destination
+- Rank (func_02071fa8) = towns visited - 1, from 1 to 4 (a new game already has 2: Port Searis and Perit). Towns visited = set bytes among the 7 destination
   unlocks at 0x020B486A (set when a town's main map is first entered, func_02041d38).
 - The pick (a cave replacing the 6 calls of func_0206cf28 in func_0206cfc0) offers up to 3 templates whose items
   can all be had by now (earliest town count from dsde.gad_jobs, at or below towns visited), from the rank range,
@@ -25,6 +25,7 @@ PLACE_UNLOCKS = 0x020B486A
 PLACE_COUNT = 7
 MAX_RANK = 4
 MIN_RANK = 1
+START_TOWNS = 2  # destinations unlocked when play starts; rank 1 there, +1 per new town
 MAP_ID = 0x020B6BE4
 OFFICES = (  # Gad's office map: template pool (40 u16 template indices)
     (0x9A, 0x0209DEB4),
@@ -91,6 +92,7 @@ count:
     add   r2, r2, #1
     cmp   r2, #{PLACE_COUNT}
     blt   count
+    sub   r0, r0, #{START_TOWNS - MIN_RANK}
     cmp   r0, #{MIN_RANK}
     movlt r0, #{MIN_RANK}
     cmp   r0, #{MAX_RANK}
@@ -246,6 +248,72 @@ future_slot:
 """
 
 
+# The job list (func_0204ccd4, main engine BG) draws each title with palette bank 10; the future job's title
+# uses bank 9 (unused on this screen) holding a red copy of bank 10. Its text colors 1 (lightest) to 7 (the
+# glyph core) are blended from white down to dark red.
+TITLE_PALETTE_STORE = (
+    0x0204D8A8  # str r4, [sp, #8]: palette bank argument (r4 = 10, r7 = slot)
+)
+TITLE_PALETTE_STORE_WORD = 0xE58D4008
+RED_BANK = 9
+BG_PALETTE_MAIN = 0x05000000
+PALETTE_BANK_BYTES = 0x20
+JOB_TITLE_PALETTE = (
+    0x0000,
+    0x7FDE,
+    0x6739,
+    0x56B5,
+    0x4631,
+    0x2529,
+    0x1084,
+    0x0421,
+    *(0x7FFF,) * 7,
+    0x0000,
+)
+TEXT_COLORS = range(1, 8)
+DARK_RED = (24, 2, 2)  # 5-bit RGB of the glyph core
+WHITE_LEVEL = 31
+CHANNEL_BITS = 5
+CHANNEL_MASK = 0x1F
+
+
+def red_title_palette() -> tuple[int, ...]:
+    colors = list(JOB_TITLE_PALETTE)
+    for i in TEXT_COLORS:
+        level = colors[i] & CHANNEL_MASK
+        t = (level - 1) / (WHITE_LEVEL - 1)
+        r, g, b = (round(c + t * (WHITE_LEVEL - c)) for c in DARK_RED)
+        colors[i] = r | g << CHANNEL_BITS | b << 2 * CHANNEL_BITS
+    return tuple(colors)
+
+
+TITLE_ASM = f"""
+    ldr   r0, future_slot
+    ldr   r0, [r0]
+    cmp   r0, r7
+    movne r0, r4
+    moveq r0, #{RED_BANK}
+    str   r0, [sp, #8]
+    bxne  lr
+    adr   r1, red
+    ldr   r2, bank
+    mov   r3, #0
+copy:
+    ldrh  r12, [r1, r3]
+    strh  r12, [r2, r3]
+    add   r3, r3, #2
+    cmp   r3, #{PALETTE_BANK_BYTES}
+    blt   copy
+    bx    lr
+future_slot:
+    .word ${{cave_gad_future_slot}}
+bank:
+    .word {BG_PALETTE_MAIN + RED_BANK * PALETTE_BANK_BYTES:#x}
+red:
+{chr(10).join(f"    .short {c:#x}" for c in red_title_palette())}
+"""
+
+
 def job_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
     return (
         CaveCode("cave_gad_future_slot", "    .word 0xffffffff", "future job slot"),
@@ -276,5 +344,14 @@ def job_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
             RANK_LAST_WORD,
             _rank_asm(),
             "office rank = towns visited, 1 to 4",
+        ),
+        CaveCode("cave_gad_title", TITLE_ASM, "future job title in red"),
+        AsmPatch(
+            TITLE_PALETTE_STORE,
+            TITLE_PALETTE_STORE + 4,
+            TITLE_PALETTE_STORE_WORD,
+            TITLE_PALETTE_STORE_WORD,
+            "bl ${cave_gad_title}",
+            "future job title in red",
         ),
     )
