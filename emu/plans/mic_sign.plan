@@ -1,0 +1,206 @@
+# The battle sign (mic-sign): first temple battle with Jian alone (test stats, one kill per action, so the
+# battle lasts several rounds). A every 20 frames, a shot every 100 frames: command input, actions,
+# later rounds' command input, to check the sign and anything sharing its tiles.
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+shot sign00
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign01
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign02
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign03
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign04
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign05
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign06
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign07
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign08
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign09
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign10
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign11
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign12
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign13
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign14
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign15
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign16
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sign18

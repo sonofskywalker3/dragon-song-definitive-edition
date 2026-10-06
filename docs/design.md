@@ -72,7 +72,8 @@ Decided 2026-10-06.
 
 - No microphone. Running from battle is holding L and R together (half a second) on the command screen;
   L and R are for running only, so the game's hold-L/R fast-forward is gone. Any tutorial or on-screen
-  hint must say L+R is for running (the battle screen's wooden "MIC" sign needs redrawing).
+  hint must say L+R is for running. The battle screen's wooden "MIC" sign is redrawn to say "L+R",
+  keeping the running man and the original lettering style.
 - Battles should run smoother and faster by default, so that no speed button is needed. If a speed control
   is still needed after playtesting, it is a full battle speed setting like the 2025 Lunar remasters (three
   speeds, battle only), cycled by tapping R alone (L+R stays the run chord). Analysis: docs/re-battle-pacing.md.
