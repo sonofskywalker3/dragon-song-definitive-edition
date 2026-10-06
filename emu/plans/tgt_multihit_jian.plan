@@ -1,0 +1,97 @@
+# Manual targeting with a real multi-hit attack: Jian's 3-hit combo (he has it until the curse after the
+# San Coliseum tournament). Run with --save. Temple battle: back row Ticks in battlers 4, 5, 6; front row
+# 9 (left) and 10 (right). Jian alone picks the bottom-left cell (battler 9), whose HP is set to 1 so the
+# first hit of the combo kills it; the other two hits must land on the next living enemy (10).
+# HP of battle stat record r: 0x0228E860 + r * 0x6C + 0x14 (pointer at 0x020B8620; record = battler here).
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+peek u32 0x020B8620 stats_ptr
+battlers
+poke u16 0x0228EA24 300
+poke u16 0x0228EA90 300
+poke u16 0x0228EAFC 300
+poke u16 0x0228EC40 1
+poke u16 0x0228ECAC 999
+watch u16 0x0228EA24 hp4
+watch u16 0x0228EA90 hp5
+watch u16 0x0228EAFC hp6
+watch u16 0x0228EC40 hp9
+watch u16 0x0228ECAC hp10
+watch u32 0x0228EC8C pending9
+watch u32 0x0228ECF8 pending10
+exec 0x02051C48 pick_target
+exec 0x02030BC8 hit_alive
+shot mhj0
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+shot mhj1_picker
+press A 3
+wait 15
+shot mhj_t1
+wait 15
+shot mhj_t2
+wait 15
+shot mhj_t3
+wait 15
+shot mhj_t4
+wait 15
+shot mhj_t5
+wait 15
+shot mhj_t6
+wait 15
+shot mhj_t7
+wait 15
+shot mhj_t8
+wait 15
+shot mhj_t9
+wait 15
+shot mhj_t10
+wait 15
+shot mhj_t11
+wait 15
+shot mhj_t12
+wait 15
+shot mhj_t13
+wait 15
+shot mhj_t14
+wait 15
+shot mhj_t15
+wait 15
+shot mhj_t16
+wait 15
+shot mhj_t17
+wait 15
+shot mhj_t18
+wait 15
+shot mhj_t19
+wait 15
+shot mhj_t20
+wait 15
+shot mhj_t21
+wait 15
+shot mhj_t22
+wait 15
+shot mhj_t23
+wait 15
+shot mhj_t24
+wait 15
+shot mhj_t25
+wait 15
+shot mhj_t26
+wait 15
+shot mhj_t27
+wait 15
+shot mhj_t28
+wait 15
+shot mhj_t29
+wait 15
+shot mhj_t30
+battlers
+wait 300
+battlers

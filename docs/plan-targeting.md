@@ -631,3 +631,11 @@ different from the plan above:
 - Unverified: boss name images (Gideon shows as "Gideon 2"/"Gideon 3" by name string), row 156 (the Blue
   Dragon's summons) shows as "Jian", 4 enemies in one row (the 4th column lands on page 2), mic Run while the
   picker is up.
+- **Multi-hit attacks (tested 2026-10-05, docs/test-report-battle.md)**: Jian has a real 3-hit combo until
+  the curse, and Flora's hit count comes from her weapon (effect 0x2B = up to 2, 0x2C = up to 3; Composite
+  Bow, item 39, is 0x2C), rebuilt from gear at every action by func_0206ab6c, which is why pinning
+  0x0213B919 did nothing. Hits of one action only queue damage in the stat record (+0x60) and HP drops when
+  the action ends, so the original hook D never saw the target dead and every later hit landed on an enemy
+  the first hit had already killed. Fixed with `cave_tgt_live`: an enemy counts as dead once HP plus the
+  queued damage is 0 or less (hook D and the next-enemy search). Verified: Jian's combo goes 9, 10, 10 and
+  Flora's three arrows 9, 10, 10 after the first hit kills 9.
