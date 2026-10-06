@@ -1,0 +1,5 @@
+# Strong attack and defence for field tests, HP left alone (test only)
+pin u8 0x020B4678 255
+pin u8 0x020B467C 255
+pin u8 0x020B4684 255
+pin u8 0x020B468C 255

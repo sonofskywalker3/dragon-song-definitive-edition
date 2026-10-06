@@ -1,0 +1,73 @@
+# Save glitch test: talk to Flora twice in the Underground Tunnel (map 50) after she has left the party,
+# then check Menu > System > Save. Run on the patched ROM and on the original (same plan).
+# Story ctx is at 0x02204620 after boot_from_save (*(u32*)0x020B4640); flag n is bit n%8 of ctx + n/8.
+include boot_from_save
+peek u32 0x020B4640 story_ctx
+# story flags 0xCA (Flora back in the tunnel, set at Elda Canyon), 0xCB (Flora's join done), 0xCC (she left the party)
+poke u8 0x02204639 0x1C
+# party Jian, Gabryel, Rufus (Flora not in the party)
+poke u16 0x020B4650 2
+poke u16 0x020B4654 4
+# door out of Jian's room with the destination pinned to map 50
+pin u16 0x020B77EC 50
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+watch u8 0x02204639 flags_C8_CF
+watch u8 0x0220462B flags_58_5F
+watch u32 0x020B0010 fstate
+# stand just below Flora (map object 6, talk id 0xA0, at 0x2D0,0xA4) and face her
+poke u32 0x020B6CB4 0x2D0000
+poke u32 0x020B6CB8 0xB8000
+wait 30
+press Up 8
+wait 10
+shot sg_before
+# first talk
+press A 3
+wait 60
+shot sg_talk1_a
+press A 3
+wait 60
+shot sg_talk1_b
+press A 3
+wait 60
+press A 3
+wait 60
+peek u8 0x02204639 after_talk1_flags_C8_CF
+peek u8 0x0220462B after_talk1_flags_58_5F
+# second talk
+press A 3
+wait 60
+shot sg_talk2_a
+press A 3
+wait 60
+shot sg_talk2_b
+press A 3
+wait 60
+press A 3
+wait 60
+peek u8 0x02204639 after_talk2_flags_C8_CF
+peek u8 0x0220462B after_talk2_flags_58_5F
+# Menu > System
+press X 3
+wait 90
+press Right 3
+wait 30
+press Down 3
+wait 30
+shot sg_menu_system
+press A 3
+wait 90
+shot sg_system
+# pick Save: the slot screen opens only when saving is allowed (otherwise an error sound)
+press Down 3
+wait 30
+shot sg_system_save
+press A 3
+wait 120
+shot sg_save_pressed
