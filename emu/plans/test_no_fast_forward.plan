@@ -1,0 +1,25 @@
+# L and R no longer fast-forward battles (hold-lr-to-run): the battle speed level at 0x020B8540 must stay
+# 0 while L, R or both are held during the party's attack. Temple battle (warp6), Jian attacks.
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+watch u32 0x020B8540 speed_level
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 10
+hold R
+wait 60
+release
+hold L
+wait 60
+release
+hold L,R
+wait 60
+release
+wait 200

@@ -9,9 +9,14 @@ The call is replaced by "L and R both held for HOLD_FRAMES frames in a row" (Jef
 press), so running is always deliberate and the mic is never consulted. Everything after it is the
 game's own run path: escape works in normal battles when rand % 10 >= the number of living enemies,
 never in boss battles.
+
+L and R are for running only (Jeff), so the game's hold-to-fast-forward (func_020297d4 sets the battle
+speed level at 0x020B8540 every frame: L = 1, R = 2, L+R = 3; docs/re-curse-battle-speed.md 2.1) is
+switched off: the two conditional stores become no-ops and the level stays 0. Battle pacing is to be
+fixed by default instead (docs/re-battle-pacing.md).
 """
 
-from dsde.patching import AsmPatch, CaveCode, Feature
+from dsde.patching import ARM_NOP, AsmPatch, CaveCode, Feature, Patch
 from dsde.targeting_consts import PAD
 
 MIC_BLOW_CALL = 0x0203A880  # bl func_0206bafc in func_0203a34c
@@ -19,6 +24,10 @@ MIC_BLOW_CALL_WORD = 0xEB00C49D
 PAD_HELD = 0x0C  # u16 in the pad struct: keys held down this frame
 KEYS_RUN = 0x300  # L (0x200) and R (0x100)
 HOLD_FRAMES = 30  # half a second
+FAST_FORWARD_STORES = (  # func_020297d4: strne of the speed level for L, then R
+    (0x0202980C, 0x15810000),
+    (0x02029820, 0x15801000),
+)
 
 HOLD_STATE_ASM = """
     .word 0
@@ -60,6 +69,10 @@ HOLD_LR_TO_RUN = Feature(
             MIC_BLOW_CALL_WORD,
             "bl ${cave_run_button}",
             "holding L and R runs from battle, not the microphone",
+        ),
+        *(
+            Patch(addr, old, ARM_NOP, "L and R no longer fast-forward battles")
+            for addr, old in FAST_FORWARD_STORES
         ),
     ),
 )
