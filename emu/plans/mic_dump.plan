@@ -1,0 +1,12 @@
+# First temple battle, command input: screenshot and dump display registers, palettes, OAM and the
+# engine B (top screen) VRAM to find the wooden "MIC" sign's graphics
+include party2_strong
+wait 330
+shot mic_dump
+dump 0x04000000 0x80 rega
+dump 0x04001000 0x80 regb
+dump 0x04000240 0x10 vramcnt
+dump 0x05000000 0x800 pal
+dump 0x07000000 0x800 oam
+dump 0x06200000 0x20000 bgb
+dump 0x06600000 0x20000 objb

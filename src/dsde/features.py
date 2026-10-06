@@ -10,6 +10,7 @@ from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
 from dsde.feat_curse import NO_CURSE_PENALTY
 from dsde.feat_gad import GAD_EXPRESS
+from dsde.feat_mic_sign import MIC_SIGN
 from dsde.feat_mp import MP_ECONOMY
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_results import RESULT_SCREENS
@@ -370,6 +371,7 @@ FEATURES: tuple[Feature, ...] = (
     MP_ECONOMY,
     WALK_SPEED,
     GAD_EXPRESS,
+    MIC_SIGN,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -392,4 +394,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     MP_ECONOMY.name,
     WALK_SPEED.name,
     GAD_EXPRESS.name,
+    MIC_SIGN.name,
 )
