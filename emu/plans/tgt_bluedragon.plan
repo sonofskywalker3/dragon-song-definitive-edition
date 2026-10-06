@@ -1,0 +1,104 @@
+# Picker label of the Blue Dragon's summons (row 156) in a scripted Blue Dragon fight (battle id 0x0B), run with
+# --save. Same trick as boss_sasquatch. Jian attacks with A presses; the bubbles join after the dragon summons
+# them, and the third Fight picker shows the dragon and two front-row bubbles. Right moves onto a bubble: the
+# bottom bar must say "Bubble" with a blue sphere icon.
+include boot_from_save
+include cheats_strong
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+shot boss_field
+dump 0x0213B930 0x200 inv_before
+peek u32 0x020B4694 jian_exp_before
+peek u32 0x020B4664 jian_level_before
+peek u32 0x020B4824 silver_before
+poke u16 0x020B7838 1
+poke u16 0x020B783A 11
+poke u32 0x020B0010 0x73
+wait 240
+battlers
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+battlers
+shot bd_picker
+press Right 3
+wait 30
+shot bd_bubble1
+press Right 3
+wait 30
+shot bd_bubble2
