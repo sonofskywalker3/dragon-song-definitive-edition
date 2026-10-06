@@ -12,7 +12,10 @@ member itself.
 At execution the auto rule's target pick is replaced when a manual target is present. A dead
 target moves on to the next living reachable enemy in list order (front row first, then left to
 right on screen), wrapping to the top. The same redirect replaces the "target dead, the hit whiffs"
-test for every party Attack hit, so later hits of a multi-hit attack move on as well.
+test for every party Attack hit, so later hits of a multi-hit attack move on as well. Hits of one
+action only queue their damage (stat record +0x60) until the action ends, so an enemy counts as dead
+once its HP plus that queued damage is 0 or less (otherwise Jian's combo and Flora's multi-shot bows
+spend every hit on an enemy the first hit already killed).
 """
 
 from dsde.feat_targeting_picker import PICKER_PATCHES
@@ -27,6 +30,11 @@ from dsde.targeting_consts import (
     BATTLER_SIZE,
     BATTLERS_PTR,
     CHAR_ID,
+    STATS_PTR,
+    STAT_HP,
+    STAT_PENDING_HP,
+    STAT_RECORD,
+    STAT_SIZE,
     CHAR_REACHES_ALL,
     COVER_MODE,
     EQUIP_REACHES_ALL,
@@ -65,6 +73,28 @@ ROWS_ASM = f"""
     pop   {{r4, pc}}
 """
 
+# r0 = battler -> r0 = BATTLER_ALIVE's answer, except 0 when the battler is alive but the damage
+# queued by the current action (stat record +0x60, applied when the action ends) brings its HP to 0
+LIVE_ASM = f"""
+    push  {{r4, lr}}
+    mov   r4, r0
+    bl    {BATTLER_ALIVE:#x}
+    cmp   r0, #0
+    pople {{r4, pc}}
+    ldr   r1, live_stats
+    ldr   r1, [r1]
+    ldr   r2, [r4, #{STAT_RECORD:#x}]
+    mov   r3, #{STAT_SIZE:#x}
+    mla   r1, r3, r2, r1
+    ldr   r2, [r1, #{STAT_HP:#x}]
+    ldr   r3, [r1, #{STAT_PENDING_HP:#x}]
+    adds  r2, r2, r3
+    movle r0, #0
+    pop   {{r4, pc}}
+live_stats:
+    .word {STATS_PTR:#x}
+"""
+
 # r0 = battler index, r1 = rows -> r0 = 1 if that enemy is alive and in reach
 OK_ASM = f"""
     push  {{r4, lr}}
@@ -82,7 +112,7 @@ ok_alive:
     ldr   r2, [r2]
     mov   r3, #{BATTLER_SIZE:#x}
     mla   r0, r3, r0, r2
-    bl    {BATTLER_ALIVE:#x}
+    bl    ${{cave_tgt_live}}
     cmp   r0, #0
     movgt r0, #1
     popgt {{r4, pc}}
@@ -237,8 +267,9 @@ pick_state:
 
 # Replaces `bl BATTLER_ALIVE` before a hit in func_02030b44. In: r0 = r5 = target battler,
 # r4 = target index, r6 = attacker (scratch copy), fp = hit flags; the caller keeps the target in
-# r4, r5, [sp + 4] and [sp + 0x1C] (here + 8 for our push). A party Attack hit on a dead enemy moves
-# to the next living enemy in list order instead of whiffing.
+# r4, r5, [sp + 4] and [sp + 0x1C] (here + 8 for our push). A party Attack hit on a dead enemy, or
+# on one that earlier hits of the same action already killed, moves to the next living enemy in list
+# order instead of whiffing. Every other hit gets BATTLER_ALIVE's own answer.
 CALLER_TARGET_INDEX = 0x04 + 8
 CALLER_TARGET_OFFSET = 0x1C + 8
 HIT_SLOT_SHIFT = 12
@@ -246,32 +277,36 @@ HIT_SLOT_MASK = 7
 HIT_ASM = f"""
     push  {{r1, lr}}
     bl    {BATTLER_ALIVE:#x}
+    str   r0, [sp]
     cmp   r0, #0
-    bgt   hit_done
+    ble   hit_dead
+    mov   r0, r5
+    bl    ${{cave_tgt_live}}
+    cmp   r0, #0
+    bgt   hit_vanilla
+hit_dead:
     ldr   r1, hit_work
     ldr   r1, [r1]
     ldrsh r1, [r1, #{COVER_MODE:#x}]
     cmp   r1, #0
-    bne   hit_done
+    bne   hit_vanilla
     ldr   r1, [r6]
     tst   r1, #{FLAGS_ENEMY}
-    bne   hit_done
+    bne   hit_vanilla
     ldrsh r1, [r6, #{ACTION:#x}]
     cmp   r1, #{ACTION_ATTACK}
-    bne   hit_done
+    bne   hit_vanilla
     cmp   r4, #{FIRST_ENEMY}
-    blt   hit_done
+    blt   hit_vanilla
     cmp   r4, #{LAST_ENEMY}
-    bgt   hit_done
-    str   r0, [sp]
+    bgt   hit_vanilla
     mov   r0, r6
     bl    ${{cave_tgt_rows}}
     mov   r1, r0
     mov   r0, r4
     bl    ${{cave_tgt_next}}
     cmp   r0, #0
-    ldrlt r0, [sp]
-    blt   hit_done
+    blt   hit_vanilla
     mov   r4, r0
     ldr   r1, hit_battlers
     ldr   r1, [r1]
@@ -285,6 +320,9 @@ HIT_ASM = f"""
     add   r1, r6, r1, lsl #1
     strh  r4, [r1, #{TARGETS:#x}]
     mov   r0, #1
+    b     hit_done
+hit_vanilla:
+    ldr   r0, [sp]
 hit_done:
     pop   {{r1, pc}}
 hit_work:
@@ -303,6 +341,7 @@ MANUAL_TARGETING = Feature(
     (
         CaveCode("cave_tgt_state", STATE_ASM, "enemy list mode and entry map"),
         CaveCode("cave_tgt_rows", ROWS_ASM, "rows a party member reaches"),
+        CaveCode("cave_tgt_live", LIVE_ASM, "alive after this action's queued damage"),
         CaveCode("cave_tgt_ok", OK_ASM, "enemy alive and in reach"),
         CaveCode("cave_tgt_less", LESS_ASM, "enemy list order"),
         CaveCode("cave_tgt_after", AFTER_ASM, "next enemy in list order"),

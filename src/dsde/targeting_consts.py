@@ -5,6 +5,12 @@ MENU = 0x020B8800  # battle command menu state
 BUTTONS_PTR = 0x020B86FC  # pointer to the menu's button array, BUTTON_SIZE bytes each
 BATTLERS_PTR = 0x020B8640  # pointer to the battler array, BATTLER_SIZE bytes each
 BATTLE_WORK_PTR = 0x020B8550
+STATS_PTR = 0x020B8620  # pointer to the battle stat records, STAT_SIZE bytes each
+STAT_SIZE = 0x6C
+STAT_HP = 0x14
+STAT_PENDING_HP = (
+    0x60  # HP change queued by the current action's hits, applied when it ends
+)
 BUTTON_SIZE = 200
 BATTLER_SIZE = 0x12C
 
@@ -71,6 +77,7 @@ LIST_ROWS = 6
 
 # Battler fields
 CHAR_ID = 0x04
+STAT_RECORD = 0x10  # index of the battler's stat record
 ACTION = 0x84
 TARGETS = 0x8C
 POSITION_X = 0xD4  # screen position: lower is further left

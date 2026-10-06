@@ -1,0 +1,202 @@
+# Manual targeting with a real multi-hit attack: Flora's bow. Run with --save.
+# Flora (character id 3) rolls her Attack hit count as rand % byte[0x0213B919] + 1 (func_020514ec,
+# 0x02051BE4). That byte is rebuilt from the actor's gear at every action (func_0206ab6c, so pinning it
+# does nothing): weapon effect 0x2B gives 2, 0x2C gives 3. Composite Bow (item 39, effect 0x2C) goes in
+# her weapon slot (character struct +0x40), so her attacks hit 1 to 3 times.
+# Flora alone (party slot 0 = 3, slot 1 empty) in the temple battle: back row Ticks in battlers 4, 5, 6;
+# front row 9 (left) and 10 (right). She picks the bottom-left cell (battler 9), whose HP is set to 1 so
+# her first hit kills it; her other hits must land on the next living enemy instead.
+# HP of battle stat record r: 0x0228E860 + r * 0x6C + 0x14; damage waits in +0x60 until the action ends.
+include boot_from_save
+poke u16 0x020B464C 3
+poke u16 0x020B4650 65535
+poke u16 0x020B4780 999
+poke u16 0x020B477C 999
+poke u16 0x020B47AC 39
+# DEX and AGI 255 so her arrows land and she acts first (test only)
+poke u8 0x020B47A0 255
+poke u8 0x020B4798 255
+include warp6
+wait 270
+peek u32 0x020B8620 stats_ptr
+battlers
+poke u16 0x0228EA24 300
+poke u16 0x0228EA90 300
+poke u16 0x0228EAFC 300
+poke u16 0x0228EC40 1
+poke u16 0x0228ECAC 999
+watch u16 0x0228EA24 hp4
+watch u16 0x0228EA90 hp5
+watch u16 0x0228EAFC hp6
+watch u16 0x0228EC40 hp9
+watch u16 0x0228ECAC hp10
+watch u32 0x0228EC8C pending9
+watch u32 0x0228ECF8 pending10
+exec 0x02051BFC hit_roll
+exec 0x02051C48 pick_target
+exec 0x02030BC8 hit_alive
+shot mhf0
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+shot mhf1_picker
+press Down 3
+wait 20
+shot mhf2_picked
+press A 3
+wait 15
+shot mhf_t1
+wait 15
+shot mhf_t2
+wait 15
+shot mhf_t3
+wait 15
+shot mhf_t4
+wait 15
+shot mhf_t5
+wait 15
+shot mhf_t6
+wait 15
+shot mhf_t7
+wait 15
+shot mhf_t8
+wait 15
+shot mhf_t9
+wait 15
+shot mhf_t10
+wait 15
+shot mhf_t11
+wait 15
+shot mhf_t12
+wait 15
+shot mhf_t13
+wait 15
+shot mhf_t14
+wait 15
+shot mhf_t15
+wait 15
+shot mhf_t16
+wait 15
+shot mhf_t17
+wait 15
+shot mhf_t18
+wait 15
+shot mhf_t19
+wait 15
+shot mhf_t20
+wait 15
+shot mhf_t21
+wait 15
+shot mhf_t22
+wait 15
+shot mhf_t23
+wait 15
+shot mhf_t24
+wait 15
+shot mhf_t25
+wait 15
+shot mhf_t26
+wait 15
+shot mhf_t27
+wait 15
+shot mhf_t28
+wait 15
+shot mhf_t29
+wait 15
+shot mhf_t30
+wait 15
+shot mhf_t31
+wait 15
+shot mhf_t32
+wait 15
+shot mhf_t33
+wait 15
+shot mhf_t34
+wait 15
+shot mhf_t35
+wait 15
+shot mhf_t36
+wait 15
+shot mhf_t37
+wait 15
+shot mhf_t38
+wait 15
+shot mhf_t39
+wait 15
+shot mhf_t40
+wait 15
+shot mhf_t41
+wait 15
+shot mhf_t42
+wait 15
+shot mhf_t43
+wait 15
+shot mhf_t44
+wait 15
+shot mhf_t45
+wait 15
+shot mhf_t46
+wait 15
+shot mhf_t47
+wait 15
+shot mhf_t48
+wait 15
+shot mhf_t49
+wait 15
+shot mhf_t50
+wait 15
+shot mhf_t51
+wait 15
+shot mhf_t52
+wait 15
+shot mhf_t53
+wait 15
+shot mhf_t54
+wait 15
+shot mhf_t55
+wait 15
+shot mhf_t56
+wait 15
+shot mhf_t57
+wait 15
+shot mhf_t58
+wait 15
+shot mhf_t59
+wait 15
+shot mhf_t60
+wait 15
+shot mhf_t61
+wait 15
+shot mhf_t62
+wait 15
+shot mhf_t63
+wait 15
+shot mhf_t64
+wait 15
+shot mhf_t65
+wait 15
+shot mhf_t66
+wait 15
+shot mhf_t67
+wait 15
+shot mhf_t68
+wait 15
+shot mhf_t69
+wait 15
+shot mhf_t70
+wait 15
+shot mhf_t71
+wait 15
+shot mhf_t72
+wait 15
+shot mhf_t73
+wait 15
+shot mhf_t74
+wait 15
+shot mhf_t75
+battlers
+wait 300
+battlers

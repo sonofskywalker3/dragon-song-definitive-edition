@@ -1,0 +1,108 @@
+# Boss EXP in a scripted boss fight (Sasquatch, Delrich Temple). Run with --save.
+# Delrich Temple's script (013) starts its Sasquatch fights with script op 0x10 (type 3, battle id 1, 0x13..0x15).
+# The op stores type/id in the script context (+0x268/+0x26A); the field loop then writes
+# 0x020B77E4+0x54 = 1, +0x56 = battle id and sets field state (0x020AFF84+0x8C) to 0x73. This plan does
+# those last three writes itself, standing in Delrich Temple, so the battle runs exactly as the script's would.
+watch u16 0x020B85BE event_battle_id
+watch u16 0x020B85C0 battle_mode
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B8610 exp_pool
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u32 0x020B4664 jian_level
+include boot_from_save
+include cheats_strong
+# warp6 without the final move onto an enemy spawn point
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+shot boss_field
+dump 0x0213B930 0x200 inv_before
+peek u32 0x020B4694 jian_exp_before
+peek u32 0x020B4664 jian_level_before
+peek u32 0x020B4824 silver_before
+poke u16 0x020B7838 1
+poke u16 0x020B783A 1
+poke u32 0x020B0010 0x73
+wait 240
+shot boss_intro
+battlers
+wait 60
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+shot boss_fight5
+battlers
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+shot boss_fight10
+battlers
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+shot boss_fight15
+battlers
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+shot boss_fight20
+battlers
+press A 3
+wait 20
+press A 3
+wait 20
+# Timed for the build with the queued-damage targeting fix, where Jian's first combo ends the fight
+# (victory about frame 3430). Older builds need more A presses. Result flow: sub state 2 shows the
+# pool and waits for A, 3 pours it, 99 shows the paid EXP and waits for A, 97/98 the item page, A leaves.
+wait 250
+shot boss_exp_pool
+press A 3
+wait 200
+shot boss_exp_page
+press A 3
+wait 80
+shot boss_items_page
+wait 120
+press A 3
+wait 60
+shot boss_leaving
+wait 300
+shot boss_after
+peek u32 0x020B4694 jian_exp_final
+peek u32 0x020B4664 jian_level_final
+peek u32 0x020B4824 silver_final
+dump 0x0213B930 0x200 inv_after
