@@ -1,5 +1,5 @@
 # Pacing diagnostic (docs/re-curse-battle-speed.md): one round of Jian's Attack in the first
-# Delrich Temple battle, no fast-forward.
+# Delrich Temple battle, Jian cursed (battle ctx 0x020B85B8 +0x5C poked to 1), no fast-forward.
 # Logs the round state (battle ctx +0x2E; ctx is the pointer at 0x020B8550, 0x02282940 in this run),
 # the actor (+0x32), battler 12's action step (+0xCC), the camera mode (0x020B8578 +0x2C), every
 # step start (func_020316e0) and the built-in fast-forward level (0x020B8540).
@@ -14,6 +14,8 @@ watch u16 0x02282972 actor
 watch u16 0x0228FC7C b12_step
 watch u32 0x020B85A4 camera_mode
 exec 0x020316E0 step_start
+poke u16 0x020B8614 1
+peek u16 0x020B8614 curse
 press A 3
 wait 60
 press A 3
@@ -22,4 +24,4 @@ press A 3
 wait 60
 press A 3
 wait 900
-shot diag_speed_base_end
+shot diag_curse_attack_end

@@ -1,0 +1,27 @@
+# Screenshots of Jian's cursed Attack (docs/re-curse-battle-speed.md): battle ctx 0x020B85B8 +0x5C
+# poked to 1 before the command, so func_02068308 picks script 0x020958C0 and animation 0x0D instead
+# of the combo (0x02095AF0, animation 0x0E). Frames match diag_curse_attack (action from 3052).
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+poke u16 0x020B8614 1
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 82
+shot curse_3100
+wait 22
+shot curse_3122
+wait 14
+shot curse_3136
+wait 14
+shot curse_3150
+wait 20
+shot curse_3170
+wait 20
+shot curse_3190
