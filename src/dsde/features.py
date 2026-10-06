@@ -5,6 +5,7 @@ from pathlib import Path
 from dsde.boss_exp import boss_exp, check_tables
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
 from dsde.feat_battle_end import BATTLE_END_RULES
+from dsde.feat_battle_kill import KILL_ON_HIT
 from dsde.feat_battle_pace import BATTLE_PACE
 from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
@@ -12,6 +13,7 @@ from dsde.feat_curse import NO_CURSE_PENALTY
 from dsde.feat_gad import GAD_EXPRESS
 from dsde.feat_mic_sign import MIC_SIGN
 from dsde.feat_mp import MP_ECONOMY
+from dsde.feat_opening import OPENING
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_targeting import MANUAL_TARGETING
@@ -368,10 +370,12 @@ FEATURES: tuple[Feature, ...] = (
     BATTLE_SPEED,
     NO_CURSE_PENALTY,
     BATTLE_PACE,
+    KILL_ON_HIT,
     MP_ECONOMY,
     WALK_SPEED,
     GAD_EXPRESS,
     MIC_SIGN,
+    OPENING,  # prototype, not in DEFAULT_FEATURES until approved
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -391,6 +395,7 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     BATTLE_SPEED.name,
     NO_CURSE_PENALTY.name,
     BATTLE_PACE.name,
+    KILL_ON_HIT.name,
     MP_ECONOMY.name,
     WALK_SPEED.name,
     GAD_EXPRESS.name,
