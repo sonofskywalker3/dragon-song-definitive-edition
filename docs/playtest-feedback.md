@@ -40,6 +40,27 @@ Jian. Text only, no new actors or event scripting. Before writing it, check who 
 and whether Gad's Express, the recent partnership with Lucia, standing on his head, and the crush come
 up again later.
 
+PS1 reference (scripts in build/research/lunar_scripts/, not tracked): Eternal Blue opens on Hiro and
+Ruby mid-heist; Hiro only introduces himself afterwards, in a short self-aware aside to the player while
+running from monsters. Silver Star gives Alex one short narrated paragraph about his dream (Dyne), then
+Nall calls for him and Luna's first line is "Alex, you're late again, silly." Neither recaps the intro.
+
+Decided (Jeff): option A. Main intro, then skip the self-introduction and go straight to an off-screen
+wake-up: someone calls up to Jian that he overslept and Lucia already left, Jian answers with short,
+flustered lines. It replaces his waking lines, the monologue and "Right then! I'd better go looking for
+Lucia..." (script 001 from the "....It's morning...?" message through that one). Jeff's message was cut
+off after "then as": the rest of the direction is still to come.
+
+Draft (speaker to confirm: whoever runs Gad's Express or owns Jian's room #203, and is met soon):
+
+> [Gad]: JIAN! You alive up there?! / Lucia left an hour ago!
+> Jian: ...Huh? An hour?!
+> [Gad]: She took today's run without / you. Get moving, or she'll / take your pay too!
+> Jian: I'm up! I'm up!
+
+Before building: check who is near Jian's room and at Gad's Express, add `!`, `?` and the speaker
+name markup to feat_text.py, and verify the scene in the emulator.
+
 Notes:
 - Almost every fact repeats the intro's last page, which the player read seconds before (script 026:
   "A youth who loves acrobatics, named 'Jian Campbell', is making a living here as a 'courier', along
