@@ -19,6 +19,7 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 | 6. Broken gear back after battle | `battle-end-rules` | Verified with a simulated break (weapon swapped to its replacement mid-battle is back after the battle). Not yet seen with a real breaker enemy |
 | 6. Stolen items back if the thief dies | `battle-end-rules` | Verified with temple enemies forced to steal: Fossil stolen mid-battle, returned on the win. Implemented as "a won battle returns all thefts" because enemies change battler slots mid-fight; equivalent since enemies never flee |
 | Save glitch (Flora's tunnel line) | `fix-save-glitch` | Verified (docs/test-report-field.md): talking to Flora twice in the Underground Tunnel sets flag 0x5E, 0xCF stays clear, Save still works (original: 0xCF set, Save struck out) |
+| Text edits | `text-edits` | Script text changes listed in `src/dsde/feat_text.py` (`TEXT_EDITS`). Intro: "her servant the Dragonmaster" -> "her champion the Dragonmaster," (script 026; the message moves to the end of the file because it grows). Verified (`text_intro`, build/par_a/intro/intro_page1.png): the line shows with no blank line after it and the whole intro plays to the end |
 
 ## Test notes
 
