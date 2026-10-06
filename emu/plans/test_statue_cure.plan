@@ -1,0 +1,25 @@
+# mp-economy: a healing statue (map object id 0x37D) also cures status. Jian's room has no statue, so
+# object 0 (just above Jian) is turned into one: id 0x37D, no facing check (+0x15 = 0xFF). Jian and Lucia
+# get a status (record +0x08 low 4 bits) and low HP and MP; A on the statue should fill HP and MP and
+# clear the status.
+include boot_from_save
+pin u16 0x020B4650 1
+poke u16 0x020B6FE6 0x37D
+poke u8 0x020B6FE9 0xFF
+poke u32 0x020B4660 2
+poke u32 0x020B4668 5
+poke u32 0x020B4670 1
+poke u32 0x020B46BC 3
+poke u32 0x020B46C4 4
+poke u32 0x020B46CC 2
+wait 10
+dump 0x020B4660 0x14 jian_before
+dump 0x020B46BC 0x14 lucia_before
+press Up 20
+wait 10
+shot sc_before
+press A 4
+wait 90
+shot sc_after
+dump 0x020B4660 0x14 jian_after
+dump 0x020B46BC 0x14 lucia_after

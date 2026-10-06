@@ -1,0 +1,36 @@
+# mp-economy: town 005's item shop (map 0xBA, slot 3) sells Mental Gum for 1000.
+# Jian takes his room's door with the destination pinned to map 0xBA, then the field state is set to
+# 0x68 (open shop, as a shop NPC's script request does) with shop slot 3.
+include boot_from_save
+pin u16 0x020B77EC 0xBA
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+poke u32 0x020B4824 5000
+shot sh_town
+poke u16 0x020B7838 3
+poke u32 0x020B0010 0x68
+wait 120
+shot sh_open
+press A 8
+wait 60
+shot sh_buy
+peek u8 0x0213BA45 gum_before
+press Right 8
+wait 30
+shot sh_gum
+press A 8
+wait 60
+shot sh_qty
+press A 8
+wait 60
+shot sh_confirm
+press A 8
+wait 90
+shot sh_bought
+peek u32 0x020B4824 silver_after
+peek u8 0x0213BA45 gum_after
