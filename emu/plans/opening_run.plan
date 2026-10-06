@@ -1,6 +1,6 @@
-# Opening prototype (feature opening-run, docs/re-opening.md): New Game, through the intro, then the
-# wake-up call and the scripted run from Jian's room to the street, with a shot and Jian's position
-# every 40 frames. A is pressed every 40 frames; a box only closes once its text has finished typing.
+# Opening (feature opening-run, docs/re-opening.md): New Game, through the intro, then the wake-up call
+# and the scripted run from Jian's room to the town map, with a shot and Jian's position every 40 frames.
+# A is pressed every 40 frames; a box only closes once its text has finished typing.
 watch u16 0x020B6BE4 map
 watch u32 0x020B6CEC route
 wait 1800

@@ -1,6 +1,6 @@
 """Opening: Jian is woken from downstairs and runs out of the inn (playtest feedback item 2).
 
-Prototype with placeholder dialogue (docs/re-opening.md). Script 001's wake-up in Jian's room (map 163)
+Final dialogue; mechanics in docs/re-opening.md. Script 001's wake-up in Jian's room (map 163)
 jumps to new code appended to the script: an off-screen wake-up call, then a scripted run. The run
 crosses three maps, and a script cannot survive a map change (op 0x10 ends it), so each leg ends with
 a map change and the next leg starts from the new map's entry event: the script's entry dispatcher
@@ -83,20 +83,28 @@ FADE_DEFAULT_FRAMES = -1  # 30 frames
 PAGE_BREAK = b"\xfe\xfd\xfd"  # end of page, then the layout the game's own messages use
 TEXT_END = b"\xff"
 
-# Placeholder dialogue: not final (tone rules pending, docs/playtest-feedback.md item 2)
-WAKE_CALL = ("<Cherenkov>\nJIAN! You alive up there?!\nLucia left an hour ago!",)
-WAKE_REPLY = ("<Jian>\n...Huh? An hour?!",)
+# Dialogue (decided with Jeff 2026-10-06, docs/playtest-feedback.md item 2). Each tuple is the pages of
+# one message. Jian's run lines are his inner voice: every line in the alternate color, no name tag, as
+# the vanilla monologue. They come from his Japanese self-introduction minus what the prologue says.
+WAKE_CALL = ("<Cherenkov>\nJian! Overslept again?!\nLucia headed out hours ago!",)
+WAKE_REPLY = ("<Jian>\nWha...? She left already?!",)
 WAKE_PUSH = (
-    "<Cherenkov>\nI wish I could afford to\noversleep every day!\nGet moving!",
+    "<Cherenkov>\nKeep this up and I'll rent\nthe room to someone\nrespectable!",
 )
 WAKE_UP = ("<Jian>\nI'm up! I'm up!",)
 RUN_ROOM = (
-    "<Jian>\nOh, hey. Didn't see you\nthere. I'm Jian, courier for\nGad's Express.",
+    (
+        "<I'm Jian. I'm a courier for>\n<Gad's Express. Lucia and I>\n"
+        "<haven't been partners long.>"
+    ),
 )
-RUN_HALL = ("<Jian>\nFastest legs in Searis...\nwhen I'm awake.",)
-RUN_LOBBY = ("<Jian>\nThe girl who left without me?\nLucia, my new partner.",)
+RUN_HALL = ("<It gets risky sometimes.>\n<Honestly? That's what I>\n<love about it.>",)
+RUN_LOBBY = ("<Lucia? She's great.>\n<Just don't tell her>\n<I said so.>",)
 CHERENKOV_LOBBY = (
-    "<Cherenkov>\nWhat are you still doing here?\nGo on, Lucia's waiting!",
+    (
+        "<Cherenkov>\nJian, what are you doing?!\nGet to {Fountain Square}!\n"
+        "Don't keep Lucia waiting!"
+    ),
 )
 
 # Legs of the run (direction, ticks, speed), after the owner's walked path (build/emu/record/path.log).

@@ -30,6 +30,8 @@ CODE_START = 4  # the file's first op jumps to its code at this u32
 TEXT_END = 0xFF
 SPEAKER_START = "<"  # stands for FB 06, which opens a speaker name
 SPEAKER_END = ">"  # FB 07 closes it
+PLACE_START = "{"  # stands for FB 04, the blue place-name color (closed by FB 07)
+PLACE_END = "}"
 TEXT_CODES = {
     " ": b"\x00",
     ",": b"\x29",
@@ -40,6 +42,8 @@ TEXT_CODES = {
     "\n": b"\xfd",
     SPEAKER_START: b"\xfb\x06",
     SPEAKER_END: b"\xfb\x07",
+    PLACE_START: b"\xfb\x04",
+    PLACE_END: b"\xfb\x07",
     **{chr(ord("A") + i): bytes([0x02 + i]) for i in range(26)},
     **{chr(ord("a") + i): bytes([0x3A + i]) for i in range(26)},
     **{chr(ord("0") + i): bytes([0x30 + i]) for i in range(10)},
@@ -75,6 +79,36 @@ TEXT_EDITS = (
         # exactly 30 characters: the box wraps after it, so the line break goes
         "her champion the Dragonmaster,",
         "intro: the Dragonmaster is Althena's champion, not her servant",
+    ),
+    # Prologue trims (playtest feedback 3): no quotes around ordinary words, no "who loves acrobatics" and
+    # no "pair of them love excitement" paragraph. Where a shorter line would change the box's own wrap
+    # (30 characters, the space at the wrap is not stored), the line break is written out.
+    TextEdit(26, "The 'Beastmen'.\n", "The Beastmen.\n", "prologue: no quotes"),
+    TextEdit(26, "the 'Humans'.\n", "the Humans.\n", "prologue: no quotes"),
+    TextEdit(
+        26, "favor of the 'Beastmen'.", "favor of the Beastmen.", "prologue: no quotes"
+    ),
+    TextEdit(
+        26,
+        "The dynamic 'Beastmen' built amagnificent castle and lived aluxurious",
+        # "magnificent castle and lived a" is exactly 30 characters, so the box wraps after it by itself
+        "The dynamic Beastmen built a\nmagnificent castle and lived aluxurious",
+        "prologue: no quotes",
+    ),
+    TextEdit(
+        26,
+        "The 'Humans', desiring quietersurroundings",
+        "The Humans, desiring quieter\nsurroundings",
+        "prologue: no quotes",
+    ),
+    TextEdit(
+        26,
+        "A youth who loves acrobatics,\nnamed 'Jian Campbell',\nis making a living here as a\n"
+        "'courier', along with his\nfriend 'Lucia Collins'.\n\nThe pair of them love\n"
+        "excitement... especially when\nspiced with just a little\ndanger.",
+        "A youth named Jian Campbell\nis making a living here as a\ncourier, along with his\n"
+        "friend Lucia Collins.",
+        "prologue: Jian and Lucia without quotes, acrobatics or the excitement paragraph",
     ),
     # Gad's Express recipients whose dialogue name differs from the job menu; the Japanese release uses
     # the menu's name in both places (docs/re-japanese.md)
