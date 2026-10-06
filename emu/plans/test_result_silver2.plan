@@ -1,6 +1,6 @@
-# Result screens with three party members: EXP page with the Silver line below the member lines, A
-# opens the item page, A leaves. Run with --save. Shots r3_*.
-include party3_strong
+# Result screens with two party members: EXP page with the Silver line, A opens the item page, A
+# leaves. Run with --save. Shots r2_*.
+include party2_strong
 watch u16 0x020B85C8 result_sub
 watch u32 0x020B4824 silver
 watch u32 0x020B4694 jian_exp32
@@ -132,12 +132,12 @@ wait 20
 press A 3
 wait 20
 wait 900
-shot r3_exp
+shot r2_exp
 dump 0x020B88B4 0x1E0 wintab
 press A 3
 wait 60
-shot r3_items
+shot r2_items
 press A 3
 wait 260
-shot r3_field
+shot r2_field
 dump 0x0213B930 0x200 inv_after

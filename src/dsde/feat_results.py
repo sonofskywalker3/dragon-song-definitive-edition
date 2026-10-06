@@ -1,8 +1,8 @@
 """Result screens: the EXP page shows the silver won, and a second page lists the dropped items.
 
 Design sections 2 and 3. All battles now use the EXP (Virtue) result flow, whose screen shows only
-Althena Conduct: windows 6 (the pool) and 7..9 (one per party member). feat_results_silver adds a
-"Silver" line below the last member. The vanilla item list (window 5 plus item icons) is built by
+Althena Conduct: windows 6 (the pool) and 7..9 (one per party member). feat_results_silver hides the
+pool and turns window 6 into a "Silver" line below the last member. The vanilla item list (window 5 plus item icons) is built by
 the same setup routine, func_0203b03c, only when the battle mode at ctx+8 is not an EXP mode, and
 the two layouts share the top of the top screen.
 
