@@ -1,0 +1,54 @@
+# mp-economy in battle: Jian gives Lucia a Mental Gum (flat +20), then Lucia uses card 0xE9 (all allies,
+# 100% of max MP, keeps its percentage). Lucia 5 / 300 MP, Jian 0 / 10.
+include party2_strong
+pin u32 0x020B46D0 300
+poke u32 0x020B46CC 5
+poke u32 0x020B4670 0
+poke u8 0x0213BA45 5
+poke u8 0x0213BA18 2
+wait 270
+battlers
+press A 8
+wait 60
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+shot bt_tools
+press Right 8
+wait 30
+shot bt_tools2
+press A 8
+wait 60
+shot bt_gum_target
+press Right 8
+wait 30
+shot bt_gum_target2
+press A 8
+wait 60
+shot bt_lucia_turn
+press Down 8
+wait 30
+press A 8
+wait 60
+press Right 8
+wait 30
+press A 8
+wait 60
+shot bt_cards
+press A 8
+wait 60
+shot bt_card_target
+press A 8
+wait 30
+shot bt_round_1
+wait 120
+shot bt_round_2
+wait 120
+shot bt_round_3
+wait 120
+shot bt_round_4
+wait 200
+shot bt_round_5

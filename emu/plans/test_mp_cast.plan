@@ -1,0 +1,24 @@
+# mp-economy: Lucia casts Healing Water (4 MP) on Jian, then again with the Holy Umbrella (cost / 2 = 2)
+include boot_from_save
+poke u32 0x020B4668 5
+include mp_open_special
+shot mc_list
+press A 8
+wait 60
+shot mc_target
+press A 8
+wait 150
+peek u32 0x020B4668 jian_hp_after
+peek u32 0x020B46CC lucia_mp_after_cast1
+shot mc_after1
+poke u32 0x020B4668 5
+poke u16 0x020B46F4 0x15
+wait 10
+shot mc_umbrella_list
+press A 8
+wait 60
+press A 8
+wait 150
+peek u32 0x020B4668 jian_hp_after2
+peek u32 0x020B46CC lucia_mp_after_cast2
+shot mc_after2

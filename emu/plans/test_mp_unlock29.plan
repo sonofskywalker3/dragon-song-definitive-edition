@@ -1,0 +1,15 @@
+# mp-economy: Lucia's Special list at max MP 29 (Tender Rain unlocks at 30, its vanilla cost, not at 12)
+include boot_from_save
+pin u32 0x020B46D0 29
+pin u32 0x020B46CC 29
+include mp_open_special
+shot mu29_1
+press Right 8
+wait 20
+shot mu29_2
+press Down 8
+wait 20
+shot mu29_3
+press Down 8
+wait 20
+shot mu29_4

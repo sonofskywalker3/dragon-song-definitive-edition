@@ -1,0 +1,9 @@
+# From the field: open the menu and the Special (magic) page, Lucia in party slot 1
+pin u16 0x020B4650 1
+wait 30
+press X 3
+wait 120
+press Down 8
+wait 30
+press A 8
+wait 60

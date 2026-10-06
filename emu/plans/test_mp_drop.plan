@@ -1,0 +1,36 @@
+# mp-economy: in the field Mental Drop restores 50 MP, capped at max MP. Lucia at 10 / 100: 60, then 100
+include boot_from_save
+pin u16 0x020B4650 1
+pin u32 0x020B46D0 100
+poke u32 0x020B46CC 10
+poke u8 0x0213BA45 0
+poke u8 0x0213BA46 5
+wait 30
+press X 3
+wait 120
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+shot md_drop
+press A 8
+wait 60
+press Right 8
+wait 20
+press A 8
+wait 150
+peek u32 0x020B46CC lucia_mp_after_drop1
+shot md_after1
+press A 8
+wait 150
+peek u32 0x020B46CC lucia_mp_after_drop2
+peek u8 0x0213BA46 drop_count
+shot md_after2

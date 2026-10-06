@@ -131,3 +131,10 @@ any rewrite should check what the Japanese script actually says.
 Jeff (2026-10-06): "can we increase walking speed a bit?" Field walking only (running is design 1).
 To find: the player's walk step per frame (player block 0x020B6BE4, position x +0xD0, y +0xD4 in 20.12)
 and whether NPC routes and scripted walks share the same speed value.
+
+## 7. Battle cards: duplicate drops refill durability (Open)
+
+Jeff (2026-10-06): improve the card system. A card should still drop when you already have one, and a
+duplicate drop refills that card's durability instead of being lost. To find: how card drops are
+skipped for owned cards, and where a card's durability (the "P" counter on the card) is kept. Cards are
+items (for example 0xE8 Dagon, 0xE9 Hellbird) in the battle Item menu under Cards.
