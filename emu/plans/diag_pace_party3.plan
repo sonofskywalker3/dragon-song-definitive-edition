@@ -1,0 +1,38 @@
+# Pacing diagnostic (docs/re-battle-pacing.md): party of three (party3_strong) in the first temple
+# battle; screenshots of the command menu to find the Special (spell) command.
+include party3_strong
+include warp6
+wait 270
+watch u32 0x020B0010 main_state
+watch u16 0x020B85C8 substate
+watch u16 0x0228296E round_state
+shot p3_cmd0
+press Down 3
+wait 20
+shot p3_cmd1
+press Down 3
+wait 20
+shot p3_cmd2
+press Up 3
+wait 20
+press Up 3
+wait 20
+press A 3
+wait 30
+shot p3_fight
+press A 3
+wait 30
+shot p3_fight2
+press A 3
+wait 30
+shot p3_next
+press Down 3
+wait 20
+shot p3_next_d
+press A 3
+wait 30
+shot p3_special
+press A 3
+wait 30
+shot p3_special2
+wait 300

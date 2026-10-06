@@ -1,0 +1,248 @@
+# Pacing diagnostic (docs/re-battle-pacing.md): the whole first Delrich Temple battle (warp6, Jian with
+# test stats kills one enemy per action), A every 20 frames from the first command to the field.
+# Logs the battle main state (0x020B0010), its substate (ctx 0x020B85B8 +0x10), the round state
+# (battle work +0x2E; work is the pointer at 0x020B8550, 0x02282940 in these runs), actor, work +0xCE/+0xD0
+# (kill hold and fade counters, also the intro counters), +0xD4 (refill counter), +0xD6/+0xD8 (status
+# ticks), battler 12's action step, the camera mode, and every call of the battle main func_020297d4
+# (one line per game frame that runs the battle update).
+include boot_from_save
+include cheats_strong
+watch u32 0x020B0010 main_state
+watch u16 0x020B85C8 substate
+include warp6
+watch u16 0x0228296E round_state
+watch u16 0x02282972 actor
+watch u16 0x02282A0E w_ce
+watch u16 0x02282A10 w_d0
+watch u16 0x02282A14 w_d4
+watch u16 0x02282A18 w_d8
+watch u16 0x0228FC7C b12_step
+watch u32 0x020B85A4 camera_mode
+exec 0x020297D4 bmain
+wait 270
+peek u32 0x020B8550 battle_work
+peek u32 0x020B8624 dmgnum_array
+peek u32 0x020B8640 battlers_base
+battlers
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+wait 300
+shot diag_pace_round_end
