@@ -1,0 +1,80 @@
+# kill-on-hit: Jian's 3-hit combo against the two front enemies (battlers 9 and 10) at 1 HP each. Each should
+# die right after the hit that kills it (HP drops at the hit) while Jian carries on, not both after the combo.
+# HP of battle stat record r: 0x0228E860 + r * 0x6C + 0x14.
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+peek u32 0x020B8620 stats_ptr
+poke u16 0x0228EC40 1
+poke u16 0x0228ECAC 1
+watch u16 0x0228EC40 hp9
+watch u16 0x0228ECAC hp10
+exec 0x02030BC8 hit
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 8
+shot kh_01
+wait 8
+shot kh_02
+wait 8
+shot kh_03
+wait 8
+shot kh_04
+wait 8
+shot kh_05
+wait 8
+shot kh_06
+wait 8
+shot kh_07
+wait 8
+shot kh_08
+wait 8
+shot kh_09
+wait 8
+shot kh_10
+wait 8
+shot kh_11
+wait 8
+shot kh_12
+wait 8
+shot kh_13
+wait 8
+shot kh_14
+wait 8
+shot kh_15
+wait 8
+shot kh_16
+wait 8
+shot kh_17
+wait 8
+shot kh_18
+wait 8
+shot kh_19
+wait 8
+shot kh_20
+wait 8
+shot kh_21
+wait 8
+shot kh_22
+wait 8
+shot kh_23
+wait 8
+shot kh_24
+wait 8
+shot kh_25
+wait 8
+shot kh_26
+wait 8
+shot kh_27
+wait 8
+shot kh_28
+wait 8
+shot kh_29
+wait 8
+shot kh_30
