@@ -107,3 +107,14 @@ Script 026 @ 0x08 (the same opening narration as item 1). Jeff:
 Check after the edit: line wraps (30 characters, the stored text drops the space at each wrap) and that
 the last page still ends cleanly with its page break before the game starts.
 
+
+## 4. Lore and worldbuilding (Open)
+
+Jeff (2026-10-06): one problem he keeps hearing is that the game has no lore. Gather everything that
+can be found in the first game's scripts (Silver Star Story Complete, build/research/lunar_scripts/,
+not tracked) and in any other first-party or fan sources, to strengthen the real worldbuilding. He will
+invent material if he has to, but it has to feel right for Lunar.
+
+Not started. Likely output: a tracked research doc (short quotes only, with sources) on the world before
+Dragon Song: Althena, the Dragonmaster, the Four Dragons, Beastmen and humans, the Vile Tribe, places and
+history, and where the new dialogue could use them.
