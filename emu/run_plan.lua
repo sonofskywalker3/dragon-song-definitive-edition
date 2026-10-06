@@ -143,7 +143,7 @@ for line in io.lines(path) do
 		event.on_bus_exec(function()
 			local r = emu.getregisters()
 			local parts = {}
-			for _, k in ipairs({ "ARM9 r0", "ARM9 r1", "ARM9 r4", "ARM9 r5", "ARM9 r6", "ARM9 r7", "ARM9 r14" }) do
+			for _, k in ipairs({ "ARM9 r0", "ARM9 r1", "ARM9 r2", "ARM9 r3", "ARM9 r4", "ARM9 r5", "ARM9 r6", "ARM9 r7", "ARM9 r14" }) do
 				parts[#parts + 1] = string.format("%s=%08X", k:sub(6), r[k] or 0)
 			end
 			say("exec " .. label .. " " .. table.concat(parts, " "))
