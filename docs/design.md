@@ -127,6 +127,6 @@ the Cathedral calls her "My lady"; Leephon City already has Zethos posters (coul
 
 To change: the Coliseum aftermath (script 005), Carmen in Port Olbeage (007), at Zethos Castle (009)
 Lucia's demand, Jian's "why did you do it", "cursed knight", the post-fight curse lines and "You look all
-better now"; the Zethos fight loses its curse HP floor and self-cure, so check its balance (Jian fights
-alone). Check that the Cathedral detour still has its reason. Story details: docs/re-curse-battle-speed.md
+better now"; the Zethos fight keeps its HP floor and the round-3 "real hit" (no curse text in battle; only Jian's attack
+ignores the curse, `no-curse-penalty`). Check that the Cathedral detour still has its reason. Story details: docs/re-curse-battle-speed.md
 part 1.
