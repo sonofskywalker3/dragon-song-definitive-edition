@@ -9,6 +9,7 @@ from dsde.feat_battle_pace import BATTLE_PACE
 from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
 from dsde.feat_curse import NO_CURSE_PENALTY
+from dsde.feat_mp import MP_ECONOMY
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_targeting import MANUAL_TARGETING
@@ -364,6 +365,7 @@ FEATURES: tuple[Feature, ...] = (
     BATTLE_SPEED,
     NO_CURSE_PENALTY,
     BATTLE_PACE,
+    MP_ECONOMY,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -383,4 +385,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     BATTLE_SPEED.name,
     NO_CURSE_PENALTY.name,
     BATTLE_PACE.name,
+    MP_ECONOMY.name,
 )
