@@ -144,3 +144,9 @@ items (for example 0xE8 Dagon, 0xE9 Hellbird) in the battle Item menu under Card
 
 Jeff (follow-up): the "collection" cards (the ones with no battle use, only collected) should be given
 real uses. To find: which cards are collection-only and what effect slots the card system supports.
+
+## 8. Multi-hit kills die at the end of the combo (Open, being worked on)
+
+Jeff (2026-10-06): when Jian's 3-hit combo kills several enemies, they all die together after his last
+hit. He wants each enemy to die right after the hit that kills it, while Jian moves on and hits the next
+one. Asked to build it (2026-10-06).
