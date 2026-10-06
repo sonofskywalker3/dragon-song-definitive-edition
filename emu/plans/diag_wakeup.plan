@@ -1,0 +1,137 @@
+# Diagnostic: the opening from New Game through Jian's wake-up, logging map id and position.
+watch u16 0x020B6BE4 map
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+press A 3
+wait 300
+shot wk_01
+peek u32 0x020B6CB4 x01
+peek u32 0x020B6CB8 y01
+press A 3
+wait 300
+shot wk_02
+peek u32 0x020B6CB4 x02
+peek u32 0x020B6CB8 y02
+press A 3
+wait 300
+shot wk_03
+peek u32 0x020B6CB4 x03
+peek u32 0x020B6CB8 y03
+press A 3
+wait 300
+shot wk_04
+peek u32 0x020B6CB4 x04
+peek u32 0x020B6CB8 y04
+press A 3
+wait 300
+shot wk_05
+peek u32 0x020B6CB4 x05
+peek u32 0x020B6CB8 y05
+press A 3
+wait 300
+shot wk_06
+peek u32 0x020B6CB4 x06
+peek u32 0x020B6CB8 y06
+press A 3
+wait 300
+shot wk_07
+peek u32 0x020B6CB4 x07
+peek u32 0x020B6CB8 y07
+press A 3
+wait 300
+shot wk_08
+peek u32 0x020B6CB4 x08
+peek u32 0x020B6CB8 y08
+press A 3
+wait 300
+shot wk_09
+peek u32 0x020B6CB4 x09
+peek u32 0x020B6CB8 y09
+press A 3
+wait 300
+shot wk_10
+peek u32 0x020B6CB4 x10
+peek u32 0x020B6CB8 y10
+press A 3
+wait 300
+shot wk_11
+peek u32 0x020B6CB4 x11
+peek u32 0x020B6CB8 y11
+press A 3
+wait 300
+shot wk_12
+peek u32 0x020B6CB4 x12
+peek u32 0x020B6CB8 y12
+press A 3
+wait 300
+shot wk_13
+peek u32 0x020B6CB4 x13
+peek u32 0x020B6CB8 y13
+press A 3
+wait 300
+shot wk_14
+peek u32 0x020B6CB4 x14
+peek u32 0x020B6CB8 y14
+press A 3
+wait 300
+shot wk_15
+peek u32 0x020B6CB4 x15
+peek u32 0x020B6CB8 y15
+press A 3
+wait 300
+shot wk_16
+peek u32 0x020B6CB4 x16
+peek u32 0x020B6CB8 y16
+press A 3
+wait 300
+shot wk_17
+peek u32 0x020B6CB4 x17
+peek u32 0x020B6CB8 y17
+press A 3
+wait 300
+shot wk_18
+peek u32 0x020B6CB4 x18
+peek u32 0x020B6CB8 y18
+press A 3
+wait 300
+shot wk_19
+peek u32 0x020B6CB4 x19
+peek u32 0x020B6CB8 y19
+press A 3
+wait 300
+shot wk_20
+peek u32 0x020B6CB4 x20
+peek u32 0x020B6CB8 y20
+press A 3
+wait 300
+shot wk_21
+peek u32 0x020B6CB4 x21
+peek u32 0x020B6CB8 y21
+press A 3
+wait 300
+shot wk_22
+peek u32 0x020B6CB4 x22
+peek u32 0x020B6CB8 y22
+press A 3
+wait 300
+shot wk_23
+peek u32 0x020B6CB4 x23
+peek u32 0x020B6CB8 y23
+press A 3
+wait 300
+shot wk_24
+peek u32 0x020B6CB4 x24
+peek u32 0x020B6CB8 y24
+press A 3
+wait 300
+shot wk_25
+peek u32 0x020B6CB4 x25
+peek u32 0x020B6CB8 y25
+press A 3
+wait 300
+shot wk_26
+peek u32 0x020B6CB4 x26
+peek u32 0x020B6CB8 y26

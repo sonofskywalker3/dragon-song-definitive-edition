@@ -1,0 +1,24 @@
+# Diagnostic: walk Jian from his room out of the inn, logging map id and position (scripted run research).
+include boot_from_save
+watch u16 0x020B6BE4 map
+watch u32 0x020B6CEC route_ptr
+peek u32 0x020B6CB4 x0
+peek u32 0x020B6CB8 y0
+shot w0
+press Right 40
+peek u32 0x020B6CB4 x1
+peek u32 0x020B6CB8 y1
+shot w1
+press Down,Right 40
+peek u32 0x020B6CB4 x2
+peek u32 0x020B6CB8 y2
+shot w2
+press Right 40
+peek u32 0x020B6CB4 x3
+peek u32 0x020B6CB8 y3
+shot w3
+press Down 80
+wait 120
+peek u32 0x020B6CB4 x4
+peek u32 0x020B6CB8 y4
+shot w4
