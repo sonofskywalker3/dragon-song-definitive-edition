@@ -34,6 +34,8 @@ TEXT_CODES = {
     " ": b"\x00",
     ",": b"\x29",
     ".": b"\x2a",
+    "!": b"\x24",
+    "?": b"\x25",
     "'": b"\x54",
     "\n": b"\xfd",
     SPEAKER_START: b"\xfb\x06",

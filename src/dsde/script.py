@@ -3,6 +3,9 @@
 The interpreter is func_020418ac. Each instruction starts with a u16 opcode; the handler table at
 0x020A3EE8 has 83 entries of {handler, yield flag}. A script file starts with op 0x02 (jump) to its
 code. Ops 0x13/0x14/0x15 carry a variable-length flag list, op 0x35 a variable-length payload.
+Op 0x00 ends the event (the interpreter stops; it is not a yield). Ops 0x0D/0x0E compare two operands
+and jump (0x0D) or call (0x0E). 0x13 jumps if all its flags are set, 0x14 if any is set, 0x15 if none is set
+(docs/re-opening.md).
 
 Usage:
     uv run python -m dsde.script build/unpacked/script/010.bin            # linear listing
@@ -100,26 +103,27 @@ FIXED_LENGTHS = {
 OP_JUMP = 0x02
 OP_CALL = 0x03
 OP_RET = 0x04
-OP_IF_CMP_CALL = frozenset({0x0D, 0x0E})
+OP_STOP = 0x00
+OP_IF_CMP = frozenset({0x0D, 0x0E})  # 0x0D jumps, 0x0E calls (returns with 0x04)
 OP_MSG = 0x0F
 OP_FLAG_LISTS = frozenset({0x13, 0x14, 0x15})
 OP_SHORT_ARG = frozenset({0x19, 0x1A, 0x1B, 0x1C, 0x21})
 OP_END = 0x20
 OP_YES_NO = 0x31
 OP_VARIABLE = 0x35
-STOP_OPS = frozenset({OP_JUMP, OP_RET, OP_END, OP_YES_NO})
+STOP_OPS = frozenset({OP_STOP, OP_JUMP, OP_RET, OP_END, OP_YES_NO})
 NAMES = {
-    0x00: "yield",
+    OP_STOP: "stop",
     OP_JUMP: "jump",
     OP_CALL: "call",
     OP_RET: "ret",
     0x05: "var_set",
-    0x0D: "if_cmp_call",
+    0x0D: "if_cmp_goto",
     0x0E: "if_cmp_call",
     OP_MSG: "msg",
     0x13: "if_all_set_goto",
-    0x14: "if_none_set_goto",
-    0x15: "if_any_set_goto",
+    0x14: "if_any_set_goto",
+    0x15: "if_none_set_goto",
     0x19: "set_flag",
     0x1A: "clear_flag",
     0x1B: "party_join",
@@ -171,7 +175,7 @@ def branch_targets(data: bytes, pc: int) -> list[int]:
     op = struct.unpack_from("<H", data, pc)[0]
     if op in (OP_JUMP, OP_CALL) or op in OP_FLAG_LISTS:
         return [struct.unpack_from("<I", data, pc + 4)[0]]
-    if op in OP_IF_CMP_CALL:
+    if op in OP_IF_CMP:
         return [struct.unpack_from("<I", data, pc + 12)[0]]
     if op == OP_YES_NO:
         return list(struct.unpack_from("<II", data, pc + 4))
