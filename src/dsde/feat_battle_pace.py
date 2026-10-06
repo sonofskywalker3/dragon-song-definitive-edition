@@ -9,8 +9,14 @@ so Normal stays exactly vanilla.
   frame: the step counter (battler +0xCE, func_02031514) and the move counter (+0xB4,
   func_0202f230). Steps end on "counter >= duration" and the mover clamps to the duration, so they
   stay in step and cannot overshoot.
-- P3 (part): the white flash on a killed enemy holds 20 frames instead of 60 (the fade after it is
-  unchanged: its blend is computed from the start value, so a shorter start would jump).
+- P3: the white flash on a killed enemy holds 20 frames instead of 60, and the fade after it takes 16
+  frames instead of 32: its counter (+0xD0, round state 0xD) counts down two per frame from the same
+  start, and the blend is computed from the counter, so it follows the same curve twice as fast.
+- P7: the camera turns to each actor (round state 5) and back at the end of a round (func_020297d4
+  case 8) in 8 frames instead of 16 (func_02028540 duration).
+- Victory: each battler's pose holds 30 frames instead of 60 after its animation (func_02067698, +0xC4),
+  and after the EXP pour the wait before the result page is 15 + 20 frames instead of 30 + 40
+  (+0x134 set in func_02052ac4, +0x130 set when the pour ends).
 - P4: the back-row enemy flies into a freed front slot in 32 frames instead of 64 (its counter counts
   two per frame; the position curve depends only on the counter, so it ends in the same place).
 - P5: damage numbers hold 24 frames after rising instead of 60.
@@ -62,6 +68,51 @@ CONSTANTS = (
         "cave_pace_kill_hold",
         "kill flash holds 20 frames",
     ),
+    (
+        0x0202D67C,
+        0xE3A02010,
+        "r2",
+        0x10,
+        8,
+        "cave_pace_camera_actor",
+        "camera turns to each actor in 8 frames",
+    ),
+    (
+        0x0202A744,
+        0xE3A02010,
+        "r2",
+        0x10,
+        8,
+        "cave_pace_camera_end",
+        "camera turns back at round end in 8 frames",
+    ),
+    (
+        0x020676CC,
+        0xE3A0B03C,
+        "fp",
+        0x3C,
+        30,
+        "cave_pace_pose_hold",
+        "victory poses hold 30 frames",
+    ),
+    (
+        0x02052BFC,
+        0xE3A0201E,
+        "r2",
+        0x1E,
+        15,
+        "cave_pace_levelup_wait",
+        "level-up wait 15 frames",
+    ),
+    (
+        0x0202AA68,
+        0xE3A03028,
+        "r3",
+        0x28,
+        20,
+        "cave_pace_levelup_hold",
+        "level-up hold 20 frames",
+    ),
 )
 
 
@@ -98,6 +149,10 @@ INTRO_COUNTER_ADDS = (  # func_020297d4: add r1, r1, #1 (intro counter work +0xD
     (0x0202A030, 0xE2811001, "enemy columns pop in faster"),
     (0x0202A11C, 0xE2811001, "shorter hold after the enemies appear"),
 )
+KILL_FADE_SUB = (
+    0x0202DED0,
+    0xE2400001,
+)  # func_0202d22c state 0xD: sub r0, r0, #1 (kill fade counter +0xD0)
 POUR_GATE = (
     0x02052C70,
     0xE2110003,
@@ -125,6 +180,20 @@ count_state:
 
 
 COUNT_ASM = count_asm("r0")
+
+# Replaces `sub r0, r0, #1` of the kill fade counter: - PACE_STEP on Fast and Fastest. The flags are
+# not read before the next compare, so they need not be kept.
+FADE_ASM = f"""
+    push  {{r1, lr}}
+    ldr   r1, fade_state
+    ldrb  r1, [r1]
+    cmp   r1, #0
+    subeq r0, r0, #1
+    subne r0, r0, #{PACE_STEP}
+    pop   {{r1, pc}}
+fade_state:
+    .word ${{cave_speed_state}}
+"""
 
 # Replaces `ands r0, r1, #3` (r1 = pour frame counter; the next instructions return unless Z is set):
 # on Fast and Fastest r0 = 0 with Z set, so the pour step and its A check run every frame.
@@ -164,6 +233,8 @@ BATTLE_PACE = Feature(
             _call(addr, old, "bl", "cave_pace_count_r1", note)
             for addr, old, note in INTRO_COUNTER_ADDS
         ),
+        CaveCode("cave_pace_fade", FADE_ASM, "kill fade twice as fast on Fast"),
+        _call(*KILL_FADE_SUB, "bl", "cave_pace_fade", "kill fade 16 frames"),
         CaveCode("cave_pace_pour", POUR_ASM, "EXP pour every frame, A always skips"),
         _call(*POUR_GATE, "bl", "cave_pace_pour", "EXP pour every frame, A skips"),
         CaveCode(
