@@ -153,3 +153,14 @@ one. Asked to build it (2026-10-06).
 
 Done 2026-10-06 on Fast and Fastest (Normal stays vanilla): each enemy dies on its killing hit, with its
 halo and sparkles, then fades while Jian carries on. See docs/status.md.
+
+## 2 (continued). Wake-up call text (decided 2026-10-06)
+
+Jeff picked version B of the drafts in docs/style-rules.md, with his own last line:
+
+> Cherenkov: Jian! Overslept again?! / Lucia headed out hours ago!
+> Jian: Wha...? She left already?!
+> Cherenkov: Keep this up and I'll rent / the room to someone / respectable!
+> Jian: I'm up! I'm up!
+
+The run aside (Jian's lines while he runs out of the inn) is still to be agreed.
