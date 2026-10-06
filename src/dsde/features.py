@@ -5,6 +5,7 @@ from pathlib import Path
 from dsde.boss_exp import boss_exp, check_tables
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
 from dsde.feat_battle_end import BATTLE_END_RULES
+from dsde.feat_battle_pace import BATTLE_PACE
 from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
 from dsde.feat_curse import NO_CURSE_PENALTY
@@ -362,6 +363,7 @@ FEATURES: tuple[Feature, ...] = (
     LEAVE_DROPS_GEAR,
     BATTLE_SPEED,
     NO_CURSE_PENALTY,
+    BATTLE_PACE,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -380,4 +382,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     LEAVE_DROPS_GEAR.name,
     BATTLE_SPEED.name,
     NO_CURSE_PENALTY.name,
+    BATTLE_PACE.name,
 )
