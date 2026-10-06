@@ -1,0 +1,36 @@
+# Diagnostic for the redirected attack animation: Jian's combo with the first target (9) at HP 1.
+# Battler 12 (the attacker's scratch copy) is at 0x0228FBB0 in this battle: +0xC8 action script,
+# +0xCC step, +0x8C target slot 0, +0x14/+0x18 position, +0x5C/+0x60 move target.
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+battlers
+poke u16 0x0228EA24 300
+poke u16 0x0228EA90 300
+poke u16 0x0228EAFC 300
+poke u16 0x0228EC40 1
+poke u16 0x0228ECAC 999
+watch u32 0x0228FC78 b12_script
+watch u16 0x0228FC7C b12_step
+watch u16 0x0228FC3C b12_tgt0
+watch u32 0x0228FC0C b12_mvx
+watch u32 0x0228FC10 b12_mvy
+watch u32 0x0228FBC4 b12_x
+watch u32 0x0228FBC8 b12_y
+exec 0x0202FDF0 step_move
+exec 0x020316E0 step_anim
+exec 0x02030B48 hit
+exec 0x02030BC8 hit_alive
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 40
+dump 0x0228FBB0 0x12C b12
+wait 200
+dump 0x0228FBB0 0x12C b12_late
+battlers

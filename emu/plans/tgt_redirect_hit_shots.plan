@@ -1,0 +1,72 @@
+# tgt_redirect_hit with screenshots every 15 frames after the poke (the lunge must go to 10)
+# Target dies between target resolution and the hit: Jian picks the left front enemy (9); its HP
+# is poked to 0 after his target is resolved and before his hit lands. The hit must go to the
+# next enemy in the list (10) instead of missing. Same path as later hits of a multi-hit attack.
+include boot_to_field
+include cheats_strong
+include warp6
+poke u16 0x020B4650 3
+poke u16 0x020B4780 999
+poke u16 0x020B477C 999
+wait 270
+poke u16 0x0228EBD0 0
+poke u16 0x0228EC3C 0
+exec 0x02051C48 attack_target
+exec 0x02030BC8 hit_alive
+watch u16 0x0228ED80 hp_rec9
+watch u16 0x0228EDEC hp_rec10
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 30
+poke u16 0x0228ED80 0
+wait 15
+shot rh_t1
+wait 15
+shot rh_t2
+wait 15
+shot rh_t3
+wait 15
+shot rh_t4
+wait 15
+shot rh_t5
+wait 15
+shot rh_t6
+wait 15
+shot rh_t7
+wait 15
+shot rh_t8
+wait 15
+shot rh_t9
+wait 15
+shot rh_t10
+wait 15
+shot rh_t11
+wait 15
+shot rh_t12
+wait 15
+shot rh_t13
+wait 15
+shot rh_t14
+wait 15
+shot rh_t15
+wait 15
+shot rh_t16
+wait 15
+shot rh_t17
+wait 15
+shot rh_t18
+wait 15
+shot rh_t19
+wait 15
+shot rh_t20
+wait 300
+battlers

@@ -639,3 +639,7 @@ different from the plan above:
   the first hit had already killed. Fixed with `cave_tgt_live`: an enemy counts as dead once HP plus the
   queued damage is 0 or less (hook D and the next-enemy search). Verified: Jian's combo goes 9, 10, 10 and
   Flora's three arrows 9, 10, 10 after the first hit kills 9.
+- **Redirect animation (2026-10-06)**: the lunge is aimed once at action step 0 from slot 0, so a
+  redirect only moved the damage. `feat_targeting_anim.py` re-aims after every step when the target is
+  dead or doomed and hits remain, and hops the attacker to the new enemy (docs/test-report-battle.md
+  section 3).
