@@ -51,12 +51,32 @@ flustered lines. It replaces his waking lines, the monologue and "Right then! I'
 Lucia..." (script 001 from the "....It's morning...?" message through that one). Jeff's message was cut
 off after "then as": the rest of the direction is still to come.
 
-Draft (speaker to confirm: whoever runs Gad's Express or owns Jian's room #203, and is met soon):
+Draft wake-up (speaker: Cherenkov, see below):
 
-> [Gad]: JIAN! You alive up there?! / Lucia left an hour ago!
+> Cherenkov: JIAN! You alive up there?! / Lucia left an hour ago!
 > Jian: ...Huh? An hour?!
-> [Gad]: She took today's run without / you. Get moving, or she'll / take your pay too!
+> Cherenkov: I wish I could afford to / oversleep every day! / Get moving!
 > Jian: I'm up! I'm up!
+
+Jeff (continued): after the wake-up, no player control yet. A scripted run: Jian runs out of his
+room, down the hall and out the front of the inn, and the real character introduction happens while
+he runs (the Eternal Blue model: Hiro's aside comes mid-chase).
+
+Speaker: Cherenkov, the innkeeper, not Gad. Gad has a counter in town but is not in the inn; Cherenkov
+already has the joke (script 001: "Ah, Jian. Finally, you grace us with your presence. I wish I could
+afford to oversleep every day! And if you're looking for Lucia, she already left."). His line moves
+into the wake-up, so passing him in the lobby needs a new or no line. Gad's later "Hey, lad, late again
+as usual, huh?" keeps the running gag.
+
+Draft for the run (an aside to the player, as Hiro's; only facts true in this game):
+
+> Jian: Oh, hey. Didn't see you / there. I'm Jian, courier for / Gad's Express. Fastest legs / in Searis... when I'm awake.
+> Jian: The girl who left without / me? Lucia, my new partner. / She's great. She's also / going to kill me.
+
+Feasibility, to research before promising it: script ops that move actors (026 uses 0x37, 0x39, 0x4E
+near party setup), whether the room, hall, lobby and street are separate maps and how a cutscene changes
+maps, whether a text box can show while Jian keeps running (otherwise alternate short runs and boxes),
+and returning control at the inn door. This is event scripting, much more than a text edit.
 
 Before building: check who is near Jian's room and at Gad's Express, add `!`, `?` and the speaker
 name markup to feat_text.py, and verify the scene in the emulator.
