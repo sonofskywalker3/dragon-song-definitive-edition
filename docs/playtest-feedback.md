@@ -118,3 +118,16 @@ invent material if he has to, but it has to feel right for Lunar.
 Not started. Likely output: a tracked research doc (short quotes only, with sources) on the world before
 Dragon Song: Althena, the Dragonmaster, the Four Dragons, Beastmen and humans, the Vile Tribe, places and
 history, and where the new dialogue could use them.
+
+## 5. Localization (Open)
+
+Jeff (2026-10-06): he hears the localization is a major part of the game's problem. He downloaded the
+Japanese release (Lunar Genesis, copied to `rom/Lunar - Genesis (Japan).nds`, not tracked) so the
+scripts can be compared line by line with the USA text. Goes with items 2, 3 and 4: the tone rules and
+any rewrite should check what the Japanese script actually says.
+
+## 6. Walking speed (Open)
+
+Jeff (2026-10-06): "can we increase walking speed a bit?" Field walking only (running is design 1).
+To find: the player's walk step per frame (player block 0x020B6BE4, position x +0xD0, y +0xD4 in 20.12)
+and whether NPC routes and scripted walks share the same speed value.
