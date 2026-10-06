@@ -15,6 +15,10 @@ so Normal stays exactly vanilla.
   two per frame; the position curve depends only on the counter, so it ends in the same place).
 - P5: damage numbers hold 24 frames after rising instead of 60.
 - P6: the round does not wait for damage numbers before the next actor; they finish over its start.
+- P10: the battle intro runs twice as fast: both enemy-row fades, each column popping in and the hold
+  after the enemies appear (func_020297d4 states 4 and 5, counter work +0xD0; every limit is even).
+- P11: the EXP pour advances every frame instead of every fourth (about 64 frames instead of 256), and
+  A is checked every frame, so a tap always skips it (vanilla only sees A on one frame in four).
 """
 
 from dsde.patching import AsmPatch, CaveCode, Feature
@@ -88,21 +92,54 @@ nw_state:
     .word ${{cave_speed_state}}
 """
 
-# r0 = counter -> r0 + 1 on Normal, + PACE_STEP otherwise. Keeps every other register and the flags.
-COUNT_ASM = f"""
-    push  {{r1, lr}}
-    mrs   r1, cpsr
-    push  {{r1}}
-    ldr   r1, pace_state
-    ldrb  r1, [r1]
-    cmp   r1, #0
-    addeq r0, r0, #1
-    addne r0, r0, #{PACE_STEP}
-    pop   {{r1}}
-    msr   cpsr_f, r1
-    pop   {{r1, pc}}
-pace_state:
+INTRO_COUNTER_ADDS = (  # func_020297d4: add r1, r1, #1 (intro counter work +0xD0)
+    (0x02029DD4, 0xE2811001, "first enemy row fades in faster"),
+    (0x02029ECC, 0xE2811001, "second enemy row fades in faster"),
+    (0x0202A030, 0xE2811001, "enemy columns pop in faster"),
+    (0x0202A11C, 0xE2811001, "shorter hold after the enemies appear"),
+)
+POUR_GATE = (
+    0x02052C70,
+    0xE2110003,
+)  # func_02052c2c: ands r0, r1, #3 (pour every fourth frame)
+
+
+def count_asm(reg: str) -> str:
+    """`reg` + 1 on Normal, + PACE_STEP otherwise. Keeps every other register and the flags."""
+    scratch = "r2" if reg == "r1" else "r1"
+    return f"""
+    push  {{{scratch}, lr}}
+    mrs   {scratch}, cpsr
+    push  {{{scratch}}}
+    ldr   {scratch}, count_state
+    ldrb  {scratch}, [{scratch}]
+    cmp   {scratch}, #0
+    addeq {reg}, {reg}, #1
+    addne {reg}, {reg}, #{PACE_STEP}
+    pop   {{{scratch}}}
+    msr   cpsr_f, {scratch}
+    pop   {{{scratch}, pc}}
+count_state:
     .word ${{cave_speed_state}}
+"""
+
+
+COUNT_ASM = count_asm("r0")
+
+# Replaces `ands r0, r1, #3` (r1 = pour frame counter; the next instructions return unless Z is set):
+# on Fast and Fastest r0 = 0 with Z set, so the pour step and its A check run every frame.
+POUR_ASM = """
+    ldr   r0, pour_state
+    ldrb  r0, [r0]
+    cmp   r0, #0
+    bne   pour_fast
+    ands  r0, r1, #3
+    bx    lr
+pour_fast:
+    movs  r0, #0
+    bx    lr
+pour_state:
+    .word ${cave_speed_state}
 """
 
 
@@ -122,6 +159,13 @@ BATTLE_PACE = Feature(
         _call(
             *REFILL_COUNTER_ADD, "bl", "cave_pace_count", "front-row refill runs faster"
         ),
+        CaveCode("cave_pace_count_r1", count_asm("r1"), "count frames faster (r1)"),
+        *(
+            _call(addr, old, "bl", "cave_pace_count_r1", note)
+            for addr, old, note in INTRO_COUNTER_ADDS
+        ),
+        CaveCode("cave_pace_pour", POUR_ASM, "EXP pour every frame, A always skips"),
+        _call(*POUR_GATE, "bl", "cave_pace_pour", "EXP pour every frame, A skips"),
         CaveCode(
             "cave_pace_number_wait", NUMBER_WAIT_ASM, "no wait for damage numbers"
         ),
