@@ -1,0 +1,35 @@
+# Party of Jian and Lucia (slots pinned to 0, 1, third slot empty), all strong, in the first Delrich Temple battle
+include boot_from_save
+pin u16 0x020B46C8 999
+pin u16 0x020B46C4 999
+pin u8 0x020B46D4 255
+pin u8 0x020B46D8 255
+pin u8 0x020B46E0 255
+pin u8 0x020B46E8 255
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u8 0x020B4730 255
+pin u8 0x020B4734 255
+pin u8 0x020B473C 255
+pin u8 0x020B4744 255
+pin u16 0x020B464C 0
+pin u16 0x020B4650 1
+pin u16 0x020B4654 65535
+include cheats_strong
+include warp6
+pin u16 0x020B46C8 999
+pin u16 0x020B46C4 999
+pin u8 0x020B46D4 255
+pin u8 0x020B46D8 255
+pin u8 0x020B46E0 255
+pin u8 0x020B46E8 255
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u8 0x020B4730 255
+pin u8 0x020B4734 255
+pin u8 0x020B473C 255
+pin u8 0x020B4744 255
+pin u16 0x020B464C 0
+pin u16 0x020B4650 1
+pin u16 0x020B4654 65535
+include cheats_strong

@@ -1,5 +1,5 @@
-# Result screens with three party members: the EXP page fits the Silver line (title banner dropped,
-# member lines moved up), A opens the item page, A leaves. Run with --save. Shots r3_*.
+# Result screens with three party members: EXP page with the Silver line below the member lines, A
+# opens the item page, A leaves. Run with --save. Shots r3_*.
 include party3_strong
 watch u16 0x020B85C8 result_sub
 watch u32 0x020B4824 silver
