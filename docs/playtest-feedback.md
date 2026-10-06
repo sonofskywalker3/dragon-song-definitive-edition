@@ -164,3 +164,11 @@ Jeff picked version B of the drafts in docs/style-rules.md, with his own last li
 > Jian: I'm up! I'm up!
 
 The run aside (Jian's lines while he runs out of the inn) is still to be agreed.
+
+Cherenkov's lobby line (decided 2026-10-06), from his Japanese line (script 001 JP @ 0x642) in place of the
+USA "grace us with your presence" joke, which the wake-up now replaces:
+
+> Cherenkov: Jian, what are you doing?! / Get to the fountain plaza! / Don't keep Lucia waiting!
+
+Jian's run lines: still being worked on. Source is his Japanese self-introduction (JP script 001 @ 0xC16),
+minus what the trimmed prologue already says.
