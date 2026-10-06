@@ -1,0 +1,178 @@
+# Boss EXP in a scripted boss fight (Raft, San Coliseum boss, battle id 3). Run with --save.
+# San Coliseum's script (005) starts Raft's fight with script op 0x10 type 3, battle id 3 (0x3978).
+# Like boss_sasquatch.plan, this plan stands Jian in Delrich Temple (map 6) and does the field loop's
+# three writes itself (0x020B7838 = 1, 0x020B783A = battle id, 0x020B0010 = 0x73). Raft's battle type
+# forces area_min 10, so at party level 1 Raft rolls level 10 wherever the fight runs.
+# Expected (docs/boss-exp.md): row 138, EXP 44 at level 0 and 6015 at level 98: 44 + 5971 * 10 / 98 = 653.
+# Raft dies to Jian's first combo; 25 A presses cover the fight, then a shot and an A every 120 frames
+# walk the result pages (pool page, EXP page with the Silver line, item page only if items dropped).
+watch u16 0x020B85BE event_battle_id
+watch u16 0x020B85C0 battle_mode
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B8610 exp_pool
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u32 0x020B4664 jian_level
+include boot_from_save
+include cheats_strong
+# warp6 without the final move onto an enemy spawn point
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+shot raft_field
+peek u32 0x020B4694 jian_exp_before
+peek u32 0x020B4664 jian_level_before
+peek u32 0x020B4824 silver_before
+poke u16 0x020B7838 1
+poke u16 0x020B783A 3
+poke u32 0x020B0010 0x73
+wait 240
+shot raft_intro
+battlers
+peek u32 0x020B85B8 area_group
+peek u16 0x020B85BC map
+peek u32 0x020B8620 stats_ptr
+# battle stat records 0..13 (0x6C each): +0x0C level, +0x14 HP, +0x50 EXP the kill adds
+dump 0x0228E860 0x5E8 stat_records
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a5
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a10
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a15
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a20
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a25
+battlers
+wait 120
+shot raft_r1
+press A 3
+wait 120
+shot raft_r2
+press A 3
+wait 120
+shot raft_r3
+press A 3
+wait 120
+shot raft_r4
+press A 3
+wait 120
+shot raft_r5
+press A 3
+wait 120
+shot raft_r6
+press A 3
+wait 120
+shot raft_r7
+press A 3
+wait 120
+shot raft_r8
+press A 3
+wait 120
+shot raft_r9
+press A 3
+wait 120
+shot raft_r10
+press A 3
+wait 120
+shot raft_r11
+press A 3
+wait 120
+shot raft_r12
+press A 3
+wait 120
+shot raft_r13
+press A 3
+wait 120
+shot raft_r14
+press A 3
+wait 120
+shot raft_r15
+press A 3
+wait 120
+shot raft_r16
+press A 3
+wait 120
+shot raft_r17
+press A 3
+wait 120
+shot raft_r18
+press A 3
+wait 120
+shot raft_r19
+press A 3
+wait 120
+shot raft_r20
+press A 3
+wait 120
+shot raft_r21
+press A 3
+wait 120
+shot raft_r22
+press A 3
+wait 120
+shot raft_r23
+press A 3
+wait 120
+shot raft_r24
+press A 3
+wait 300
+shot raft_after
+peek u32 0x020B4694 jian_exp_final
+peek u32 0x020B4664 jian_level_final
+peek u32 0x020B4824 silver_final

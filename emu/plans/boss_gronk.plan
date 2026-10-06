@@ -1,0 +1,233 @@
+# Boss EXP in a scripted boss fight (Gronk, Cathedral of Althena boss, battle id 5). Run with --save.
+# The Cathedral's script (015) starts Gronk's fight with script op 0x10 type 3, battle id 5 (0x43A8).
+# Like boss_sasquatch.plan, this plan stands Jian in Delrich Temple (map 6) and does the field loop's
+# three writes itself (0x020B7838 = 1, 0x020B783A = battle id, 0x020B0010 = 0x73). Gronk has no area_min
+# override, so the fight keeps map 6's area_min (4) and at party level 1 Gronk rolls level 4 here.
+# Expected (docs/boss-exp.md): row 142, EXP 148 at level 0 and 10424 at level 98: 148 + 10276 * 4 / 98 = 567.
+# (In the Cathedral itself the fight rolls level 10 or more: 1196.)
+# Gronk takes about eight of Jian's actions; 40 A presses, then a shot and an A every 120 frames
+# (the kill lands inside that loop) walk the rest of the fight and the result pages.
+watch u16 0x020B85BE event_battle_id
+watch u16 0x020B85C0 battle_mode
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B8610 exp_pool
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u32 0x020B4664 jian_level
+include boot_from_save
+include cheats_strong
+# warp6 without the final move onto an enemy spawn point
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+shot gronk_field
+peek u32 0x020B4694 jian_exp_before
+peek u32 0x020B4664 jian_level_before
+peek u32 0x020B4824 silver_before
+poke u16 0x020B7838 1
+poke u16 0x020B783A 5
+poke u32 0x020B0010 0x73
+wait 240
+shot gronk_intro
+battlers
+peek u32 0x020B85B8 area_group
+peek u16 0x020B85BC map
+peek u32 0x020B8620 stats_ptr
+# battle stat records 0..13 (0x6C each): +0x0C level, +0x14 HP, +0x50 EXP the kill adds
+dump 0x0228E860 0x5E8 stat_records
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot gronk_a5
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot gronk_a10
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot gronk_a15
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot gronk_a20
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot gronk_a25
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot gronk_a30
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot gronk_a35
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot gronk_a40
+battlers
+wait 120
+shot gronk_r1
+press A 3
+wait 120
+shot gronk_r2
+press A 3
+wait 120
+shot gronk_r3
+press A 3
+wait 120
+shot gronk_r4
+press A 3
+wait 120
+shot gronk_r5
+press A 3
+wait 120
+shot gronk_r6
+press A 3
+wait 120
+shot gronk_r7
+press A 3
+wait 120
+shot gronk_r8
+press A 3
+wait 120
+shot gronk_r9
+press A 3
+wait 120
+shot gronk_r10
+press A 3
+wait 120
+shot gronk_r11
+press A 3
+wait 120
+shot gronk_r12
+press A 3
+wait 120
+shot gronk_r13
+press A 3
+wait 120
+shot gronk_r14
+press A 3
+wait 120
+shot gronk_r15
+press A 3
+wait 120
+shot gronk_r16
+press A 3
+wait 120
+shot gronk_r17
+press A 3
+wait 120
+shot gronk_r18
+press A 3
+wait 120
+shot gronk_r19
+press A 3
+wait 120
+shot gronk_r20
+press A 3
+wait 120
+shot gronk_r21
+press A 3
+wait 120
+shot gronk_r22
+press A 3
+wait 120
+shot gronk_r23
+press A 3
+wait 120
+shot gronk_r24
+press A 3
+wait 120
+shot gronk_r25
+press A 3
+wait 120
+shot gronk_r26
+press A 3
+wait 120
+shot gronk_r27
+press A 3
+wait 120
+shot gronk_r28
+press A 3
+wait 120
+shot gronk_r29
+press A 3
+wait 120
+shot gronk_r30
+press A 3
+wait 300
+shot gronk_after
+peek u32 0x020B4694 jian_exp_final
+peek u32 0x020B4664 jian_level_final
+peek u32 0x020B4824 silver_final
