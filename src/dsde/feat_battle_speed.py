@@ -8,8 +8,9 @@ changes the speed.
 The game already scales battle animation by a speed level at 0x020B8540 (sprites run at 1 + level,
 spell effects at 1 + level / 2; docs/re-curse-battle-speed.md 2.1), which func_020297d4 zeroes every
 frame before its (now disabled) L/R hold fast-forward. That store becomes a call that writes the level
-for the current setting instead: Normal is the original speed, Fast the game's old R speed, Fastest its
-old L+R speed. The setting lives in ITCM, starts at Fast and lasts until power-off.
+for the current setting instead: Normal is the original game, Fast is the pacing package of
+feat_battle_pace.py with no acceleration, Fastest is the package plus the game's old R speed (sprites 3x,
+spell effects 2x). The setting lives in ITCM, starts at Fast and lasts until power-off.
 """
 
 from dsde.patching import AsmPatch, CaveCode, Feature
@@ -23,7 +24,11 @@ PLAY_SOUND = 0x020284D8
 SOUND_MENU = 1
 KEY_R = 0x100
 KEY_L = 0x200
-SPEED_LEVELS = (0, 2, 3)  # game speed level for Normal, Fast, Fastest
+SPEED_LEVELS = (
+    0,
+    0,
+    2,
+)  # game acceleration for Normal, Fast (battle-pace only), Fastest
 DEFAULT_SETTING = 1  # Fast
 
 # Bytes: +0 setting (index into SPEED_LEVELS), +1 armed (R pressed without L), +2 R held last frame

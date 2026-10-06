@@ -1,0 +1,126 @@
+# Battle pacing look (battle-pace): screenshots every 20 frames through round 1 on Fast.: the whole first Delrich Temple battle on the default speed (Fast),
+# A every 20 frames from the first command to the field. Logs the battle main state (0x020B0010) and the
+# speed level; compare the frame of each state with pace_battle_normal.
+include boot_from_save
+include cheats_strong
+watch u32 0x020B0010 main_state
+include warp6
+watch u32 0x020B8540 speed_level
+wait 270
+press A 3
+wait 17
+shot pf_01
+press A 3
+wait 17
+shot pf_02
+press A 3
+wait 17
+shot pf_03
+press A 3
+wait 17
+shot pf_04
+press A 3
+wait 17
+shot pf_05
+press A 3
+wait 17
+shot pf_06
+press A 3
+wait 17
+shot pf_07
+press A 3
+wait 17
+shot pf_08
+press A 3
+wait 17
+shot pf_09
+press A 3
+wait 17
+shot pf_10
+press A 3
+wait 17
+shot pf_11
+press A 3
+wait 17
+shot pf_12
+press A 3
+wait 17
+shot pf_13
+press A 3
+wait 17
+shot pf_14
+press A 3
+wait 17
+shot pf_15
+press A 3
+wait 17
+shot pf_16
+press A 3
+wait 17
+shot pf_17
+press A 3
+wait 17
+shot pf_18
+press A 3
+wait 17
+shot pf_19
+press A 3
+wait 17
+shot pf_20
+press A 3
+wait 17
+shot pf_21
+press A 3
+wait 17
+shot pf_22
+press A 3
+wait 17
+shot pf_23
+press A 3
+wait 17
+shot pf_24
+press A 3
+wait 17
+shot pf_25
+press A 3
+wait 17
+shot pf_26
+press A 3
+wait 17
+shot pf_27
+press A 3
+wait 17
+shot pf_28
+press A 3
+wait 17
+shot pf_29
+press A 3
+wait 17
+shot pf_30
+press A 3
+wait 17
+shot pf_31
+press A 3
+wait 17
+shot pf_32
+press A 3
+wait 17
+shot pf_33
+press A 3
+wait 17
+shot pf_34
+press A 3
+wait 17
+shot pf_35
+press A 3
+wait 17
+shot pf_36
+press A 3
+wait 17
+shot pf_37
+press A 3
+wait 17
+shot pf_38
+press A 3
+wait 17
+shot pf_39
