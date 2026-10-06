@@ -89,6 +89,12 @@ Decided 2026-10-06.
   convenience or emergency item and makes delivery jobs more attractive. Old Lunar games were sparing with
   MP recovery items, and backtracking to a statue to keep a grind going is normal; the current scarcity is
   excessive, not the idea.
+- Built 2026-10-06: spell costs about 40% of vanilla (Healing Water 4, Tender Rain 12, Cure Squall 4, Divine Rain 16,
+  Miracle Tears 20, Escape 2, Quick 8, Grand Weapon 10, Grand Shell 10); Dragon Magic and Gabryel's and Rufus's
+  spells stay at 10. MP growth is unchanged; if it is tuned later, unlocks move to a precomputed level table.
+- Mental Gum restores a flat 20 MP and Mental Drop a flat 50 (were 20% and 50% of max); the all-allies MP card keeps
+  its percentage. Mental Gum costs 1000 and is sold in the item shop from the third town (San Coliseum) on;
+  Mental Drop stays boss-only.
 
 ## 9. Gad's Express
 
