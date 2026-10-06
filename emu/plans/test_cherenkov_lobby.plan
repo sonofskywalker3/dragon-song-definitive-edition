@@ -1,0 +1,29 @@
+# opening-run: Cherenkov's lobby line. Warps from the test save into the lobby (map 155), puts Jian below the
+# counter's talk object (id 0x3C at 236,208; the camera does not follow the teleport) and talks to him.
+include boot_from_save
+pin u16 0x020B77EC 0x9B
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+wait 30
+poke u32 0x020B6CB4 0xEC000
+poke u32 0x020B6CB8 0xE0000
+wait 10
+press Up 4
+wait 10
+shot ch_pos1
+press A 4
+wait 90
+shot ch_talk1
+press A 4
+wait 60
+shot ch_talk1b
+wait 10
+press Up 4
+wait 10
+press A 4
+wait 90
