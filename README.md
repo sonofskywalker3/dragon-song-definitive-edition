@@ -32,6 +32,8 @@ For real hardware, put your own DS ARM7 BIOS dump (16 KB, for example from a DSi
 then passes it to dsd, which writes the secure area checksum. Our patched ROMs need this because the new
 ITCM code makes the arm9 autoload table at 0x02000B00, inside the secure area, differ from the original.
 Without it the checksum stays 0 (dsd recomputes the header CRC either way).
+Checked 2026-10-06: with a good dump (CRC32 1280F0D5) an unmodified rebuild is byte-identical to the
+original ROM, secure area checksum 0x1413 included.
 
 Hardware notes (2026-10-06, from the nds-bootstrap source, not yet tested on a device): nds-bootstrap
 (TWiLight Menu++ on a DSi or 3DS) only puts code in ITCM for a few DSiWare titles and has no fix patch
