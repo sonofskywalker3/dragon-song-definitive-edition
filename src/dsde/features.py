@@ -264,7 +264,7 @@ FEATURES: tuple[Feature, ...] = (
     WALK_SPEED,
     GAD_EXPRESS,
     MIC_SIGN,
-    OPENING,  # prototype, not in DEFAULT_FEATURES until approved
+    OPENING,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -289,4 +289,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     WALK_SPEED.name,
     GAD_EXPRESS.name,
     MIC_SIGN.name,
+    OPENING.name,
 )

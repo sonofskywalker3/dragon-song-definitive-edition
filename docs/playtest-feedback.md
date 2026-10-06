@@ -92,7 +92,7 @@ Notes:
   0xFD line break, 0xFE page break (waits for A), 0xFC, 0xFB + letter (text color: `E` alternate, `F`
   normal, `C` blue for place names). feat_text.py does not write `!`, `?`, `-` or color codes yet.
 
-## 3. Prologue trims (Open)
+## 3. Prologue trims (Done)
 
 Script 026 @ 0x08 (the same opening narration as item 1). Jeff:
 
@@ -172,3 +172,17 @@ USA "grace us with your presence" joke, which the wake-up now replaces:
 
 Jian's run lines: still being worked on. Source is his Japanese self-introduction (JP script 001 @ 0xC16),
 minus what the trimmed prologue already says.
+
+## 2 and 3. Opening built (2026-10-06)
+
+Jeff approved Jian's run lines (inner voice, no name tag, one box per map):
+
+> Room: I'm Jian. I'm a courier for / Gad's Express. Lucia and I / haven't been partners long.
+> Hall: It gets risky sometimes. / Honestly? That's what I / love about it.
+> Lobby: Lucia? She's great. / Just don't tell her / I said so.
+
+`opening-run` is in the default build with the decided wake-up, run lines and Cherenkov's lobby line
+("Fountain Square" in the place-name color, as the USA text names it). Prologue trims done (Jeff,
+2026-10-06: "'humans' and 'beastmen' need to have the ' removed still"): no quotes around Beastmen,
+Humans, Jian Campbell, courier and Lucia Collins; no "who loves acrobatics"; no "pair of them love
+excitement" paragraph. Checked in the emulator from a New Game (`text_intro`, `opening_run`).
