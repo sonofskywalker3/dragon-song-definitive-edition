@@ -1,0 +1,60 @@
+# leave-drops-gear, diagnostic: Lucia poked into party slot 1 before the intro's setup leaves: the intro's setup leaves must keep everyone's gear (flag 0x1 not set yet).
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+wait 600
+poke u16 0x020B4650 1
+exec 0x02040238 party_leave_handler
+dump 0x020B464C 12 party_before
+dump 0x020B46F4 12 lucia_before
+dump 0x020B4750 12 gabryel_before
+dump 0x020B47AC 12 flora_before
+dump 0x020B4808 12 rufus_before
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+dump 0x020B464C 12 party_after
+dump 0x020B46F4 12 lucia_after
+dump 0x020B4750 12 gabryel_after
+dump 0x020B47AC 12 flora_after
+dump 0x020B4808 12 rufus_after
+peek u16 0x020B6BE4 map_after

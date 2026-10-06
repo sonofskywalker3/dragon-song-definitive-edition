@@ -1,0 +1,92 @@
+# leave-drops-gear: a leave after the intro empties the character's equipment slots. New Game to Jian's
+# wake-up (script 001 is at 0x022825A0 here, found with diag_leave_ctx). Lucia is poked into party slot 1
+# and the scene's op 0x49 at 0x6378 (after flag 0x1 is set) becomes party_leave 1 plus a yield.
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+peek u16 0x020B6BE4 map
+poke u16 0x020B4650 1
+poke u32 0x02288918 0x0001001C
+poke u32 0x0228891C 0
+exec 0x02040238 party_leave_handler
+dump 0x020B464C 12 party_before
+dump 0x020B46F4 12 lucia_gear_before
+watch u32 0x02288918 poked_op
+press A 3
+wait 200
+shot lv_01
+press A 3
+wait 200
+shot lv_02
+press A 3
+wait 200
+shot lv_03
+press A 3
+wait 200
+shot lv_04
+press A 3
+wait 200
+shot lv_05
+press A 3
+wait 200
+shot lv_06
+press A 3
+wait 200
+shot lv_07
+press A 3
+wait 200
+shot lv_08
+press A 3
+wait 200
+shot lv_09
+press A 3
+wait 200
+shot lv_10
+dump 0x020B464C 12 party_after
+dump 0x020B46F4 12 lucia_gear_after
+dump 0x0213B930 0x1A4 inventory_after
+shot leave_after

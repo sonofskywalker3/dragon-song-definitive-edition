@@ -1,0 +1,9 @@
+# Diagnostic: equipment slots (record + 0x3C) of all five characters and the inventory, from the save.
+include boot_from_save
+dump 0x020B4698 12 jian_equip
+dump 0x020B46F4 12 lucia_equip
+dump 0x020B4750 12 gabryel_equip
+dump 0x020B47AC 12 flora_equip
+dump 0x020B4808 12 rufus_equip
+dump 0x020B464C 12 party_slots
+dump 0x0213B930 0x1A4 inventory

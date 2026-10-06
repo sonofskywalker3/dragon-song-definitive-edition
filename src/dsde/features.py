@@ -6,6 +6,7 @@ from dsde.boss_exp import boss_exp, check_tables
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
 from dsde.feat_battle_end import BATTLE_END_RULES
 from dsde.feat_battle_run import HOLD_LR_TO_RUN
+from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_FIXES
@@ -356,6 +357,7 @@ FEATURES: tuple[Feature, ...] = (
     MANUAL_TARGETING,
     TEXT_FIXES,
     HOLD_LR_TO_RUN,
+    LEAVE_DROPS_GEAR,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -371,4 +373,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     MANUAL_TARGETING.name,
     TEXT_FIXES.name,
     HOLD_LR_TO_RUN.name,
+    LEAVE_DROPS_GEAR.name,
 )

@@ -1,0 +1,50 @@
+# Diagnostic: where script 001 sits in memory once Jian's room has loaded (for test_leave_gear).
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+peek u16 0x020B6BE4 map
+find 0300000020750000490000000300000037000000 wake_op49
