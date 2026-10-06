@@ -27,7 +27,8 @@ The battle system itself stays non-positional. It was different from Lunar 1 and
 - The HP/MP recovery for clearing an area is removed.
 - Blue chests stay locked until every enemy in the area is beaten, at your own pace.
 - Bosses give EXP (in the original they give none, and their EXP values are 1 to 10 placeholders). Starting
-  value: about ten regular enemies' worth at the boss's level, tuned in playtesting.
+  value: about ten regular enemies' worth at the boss's level, tuned in playtesting. "Regular" means the
+  regular enemies of the place the boss is fought in; per-boss numbers in docs/boss-exp.md.
 - EXP amounts for regular enemies stay unchanged to start. Enemies reportedly scale with the party's level, so faster leveling
   should not break the balance. Item drops are the bigger balance risk; trim them only if playtesting says so.
 
