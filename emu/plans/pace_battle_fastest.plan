@@ -1,0 +1,230 @@
+# Battle pacing timing on Fastest (one R tap: Fast -> Fastest): the whole first Delrich Temple battle,
+# A every 20 frames. Compare with pace_battle_fast and pace_battle_normal.
+include boot_from_save
+include cheats_strong
+watch u32 0x020B0010 main_state
+include warp6
+watch u32 0x020B8540 speed_level
+wait 270
+press R 3
+wait 5
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
