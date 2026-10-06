@@ -1,4 +1,4 @@
-# Result screens: the EXP page, then A opens the item page (items and silver), then A leaves.
+# Result screens: the EXP page (members plus the Silver line), then A opens the item page (items), then A leaves.
 # Run with --save. Shots: rp_exp (EXP page waiting for A), rp_items* (item page), rp_field (after).
 watch u16 0x020B85C8 result_sub
 watch u32 0x020B8610 exp_pool

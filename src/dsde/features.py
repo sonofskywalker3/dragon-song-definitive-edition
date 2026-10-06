@@ -215,7 +215,7 @@ FIX_SAVE_GLITCH = Feature(
 
 # Silver from battles (design 3). At the EXP step func_02052fb8 fetches the battle's EXP pool
 # (before the game doubles it); the hook adds the same amount of silver. Tune SILVER_PER_EXP later.
-# The amount is also kept in cave_silver_gained for the result-screens item page.
+# The amount is also kept in cave_silver_gained for the Silver line on the result-screens EXP page.
 SILVER = 0x020B4824
 SILVER_CAP = 999_999
 GET_EXP_POOL = 0x0202AF34
