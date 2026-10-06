@@ -14,11 +14,16 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXTRACT = PROJECT_ROOT / "extract"
 DSD = PROJECT_ROOT / "tools" / "dsd.exe"
 OUTPUT_ROM = PROJECT_ROOT / "build" / "dsde.nds"
+# Your own DS ARM7 BIOS dump (16 KB). With it dsd encrypts the secure area and writes its checksum
+# (header 0x6C); without it the checksum stays 0, which emulators ignore and real hardware may not.
+ARM7_BIOS = PROJECT_ROOT / "tools" / "bios7.bin"
 
 logger = logging.getLogger(__name__)
 
 
-def build(feature_names: list[str], output: Path = OUTPUT_ROM) -> Path:
+def build(
+    feature_names: list[str], output: Path = OUTPUT_ROM, arm7_bios: Path = ARM7_BIOS
+) -> Path:
     """Copy extract/, apply the named features, and build a ROM."""
     wanted = {f.name: f for f in FEATURES}
     unknown = set(feature_names) - wanted.keys()
@@ -44,9 +49,15 @@ def build(feature_names: list[str], output: Path = OUTPUT_ROM) -> Path:
     )
     apply_data(mod_extract / "files", chosen)
     config = mod_extract / "config.yaml"
-    subprocess.run(
-        [str(DSD), "rom", "build", "-c", str(config), "-o", str(output)], check=True
-    )
+    command = [str(DSD), "rom", "build", "-c", str(config), "-o", str(output)]
+    if arm7_bios.is_file():
+        command += ["-7", str(arm7_bios)]
+    else:
+        logger.warning(
+            "no ARM7 BIOS at %s: secure area checksum left at 0 (fine for emulators)",
+            arm7_bios,
+        )
+    subprocess.run(command, check=True)
     logger.info("built %s with %s", output, ", ".join(feature_names) or "no features")
     return output
 
@@ -58,8 +69,9 @@ def main() -> None:
         "features", nargs="*", help="feature names; default is the shipping set"
     )
     parser.add_argument("--output", type=Path, default=OUTPUT_ROM)
+    parser.add_argument("--arm7-bios", type=Path, default=ARM7_BIOS)
     args = parser.parse_args()
-    build(args.features or list(DEFAULT_FEATURES), args.output)
+    build(args.features or list(DEFAULT_FEATURES), args.output, args.arm7_bios)
 
 
 if __name__ == "__main__":

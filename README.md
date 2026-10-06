@@ -27,6 +27,16 @@ You need your own copy of the game. This repo never contains the ROM or anything
 An unmodified rebuild matches the original byte for byte except the secure area checksum at header
 offset 0x6C and the header CRC at 0x15E, which need an ARM7 BIOS (`-7`) to recompute. Emulators ignore them.
 
+For real hardware, put your own DS ARM7 BIOS dump (16 KB, for example from a DSi with dumpTool) at
+`tools/bios7.bin` before running `uv run python -m dsde.patches` (or pass `--arm7-bios <path>`). The build
+then passes it to dsd, which writes the secure area checksum. Our patched ROMs need this because the new
+ITCM code makes the arm9 autoload table at 0x02000B00, inside the secure area, differ from the original.
+Without it the checksum stays 0 (dsd recomputes the header CRC either way).
+
+Hardware notes (2026-10-06, from the nds-bootstrap source, not yet tested on a device): nds-bootstrap
+(TWiLight Menu++ on a DSi or 3DS) only puts code in ITCM for a few DSiWare titles and has no fix patch
+for this game (ALNE), so our ITCM cave at 0x01FF8300 should not collide with it.
+
 ## Layout of the game
 
 - `extract/arm9/arm9.bin`: all of the game code (about 690 KB, uncompressed, no overlays).
