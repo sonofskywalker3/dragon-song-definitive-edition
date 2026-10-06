@@ -65,3 +65,50 @@ The battle system itself stays non-positional. It was different from Lunar 1 and
 - Stealing: kill the thief and you get the item back. If the thief escapes, or the party runs from the battle,
   the item is gone. No special protection for unique items for now.
 - Saving is already allowed anywhere (menu, System, Save), which softens losing an item to a thief.
+
+## 7. Battle controls and pacing
+
+Decided 2026-10-06.
+
+- No microphone. Running from battle is holding L and R together (half a second) on the command screen;
+  L and R are for running only, so the game's hold-L/R fast-forward is gone. Any tutorial or on-screen
+  hint must say L+R is for running (the battle screen's wooden "MIC" sign needs redrawing).
+- Battles should run smoother and faster by default, so that no speed button is needed. If a speed control
+  is still needed after playtesting, it is a full battle speed setting like the 2025 Lunar remasters (three
+  speeds, battle only). Analysis: docs/re-battle-pacing.md.
+- Victory screen: the Silver line counts up like the EXP does.
+
+## 8. MP and spells
+
+Decided 2026-10-06.
+
+- Spell unlocking is uncoupled from MP cost: each spell unlocks at the level it unlocks at today, so MP
+  costs and MP growth can then be tuned freely for balance.
+- Healing statues also cure status.
+- Mental Gum is sold in shops but expensive (Jeff's reference: priced like Lunar's Starlight), so it stays a
+  convenience or emergency item and makes delivery jobs more attractive. Old Lunar games were sparing with
+  MP recovery items, and backtracking to a statue to keep a grind going is normal; the current scarcity is
+  excessive, not the idea.
+
+## 9. Gad's Express
+
+Decided 2026-10-06.
+
+- Fix the recipient names that differ between the job menu and the NPC's own dialogue.
+- Keep the quit fee (a free quit would be a free reroll of the offered jobs).
+- Do not change which items jobs ask for.
+- Tie the job pool's growth to places visited or story points instead of deliveries made.
+
+## 10. Dragon rings
+
+Decided 2026-10-06, to build when playtesting reaches the dragons.
+
+- As in Lunar 1 and 2, every character can use the dragon rings.
+- Each character gets a separate ring slot, so a ring does not cost the accessory slot.
+- A ring's spell is castable by whoever wears that ring; the spells leave Jian's list when he is not
+  wearing the ring.
+
+## 11. Jian's curse
+
+Open (2026-10-06). Leaning towards removing the curse altogether and giving Gabryel a different reason to
+join. Story details: docs/re-curse-battle-speed.md part 1.
