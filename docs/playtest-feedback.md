@@ -91,3 +91,19 @@ Notes:
 - Text codes seen so far besides letters: 0x24 `!`, 0x25 `?`, 0x26 `-`, 0x29 `,`, 0x2A `.`, 0x54 `'`,
   0xFD line break, 0xFE page break (waits for A), 0xFC, 0xFB + letter (text color: `E` alternate, `F`
   normal, `C` blue for place names). feat_text.py does not write `!`, `?`, `-` or color codes yet.
+
+## 3. Prologue trims (Open)
+
+Script 026 @ 0x08 (the same opening narration as item 1). Jeff:
+
+- Remove "who loves acrobatics": "A youth who loves acrobatics, / named 'Jian Campbell', / is making a
+  living here as a / 'courier', along with his / friend 'Lucia Collins'." becomes "A youth named Jian
+  Campbell is making a living here as a courier, along with his friend Lucia Collins." (rewrap to 30).
+- Remove all the single quotes in the prologue unless needed: 'Beastmen', 'Humans', 'Jian Campbell',
+  'courier', 'Lucia Collins'. Apostrophes that are real (Althena's) stay.
+- Remove the whole last paragraph: "The pair of them love / excitement... especially when / spiced with
+  just a little / danger."
+
+Check after the edit: line wraps (30 characters, the stored text drops the space at each wrap) and that
+the last page still ends cleanly with its page break before the game starts.
+
