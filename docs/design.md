@@ -110,5 +110,23 @@ Decided 2026-10-06, to build when playtesting reaches the dragons.
 
 ## 11. Jian's curse
 
-Open (2026-10-06). Leaning towards removing the curse altogether and giving Gabryel a different reason to
-join. Story details: docs/re-curse-battle-speed.md part 1.
+Decided 2026-10-06 (dialogue to be written). The curse goes, and so does Zethos's blast at the end of the
+San Coliseum. The story never explains why Zethos cursed Jian, and the curse only lifts because Zethos
+casts the cure on him mid-fight.
+
+Gabryel's new reason to join: she acts like an impressed fan (a groupie) of the human who won the
+tournament and wants to see him take on a bigger challenge: the Beast King is challenging anyone who will
+fight him, to test their strength, with a reward. She flirts enough to set up romantic tension with Lucia.
+At Zethos Castle the reveal stays: he is her father, and the challenge was a ploy for the real offer
+(recruiting fighters for the Frontier against the Vile Tribe).
+
+Why it fits the existing story: Zethos is already known to be coming to watch the tournament and watches
+Jian win; Gabryel's first line about Jian is "This is the human who fought so bravely in the Coliseum?";
+Zethos says "I can see where your initial interest in these two must have come from, Gabryel"; a priest at
+the Cathedral calls her "My lady"; Leephon City already has Zethos posters (could become the challenge).
+
+To change: the Coliseum aftermath (script 005), Carmen in Port Olbeage (007), at Zethos Castle (009)
+Lucia's demand, Jian's "why did you do it", "cursed knight", the post-fight curse lines and "You look all
+better now"; the Zethos fight loses its curse HP floor and self-cure, so check its balance (Jian fights
+alone). Check that the Cathedral detour still has its reason. Story details: docs/re-curse-battle-speed.md
+part 1.
