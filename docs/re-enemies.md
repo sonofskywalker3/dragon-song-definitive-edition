@@ -73,7 +73,7 @@ species index lines up with the enemy names in the name block, and the same inde
 |---|---|
 | 0-3 Blob, 4-7 Onlooker, 8-11 Shreeker, 12-15 Namia, 16-19 Treant, 20-23 Ice Mongrel, 24-27 Mad Fang, 28-31 Yeti, 32-35 Termite, 36-39 Abadon, 40-43 Tick, 44-47 Bealzebub, 48-51 Insector, 52-55 Gloomwing, 56-59 Kuntukapu, 60-63 Ikontabipu, 64-67 Dagon | normal |
 | 68-71 Hellbird, 72-75 Sturge, 76-79 Vitra, 80-83 Quetzalcoatl, 84-87 Comet, 88-91 Ohainkaru, 92-95 Shaitan, 96-99 Phantom, 100-103 Ochu, 104-107 Evil Earth, 108-111 Chupacabra, 112-115 Enigma, 116-119 Ghoula, 120-123 Thanatos, 124-127 Asmodee, 128-131 Duager, 132-135 Druid | normal |
-| 136 Sasquatch, 137 Armored Boar, 138 Raft, 139 Sharif, 140 Moran, 141 Deuce, 142 Gronk, 143 Zethos, 144 Caucus, 145 Orcus, 146 Morus, 147 Red Dragon, 148 White Dragon, 149 Black Dragon, 150 Blue Dragon, 151 Dark Jian, 152 Gideon, 153 Gideon 2, 154 Gideon 3, 155 Ignatius, 156 (name slot is "Jian") | bosses |
+| 136 Sasquatch, 137 Armored Boar, 138 Raft, 139 Sharif, 140 Moran, 141 Deuce, 142 Gronk, 143 Zethos, 144 Caucus, 145 Orcus, 146 Morus, 147 Red Dragon, 148 White Dragon, 149 Black Dragon, 150 Blue Dragon, 151 Dark Jian, 152 Gideon, 153 Gideon 2, 154 Gideon 3, 155 Ignatius, 156 (name slot is "Jian"; the Blue Dragon's bubbles, labelled "Bubble" in the enemy picker) | bosses |
 
 Supporting evidence for the boss mapping: row 151 is special-cased in `func_02069ad8` to copy Jian's own
 stats (HP x6, attack x4/5, defense x6/5), which fits Dark Jian; row 155 has 9999 HP and

@@ -628,8 +628,7 @@ different from the plan above:
   the centre). `dsde.emu` now runs EmuHawk with a copy of the config without that binding.
 - Menu field `+0x2C` is set to 1 by the list-page builder itself (`[0xb] = 1`), it is not a leftover A press.
 - The picker sets the member's `+0x8C` to -1 when Fight is opened, so a stale ally index never survives.
-- Unverified: boss name images (Gideon shows as "Gideon 2"/"Gideon 3" by name string), row 156 (the Blue
-  Dragon's summons) shows as "Jian", 4 enemies in one row (the 4th column lands on page 2), mic Run while the
+- Unverified: boss name images (Gideon shows as "Gideon 2"/"Gideon 3" by name string), 4 enemies in one row (the 4th column lands on page 2), mic Run while the
   picker is up.
 - **Multi-hit attacks (tested 2026-10-05, docs/test-report-battle.md)**: Jian has a real 3-hit combo until
   the curse, and Flora's hit count comes from her weapon (effect 0x2B = up to 2, 0x2C = up to 3; Composite
@@ -643,3 +642,13 @@ different from the plan above:
   redirect only moved the damage. `feat_targeting_anim.py` re-aims after every step when the target is
   dead or doomed and hits remain, and hops the attacker to the new enemy (docs/test-report-battle.md
   section 3).
+- **Blue Dragon's summons (2026-10-06)**: row 156 maps to species 54, one past the last enemy species
+  (Ignatius, card 0x10D), so its card id 0x10E is the Jian character card: Jian's portrait and "Jian". The
+  game never names them on screen (no target selection, no summon message); fan walkthroughs call them
+  bubbles (lparchive.org Lunar: Dragon Song update 14, retromaggedon.com walkthrough), and they are drawn
+  as white and purple bubbles. `feat_targeting_names.py` shows row 156 as item 0x19C, an unused
+  placeholder named "K26", renamed "Bubble" (its string runs on into K27's, and K27 points at K28's) with
+  a copy of the Blue Orb icon (sysmenupack entry 0x36). The info window (func_02044c00) prints no name
+  for ids 0x1A0 and up and a count after anything outside 0xD8..0x113, so 0x19C is treated as a card at
+  0x02044CE4. Verified in a scripted Blue Dragon fight (`tgt_bluedragon`): "Blue Dragon", then "Bubble"
+  twice for the front-row bubbles.

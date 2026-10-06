@@ -1,0 +1,22 @@
+# Picker label for the Blue Dragon's summons (enemy row 156). Run with --save. Temple battle with the
+# left front enemy (battler 9, at 0x0228F82C in this battle) turned into row 156 before Jian opens Fight.
+# The picker's bottom bar must name it "Bubble", and the real Jian elsewhere stays "Jian".
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+poke u32 0x0228F830 156
+battlers
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+shot row156_picker
+press Right 3
+wait 30
+shot row156_right
+press Left 3
+wait 30
+shot row156_back
