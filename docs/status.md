@@ -8,12 +8,12 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 |---|---|---|
 | 1. Running | `timed-run` | Verified in emulator: no HP cost; 179 frames running, 180 frames cooldown; holding B runs once, a fresh press is needed to run again (as in Lunar 1 and 2) |
 | 2. One battle mode | `one-battle-mode` | Verified: battles use Virtue rules (EXP, kills count) and every kill also rolls items; field mode toggle disabled |
-| 2. Result screen item list | `result-screens` | Verified (plans `test_result_pages`, `test_result_pages_boss`): after the EXP page, A opens a second page, "Items received!" with the dropped items (or "No items dropped."), then A leaves. EXP (202), silver (150 -> 251) and the four items are still granted; same with the battle mode pinned to -1 (boss rules). Skipped when nothing dropped and no silver was gained. Shows at most 4 items, as in the original |
+| 2. Result screen item list | `result-screens` | Verified (plans `test_result_silver1`, `test_result_silver3`, `test_result_noitems`): after the EXP page, A opens a second page, "Items received!" with the dropped items, then A leaves. Only shown when items dropped; with no items one A on the EXP page leaves the battle as in the original. EXP (202), silver (150 -> 251) and the items are still granted. Shows at most 4 items, as in the original |
 | 2. Virtue clock removed | `no-virtue-clock` | Verified: clock stays 0 after a kill (original: +1 per frame, 3600 = 60 s) |
 | 2. Respawn on re-entry | `restock-on-entry` | Built, not verified (needs a door inside a dungeon) |
 | 2. No area-clear refill | `no-clear-refill` | Built, not verified (needs an area clear) |
 | 2. Bosses give EXP | `boss-exp` | Built: mode -1 (boss/scripted) battles take the EXP path; every boss gets 10x the average regular enemy EXP (77 at level 0, 13048 at level 98, before doubling). Regular battles regression-tested; no boss fight tested yet |
-| 3. Silver from battles | `silver-drops` | Verified: the EXP step adds the battle's EXP pool as silver (150 -> 251 for a pool of 101). Shown as "Silver 101" on the item page (`result-screens`) |
+| 3. Silver from battles | `silver-drops` | Verified: the EXP step adds the battle's EXP pool as silver (150 -> 251 for a pool of 101). Shown on the EXP page as a "Silver 101" line styled like a party member line, directly below the last member (`result-screens`, shots r1_exp and r3_exp). With three members the Althena Conduct title banner is dropped (the box below still reads Althena Conduct) and the lines move up three rows; the Silver box's 3 pixel bottom edge then falls just off the top screen |
 | 4. Manual targeting | `manual-targeting` | Verified in emulator (plans `tgt_grid`, `tgt_touch`, `tgt_redirect_pick`, `tgt_redirect_hit`): Fight opens an enemy grid shaped like the battle (back row on top, front row below, left to right); Jian sees only the front row, Flora both rows; D-pad, A, B and tap-twice work; the chosen battler is attacked; a dead chosen target goes to the next enemy, before the attack and at the hit; the item list still works afterwards; `test_exp` unchanged. Not yet seen: a real multi-hit attack, 4 enemies in one row (4th column on page 2), boss fights, mic Run during the picker |
 | 5. Benched characters earn EXP | `battle-end-rules` | Verified: with Jian alone, Lucia, Gabryel and Flora each gained the same 152 EXP, levels and stats recomputed by the game's own routines; Rufus too |
 | 6. Broken gear back after battle | `battle-end-rules` | Verified with a simulated break (weapon swapped to its replacement mid-battle is back after the battle). Not yet seen with a real breaker enemy |
@@ -44,3 +44,10 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
   closes one, func_020457cc(window) reads its state (0 while closing). Opening a window while another one in the same
   area is still closing lets the closing one erase parts of the new one.
 - `battle_to_victory` fights the first Delrich Temple battle with A presses and stops as the victory starts (frame 7210).
+  With the current build that battle is won near frame 4260, so its later presses run into the result pages; the
+  `test_result_silver*` and `test_result_noitems` plans use 52 presses instead. `party3_strong` pins the party slots to
+  Jian, Lucia and Gabryel (all strong) for three-member tests.
+- EXP page windows: the table at 0x020B88B4 (0x30 bytes per window, 14 windows) holds flags, state, final and start
+  x/y (+0x10..+0x1c), width and height (+0x20, +0x24) and the current x/y (+0x28, +0x2c); func_02045ccc fills in the
+  fixed geometry. Pool window 6 is at y 5 (7 rows: 3 banner, 4 box), members 7..9 at y 12, 16, 20 (4 rows each), so
+  three members fill the top screen.

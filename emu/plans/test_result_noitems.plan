@@ -1,0 +1,125 @@
+# Result screens when nothing dropped: the drop slots (battle ctx + 0x48) are pinned empty from the
+# end of the battle, so one A on the EXP page leaves the battle (no item page). Run with --save.
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+include boot_from_save
+include cheats_strong
+include warp6
+wait 300
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+pin u32 0x020B8600 0
+pin u32 0x020B8604 0
+pin u32 0x020B8608 0
+pin u32 0x020B860C 0
+wait 720
+shot ni_exp
+unpin
+press A 3
+wait 30
+shot ni_after_a
+wait 230
+shot ni_field
