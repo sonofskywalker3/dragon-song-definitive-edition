@@ -138,3 +138,6 @@ Jeff (2026-10-06): improve the card system. A card should still drop when you al
 duplicate drop refills that card's durability instead of being lost. To find: how card drops are
 skipped for owned cards, and where a card's durability (the "P" counter on the card) is kept. Cards are
 items (for example 0xE8 Dagon, 0xE9 Hellbird) in the battle Item menu under Cards.
+
+Jeff (follow-up): the "collection" cards (the ones with no battle use, only collected) should be given
+real uses. To find: which cards are collection-only and what effect slots the card system supports.
