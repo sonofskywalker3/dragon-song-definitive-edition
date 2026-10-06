@@ -1,0 +1,25 @@
+# Running from battle (hold-lr-to-run): the microphone, a quick L+R tap and Select must do nothing;
+# holding L and R for half a second must run. Temple battle (warp6). Logs the menu's "run chosen"
+# field (0x020B8800 + 4 = 1) and the field state (0x020B0010) as the battle ends.
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+watch u32 0x020B8804 run_chosen
+watch u32 0x020B0010 field_state
+shot run0
+press Microphone 90
+wait 30
+shot run1_after_mic
+press L,R 10
+wait 30
+press Select 3
+wait 30
+shot run2_after_tap_and_select
+hold L,R
+wait 40
+release
+wait 30
+shot run3_after_hold
+wait 400
+shot run4
