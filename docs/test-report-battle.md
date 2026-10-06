@@ -144,8 +144,8 @@ boss fight above finishes with the same EXP and silver.
 
 ### Notes
 
-- Jian's animation still swings at the original enemy; only the damage number and flash move to the new
-  one. Cosmetic.
+- Jian's animation used to swing at the original enemy; only the damage number and flash moved to the new
+  one. Fixed 2026-10-06, see "Redirected attack animation" below.
 - When every enemy the attacker reaches is dead or doomed, the next-enemy search falls back to every row
   (existing `cave_tgt_next` rule), so Jian's later combo hits can land on a back-row enemy. With nobody left
   the hit lands on the doomed enemy as in vanilla.
@@ -153,3 +153,46 @@ boss fight above finishes with the same EXP and silver.
   slot 8, a back-row Tick into slot 9), as noted in docs/plan-targeting.md.
 - Still not tested: Great Bow (2 hits), multi-hit with Flora in a party of three, Auto battle with a
   multi-hit attacker.
+
+## 3. Redirected attack animation (2026-10-06)
+
+### Cause
+
+A party Attack runs as an action script on battler 12, the attacker's scratch copy (+0xC8 points at
+16-byte steps, +0xCC is the current step; battle state 7 in func_0202d22c advances it). Jian's script at
+0x02095AF0: step 0 (flag 0x200000) aims, func_0202fdf0 takes the move target from target slot 0 (+0x8C)
+at 7/8 of the way from home; step 1 (0x1016, move type 0x1000) leaps there in 6 frames; steps 5, 6, 7
+(flag 0x40) are the three hits, swung in place; step 9 (0x9016, flag 0x8000) leaps home. A step with flag
+0x10 sets battler flag 0x200000, which lets the per-frame mover func_0202f230 advance the move. So the
+lunge is aimed once, before any hit, and hook D's later redirect only moved the damage.
+
+### Fix
+
+`src/dsde/feat_targeting_anim.py`, three hooks:
+
+- 0x0202D944 (`bl func_0202fdf0` after each step of battler 12) goes to `cave_tgt_follow`: after the
+  vanilla call, if the action is a party Attack, the script still has a hit step to come and the enemy in
+  slot 0 is dead or doomed by this action's queued damage (`cave_tgt_live`), every target slot holding it
+  moves to the next enemy (`cave_tgt_next`), and the move target is re-aimed from home by running
+  func_0202fdf0 on an aim-only step. If the current step has its own move it is restarted toward the new
+  target; otherwise an attacker already away from home starts an 8-frame hop (func_020303e8 type 0x1000).
+- 0x0202DA14 (`ands r0, r0, #0x10`, "step keeps moving") goes to `cave_tgt_moving`: also true while that
+  hop has frames left.
+- 0x0202D848 and 0x0202D87C (`bl func_0202fdf0` when an action starts) go to `cave_tgt_begin`, which
+  forgets any earlier hop.
+
+An attacker at home (Flora's bow) is only re-aimed, never moved. After the last hit nothing moves, so a
+kill with the final hit does not send the attacker to another enemy. Hook D stays as the fallback.
+
+### Observed (build with the fix)
+
+| Plan | Result |
+|---|---|
+| `diag_anim_jian` (log of battler 12's step, slot 0, move target, position) | Hit 1 (step 5, frame 3120) kills 9; the same frame slot 0 becomes 10 and the move target (204, 175) -> (250, 160); Jian moves there in 8 frames (3121..3128); hits 2 and 3 (frames 3148, 3186) are on 10 without hook D redirecting; step 9 brings him home (289, 379) |
+| `tgt_multihit_jian` | 153 on 9, then 253 and 145 on 10 (HP 999 -> 601 as before); Jian hops from the skeleton to the spider between hit 1 and hit 2: `build/par_a2/mhj/mhj_sheet_anim.png` |
+| `tgt_redirect_hit_shots` (`tgt_redirect_hit` with screenshots) | 9's HP poked to 0 after the pick; all three hits on 10 (HP 32 -> 0) and Jian leaps straight to 10, not to the dead 9: `build/par_r/tgt_redirect_hit/rh_sheet.png` |
+| `tgt_redirect_pick` | unchanged: attack resolved to 10, HP 32 -> 0 |
+| `tgt_multihit_flora` | unchanged: arrows 9, 10, 10 (10: 999 -> 967); Flora stays at home: `build/par_r/tgt_multihit_flora/mhf_sheet_anim.png` |
+| `boss_sasquatch`, `test_exp_fast` | unchanged: pool 489, silver 150 -> 639, Jian 978; pool 101, silver 251, Jian 202 |
+
+**Pass.**

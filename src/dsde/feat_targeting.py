@@ -15,9 +15,11 @@ right on screen), wrapping to the top. The same redirect replaces the "target de
 test for every party Attack hit, so later hits of a multi-hit attack move on as well. Hits of one
 action only queue their damage (stat record +0x60) until the action ends, so an enemy counts as dead
 once its HP plus that queued damage is 0 or less (otherwise Jian's combo and Flora's multi-shot bows
-spend every hit on an enemy the first hit already killed).
+spend every hit on an enemy the first hit already killed). The attacker's animation follows a
+redirect too (feat_targeting_anim.py).
 """
 
+from dsde.feat_targeting_anim import ANIM_PATCHES
 from dsde.feat_targeting_picker import PICKER_PATCHES
 from dsde.patching import AsmPatch, CaveCode, Feature
 from dsde.targeting_consts import (
@@ -349,6 +351,7 @@ MANUAL_TARGETING = Feature(
         CaveCode("cave_tgt_pick", PICK_ASM, "Attack uses the chosen enemy"),
         CaveCode("cave_tgt_hit", HIT_ASM, "hit on a dead enemy moves on"),
         *PICKER_PATCHES,
+        *ANIM_PATCHES,
         _hook(
             AUTO_TARGET_CALL,
             0xEBFFFCCB,
