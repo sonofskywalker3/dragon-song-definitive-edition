@@ -1,0 +1,18 @@
+# walk-speed: walking moves 1.25 px per frame (vanilla 1.0); running stays 2.0 (two steps per frame)
+include boot_from_save
+wait 10
+peek u32 0x020B6CB4 x0
+hold Left
+wait 30
+peek u32 0x020B6CB4 x30
+wait 10
+peek u32 0x020B6CB4 x40
+release
+wait 10
+peek u32 0x020B6CB4 xr0
+hold Left,B
+wait 10
+peek u32 0x020B6CB4 xr10
+wait 10
+peek u32 0x020B6CB4 xr20
+release

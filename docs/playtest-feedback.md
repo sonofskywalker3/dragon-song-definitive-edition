@@ -126,11 +126,14 @@ Japanese release (Lunar Genesis, copied to `rom/Lunar - Genesis (Japan).nds`, no
 scripts can be compared line by line with the USA text. Goes with items 2, 3 and 4: the tone rules and
 any rewrite should check what the Japanese script actually says.
 
-## 6. Walking speed (Open)
+## 6. Walking speed (Done, `walk-speed`)
 
 Jeff (2026-10-06): "can we increase walking speed a bit?" Field walking only (running is design 1).
 To find: the player's walk step per frame (player block 0x020B6BE4, position x +0xD0, y +0xD4 in 20.12)
 and whether NPC routes and scripted walks share the same speed value.
+
+Done 2026-10-06 (Jeff: walking speed before the demo): walking is 1.25 times as fast; running is unchanged
+(running is now 1.6 times walking instead of 2). Scripted walks are unchanged. See docs/status.md.
 
 ## 7. Battle cards: duplicate drops refill durability (Open)
 

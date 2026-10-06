@@ -14,6 +14,7 @@ from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_FIXES
+from dsde.feat_walk import WALK_SPEED
 from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
 
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
@@ -366,6 +367,7 @@ FEATURES: tuple[Feature, ...] = (
     NO_CURSE_PENALTY,
     BATTLE_PACE,
     MP_ECONOMY,
+    WALK_SPEED,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -386,4 +388,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     NO_CURSE_PENALTY.name,
     BATTLE_PACE.name,
     MP_ECONOMY.name,
+    WALK_SPEED.name,
 )

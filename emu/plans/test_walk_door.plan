@@ -1,0 +1,9 @@
+# walk-speed: Jian's room door still leads out (no pinned destination: the real map behind the door)
+include boot_from_save
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+peek u16 0x020B6BE4 map
+shot wd_after_door
