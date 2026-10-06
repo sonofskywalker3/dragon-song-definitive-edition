@@ -11,8 +11,9 @@ This project started after watching i am a dot's video
 whose closing list of fixes for Lunar: Dragon Song lines up closely with what this hack sets out to do.
 Thanks for the reminder that this game deserved another look.
 
-Lunar: Dragon Song is by Japan Art Media and Game Arts, published in North America by Ubisoft. This
-repository contains no game data; you need your own copy of the game.
+Lunar: Dragon Song was developed by Japan Art Media with Game Arts and published by Marvelous Interactive
+(Japan), Ubisoft (North America) and Rising Star Games (Europe). This repository contains no game data;
+you need your own copy of the game.
 
 ## Setup
 
