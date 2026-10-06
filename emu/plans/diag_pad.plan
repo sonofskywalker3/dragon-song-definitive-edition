@@ -1,0 +1,9 @@
+# Diagnostic: pad struct fields at 0x020AFF74 (+6 pressed, +0xA, +0xC) during a 40-frame L+R hold.
+include boot_from_save
+watch u16 0x020AFF7A pressed
+watch u16 0x020AFF7E plus_a
+watch u16 0x020AFF80 plus_c
+hold L,R
+wait 40
+release
+wait 5

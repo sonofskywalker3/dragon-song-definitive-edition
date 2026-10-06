@@ -16,6 +16,7 @@
 --   pin u8|u16|u32 ADDR VALUE    write a value before every frame until unpin
 --   unpin                        drop all pins
 --   trace ADDR LABEL             log CPU registers whenever ADDR is written
+--   find HEXBYTES LABEL          log every main RAM address where the byte pattern occurs
 --   speed PERCENT                emulation speed (default 800)
 --   include NAME                 run emu/plans/NAME.plan (same folder as the plan) inline
 local ROOT = (os.getenv("DSDE_EMU_OUT") or "C:/Users/Jeff/Documents/Projects/Dragon Song Definitive Edition/build/emu"):gsub("\\", "/") .. "/"
@@ -143,6 +144,26 @@ for line in io.lines(path) do
 	elseif cmd == "unpin" then
 		pins = {}
 		say("unpin all")
+	elseif cmd == "find" then
+		local pat = {}
+		for byte in words[2]:gmatch("%x%x") do
+			pat[#pat + 1] = tonumber(byte, 16)
+		end
+		local ram = memory.read_bytes_as_array(0, 0x400000, "Main RAM")
+		local hits = {}
+		for i = 1, #ram - #pat + 1 do
+			local ok = true
+			for j = 1, #pat do
+				if ram[i + j - 1] ~= pat[j] then
+					ok = false
+					break
+				end
+			end
+			if ok then
+				hits[#hits + 1] = string.format("%08X", 0x02000000 + i - 1)
+			end
+		end
+		say("find " .. (words[3] or words[2]) .. " " .. table.concat(hits, " "))
 	elseif cmd == "trace" then
 		-- log CPU registers on every write to ADDR
 		local label = words[3] or words[2]
