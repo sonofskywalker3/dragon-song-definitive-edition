@@ -4,6 +4,16 @@ A ROM hack of Lunar: Dragon Song (Nintendo DS, USA) that fixes the game's system
 of battle feels like Lunar 1 and 2. The design decisions are in [docs/design.md](docs/design.md), and
 what still has to be learned about the game before building is in [docs/research.md](docs/research.md).
 
+## Credits and origin
+
+This project started after watching i am a dot's video
+[My Brief Obsession with the Worst RPG Ever Made](https://www.youtube.com/watch?v=g3ZHiycAYeQ) (2026),
+whose closing list of fixes for Lunar: Dragon Song lines up closely with what this hack sets out to do.
+Thanks for the reminder that this game deserved another look.
+
+Lunar: Dragon Song is by Japan Art Media and Game Arts, published in North America by Ubisoft. This
+repository contains no game data; you need your own copy of the game.
+
 ## Setup
 
 You need your own copy of the game. This repo never contains the ROM or anything extracted from it.
