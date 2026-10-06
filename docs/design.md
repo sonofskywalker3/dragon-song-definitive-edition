@@ -104,11 +104,12 @@ Decided 2026-10-06.
 - Keep the quit fee (a free quit would be a free reroll of the offered jobs).
 - Do not change which items jobs ask for.
 - Tie the job pool's growth to places visited or story points instead of deliveries made.
-- Rule (decided 2026-10-06): every office's rank is min(4, towns visited), where a town counts once its main map has
-  been entered (the game's own destination unlocks, func_02041d38). Rank still sets the fee and quit fee.
+- Rule (decided 2026-10-06): every office's rank starts at 1 and rises by 1 for each new town, up to 4. A town counts
+  once its main map has been entered (the game's own destination unlocks, func_02041d38); play starts with 2 (Port
+  Searis and Perit), so rank = towns - 1. Rank still sets the fee and quit fee.
 - Each office offers up to 3 jobs whose items can all be had by now (sold in a visited town's shop, or dropped in an
   area reachable by then), plus at most one "future" job that cannot be completed yet, paying 1.5 times its fee.
-  The player can take the future job for extra money and finish it later. "Can be had by now" comes from a
+  The player can take the future job for extra money and finish it later. Its title is red in the job list (harder). "Can be had by now" comes from a
   build-time table: each template's earliest town count.
 
 ## 10. Dragon rings
