@@ -4,6 +4,8 @@
 -- Commands, one per line (# starts a comment):
 --   wait N                       advance N frames
 --   press BTN[,BTN...] N         hold buttons for N frames, then release for 2 frames
+--   hold BTN[,BTN...]            keep buttons down during the following commands until release
+--   release                      let go of held buttons
 --   touch X Y N                  touch the bottom screen at X,Y for N frames
 --   shot NAME                    screenshot to build/emu/NAME.png
 --   save NAME / load NAME        savestate to/from build/emu/states/NAME.State
@@ -24,6 +26,7 @@ local log = io.open(ROOT .. "run.log", "w")
 local frame = 0
 local watches = {}
 local pins = {}
+local held = {}
 
 local function say(msg)
 	log:write(string.format("[%6d] %s\n", frame, msg))
@@ -42,8 +45,15 @@ local writers = {
 }
 
 local function step(input, analog)
-	if input then
-		joypad.set(input)
+	local merged = {}
+	for b, v in pairs(held) do
+		merged[b] = v
+	end
+	for b, v in pairs(input or {}) do
+		merged[b] = v
+	end
+	if next(merged) then
+		joypad.set(merged)
 	end
 	if analog then
 		-- touch coordinates are analog axes; joypad.set ignores them
@@ -88,6 +98,14 @@ for line in io.lines(path) do
 		end
 		hold(input, tonumber(words[3]))
 		hold(nil, 2)
+	elseif cmd == "hold" then
+		for b in words[2]:gmatch("[^,]+") do
+			held[b] = true
+		end
+		say("hold " .. words[2])
+	elseif cmd == "release" then
+		held = {}
+		say("release")
 	elseif cmd == "touch" then
 		local xy = { ["Touch X"] = tonumber(words[2]), ["Touch Y"] = tonumber(words[3]) }
 		hold({ Touch = true }, tonumber(words[4]), xy)
