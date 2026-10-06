@@ -1,0 +1,27 @@
+# no-curse-penalty: with the curse flag poked on, Jian must still use his 3-hit combo script (0x02095AF0).
+# Delrich Temple battle, Jian cursed (battle ctx 0x020B85B8 +0x5C poked to 1), no fast-forward.
+# Logs the round state (battle ctx +0x2E; ctx is the pointer at 0x020B8550, 0x02282940 in this run),
+# the actor (+0x32), battler 12's action step (+0xCC), the camera mode (0x020B8578 +0x2C), every
+# step start (func_020316e0) and the built-in fast-forward level (0x020B8540).
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+peek u32 0x020B8550 battle_ctx
+watch u32 0x020B8540 ff_level
+watch u16 0x0228296E round_state
+watch u16 0x02282972 actor
+watch u16 0x0228FC7C b12_step
+watch u32 0x020B85A4 camera_mode
+watch u32 0x0228FC78 b12_script
+poke u16 0x020B8614 1
+peek u16 0x020B8614 curse
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 900
+shot diag_curse_attack_end

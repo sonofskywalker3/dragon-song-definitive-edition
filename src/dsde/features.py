@@ -7,6 +7,7 @@ from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
 from dsde.feat_battle_end import BATTLE_END_RULES
 from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
+from dsde.feat_curse import NO_CURSE_PENALTY
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_targeting import MANUAL_TARGETING
@@ -360,6 +361,7 @@ FEATURES: tuple[Feature, ...] = (
     HOLD_LR_TO_RUN,
     LEAVE_DROPS_GEAR,
     BATTLE_SPEED,
+    NO_CURSE_PENALTY,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -377,4 +379,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     HOLD_LR_TO_RUN.name,
     LEAVE_DROPS_GEAR.name,
     BATTLE_SPEED.name,
+    NO_CURSE_PENALTY.name,
 )
