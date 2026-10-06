@@ -1,0 +1,27 @@
+# Battle speed (battle-speed): starts at Fast (game speed level 2); tapping R cycles Fastest (3), Normal (0),
+# Fast (2); pressing L and R together never changes it; holding L+R still runs. Temple battle (warp6).
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+watch u32 0x020B8540 speed_level
+watch u32 0x020B8804 run_chosen
+wait 5
+press R 5
+wait 20
+press R 5
+wait 20
+press R 5
+wait 20
+press L,R 10
+wait 20
+hold R
+wait 3
+hold L
+wait 10
+release
+wait 20
+hold L,R
+wait 40
+release
+wait 300

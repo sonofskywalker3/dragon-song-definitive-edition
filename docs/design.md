@@ -75,7 +75,7 @@ Decided 2026-10-06.
   hint must say L+R is for running (the battle screen's wooden "MIC" sign needs redrawing).
 - Battles should run smoother and faster by default, so that no speed button is needed. If a speed control
   is still needed after playtesting, it is a full battle speed setting like the 2025 Lunar remasters (three
-  speeds, battle only). Analysis: docs/re-battle-pacing.md.
+  speeds, battle only), cycled by tapping R alone (L+R stays the run chord). Analysis: docs/re-battle-pacing.md.
 - Victory screen: the Silver line counts up like the EXP does.
 
 ## 8. MP and spells
