@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+from dsde.boss_exp import boss_exp, check_tables
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
 from dsde.feat_battle_end import BATTLE_END_RULES
 from dsde.feat_results import RESULT_SCREENS
@@ -263,29 +264,30 @@ silver_gained:
 
 # Bosses give EXP (design 2). Vanilla boss and scripted battles run with battle mode -1, and four
 # checks require mode == 1 for EXP; they become mode != 0. Boss EXP fields are 1 to 10 placeholders,
-# so each boss gets BOSS_EXP_FACTOR times the average regular enemy's EXP at the same level.
+# so each boss gets BOSS_EXP_FACTOR times the average EXP of its area's regular enemies (dsde.boss_exp).
 VANILLA_ARM9 = Path(__file__).resolve().parents[2] / "extract" / "arm9" / "arm9.bin"
-BOSS_EXP_FACTOR = 10
 EXP_MIN_OFFSET = 0x14
 EXP_MAX_OFFSET = 0x28
-FIRST_BOSS = 136
-LAST_BOSS = 155  # Ignatius; row 156 is not a real boss fight
 
 
 def _boss_exp_patches() -> tuple[Patch, ...]:
-    enemies = read_enemies(VANILLA_ARM9.read_bytes())
-    regular = [e for e in enemies if not e.boss]
-    exp_min = round(BOSS_EXP_FACTOR * sum(e.exp_min for e in regular) / len(regular))
-    exp_max = round(BOSS_EXP_FACTOR * sum(e.exp_max for e in regular) / len(regular))
+    data = VANILLA_ARM9.read_bytes()
+    check_tables(data)
+    enemies = read_enemies(data)
     patches = []
-    for enemy in enemies[FIRST_BOSS : LAST_BOSS + 1]:
-        row = ENEMY_TABLE + enemy.row * ENEMY_ROW_SIZE
+    for row, (exp_min, exp_max) in boss_exp(enemies).items():
+        enemy = enemies[row]
+        address = ENEMY_TABLE + row * ENEMY_ROW_SIZE
         note = f"{enemy.name} EXP"
         patches.append(
-            Patch(row + EXP_MIN_OFFSET, enemy.exp_min, exp_min, note + " at level 0")
+            Patch(
+                address + EXP_MIN_OFFSET, enemy.exp_min, exp_min, note + " at level 0"
+            )
         )
         patches.append(
-            Patch(row + EXP_MAX_OFFSET, enemy.exp_max, exp_max, note + " at level 98")
+            Patch(
+                address + EXP_MAX_OFFSET, enemy.exp_max, exp_max, note + " at level 98"
+            )
         )
     return tuple(patches)
 
