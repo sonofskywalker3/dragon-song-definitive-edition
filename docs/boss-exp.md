@@ -80,3 +80,29 @@ Jian's first combo kills the Sasquatch and both Yeti helpers: EXP pool 0 to 489 
 each), silver 150 to 639, Jian 0 to 978 EXP (pool x 2). Before this change the same fight gave a pool of
 1103. Regression `test_exp_fast` (regular battle on map 6) is unchanged: pool 101, silver 150 to 251, Jian
 202 EXP.
+
+Three more scripted boss fights, same trick as `boss_sasquatch` (Jian stands in Delrich Temple, map 6,
+party level 1, and the plan does the field loop's three writes with the boss's battle id), on
+`build/par_c/dsde_c.nds` built from ffa9c41. Plans `emu/plans/boss_raft.plan`, `emu/plans/boss_gronk.plan`,
+`emu/plans/boss_reddragon.plan`; logs and screenshots in `build/par_c/boss_raft/`, `build/par_c/boss_gronk/`,
+`build/par_c/boss_reddragon/`. In all three the battle mode u16 0x020B85C0 goes to 0xFFFF (-1) at battle
+init, the event battle id u16 0x020B85BE holds the battle id, the formation is the boss alone in battler 9,
+and the boss's battle stat record (0x0228E860 + 9 * 0x6C) holds its level at +0x0C and the EXP the kill adds
+at +0x50. The battle background is the boss's own (coliseum, cathedral, lava cave), not the temple's.
+
+| Plan | Battle id | Row | Level rolled | Expected EXP | Record +0x50 | Pool | Silver | Jian EXP |
+|---|---|---|---|---|---|---|---|---|
+| `boss_raft` | 3 | 138 Raft | 10 (Coliseum override) | 44 + 5971 * 10 / 98 = 653 | 653 | 0 to 653 | 150 to 803 | 0 to 1306 |
+| `boss_gronk` | 5 | 142 Gronk | 4 (map 6 area_min) | 148 + 10276 * 4 / 98 = 567 | 567 | 0 to 567 | 150 to 717 | 0 to 1134 |
+| `boss_reddragon` | 8 | 147 Red Dragon | 4 (map 6 area_min) | 79 + 13478 * 4 / 98 = 629 | 629 | 0 to 629 | 150 to 779 | 0 to 1258 |
+
+Silver rises by the pool and Jian's EXP by pool x 2 (the game's doubling) in each fight. Gronk and the Red
+Dragon have no area_min override, so the temple's level 4 is what they roll here; in their own places they
+roll 10 and 23 or more (1196 and 3242). Raft dies to Jian's first combo, Gronk (810 HP) and the Red Dragon
+(1122 HP) take several actions.
+
+Result pages look right in all three: the EXP page shows Jian's total and the Silver line with no Althena
+Conduct window (`raft_r5.png`, `gronk_r16.png`, `reddragon_r11.png`), then "Items received!" because each
+boss dropped items: Healing Drop x2 and the Raft card (`raft_r6.png`), Counter Type 2 and the Gronk card
+(`gronk_r17.png`), Blazing Ring and the Red Dragon card (`reddragon_r12.png`). Intros: `raft_intro.png`,
+`gronk_intro.png`, `reddragon_intro.png`. **Pass.**

@@ -1,0 +1,232 @@
+# Boss EXP in a scripted boss fight (Red Dragon, battle id 8). Run with --save.
+# The Red Dragon Cave's script (017) starts the fight with script op 0x10 type 3, battle id 8 (0x1604).
+# Like boss_sasquatch.plan, this plan stands Jian in Delrich Temple (map 6) and does the field loop's
+# three writes itself (0x020B7838 = 1, 0x020B783A = battle id, 0x020B0010 = 0x73). The dragon has no
+# area_min override, so the fight keeps map 6's area_min (4) and at party level 1 it rolls level 4 here.
+# Expected (docs/boss-exp.md): row 147, EXP 79 at level 0 and 13557 at level 98: 79 + 13478 * 4 / 98 = 629.
+# (In its own cave the fight rolls level 23 or more: 3242.)
+# 40 A presses, then a shot and an A every 120 frames walk the rest of the fight and the result pages.
+watch u16 0x020B85BE event_battle_id
+watch u16 0x020B85C0 battle_mode
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B8610 exp_pool
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u32 0x020B4664 jian_level
+include boot_from_save
+include cheats_strong
+# warp6 without the final move onto an enemy spawn point
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+shot reddragon_field
+peek u32 0x020B4694 jian_exp_before
+peek u32 0x020B4664 jian_level_before
+peek u32 0x020B4824 silver_before
+poke u16 0x020B7838 1
+poke u16 0x020B783A 8
+poke u32 0x020B0010 0x73
+wait 240
+shot reddragon_intro
+battlers
+peek u32 0x020B85B8 area_group
+peek u16 0x020B85BC map
+peek u32 0x020B8620 stats_ptr
+# battle stat records 0..13 (0x6C each): +0x0C level, +0x14 HP, +0x50 EXP the kill adds
+dump 0x0228E860 0x5E8 stat_records
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot reddragon_a5
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot reddragon_a10
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot reddragon_a15
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot reddragon_a20
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot reddragon_a25
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot reddragon_a30
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot reddragon_a35
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot reddragon_a40
+battlers
+wait 120
+shot reddragon_r1
+press A 3
+wait 120
+shot reddragon_r2
+press A 3
+wait 120
+shot reddragon_r3
+press A 3
+wait 120
+shot reddragon_r4
+press A 3
+wait 120
+shot reddragon_r5
+press A 3
+wait 120
+shot reddragon_r6
+press A 3
+wait 120
+shot reddragon_r7
+press A 3
+wait 120
+shot reddragon_r8
+press A 3
+wait 120
+shot reddragon_r9
+press A 3
+wait 120
+shot reddragon_r10
+press A 3
+wait 120
+shot reddragon_r11
+press A 3
+wait 120
+shot reddragon_r12
+press A 3
+wait 120
+shot reddragon_r13
+press A 3
+wait 120
+shot reddragon_r14
+press A 3
+wait 120
+shot reddragon_r15
+press A 3
+wait 120
+shot reddragon_r16
+press A 3
+wait 120
+shot reddragon_r17
+press A 3
+wait 120
+shot reddragon_r18
+press A 3
+wait 120
+shot reddragon_r19
+press A 3
+wait 120
+shot reddragon_r20
+press A 3
+wait 120
+shot reddragon_r21
+press A 3
+wait 120
+shot reddragon_r22
+press A 3
+wait 120
+shot reddragon_r23
+press A 3
+wait 120
+shot reddragon_r24
+press A 3
+wait 120
+shot reddragon_r25
+press A 3
+wait 120
+shot reddragon_r26
+press A 3
+wait 120
+shot reddragon_r27
+press A 3
+wait 120
+shot reddragon_r28
+press A 3
+wait 120
+shot reddragon_r29
+press A 3
+wait 120
+shot reddragon_r30
+press A 3
+wait 300
+shot reddragon_after
+peek u32 0x020B4694 jian_exp_final
+peek u32 0x020B4664 jian_level_final
+peek u32 0x020B4824 silver_final
