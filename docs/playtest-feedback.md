@@ -231,3 +231,13 @@ transition into the two races ("Two peoples came to share this world."), Caldor 
 Isle). The final text is `PROLOGUE` in feat_text.py (a whole-message rewrite, 8 pages, replacing the
 earlier piecemeal prologue edits). Seen page by page in `text_intro`: every line fits, the colon (code
 0x2D) shows, and the game goes on to the wake-up call.
+
+## 11. Lucia missing at Fountain Square (Fixed, 2026-10-07)
+
+Jeff: after the new opening Lucia was not at Fountain Square. Vanilla sets flag 0xC (Lucia waits at the
+fountain) after Cherenkov's first lobby line (script 001, `19:C` at 0x5F94); Jack tests it (0x6764). The run
+takes Jian past Cherenkov without talking, so the flag was never set. Now the run sets it with the wake-up
+flags, and both Cherenkov lines it selects between (first talk 0xBD2, after the flag 0xC78 "Impressive! You
+know where to go!") show "Jian, what are you doing?! Get to Fountain Square! Don't keep Lucia waiting!", so a
+save made before the fix gets the flag by talking to him once. Seen: flag word 0x1002 after `opening_run`;
+`test_cherenkov_lobby` shows the line.

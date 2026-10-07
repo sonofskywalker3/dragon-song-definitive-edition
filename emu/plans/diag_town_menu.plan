@@ -1,0 +1,28 @@
+# Diagnostic: scroll the Port Searis town map menu from state 'town'.
+load town
+wait 60
+shot tm_0
+press Down 3
+wait 20
+shot tm_1
+press Down 3
+wait 20
+shot tm_2
+press Down 3
+wait 20
+shot tm_3
+press Down 3
+wait 20
+shot tm_4
+press Down 3
+wait 20
+shot tm_5
+press Down 3
+wait 20
+shot tm_6
+press Down 3
+wait 20
+shot tm_7
+press Down 3
+wait 20
+shot tm_8

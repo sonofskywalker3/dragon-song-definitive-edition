@@ -1,0 +1,238 @@
+# Diagnostic: story flags after the opening (copy of the opening plan + a dump of the script context).
+# Research: vanilla opening from New Game past the wake-up, logging map changes (re-opening.md)
+watch u16 0x020B6BE4 map
+watch u32 0x020B6CB4 x
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+press A 3
+wait 150
+shot ov_01
+press A 3
+wait 150
+shot ov_02
+press A 3
+wait 150
+shot ov_03
+press A 3
+wait 150
+shot ov_04
+press A 3
+wait 150
+shot ov_05
+press A 3
+wait 150
+shot ov_06
+press A 3
+wait 150
+shot ov_07
+press A 3
+wait 150
+shot ov_08
+press A 3
+wait 150
+shot ov_09
+press A 3
+wait 150
+shot ov_10
+press A 3
+wait 150
+shot ov_11
+press A 3
+wait 150
+shot ov_12
+press A 3
+wait 150
+shot ov_13
+press A 3
+wait 150
+shot ov_14
+press A 3
+wait 150
+shot ov_15
+press A 3
+wait 150
+shot ov_16
+press A 3
+wait 150
+shot ov_17
+press A 3
+wait 150
+shot ov_18
+press A 3
+wait 150
+shot ov_19
+press A 3
+wait 150
+shot ov_20
+press A 3
+wait 150
+shot ov_21
+press A 3
+wait 150
+shot ov_22
+press A 3
+wait 150
+shot ov_23
+press A 3
+wait 150
+shot ov_24
+press A 3
+wait 150
+shot ov_25
+press A 3
+wait 150
+shot ov_26
+press A 3
+wait 150
+shot ov_27
+press A 3
+wait 150
+shot ov_28
+press A 3
+wait 150
+shot ov_29
+press A 3
+wait 150
+shot ov_30
+press A 3
+wait 150
+shot ov_31
+press A 3
+wait 150
+shot ov_32
+press A 3
+wait 150
+shot ov_33
+press A 3
+wait 150
+shot ov_34
+press A 3
+wait 150
+shot ov_35
+press A 3
+wait 150
+shot ov_36
+press A 3
+wait 150
+shot ov_37
+press A 3
+wait 150
+shot ov_38
+press A 3
+wait 150
+shot ov_39
+press A 3
+wait 150
+shot ov_40
+press A 3
+wait 150
+shot ov_41
+press A 3
+wait 150
+shot ov_42
+press A 3
+wait 150
+shot ov_43
+press A 3
+wait 150
+shot ov_44
+press A 3
+wait 150
+shot ov_45
+press A 3
+wait 150
+shot ov_46
+press A 3
+wait 150
+shot ov_47
+press A 3
+wait 150
+shot ov_48
+press A 3
+wait 150
+shot ov_49
+press A 3
+wait 150
+shot ov_50
+press A 3
+wait 150
+shot ov_51
+press A 3
+wait 150
+shot ov_52
+press A 3
+wait 150
+shot ov_53
+press A 3
+wait 150
+shot ov_54
+press A 3
+wait 150
+shot ov_55
+press A 3
+wait 150
+shot ov_56
+press A 3
+wait 150
+shot ov_57
+press A 3
+wait 150
+shot ov_58
+press A 3
+wait 150
+shot ov_59
+press A 3
+wait 150
+shot ov_60
+press A 3
+wait 150
+shot ov_61
+press A 3
+wait 150
+shot ov_62
+press A 3
+wait 150
+shot ov_63
+press A 3
+wait 150
+shot ov_64
+press A 3
+wait 150
+shot ov_65
+press A 3
+wait 150
+shot ov_66
+press A 3
+wait 150
+shot ov_67
+press A 3
+wait 150
+shot ov_68
+press A 3
+wait 150
+shot ov_69
+press A 3
+wait 150
+shot ov_70
+press A 3
+wait 150
+shot ov_71
+press A 3
+wait 150
+shot ov_72
+press A 3
+wait 150
+shot ov_73
+press A 3
+wait 150
+shot ov_74
+press A 3
+wait 150
+shot ov_75
+wait 300
+shot ov_end
+peek u32 0x020B4640 ctx
+dump 0x02204620 0x200 flags
