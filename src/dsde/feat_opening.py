@@ -121,11 +121,11 @@ ROOM_ROUTE = (
     (RIGHT, 6, SPEED_RUN),
     (DOWN_RIGHT, 50, SPEED_RUN),
 )  # (174,154) -> door (269,197)
-HALL_ROUTE = (  # (366,187) -> stairs (76,~280)
+HALL_ROUTE = (  # (366,187) -> stairs (90,307), where the walked path changed maps (y 307..317)
     (DOWN, 22, SPEED_RUN),
     (DOWN_LEFT, 96, SPEED_RUN),
-    (LEFT, 61, SPEED_RUN),
-    (UP, 20, SPEED_RUN),
+    (LEFT, 54, SPEED_RUN),
+    (UP, 4, SPEED_RUN),
 )
 LOBBY_ROUTE = (  # (96,215) -> front door (366,315)
     (RIGHT, 46, SPEED_RUN),
