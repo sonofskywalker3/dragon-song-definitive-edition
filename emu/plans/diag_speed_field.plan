@@ -1,0 +1,13 @@
+# Diagnostic: field speed. Walk Right 30 frames, then run Right 30 frames, reading Jian's x (20.12).
+include boot_from_save
+wait 60
+poke u32 0x020B6CB4 0x96000
+poke u32 0x020B6CB8 0x96000
+wait 10
+peek u32 0x020B6CB4 x0
+press Right 30
+peek u32 0x020B6CB4 x_walk
+wait 10
+peek u32 0x020B6CB4 x1
+press B,Left 30
+peek u32 0x020B6CB4 x_run

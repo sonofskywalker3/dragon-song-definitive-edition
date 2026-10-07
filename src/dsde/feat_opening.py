@@ -32,22 +32,26 @@ WAKE_ANIMATION = (
     0x6304,
 )  # Jian's waking pose ops and the 90-frame wait after them
 POSE_RESET = (0x6318, 0x6328)  # ops 0x38 + 0x40 that put Jian back in his normal pose
-# Flags the run sets: 0x1 and 0x1E2 as the vanilla wake-up (0x1 = woken up, skips it on re-entry), and
-# LUCIA_AT_FOUNTAIN, which vanilla sets after Cherenkov's first lobby line (0x5F94). The run takes Jian past
-# Cherenkov without talking, so without it Lucia never waited at Fountain Square (Jeff, 2026-10-07). Jack
-# tests it too ("I just saw Lucia in Fountain Square", 0x6764).
-LUCIA_AT_FOUNTAIN = 0xC
-STORY_FLAGS = (0x1, 0x1E2, LUCIA_AT_FOUNTAIN)
-# Cherenkov's lobby lines branch on flags; with LUCIA_AT_FOUNTAIN set he says "Impressive! You know where to
-# go!" (0x0C78), which makes no sense after the run, so that message op shows our Fountain Square line.
-CHERENKOV_AFTER_RUN_LINE = (
-    0x5FA8  # u32 text offset of the LUCIA_AT_FOUNTAIN branch's message op
+# Flags the run sets: 0x1 and 0x1E2 as the vanilla wake-up (0x1 = woken up, skips it on re-entry), and the
+# two that send Jian to Lucia. Vanilla: Cherenkov's first lobby line sets LUCIA_LEFT (0x5F94), then Jack,
+# seeing it, says "I just saw Lucia in Fountain Square" and sets LUCIA_AT_FOUNTAIN (0x6788); only with that
+# flag does map 164's entry code keep the Lucia meeting (object 200, script 001 0x56E0). The run takes Jian
+# past Cherenkov without talking, so Lucia never waited at the fountain (Jeff, 2026-10-07).
+LUCIA_LEFT = 0xC
+LUCIA_AT_FOUNTAIN = 0xD
+STORY_FLAGS = (0x1, 0x1E2, LUCIA_LEFT, LUCIA_AT_FOUNTAIN)
+# Cherenkov's lobby lines branch on flags (script 001 0x5F40): with LUCIA_AT_FOUNTAIN he says 0x0CA9 ("Get
+# over to the Fountain Square, on the double!"), with only LUCIA_LEFT 0x0C78 ("Impressive! You know where to
+# go!"), with neither his first line 0x0BD2, which repeats the wake-up joke. All three show our line.
+CHERENKOV_LINES = (  # (u32 text offset of the message op, vanilla text)
+    (0x5FBC, 0xCA9),
+    (0x5FA8, 0xC78),
+    (0x5F90, 0xBD2),
 )
-CHERENKOV_AFTER_RUN_TEXT = 0xC78
-# Without LUCIA_AT_FOUNTAIN (a save made after the run before this fix) he gives his first line, which
-# repeats the wake-up joke: that one shows our line too, and it sets LUCIA_AT_FOUNTAIN as before.
-CHERENKOV_FIRST_LINE = 0x5F90
-CHERENKOV_FIRST_TEXT = 0xBD2
+# Map 164 (Fountain Square) keeps the Lucia meeting only with LUCIA_AT_FOUNTAIN, which only Jack sets: now it
+# checks LUCIA_LEFT, set by the run or by Cherenkov, so no one has to find Jack (and saves made after the run
+# with Cherenkov talked to work too).
+FOUNTAIN_ENTRY_FLAG = 0x56E8  # u16 flag in `if all of [0x0D] goto 0x56F0`
 # A flag no script tests or sets (0x1D1..0x1E0 are free; 0x1E0 + n are destination flags)
 RUN_FLAG = 0x1DF
 
@@ -321,23 +325,28 @@ def opening_patches() -> tuple[DataPatch, ...]:
             struct.pack("<I", labels["entry"]),
             "opening: map entry events check the hall and lobby legs of the run first",
         ),
-        DataPatch(
-            ARCHIVE,
-            SCRIPT,
-            CHERENKOV_AFTER_RUN_LINE,
-            struct.pack("<I", CHERENKOV_AFTER_RUN_TEXT),
-            struct.pack("<I", labels["t_cherenkov"]),
-            "opening: after the run Cherenkov sends Jian to Fountain Square",
-        ),
-        DataPatch(
-            ARCHIVE,
-            SCRIPT,
-            CHERENKOV_FIRST_LINE,
-            struct.pack("<I", CHERENKOV_FIRST_TEXT),
-            struct.pack("<I", labels["t_cherenkov"]),
-            "opening: Cherenkov's first lobby line sends Jian to Fountain Square",
+        *(
+            DataPatch(
+                ARCHIVE,
+                SCRIPT,
+                site,
+                struct.pack("<I", vanilla),
+                struct.pack("<I", labels["t_cherenkov"]),
+                "opening: Cherenkov sends Jian to Fountain Square",
+            )
+            for site, vanilla in CHERENKOV_LINES
         ),
     ]
+    patches.append(
+        DataPatch(
+            ARCHIVE,
+            SCRIPT,
+            FOUNTAIN_ENTRY_FLAG,
+            struct.pack("<H", LUCIA_AT_FOUNTAIN),
+            struct.pack("<H", LUCIA_LEFT),
+            "opening: Lucia waits at Fountain Square once Cherenkov has sent Jian there",
+        )
+    )
     return tuple(patches)
 
 
