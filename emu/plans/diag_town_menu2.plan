@@ -1,0 +1,27 @@
+# Diagnostic: cycle the town map locations with Right, then Left, from state 'town'.
+load town
+wait 60
+press Right 3
+wait 30
+shot tr_1
+press Right 3
+wait 30
+shot tr_2
+press Right 3
+wait 30
+shot tr_3
+press Right 3
+wait 30
+shot tr_4
+press Right 3
+wait 30
+shot tr_5
+press Left 3
+wait 30
+shot tl_1
+press Left 3
+wait 30
+shot tl_2
+press Left 3
+wait 30
+shot tl_3

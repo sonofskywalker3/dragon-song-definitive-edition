@@ -1,0 +1,114 @@
+# New Game through the opening run to the Port Searis town map menu (map 285), then a savestate 'town'.
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+wait 60
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+press A 3
+wait 35
+wait 150
+watch u16 0x020B6BE4 map
+shot town0
+save town

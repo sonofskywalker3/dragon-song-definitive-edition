@@ -1,0 +1,353 @@
+# Diagnostic: story flags after the opening (copy of the opening plan + a dump of the script context).
+# Opening (feature opening-run, docs/re-opening.md): New Game, through the intro, then the wake-up call
+# and the scripted run from Jian's room to the town map, with a shot and Jian's position every 40 frames.
+# A is pressed every 40 frames; a box only closes once its text has finished typing.
+watch u16 0x020B6BE4 map
+watch u32 0x020B6CEC route
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+press A 3
+wait 150
+wait 60
+wait 35
+shot op_01
+peek u32 0x020B6CB4 x01
+peek u32 0x020B6CB8 y01
+press A 3
+wait 35
+shot op_02
+peek u32 0x020B6CB4 x02
+peek u32 0x020B6CB8 y02
+press A 3
+wait 35
+shot op_03
+peek u32 0x020B6CB4 x03
+peek u32 0x020B6CB8 y03
+press A 3
+wait 35
+shot op_04
+peek u32 0x020B6CB4 x04
+peek u32 0x020B6CB8 y04
+press A 3
+wait 35
+shot op_05
+peek u32 0x020B6CB4 x05
+peek u32 0x020B6CB8 y05
+press A 3
+wait 35
+shot op_06
+peek u32 0x020B6CB4 x06
+peek u32 0x020B6CB8 y06
+press A 3
+wait 35
+shot op_07
+peek u32 0x020B6CB4 x07
+peek u32 0x020B6CB8 y07
+press A 3
+wait 35
+shot op_08
+peek u32 0x020B6CB4 x08
+peek u32 0x020B6CB8 y08
+press A 3
+wait 35
+shot op_09
+peek u32 0x020B6CB4 x09
+peek u32 0x020B6CB8 y09
+press A 3
+wait 35
+shot op_10
+peek u32 0x020B6CB4 x10
+peek u32 0x020B6CB8 y10
+press A 3
+wait 35
+shot op_11
+peek u32 0x020B6CB4 x11
+peek u32 0x020B6CB8 y11
+press A 3
+wait 35
+shot op_12
+peek u32 0x020B6CB4 x12
+peek u32 0x020B6CB8 y12
+press A 3
+wait 35
+shot op_13
+peek u32 0x020B6CB4 x13
+peek u32 0x020B6CB8 y13
+press A 3
+wait 35
+shot op_14
+peek u32 0x020B6CB4 x14
+peek u32 0x020B6CB8 y14
+press A 3
+wait 35
+shot op_15
+peek u32 0x020B6CB4 x15
+peek u32 0x020B6CB8 y15
+press A 3
+wait 35
+shot op_16
+peek u32 0x020B6CB4 x16
+peek u32 0x020B6CB8 y16
+press A 3
+wait 35
+shot op_17
+peek u32 0x020B6CB4 x17
+peek u32 0x020B6CB8 y17
+press A 3
+wait 35
+shot op_18
+peek u32 0x020B6CB4 x18
+peek u32 0x020B6CB8 y18
+press A 3
+wait 35
+shot op_19
+peek u32 0x020B6CB4 x19
+peek u32 0x020B6CB8 y19
+press A 3
+wait 35
+shot op_20
+peek u32 0x020B6CB4 x20
+peek u32 0x020B6CB8 y20
+press A 3
+wait 35
+shot op_21
+peek u32 0x020B6CB4 x21
+peek u32 0x020B6CB8 y21
+press A 3
+wait 35
+shot op_22
+peek u32 0x020B6CB4 x22
+peek u32 0x020B6CB8 y22
+press A 3
+wait 35
+shot op_23
+peek u32 0x020B6CB4 x23
+peek u32 0x020B6CB8 y23
+press A 3
+wait 35
+shot op_24
+peek u32 0x020B6CB4 x24
+peek u32 0x020B6CB8 y24
+press A 3
+wait 35
+shot op_25
+peek u32 0x020B6CB4 x25
+peek u32 0x020B6CB8 y25
+press A 3
+wait 35
+shot op_26
+peek u32 0x020B6CB4 x26
+peek u32 0x020B6CB8 y26
+press A 3
+wait 35
+shot op_27
+peek u32 0x020B6CB4 x27
+peek u32 0x020B6CB8 y27
+press A 3
+wait 35
+shot op_28
+peek u32 0x020B6CB4 x28
+peek u32 0x020B6CB8 y28
+press A 3
+wait 35
+shot op_29
+peek u32 0x020B6CB4 x29
+peek u32 0x020B6CB8 y29
+press A 3
+wait 35
+shot op_30
+peek u32 0x020B6CB4 x30
+peek u32 0x020B6CB8 y30
+press A 3
+wait 35
+shot op_31
+peek u32 0x020B6CB4 x31
+peek u32 0x020B6CB8 y31
+press A 3
+wait 35
+shot op_32
+peek u32 0x020B6CB4 x32
+peek u32 0x020B6CB8 y32
+press A 3
+wait 35
+shot op_33
+peek u32 0x020B6CB4 x33
+peek u32 0x020B6CB8 y33
+press A 3
+wait 35
+shot op_34
+peek u32 0x020B6CB4 x34
+peek u32 0x020B6CB8 y34
+press A 3
+wait 35
+shot op_35
+peek u32 0x020B6CB4 x35
+peek u32 0x020B6CB8 y35
+press A 3
+wait 35
+shot op_36
+peek u32 0x020B6CB4 x36
+peek u32 0x020B6CB8 y36
+press A 3
+wait 35
+shot op_37
+peek u32 0x020B6CB4 x37
+peek u32 0x020B6CB8 y37
+press A 3
+wait 35
+shot op_38
+peek u32 0x020B6CB4 x38
+peek u32 0x020B6CB8 y38
+press A 3
+wait 35
+shot op_39
+peek u32 0x020B6CB4 x39
+peek u32 0x020B6CB8 y39
+press A 3
+wait 35
+shot op_40
+peek u32 0x020B6CB4 x40
+peek u32 0x020B6CB8 y40
+press A 3
+wait 35
+shot op_41
+peek u32 0x020B6CB4 x41
+peek u32 0x020B6CB8 y41
+press A 3
+wait 35
+shot op_42
+peek u32 0x020B6CB4 x42
+peek u32 0x020B6CB8 y42
+press A 3
+wait 35
+shot op_43
+peek u32 0x020B6CB4 x43
+peek u32 0x020B6CB8 y43
+press A 3
+wait 35
+shot op_44
+peek u32 0x020B6CB4 x44
+peek u32 0x020B6CB8 y44
+press A 3
+wait 35
+shot op_45
+peek u32 0x020B6CB4 x45
+peek u32 0x020B6CB8 y45
+press A 3
+wait 35
+shot op_46
+peek u32 0x020B6CB4 x46
+peek u32 0x020B6CB8 y46
+press A 3
+wait 35
+shot op_47
+peek u32 0x020B6CB4 x47
+peek u32 0x020B6CB8 y47
+press A 3
+wait 35
+shot op_48
+peek u32 0x020B6CB4 x48
+peek u32 0x020B6CB8 y48
+press A 3
+wait 60
+shot op_street
+press Down 40
+wait 20
+shot op_control
+peek u32 0x020B6CB4 xc
+peek u32 0x020B6CB8 yc
+# Back into the inn from the town map (Inn 1F is the first entry) and talk to Cherenkov at the counter
+wait 120
+press A 3
+wait 150
+shot op_lobby_again
+press Up,Left 80
+press Up 15
+press Left 10
+press Up,Left 4
+peek u32 0x020B6CB4 xk
+peek u32 0x020B6CB8 yk
+press A 3
+wait 150
+shot op_cherenkov
+press A 3
+wait 150
+shot op_cherenkov2
+peek u32 0x020B4640 ctx
+dump 0x02204620 0x200 flags
+dump 0x02204620 0x4 flags0

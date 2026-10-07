@@ -32,13 +32,21 @@ WAKE_ANIMATION = (
     0x6304,
 )  # Jian's waking pose ops and the 90-frame wait after them
 POSE_RESET = (0x6318, 0x6328)  # ops 0x38 + 0x40 that put Jian back in his normal pose
-STORY_FLAGS = (
-    0x1,
-    0x1E2,
-)  # set by the vanilla wake-up (0x1 = woken up, skips it on re-entry)
-CHERENKOV_FIRST_LINE = (
-    0x5F90  # u32 text offset of his "Finally, you grace us..." message op
+# Flags the run sets: 0x1 and 0x1E2 as the vanilla wake-up (0x1 = woken up, skips it on re-entry), and
+# LUCIA_AT_FOUNTAIN, which vanilla sets after Cherenkov's first lobby line (0x5F94). The run takes Jian past
+# Cherenkov without talking, so without it Lucia never waited at Fountain Square (Jeff, 2026-10-07). Jack
+# tests it too ("I just saw Lucia in Fountain Square", 0x6764).
+LUCIA_AT_FOUNTAIN = 0xC
+STORY_FLAGS = (0x1, 0x1E2, LUCIA_AT_FOUNTAIN)
+# Cherenkov's lobby lines branch on flags; with LUCIA_AT_FOUNTAIN set he says "Impressive! You know where to
+# go!" (0x0C78), which makes no sense after the run, so that message op shows our Fountain Square line.
+CHERENKOV_AFTER_RUN_LINE = (
+    0x5FA8  # u32 text offset of the LUCIA_AT_FOUNTAIN branch's message op
 )
+CHERENKOV_AFTER_RUN_TEXT = 0xC78
+# Without LUCIA_AT_FOUNTAIN (a save made after the run before this fix) he gives his first line, which
+# repeats the wake-up joke: that one shows our line too, and it sets LUCIA_AT_FOUNTAIN as before.
+CHERENKOV_FIRST_LINE = 0x5F90
 CHERENKOV_FIRST_TEXT = 0xBD2
 # A flag no script tests or sets (0x1D1..0x1E0 are free; 0x1E0 + n are destination flags)
 RUN_FLAG = 0x1DF
@@ -316,10 +324,18 @@ def opening_patches() -> tuple[DataPatch, ...]:
         DataPatch(
             ARCHIVE,
             SCRIPT,
+            CHERENKOV_AFTER_RUN_LINE,
+            struct.pack("<I", CHERENKOV_AFTER_RUN_TEXT),
+            struct.pack("<I", labels["t_cherenkov"]),
+            "opening: after the run Cherenkov sends Jian to Fountain Square",
+        ),
+        DataPatch(
+            ARCHIVE,
+            SCRIPT,
             CHERENKOV_FIRST_LINE,
             struct.pack("<I", CHERENKOV_FIRST_TEXT),
             struct.pack("<I", labels["t_cherenkov"]),
-            "opening: Cherenkov's first lobby line no longer repeats the wake-up joke",
+            "opening: Cherenkov's first lobby line sends Jian to Fountain Square",
         ),
     ]
     return tuple(patches)
