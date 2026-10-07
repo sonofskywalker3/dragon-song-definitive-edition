@@ -1,0 +1,13 @@
+# Diagnostic: warp to map 167 and dump its objects (looking for Jack, object 0x5A / 0x5C).
+include boot_from_save
+wait 30
+poke u32 0x02204620 0x1003
+pin u16 0x020B77EC 167
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects

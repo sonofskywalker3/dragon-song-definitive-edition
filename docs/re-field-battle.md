@@ -795,3 +795,39 @@ Stumbled on while doing the above, not investigated further:
    character uses the multi-hit roll at 0x0213B919.
 7. Load flags passed to `func_0201d92c` by save load, warp and menu return (matters for the restock-on-entry patch).
 8. Whether an opened blue chest stays open after its map restocks.
+
+## Port Searis maps, objects and the opening's story flags (2026-10-07)
+
+Found while fixing "Lucia is not at Fountain Square" (docs/playtest-feedback.md 11). Map ids read by pin-warping
+to each map (`emu/plans/diag_map_objects.plan.N`: `pin u16 0x020B77EC <map>` while walking out of the room)
+and screenshotting the location label (`diag_map_name.plan.N`); object ids from the live object table.
+
+| Map | Place | Object ids (+0x12) |
+|---|---|---|
+| 150 | ? | 0xBE |
+| 151..154 | ? (one object each: 0x0A, 0x14, 0x1E, 0x28) | |
+| 155 | Inn 1F (lobby; Cherenkov is talk object 0x3C) | |
+| 156 | Restaurant | 0x36, 0x34, 0x32, 0x1F5 |
+| 157 | Jose's house | 0x64, 0x66, 0x3E9 |
+| 158 | Isabella's house | 0x50, 0x321 |
+| 159 | Jack's house (Jack: talk objects 0x5A, 0x5C) | 0x5A, 0x5C, 0x385 |
+| 160 | Inn 2F hall | |
+| 161, 162 | ? | 0x3E 0x26E 0x26D; 0x40 0x281 |
+| 163 | Jian's room | |
+| 164 | Fountain Square (Lucia meeting = object 0xC8) | 0x4A, 0x46, 0xC8, 0x48, 0x37D, 0x37E |
+| 165..171 | ? | 0x6E; 0x0A 0x14; ...; 0x3C 0x3E 0x259 |
+| 285 | Port Searis town map ("Select place to go" menu, not walkable) | |
+
+- Live map objects: 32 x 0x40 at 0x020B6FD4; +0x04 x and +0x08 y (20.12), +0x12 object id (the id script
+  talk handlers compare: script 001 0x579C.. `0D:2 var1 == id goto handler`), +0x14 kind.
+- Script context (story flag bits at its start): pointer at 0x020B4640, 0x02204620 in this build; flag n is bit
+  n & 31 of word n >> 5. Dump and diff it between two runs to find what a skipped script sets
+  (`diag_flags_vanilla` / `diag_flags_ours`).
+- Opening flags: 0x1 and 0x1E2 (woken up), 0xC "Lucia left" (Cherenkov's first lobby line, 0x5F94), 0xD "Lucia
+  at the fountain" (only Jack sets it, 0x6788, after 0xC), 0xB "met Lucia" (end of the fountain meeting).
+  Map 164's entry code (script 001 0x56E0) keeps object 0xC8 only with 0xD (now patched to test 0xC).
+- Script op 0x18 <id> removes map object <id> on entry; 0x19 sets a flag, 0x1A clears one; 0x13/0x14/0x15 =
+  all / any / none of the listed flags set -> goto (docs/re-opening.md).
+- The town map menu (map 285) is not driven by Left/Right/L/R/Down in the harness; to reach a map in tests,
+  pin-warp from Jian's room as above (the player lands at x = 9999 and needs a position poke; the map's
+  entry script may not run, so entry-time object removal cannot be tested this way).
