@@ -1,0 +1,150 @@
+# Vanilla reference: when does the flyer above the empty front column (slot 8) drop? First temple battle,
+# real stats, Jian attacks; shots every 10 frames through the first round. Run with --save on the vanilla ROM.
+include boot_from_save
+include warp6
+wait 270
+shot vd_start
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+wait 10
+shot vd_01
+wait 10
+shot vd_02
+wait 10
+shot vd_03
+wait 10
+shot vd_04
+wait 10
+shot vd_05
+wait 10
+shot vd_06
+wait 10
+shot vd_07
+wait 10
+shot vd_08
+wait 10
+shot vd_09
+wait 10
+shot vd_10
+wait 10
+shot vd_11
+wait 10
+shot vd_12
+wait 10
+shot vd_13
+wait 10
+shot vd_14
+wait 10
+shot vd_15
+wait 10
+shot vd_16
+wait 10
+shot vd_17
+wait 10
+shot vd_18
+wait 10
+shot vd_19
+wait 10
+shot vd_20
+wait 10
+shot vd_21
+wait 10
+shot vd_22
+wait 10
+shot vd_23
+wait 10
+shot vd_24
+wait 10
+shot vd_25
+wait 10
+shot vd_26
+wait 10
+shot vd_27
+wait 10
+shot vd_28
+wait 10
+shot vd_29
+wait 10
+shot vd_30
+wait 10
+shot vd_31
+wait 10
+shot vd_32
+wait 10
+shot vd_33
+wait 10
+shot vd_34
+wait 10
+shot vd_35
+wait 10
+shot vd_36
+wait 10
+shot vd_37
+wait 10
+shot vd_38
+wait 10
+shot vd_39
+wait 10
+shot vd_40
+wait 10
+shot vd_41
+wait 10
+shot vd_42
+wait 10
+shot vd_43
+wait 10
+shot vd_44
+wait 10
+shot vd_45
+wait 10
+shot vd_46
+wait 10
+shot vd_47
+wait 10
+shot vd_48
+wait 10
+shot vd_49
+wait 10
+shot vd_50
+wait 10
+shot vd_51
+wait 10
+shot vd_52
+wait 10
+shot vd_53
+wait 10
+shot vd_54
+wait 10
+shot vd_55
+wait 10
+shot vd_56
+wait 10
+shot vd_57
+wait 10
+shot vd_58
+wait 10
+shot vd_59
+wait 10
+shot vd_60

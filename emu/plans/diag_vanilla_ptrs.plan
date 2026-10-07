@@ -1,0 +1,7 @@
+# Vanilla: pointers for diag_vanilla_drop2.
+include boot_from_save
+include warp6
+wait 270
+peek u32 0x020B8550 work
+peek u32 0x020B8640 battlers
+battlers

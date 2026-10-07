@@ -712,3 +712,11 @@ during the attack while Jian's swings stay on 10 (3077, 3115); `diag_drop` / `tg
 the empty slot 8 drops at the first action (2987..2997), Jian's third swing goes to it (slot 8, 3114) after
 both 9 and 10 die, 9 and 10 refill after their fades (3096, 3124); `tgt_drop_exp` 202 EXP / 101 silver;
 `tgt_multihit_jian` 9, 10, 10.
+
+Correction (Jeff, same day): vanilla refills after every action, whoever acts (watched on the vanilla ROM,
+`diag_vanilla_drop2`: the first action of the temple battle ends, states 0x10 / 0x11 run with mask 1 and the
+flyer above the empty slot 8 is in it at 3114; in play that first action was the fly's own attack, so it
+"stayed down" after attacking). Our tick dropped it at the start of the first action instead. Now the tick
+records REFILL_COLUMNS when an action starts (round state turns 7) and leaves those columns to vanilla's
+after-action refill; only slots that empty during the action drop mid-action. `diag_drop`: no drop before
+Jian's combo clears the front row (3077), then all three columns drop at once and his third swing hits slot 10.
