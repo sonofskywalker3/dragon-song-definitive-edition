@@ -1,0 +1,43 @@
+# Diagnostic: Jian placed at points in the hall (map 160) after leaving his room; a shot at each.
+include boot_from_save
+wait 120
+poke u32 0x020B6CB4 1007616
+poke u32 0x020B6CB8 876544
+wait 150
+shot hall_start
+poke u32 0x020B6CB4 1585152
+poke u32 0x020B6CB8 811008
+wait 12
+shot hall_387_198
+poke u32 0x020B6CB4 1351680
+poke u32 0x020B6CB8 925696
+wait 12
+shot hall_330_226
+poke u32 0x020B6CB4 1064960
+poke u32 0x020B6CB8 1069056
+wait 12
+shot hall_260_261
+poke u32 0x020B6CB4 819200
+poke u32 0x020B6CB8 1191936
+wait 12
+shot hall_200_291
+poke u32 0x020B6CB4 614400
+poke u32 0x020B6CB8 1294336
+wait 12
+shot hall_150_316
+poke u32 0x020B6CB4 540672
+poke u32 0x020B6CB8 1331200
+wait 12
+shot hall_132_325
+poke u32 0x020B6CB4 450560
+poke u32 0x020B6CB8 1294336
+wait 12
+shot hall_110_316
+poke u32 0x020B6CB4 376832
+poke u32 0x020B6CB8 1249280
+wait 12
+shot hall_92_305
+poke u32 0x020B6CB4 397312
+poke u32 0x020B6CB8 1392640
+wait 12
+shot hall_97_340
