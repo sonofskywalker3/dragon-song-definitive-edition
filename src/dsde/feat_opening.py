@@ -114,26 +114,23 @@ CHERENKOV_LOBBY = (
     ),
 )
 
-# Legs of the run (direction, ticks, speed), after the owner's walked path (build/emu/record/path.log).
-# One tick moves speed / 0x1000 pixels: 2 px straight at SPEED_RUN, (1.75, 0.875) px diagonally.
-# Routes are scripted moves, so the endpoints only need to look right: each leg ends with a map change.
-ROOM_ROUTE = (  # (174,154) -> over the doormat (x 230..250, y 200..214) to its edge (235,214)
-    (RIGHT, 6, SPEED_RUN),
-    (DOWN_RIGHT, 28, SPEED_RUN),
-    (DOWN, 18, SPEED_RUN),
-)
-HALL_ROUTE = (  # (366,187) -> stairs (90,307), where the walked path changed maps (y 307..317)
-    (DOWN, 22, SPEED_RUN),
-    (DOWN_LEFT, 96, SPEED_RUN),
-    (LEFT, 54, SPEED_RUN),
-    (UP, 4, SPEED_RUN),
-)
-# (96,215) -> front door (366,315), down and away from the counter at once (the walk slid along it)
-LOBBY_ROUTE = (
-    (DOWN_RIGHT, 60, SPEED_RUN),
-    (RIGHT, 30, SPEED_RUN),
-    (DOWN_RIGHT, 54, SPEED_RUN),
-    (RIGHT, 5, SPEED_RUN),
+# Legs of the run (direction, ticks, speed); one tick per frame. A tick moves speed / 0x1000 pixels:
+# 1 px straight at SPEED_WALK, (0.875, 0.4375) px diagonally (the 2:1 screen diagonal, two buttons held).
+# Jeff: walk, not run, so the asides can be read on the way; diagonals through doors, not zigzags.
+# Each leg ends with our own map change, so the endpoints only need to look right.
+ROOM_ROUTE = (  # (174,154) -> a step down from the bed, then straight over the doormat (x 230..250)
+    (DOWN, 26, SPEED_WALK),
+    (DOWN_RIGHT, 76, SPEED_WALK),
+)  # -> (240,213), the mat's front edge
+HALL_ROUTE = (  # (366,187) -> out of the door, along the corridor, up-left into the stairway
+    (DOWN_RIGHT, 24, SPEED_WALK),
+    (DOWN_LEFT, 292, SPEED_WALK),
+    (UP_LEFT, 46, SPEED_WALK),
+)  # -> (91,305), where the walked path changed maps (y 307..317)
+LOBBY_ROUTE = (  # (96,215) -> front door (366,315), down and away from the counter at once
+    (DOWN_RIGHT, 120, SPEED_WALK),
+    (RIGHT, 70, SPEED_WALK),
+    (DOWN_RIGHT, 108, SPEED_WALK),
 )
 
 
