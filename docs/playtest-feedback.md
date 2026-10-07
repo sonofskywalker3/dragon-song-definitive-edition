@@ -241,3 +241,16 @@ flags, and both Cherenkov lines it selects between (first talk 0xBD2, after the 
 know where to go!") show "Jian, what are you doing?! Get to Fountain Square! Don't keep Lucia waiting!", so a
 save made before the fix gets the flag by talking to him once. Seen: flag word 0x1002 after `opening_run`;
 `test_cherenkov_lobby` shows the line.
+
+Follow-up (same day): talking to Cherenkov was not enough either. Map 164 (Fountain Square) keeps the Lucia
+meeting (object 200) only with flag 0xD, which only Jack sets ("I just saw Lucia in Fountain Square", 0x6788,
+after Cherenkov's 0xC). The entry check (script 001 0x56E8) now tests 0xC instead, and the run sets both, so
+neither Jack nor Cherenkov is needed and a save with Cherenkov talked to works as is.
+
+## 12. Faster field movement and the run cooldown (Done, 2026-10-07)
+
+Jeff: walking 1.5 times, running 3 times vanilla walking (walking 1.25 made running feel little better), and
+the run should be ready on entering a new area (running through a door carried the 3 s cooldown into the next
+map). `walk-speed` scales every field step by 1.5 (a running frame's two steps make 3); measured 45 px in 30
+frames walking and 90 running (`diag_speed_field`). `timed-run` resets the run state when the map id changes
+(`diag_run_counter2`: state 0 on the first frame of the new map, running again at once on B).

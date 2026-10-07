@@ -1,6 +1,6 @@
 """Field running (design 1): no HP cost, and a timed run with a cooldown. See docs/re-field-battle.md section 1."""
 
-from dsde.patching import AsmPatch, Feature, Patch
+from dsde.patching import AsmPatch, CaveCode, Feature, Patch
 
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
 # 8-bit counter at +0x40 bits 5..12 (the old HP drain counter): 0 = ready, 1..RUN_TICKS =
@@ -11,6 +11,7 @@ FRAMES_PER_TICK = 2
 RUN_TICKS = 90  # 3 seconds
 COOLDOWN_TICKS = 90  # 3 seconds
 FRAME_COUNTER = 0x020B05BC
+FIELD_MAP = 0x020B6BE4  # s16 current map id (field state block)
 TIMED_RUN_BODY_ADDR = 0x020251AC
 TIMED_RUN_EXIT = 0x02024C58
 DPAD_MASK = 0xF0
@@ -26,9 +27,29 @@ TIMED_RUN_ASM_ENTRY = f"""
     ldr   r0, [sp, #8]
     ldr   r12, frame_counter
     ldrh  r12, [r12]
+    bl    ${{cave_run_area}}
     b     {TIMED_RUN_BODY_ADDR:#x}
 frame_counter:
     .word {FRAME_COUNTER:#x}
+"""
+
+# A new area starts with the run ready (Jeff, 2026-10-07): running through a door used to carry the 3 s
+# cooldown into the next map. In: r3 = run state; out: r3 = 0 on the first frame of a different map.
+RUN_AREA_ASM = f"""
+    push  {{r0, r1, r12}}
+    ldr   r0, area_map
+    ldrh  r0, [r0]
+    ldr   r1, area_last
+    ldrh  r12, [r1]
+    cmp   r0, r12
+    strhne r0, [r1]
+    movne r3, #0
+    pop   {{r0, r1, r12}}
+    bx    lr
+area_map:
+    .word {FIELD_MAP:#x}
+area_last:
+    .word ${{cave_run_area_last}}
 """
 
 # Part 2 sits in the freed HP drain block. In: r0 = B held, r1 = player flags, r2 = &flags,
@@ -89,6 +110,8 @@ NO_RUN_HP_COST = Feature(
 TIMED_RUN = Feature(
     "timed-run",
     (
+        CaveCode("cave_run_area_last", "    .word 0", "map the run state belongs to"),
+        CaveCode("cave_run_area", RUN_AREA_ASM, "run ready again in a new area"),
         Patch(
             0x020251A8,
             0x1A00001E,

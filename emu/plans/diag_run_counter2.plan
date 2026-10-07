@@ -1,0 +1,9 @@
+# Diagnostic: the run state counter (player flags +0x40, bits 5..12) when running through a map change.
+include boot_from_save
+wait 60
+watch u32 0x020B6CF0 pflags
+watch u16 0x020B6BE4 map
+press B,Down,Right 70
+wait 200
+press B,Down,Left 20
+wait 60

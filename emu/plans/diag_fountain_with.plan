@@ -1,0 +1,20 @@
+# Diagnostic: warp to map 164 (Fountain Square?) with flags 0xC and 0xD; is the Lucia meeting there?
+include boot_from_save
+wait 30
+poke u32 0x02204620 0x3003
+pin u16 0x020B77EC 0xA4
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+watch u16 0x020B6BE4 map
+shot fq_1
+wait 120
+shot fq_2
+press Up 60
+shot fq_3
+wait 90
+shot fq_4
+dump 0x020B6FD4 0x800 objects

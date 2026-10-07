@@ -1,0 +1,74 @@
+# Diagnostic: walk around Fountain Square with flags 0xC/0xD, pressing A; watch flag 0x0B (met Lucia).
+include boot_from_save
+wait 30
+poke u32 0x02204620 0x3003
+pin u16 0x020B77EC 0xA4
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+poke u32 0x020B6CB4 0xC8000
+poke u32 0x020B6CB8 0xC8000
+wait 60
+watch u32 0x02204620 flags0
+shot fz_start
+peek u32 0x020B6CB4 x
+peek u32 0x020B6CB8 y
+press Up 90
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press Left 90
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press Down 90
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press Right 90
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press Up,Left 90
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press Down,Left 90
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press Up,Right 90
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press Down,Right 90
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+shot fz_end
