@@ -1,0 +1,27 @@
+# Diagnostic: Jian placed at points around his room's doormat (map coords), a shot at each.
+include boot_from_save
+wait 120
+poke u32 0x020B6CB4 942080
+poke u32 0x020B6CB8 819200
+wait 20
+shot room_230_200
+poke u32 0x020B6CB4 983040
+poke u32 0x020B6CB8 843776
+wait 20
+shot room_240_206
+poke u32 0x020B6CB4 1024000
+poke u32 0x020B6CB8 819200
+wait 20
+shot room_250_200
+poke u32 0x020B6CB4 966656
+poke u32 0x020B6CB8 876544
+wait 20
+shot room_236_214
+poke u32 0x020B6CB4 909312
+poke u32 0x020B6CB8 851968
+wait 20
+shot room_222_208
+poke u32 0x020B6CB4 1007616
+poke u32 0x020B6CB8 876544
+wait 20
+shot room_246_214
