@@ -1,0 +1,5 @@
+# Diagnostic part 3: the two front enemies' piece records from state pk.
+load pk
+wait 1
+dump 0x229CB10 0x18 piece9
+dump 0x22BE774 0x18 piece10

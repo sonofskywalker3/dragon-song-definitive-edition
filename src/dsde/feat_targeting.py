@@ -20,6 +20,7 @@ redirect too (feat_targeting_anim.py).
 """
 
 from dsde.feat_targeting_anim import ANIM_PATCHES
+from dsde.feat_targeting_brackets import BRACKET_PATCHES
 from dsde.feat_targeting_picker import PICKER_PATCHES
 from dsde.patching import AsmPatch, CaveCode, Feature
 from dsde.targeting_consts import (
@@ -352,6 +353,7 @@ MANUAL_TARGETING = Feature(
         CaveCode("cave_tgt_hit", HIT_ASM, "hit on a dead enemy moves on"),
         *PICKER_PATCHES,
         *ANIM_PATCHES,
+        *BRACKET_PATCHES,
         _hook(
             AUTO_TARGET_CALL,
             0xEBFFFCCB,

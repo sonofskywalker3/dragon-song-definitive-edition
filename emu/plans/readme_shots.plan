@@ -1,5 +1,13 @@
-# README screenshot of the battle sign at the first command input, real stats (run with --save).
+# README screenshots with real stats (run with --save): the battle sign at the first command input, then
+# the enemy picker with its corners on the highlighted enemy.
 include boot_from_save
 include warp6
 wait 270
 shot rs_sign
+press A 3
+wait 90
+press A 3
+wait 120
+press Right 3
+wait 60
+shot rs_picker
