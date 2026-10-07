@@ -19,6 +19,7 @@ from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_run import NO_RUN_HP_COST, TIMED_RUN
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_FIXES
+from dsde.feat_title_seal import TITLE_SEAL
 from dsde.feat_walk import WALK_SPEED
 from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
 
@@ -265,6 +266,7 @@ FEATURES: tuple[Feature, ...] = (
     GAD_EXPRESS,
     MIC_SIGN,
     OPENING,
+    TITLE_SEAL,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -290,4 +292,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     GAD_EXPRESS.name,
     MIC_SIGN.name,
     OPENING.name,
+    TITLE_SEAL.name,
 )

@@ -13,7 +13,7 @@ from pathlib import Path
 
 from keystone import KS_ARCH_ARM, KS_MODE_ARM, Ks
 
-from dsde.archive import compress_stored, decompress, read_archive, write_archive
+from dsde.archive import compress, decompress, read_archive, write_archive
 
 ARM9_BASE = 0x02000000
 ARM_NOP = 0xE1A00000
@@ -197,5 +197,5 @@ def apply_data(files_dir: Path, features: list[Feature]) -> None:
                 patch.note,
             )
         for index, data in decoded.items():
-            entries[index] = compress_stored(bytes(data))
+            entries[index] = compress(bytes(data))
         path.write_bytes(write_archive(entries))
