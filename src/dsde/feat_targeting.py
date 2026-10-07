@@ -197,33 +197,43 @@ after_next:
 """
 
 # r0 = start battler, r1 = rows -> r0 = start if it is alive and in reach, else the next one in
-# list order (wrapping to the top), else -1. Falls back to every row when nobody is in reach.
-NEXT_ASM = f"""
-    push  {{r4-r6, lr}}
+# list order (wrapping to the top), else -1. Used mid-action: never a row the attacker cannot reach.
+REACH_ASM = """
+    push  {r4, r5, lr}
     mov   r4, r0
     mov   r5, r1
-next_retry:
-    mov   r0, r4
-    mov   r1, r5
-    bl    ${{cave_tgt_ok}}
+    bl    ${cave_tgt_ok}
     cmp   r0, #0
     movne r0, r4
-    popne {{r4-r6, pc}}
+    popne {r4, r5, pc}
     mov   r0, r4
     mov   r1, r5
-    bl    ${{cave_tgt_after}}
+    bl    ${cave_tgt_after}
     cmp   r0, #0
-    popge {{r4-r6, pc}}
+    popge {r4, r5, pc}
     mvn   r0, #0
     mov   r1, r5
-    bl    ${{cave_tgt_after}}
+    bl    ${cave_tgt_after}
+    pop   {r4, r5, pc}
+"""
+
+# As cave_tgt_reach, falling back to every row when nobody is in reach. Used when an action starts
+# (the refill has filled the front row by then), so a manual attack never hits AUTO_TARGET's
+# zero-candidate path.
+NEXT_ASM = f"""
+    push  {{r4, r5, lr}}
+    mov   r4, r0
+    mov   r5, r1
+    bl    ${{cave_tgt_reach}}
     cmp   r0, #0
-    popge {{r4-r6, pc}}
+    popge {{r4, r5, pc}}
     cmp   r5, #{ROWS_ANY}
-    movne r5, #{ROWS_ANY}
-    bne   next_retry
-    mvn   r0, #0
-    pop   {{r4-r6, pc}}
+    mvneq r0, #0
+    popeq {{r4, r5, pc}}
+    mov   r0, r4
+    mov   r1, #{ROWS_ANY}
+    bl    ${{cave_tgt_reach}}
+    pop   {{r4, r5, pc}}
 """
 
 # Replaces `bl AUTO_TARGET` in the party Attack loop. In: r0 = mode, r1 = rows, r4 = actor,
@@ -272,7 +282,10 @@ pick_state:
 # r4 = target index, r6 = attacker (scratch copy), fp = hit flags; the caller keeps the target in
 # r4, r5, [sp + 4] and [sp + 0x1C] (here + 8 for our push). A party Attack hit on a dead enemy, or
 # on one that earlier hits of the same action already killed, moves to the next living enemy in list
-# order instead of whiffing. Every other hit gets BATTLER_ALIVE's own answer.
+# order instead of whiffing, but only to an enemy the attacker reaches: with nobody left in reach the hit
+# whiffs as in vanilla, so Jian never leaps at a flying back-row enemy mid-combo; the back row comes down
+# after the action as usual (Jeff, 2026-10-07; plan tgt_no_leap). Every other hit gets BATTLER_ALIVE's
+# own answer.
 CALLER_TARGET_INDEX = 0x04 + 8
 CALLER_TARGET_OFFSET = 0x1C + 8
 HIT_SLOT_SHIFT = 12
@@ -307,7 +320,7 @@ hit_dead:
     bl    ${{cave_tgt_rows}}
     mov   r1, r0
     mov   r0, r4
-    bl    ${{cave_tgt_next}}
+    bl    ${{cave_tgt_reach}}
     cmp   r0, #0
     blt   hit_vanilla
     mov   r4, r0
@@ -348,6 +361,7 @@ MANUAL_TARGETING = Feature(
         CaveCode("cave_tgt_ok", OK_ASM, "enemy alive and in reach"),
         CaveCode("cave_tgt_less", LESS_ASM, "enemy list order"),
         CaveCode("cave_tgt_after", AFTER_ASM, "next enemy in list order"),
+        CaveCode("cave_tgt_reach", REACH_ASM, "living target or the next one in reach"),
         CaveCode("cave_tgt_next", NEXT_ASM, "living target or the next one"),
         CaveCode("cave_tgt_pick", PICK_ASM, "Attack uses the chosen enemy"),
         CaveCode("cave_tgt_hit", HIT_ASM, "hit on a dead enemy moves on"),
