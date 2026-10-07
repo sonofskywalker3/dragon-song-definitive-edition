@@ -117,20 +117,23 @@ CHERENKOV_LOBBY = (
 # Legs of the run (direction, ticks, speed), after the owner's walked path (build/emu/record/path.log).
 # One tick moves speed / 0x1000 pixels: 2 px straight at SPEED_RUN, (1.75, 0.875) px diagonally.
 # Routes are scripted moves, so the endpoints only need to look right: each leg ends with a map change.
-ROOM_ROUTE = (
+ROOM_ROUTE = (  # (174,154) -> over the doormat (x 230..250, y 200..214) to its edge (235,214)
     (RIGHT, 6, SPEED_RUN),
-    (DOWN_RIGHT, 50, SPEED_RUN),
-)  # (174,154) -> door (269,197)
+    (DOWN_RIGHT, 28, SPEED_RUN),
+    (DOWN, 18, SPEED_RUN),
+)
 HALL_ROUTE = (  # (366,187) -> stairs (90,307), where the walked path changed maps (y 307..317)
     (DOWN, 22, SPEED_RUN),
     (DOWN_LEFT, 96, SPEED_RUN),
     (LEFT, 54, SPEED_RUN),
     (UP, 4, SPEED_RUN),
 )
-LOBBY_ROUTE = (  # (96,215) -> front door (366,315)
-    (RIGHT, 46, SPEED_RUN),
-    (DOWN_RIGHT, 102, SPEED_RUN),
-    (DOWN, 5, SPEED_RUN),
+# (96,215) -> front door (366,315), down and away from the counter at once (the walk slid along it)
+LOBBY_ROUTE = (
+    (DOWN_RIGHT, 60, SPEED_RUN),
+    (RIGHT, 30, SPEED_RUN),
+    (DOWN_RIGHT, 54, SPEED_RUN),
+    (RIGHT, 5, SPEED_RUN),
 )
 
 
