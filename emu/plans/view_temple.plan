@@ -1,0 +1,6 @@
+# Viewing: the first temple battle with real stats, saved at the first command input, for normal-speed checks:
+# EmuHawk --load-state=build/view/states/temple.State build/dsde.nds
+include boot_from_save
+include warp6
+wait 270
+save temple
