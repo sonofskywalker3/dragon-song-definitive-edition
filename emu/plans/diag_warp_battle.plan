@@ -1,0 +1,10 @@
+# Diagnostic: does warp6 still reach the first temple battle? (shot at the first command input)
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+shot sign00
+press A 3
+wait 17
+press A 3
+wait 17

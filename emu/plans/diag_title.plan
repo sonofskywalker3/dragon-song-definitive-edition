@@ -1,0 +1,9 @@
+# Title screen screenshots (for the Definitive Edition stamp).
+wait 900
+shot title_900
+wait 300
+shot title_1200
+wait 300
+shot title_1500
+wait 300
+shot title_1800

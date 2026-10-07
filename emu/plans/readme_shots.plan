@@ -1,0 +1,5 @@
+# README screenshot of the battle sign at the first command input, real stats (run with --save).
+include boot_from_save
+include warp6
+wait 270
+shot rs_sign

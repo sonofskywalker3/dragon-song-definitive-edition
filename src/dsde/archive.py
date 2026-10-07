@@ -23,6 +23,9 @@ HEADER_SIZE = 12
 LENGTH_SHIFT = 12
 MIN_MATCH = 3
 DISTANCE_MASK = 0xFFF
+MAX_MATCH = (0xFFFF >> LENGTH_SHIFT) + MIN_MATCH  # 18
+WINDOW = DISTANCE_MASK + 1  # farthest back-reference
+CHAIN_LIMIT = 64  # earlier positions kept per 3-byte prefix (speed against ratio)
 
 
 class ArchiveError(ValueError):
@@ -76,10 +79,57 @@ def decompress(entry: bytes) -> bytes:
     return bytes(out[:size])
 
 
-def compress_stored(data: bytes) -> bytes:
-    """Encode data as a CMDS entry using literals only. Valid for the game, just not smaller."""
-    flags = bytes(_align(len(data), 8) // 8)
-    return MAGIC + struct.pack("<II", len(data), len(data)) + data + flags
+def compress(data: bytes) -> bytes:
+    """Encode data as a CMDS entry with back-references (greedy longest match).
+
+    Patched entries must stay close to their vanilla size: the game loads whole archives into
+    memory, and a titlepack 39 KB larger (its art entry stored as literals) broke a later battle
+    (2026-10-07). The result is checked by decompressing it.
+    """
+    stream = bytearray()
+    flag_bits: list[int] = []
+    recent: dict[bytes, list[int]] = {}
+    pos = 0
+    while pos < len(data):
+        best_len, best_dist = 0, 0
+        key = data[pos : pos + MIN_MATCH]
+        if len(key) == MIN_MATCH:
+            for start in reversed(recent.get(key, ())):
+                distance = pos - start
+                if distance > WINDOW:
+                    break
+                length = MIN_MATCH
+                while (
+                    length < MAX_MATCH
+                    and pos + length < len(data)
+                    and data[start + length] == data[pos + length]
+                ):
+                    length += 1
+                if length > best_len:
+                    best_len, best_dist = length, distance
+                    if length == MAX_MATCH:
+                        break
+        step = best_len if best_len >= MIN_MATCH else 1
+        if best_len >= MIN_MATCH:
+            value = (best_len - MIN_MATCH) << LENGTH_SHIFT | (best_dist - 1)
+            stream += struct.pack("<H", value)
+            flag_bits.append(1)
+        else:
+            stream.append(data[pos])
+            flag_bits.append(0)
+        for p in range(pos, pos + step):
+            chain = recent.setdefault(data[p : p + MIN_MATCH], [])
+            chain.append(p)
+            if len(chain) > CHAIN_LIMIT:
+                del chain[: len(chain) - CHAIN_LIMIT]
+        pos += step
+    flags = bytearray(_align(len(flag_bits), 8) // 8)
+    for i, bit in enumerate(flag_bits):
+        flags[i >> 3] |= bit << (i & 7)
+    entry = MAGIC + struct.pack("<II", len(data), len(stream)) + stream + flags
+    if decompress(entry) != data:
+        raise ArchiveError("compressed entry does not decompress to its data")
+    return entry
 
 
 def unpack_all(extract_files: Path, out_dir: Path) -> None:
