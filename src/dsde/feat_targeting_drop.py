@@ -8,8 +8,10 @@ at the end copies each into the front slot of its column (battler and stat recor
 
 Jeff (2026-10-07): with kill-on-hit (Fast and Fastest) a front enemy dies mid-action, and the enemy behind
 it should drop in as soon as the slot is empty, as the battle calls for. Every frame of an action (round
-state 7) the tick asks REFILL_COLUMNS, leaves out columns whose front enemy is still fading out (dying but
-not yet gone), and starts the refill on the rest; it then runs REFILL_STEPS_PER_FRAME steps a frame. The
+state 7) the tick asks REFILL_COLUMNS, leaves out the columns that were already due when the action started
+(a front slot empty from the start of the battle or from an earlier action: vanilla refills those after
+the action, round state 0x10 / 0x11, and so do we) and columns whose front enemy is still fading out (dying
+but not yet gone), and starts the refill on the rest; it then runs REFILL_STEPS_PER_FRAME steps a frame. The
 lunge follow-up (feat_targeting_anim.py) also starts one at once, fading or not, when a melee attacker has
 nobody left in reach, and the hit hook ends a running drop before a hit on a dead target, so a swing at the
 slot lands on the enemy that dropped in. A drop still running when the round reaches vanilla's own refill
@@ -44,6 +46,10 @@ DROP_STATE_ASM = """
     .word 0
 """
 DROPPING = 0  # byte: 1 while our refill runs
+LAST_ROUND = 1  # byte: round state seen last frame
+START_MASK = (
+    2  # byte: REFILL_COLUMNS when the action started (those wait for vanilla's refill)
+)
 
 # Every battle frame: run a refill of ours, or start one during an action
 DROP_TICK_ASM = f"""
@@ -52,6 +58,15 @@ DROP_TICK_ASM = f"""
     ldr   r6, tick_work
     ldr   r6, [r6]
     ldrsh r7, [r6, #{ROUND_STATE:#x}]
+    ldrb  r0, [r4, #{LAST_ROUND}]
+    strb  r7, [r4, #{LAST_ROUND}]
+    cmp   r7, #{ROUND_ACTION}
+    bne   tick_check
+    cmp   r0, #{ROUND_ACTION}
+    beq   tick_check
+    bl    {REFILL_COLUMNS:#x}
+    strb  r0, [r4, #{START_MASK}]
+tick_check:
     ldrb  r0, [r4, #{DROPPING}]
     cmp   r0, #0
     beq   tick_poll
@@ -81,7 +96,8 @@ tick_poll:
     cmp   r7, #{ROUND_ACTION}
     popne {{r4-r7, pc}}
     bl    {REFILL_COLUMNS:#x}
-    movs  r5, r0
+    ldrb  r1, [r4, #{START_MASK}]
+    bics  r5, r0, r1
     popeq {{r4-r7, pc}}
     ldr   r1, tick_battlers
     ldr   r1, [r1]
