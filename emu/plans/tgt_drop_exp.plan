@@ -1,0 +1,448 @@
+# The mid-attack drop keeps every kill's EXP and silver: the tgt_no_leap opening, then A until the victory
+# screen. The same temple battle pays Jian 202 EXP and 101 silver without the drop (mic_sign sign11).
+include boot_from_save
+include cheats_strong
+peek u32 0x020B4694 exp_before
+peek u32 0x020B4824 silver_before
+include warp6
+wait 270
+poke u16 0x0228EC40 1
+poke u16 0x0228ECAC 1
+watch u16 0x0228EC40 hp9
+watch u16 0x0228ECAC hp10
+watch u16 0x0228EA24 hp4
+watch u16 0x0228EA90 hp5
+watch u16 0x0228EAFC hp6
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_10
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_20
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_30
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_40
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_50
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_60
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_70
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_80
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_90
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_95
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_100
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_105
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_110
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_115
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_120
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_125
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_130
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_135
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_140
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_145
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_150
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_155
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_160
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_165
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_170
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_175
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_180
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_185
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_190
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_195
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot ex_200
+peek u32 0x020B4694 exp_after
+peek u32 0x020B4824 silver_after
