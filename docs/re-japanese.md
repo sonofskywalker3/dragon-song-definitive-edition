@@ -7,11 +7,23 @@ Notes for comparing the USA text with the Japanese original (playtest feedback 5
 
 - Extract: `tools/dsd.exe rom extract -r "rom/Lunar - Genesis (Japan).nds" -o build/extract_jp`.
 - Archives: `dsde.archive.unpack_all` works on the Japanese .dat files too (output in `build/unpacked_jp/`).
-- Encoding: one byte per character, ending at 0xFF.
+- Encoding: one byte per character, ending at 0xFF. **The byte is the index of a cell in the one dialogue
+  font**, `build/unpacked_jp/pack/005.bin` (0x30-byte NTC4 header, then 4bpp 8x8 tiles; cell c is tiles 2c
+  and 2c + 1, an 8x16 glyph at 0x30 + c * 64). There is no lookup table and nothing per script: a code means
+  the same character in every file. Checked 2026-10-07 by dumping the bottom-screen BG VRAM during the JP
+  opening: its font area equals pack/005 for all 256 cells. (`wmpack/046.bin` is the world-map copy, with
+  Latin capitals in 0xC9..0xDF.)
+- Decoder: `uv run python -m dsde.jp_text build/unpacked_jp/script/NNN.bin` (`--all` for unreferenced strings,
+  `--sheet out.png` with `uv run --with pillow` to render the cells a script uses for checking by eye).
 
 | Bytes | Characters |
 |---|---|
-| 0x10 | ー (long vowel mark) |
+| 0x00 | full-width space (0xF9 too) |
+| 0x01 | ▼ |
+| 0x02 to 0x08 | H L M P S V Z |
+| 0x09 0x0A | 「」 |
+| 0x0B 0x0C | ( ) |
+| 0x0D to 0x14 | & ！ ？ ー 。 、 ： / |
 | 0x15 to 0x1E | digits 0 to 9 |
 | 0x1F to 0x4C | hiragana in あいうえお order |
 | 0x4D to 0x55 | small hiragana |
@@ -20,8 +32,14 @@ Notes for comparing the USA text with the Japanese original (playtest feedback 5
 | 0x8D to 0xA5 | voiced and half-voiced hiragana |
 | 0xA6 to 0xBE | voiced and half-voiced katakana |
 | 0xBF | ヴ |
-| 0xC5 | ・ |
+| 0xC0 to 0xC6 | 〜 … × ↑ ↓ ・ © |
+| 0xC7 0xC8 | 【】 (the brackets the USA text turned into single quotes) |
+| 0xC9 | F |
+| 0xCA to 0xF8 | the game's only 47 kanji: 必要世界女神竜使赤白青黒気来見行人間王言村町魔族法手中大陸心配地方天転呪生本当出存在入死剣悪獣 |
 
+There is no 力 glyph: the text writes 魔法カ with katakana カ for 魔法力. Control codes: FB xx (06 speaker,
+04 place-name colour, 03 item colour; FB 07 ends any of them), FC (one byte, mostly right after a page
+break), FD new line, FE page break, FF end.
 - Scripts: in `script/NNN.bin` a speaker name sits between FB 06 and FB 07, as in the USA scripts.
 - The shop string table (Gad's Express recipient names are entries 75 to 128) has its u16 offsets at 0x020A3DC0
   (129 entries, same layout as the USA table at 0x020A4D28) and its text at 0x020A3EC4.
@@ -53,10 +71,8 @@ Three names that agree in English differ from the Japanese: Jose is ホセア (H
 
 Compared 2026-10-07 for Jeff's question whether the flat "racism is bad" story comes from the localization.
 Script 026 holds the opening narration (JP @ 0x8, USA @ 0x8) and the ending (Titus and Peles, the closing
-narration). Kanji use per-script codes in 0xC1..0xFF that the kana table above does not cover; they are read
-from context here (世界 world, 女神 goddess, 竜使い Dragonmaster, 獣人 Beastmen, 人間 Humans, 大陸 continent),
-so single words may be off, but the sense of each sentence is clear from the kana.
-`{C7}`/`{C8}` are the 「」 brackets the USA text turned into single quotes; `{11}` is 。, `{C1}` is …
+narration). First read with the kanji guessed from context; every guess was later confirmed from the font (above).
+The full decoded text and a line-by-line translation are in docs/intro-analysis.md.
 
 Close translation of the Japanese, page by page, with what the USA text does differently:
 
