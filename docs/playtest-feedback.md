@@ -202,3 +202,23 @@ Jeff rewrote Cherenkov's wake-up and Jian's run lines:
 
 Checked from a New Game in the emulator (`opening_run`): every box fits, the run reaches the street and
 hands back control. The room line is one page (Jeff: no A press mid-run), the punchline after a blank line.
+
+## 9. Y button "thinking out loud" becomes party chat (Open, 2026-10-07)
+
+In the field the DS Y button shows a line of Jian thinking aloud about what to do next (script 018, e.g.
+"Anyway... I'd better find Lucia, quick! She's probably about ready to boil over!"; Japanese とにかく…). Jeff:
+co-opt it for the story and turn it into **party chat**: it can still give the hint, but other party
+members talk too, Tales-style. Not started. First steps when it is: map how script 018 picks its line (story
+flags), whether a message there can show several speakers, and list every line with its trigger.
+
+Also on the list for that work: the first hint no longer fits the new opening (Cherenkov already says
+Fountain Square, and a later hint has Jian "remember" it). Suggested: "I'd better get to Fountain Square,
+quick! Lucia's probably about ready to boil over!"
+
+## 2. Opening run asides rebalanced (2026-10-07)
+
+Jian walks the run now (diagonal routes, see feat_opening.py), so the room is short (about 2 s) and the
+hall long (about 6 s). Jeff: move the whole Lucia part into the hall. Room: "I'm Jian. I'm a courier for /
+Gad's Express." Hall: "Lucia and I haven't been / partners long, but she's / great. Except for her temper.
+/ (blank) / The job gets risky sometimes, / but honestly, that's why I / love it." Lobby unchanged. Seen in
+`opening_run`: all seven hall lines fit one box.
