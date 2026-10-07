@@ -263,3 +263,11 @@ does the hint become "Now I remember! We were going to meet up at Fountain Squar
 Japanese works the same way, so it is the original design, not a localization loss; the only thing our opening
 removed is Jian's "Right then! I'd better go looking for Lucia...". Decision: override it, as built (the run
 sets 0xC and 0xD, map 164 checks 0xC): in our opening Jian is late to meet her, so he knows where.
+
+## 13. Healing statue without the camera pan (Done, 2026-10-07)
+
+Jeff: A on a statue panned the camera to centre it, sparkled, then panned back. Field state 0x3C calls the
+camera move func_0201d878 (statue - (0x80, 0x50), 60 frames) and 0x3D waits for it; after the sparkle 0x40
+pans back to Jian the same way and waits. Both calls are NOPs now (feat_mp STATUE_CAMERA_CALLS), in the code
+every statue shares. `test_statue_fountain` (Fountain Square, map 164): vanilla 193 frames from A to control
+(3C, 3D +60, 3E, 3F, 40 +60), ours 73 (3C, 3E, 3F); the sparkle plays on Jian and the camera stays put.

@@ -41,7 +41,8 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Enemies come back when you leave an area and return**, not instantly. Blue chests unlock once every
   enemy in the area is beaten, at your own pace.
 - **No HP and MP refill for clearing an area.** Healing statues fully restore HP and MP and now also cure
-  status (poison and the like).
+  status (poison and the like), with no camera pan:
+  the sparkle and heal happen at once.
 - **The save glitch is fixed.** Talking to Flora twice in the Underground Tunnel no longer locks out saving.
 
 ### Battles
