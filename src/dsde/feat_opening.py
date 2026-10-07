@@ -92,14 +92,14 @@ WAKE_CALL = (
 WAKE_REPLY = ("<Jian>\nWha...? She left already?!",)
 WAKE_PUSH = ("<Cherenkov>\nKeep this up and I'll rent\nyour room to someone useful!",)
 WAKE_UP = ("<Jian>\nI'm up! I'm up!",)
-RUN_ROOM = (
-    (
-        "<I'm Jian. I'm a courier for>\n<Gad's Express. Lucia and I>\n"
-        "<haven't been partners long,>\n<but she's great.>\n\n<Except for her temper.>"
-    ),
-)
+# The room walk is short (about 2 s), so it gets one line; the hall walk (about 6 s) gets the most text.
+RUN_ROOM = ("<I'm Jian. I'm a courier for>\n<Gad's Express.>",)
 RUN_HALL = (
-    "<The job gets risky sometimes,>\n<but honestly, that's why I>\n<love it.>",
+    (
+        "<Lucia and I haven't been>\n<partners long, but she's>\n"
+        "<great. Except for her temper.>\n\n"
+        "<The job gets risky sometimes,>\n<but honestly, that's why I>\n<love it.>"
+    ),
 )
 RUN_LOBBY = (
     (
