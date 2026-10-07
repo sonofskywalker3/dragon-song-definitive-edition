@@ -7,9 +7,20 @@ is gone.
 **[Download the latest patch](../../releases/latest)** (a `.bps` file; you need your own USA ROM, see
 [How to play it](#how-to-play-it)).
 
-| New opening | Pick your own targets | Run with L+R, no microphone | Silver from every battle |
-|:-:|:-:|:-:|:-:|
-| ![Cherenkov wakes Jian](docs/screenshots/opening-wakeup.png) | ![Enemy picker in battle](docs/screenshots/battle-target-picker.png) | ![Battle sign reads L+R](docs/screenshots/battle-run-sign.png) | ![Victory screen counts EXP and silver](docs/screenshots/victory-silver.png) |
+<table>
+  <tr>
+    <th width="25%">New opening</th>
+    <th width="25%">Pick your own targets</th>
+    <th width="25%">Run with L+R, no microphone</th>
+    <th width="25%">Silver from every battle</th>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/opening-wakeup.png" alt="Cherenkov wakes Jian" width="200"></td>
+    <td><img src="docs/screenshots/battle-target-picker.png" alt="Enemy picker in battle, corners on the enemy" width="200"></td>
+    <td><img src="docs/screenshots/battle-run-sign.png" alt="Battle sign reads L+R" width="200"></td>
+    <td><img src="docs/screenshots/victory-silver.png" alt="Victory screen counts EXP and silver" width="200"></td>
+  </tr>
+</table>
 
 This is an early beta (v0.1.2): the engine and battle changes are in, and the story rewrite has only just
 started. Feedback is welcome in [Issues](../../issues).
