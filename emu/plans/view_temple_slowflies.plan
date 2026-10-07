@@ -1,0 +1,9 @@
+# Viewing: the temple battle with the three flies' agility at 1 (stat record +0x30), so the front enemies and
+# Jian act first; for watching when the fly above the empty slot drops. Needs build/view/states/temple.State.
+load temple
+wait 1
+poke u16 0x0228EA40 1
+poke u16 0x0228EAAC 1
+poke u16 0x0228EB18 1
+wait 1
+save temple_slowflies

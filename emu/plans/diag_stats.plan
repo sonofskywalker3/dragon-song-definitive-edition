@@ -1,0 +1,8 @@
+# Diagnostic: battle stat records (to find agility) at the temple battle.
+load temple
+wait 1
+dump 0x0228E860 0x6C stat0
+dump 0x0228EA10 0x6C stat4
+dump 0x0228EA7C 0x6C stat5
+dump 0x0228EC2C 0x6C stat9
+dump 0x020B4640 0x80 jian_record
