@@ -675,3 +675,15 @@ Jeff: the picker's blue corners should also frame the highlighted enemy on the b
 - Seen (`tgt_brackets`): Jian's picker on the skeleton and the spider, Flora's on the flying back row (top
   screen), corners gone once the action starts; the Blue Dragon (`diag_brackets_boss`): the box runs off the
   left edge with the dragon, only its right corners show.
+
+## No leap at an out-of-reach enemy mid-combo (2026-10-07)
+
+Jeff: Jian leapt up at a flying back-row enemy when his combo killed the last front-row enemy. The next-enemy
+search fell back to every row when nobody was in reach, and both mid-action redirects (the hit hook and the
+lunge follow-up in feat_targeting_anim.py) used it. Now `cave_tgt_reach` searches the attacker's rows only and
+the mid-action redirects use it: with nobody left in reach the remaining swings stay on the first target and
+whiff, as in vanilla. The game's refill brings the back row down after the action, and the next attack hits
+it in the front row. `cave_tgt_next` (reach, then every row) is kept for the start of an action only.
+Seen in `tgt_no_leap`: both front enemies die at frames 3049 and 3077, no flyer takes damage, slots 9 and 10
+are refilled at 3266 and the next round's attack hits slot 9 (300 -> 164); `tgt_multihit_jian` still goes
+9, 10, 10.

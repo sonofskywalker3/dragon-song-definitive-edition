@@ -9,7 +9,8 @@ there while Jian keeps swinging at the first one.
 
 After each step of the attacker's script (the STEP_SETUP call that follows the step's hit), if
 the target is dead or doomed by this action's queued damage and the script still has hits to
-come, the target slots move to the next enemy, the move target is re-aimed from home as step 0
+come, the target slots move to the next enemy the attacker reaches (never a back row out of reach:
+with nobody left in reach the remaining swings stay on the first target and whiff), the move target is re-aimed from home as step 0
 would have done, and an attacker already away from home hops over to the new enemy before the
 next swing. A step that has a move of its own is just re-aimed. The hit hook stays as the
 fallback for anything this misses.
@@ -145,7 +146,7 @@ fol_more:
     bl    ${{cave_tgt_rows}}
     mov   r1, r0
     mov   r0, r5
-    bl    ${{cave_tgt_next}}
+    bl    ${{cave_tgt_reach}}
     cmp   r0, #0
     blt   fol_done
     cmp   r0, r5

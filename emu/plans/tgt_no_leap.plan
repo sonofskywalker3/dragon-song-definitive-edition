@@ -1,0 +1,142 @@
+# Repro (Jeff 2026-10-07): Jian's combo kills both front-row enemies (HP 1 each); the third hit must not
+# leap up at a flying back-row enemy; the flyers come down after the action and the next round hits one.
+include boot_from_save
+include cheats_strong
+include warp6
+wait 270
+poke u16 0x0228EA24 300
+poke u16 0x0228EA90 300
+poke u16 0x0228EAFC 300
+poke u16 0x0228EC40 1
+poke u16 0x0228ECAC 1
+watch u16 0x0228EC40 hp9
+watch u16 0x0228ECAC hp10
+watch u16 0x0228EA24 hp4
+watch u16 0x0228EA90 hp5
+watch u16 0x0228EAFC hp6
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 10
+shot lp_01
+wait 10
+shot lp_02
+wait 10
+shot lp_03
+wait 10
+shot lp_04
+wait 10
+shot lp_05
+wait 10
+shot lp_06
+wait 10
+shot lp_07
+wait 10
+shot lp_08
+wait 10
+shot lp_09
+wait 10
+shot lp_10
+wait 10
+shot lp_11
+wait 10
+shot lp_12
+wait 10
+shot lp_13
+wait 10
+shot lp_14
+wait 10
+shot lp_15
+wait 10
+shot lp_16
+wait 10
+shot lp_17
+wait 10
+shot lp_18
+wait 10
+shot lp_19
+wait 10
+shot lp_20
+wait 10
+shot lp_21
+wait 10
+shot lp_22
+wait 10
+shot lp_23
+wait 10
+shot lp_24
+wait 10
+shot lp_25
+wait 10
+shot lp_26
+wait 10
+shot lp_27
+wait 10
+shot lp_28
+wait 10
+shot lp_29
+wait 10
+shot lp_30
+wait 10
+shot lp_31
+wait 10
+shot lp_32
+wait 10
+shot lp_33
+wait 10
+shot lp_34
+wait 10
+shot lp_35
+wait 10
+shot lp_36
+wait 10
+shot lp_37
+wait 10
+shot lp_38
+wait 10
+shot lp_39
+wait 10
+shot lp_40
+# Next round: the flyers that came down into the front row (slots 9, 10) can be attacked there.
+wait 200
+shot nr_command
+press A 3
+wait 90
+press A 3
+wait 120
+shot nr_picker
+press A 3
+wait 12
+shot nr_01
+wait 12
+shot nr_02
+wait 12
+shot nr_03
+wait 12
+shot nr_04
+wait 12
+shot nr_05
+wait 12
+shot nr_06
+wait 12
+shot nr_07
+wait 12
+shot nr_08
+wait 12
+shot nr_09
+wait 12
+shot nr_10
+wait 12
+shot nr_11
+wait 12
+shot nr_12
+wait 12
+shot nr_13
+wait 12
+shot nr_14
+wait 12
+shot nr_15
+wait 12
+shot nr_16
