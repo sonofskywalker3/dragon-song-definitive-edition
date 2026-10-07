@@ -7,9 +7,9 @@ is gone.
 **[Download the latest patch](../../releases)** (a `.bps` file; you need your own USA ROM, see
 [How to play it](#how-to-play-it)).
 
-| New opening | Running costs no HP | Run with L+R, no microphone | Silver from every battle |
+| New opening | Pick your own targets | Run with L+R, no microphone | Silver from every battle |
 |:-:|:-:|:-:|:-:|
-| ![Cherenkov wakes Jian](docs/screenshots/opening-wakeup.png) | ![Jian runs through the inn](docs/screenshots/opening-run.png) | ![Battle sign reads L+R](docs/screenshots/battle-run-sign.png) | ![Victory screen counts EXP and silver](docs/screenshots/victory-silver.png) |
+| ![Cherenkov wakes Jian](docs/screenshots/opening-wakeup.png) | ![Enemy picker in battle](docs/screenshots/battle-target-picker.png) | ![Battle sign reads L+R](docs/screenshots/battle-run-sign.png) | ![Victory screen counts EXP and silver](docs/screenshots/victory-silver.png) |
 
 This is an early demo (v0.1): the engine and battle changes are in, and the story rewrite has only just
 started. Feedback is welcome in [Issues](../../issues).

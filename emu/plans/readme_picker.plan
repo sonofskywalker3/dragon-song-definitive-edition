@@ -1,0 +1,28 @@
+# README screenshots of the enemy picker: first temple battle with Jian and Flora (run with --save).
+# Jian: Manual > Fight opens the picker (front row only); Flora's picker shows both rows.
+include boot_from_save
+include cheats_strong
+poke u16 0x020B4650 3
+include warp6
+wait 270
+press A 3
+wait 90
+press A 3
+wait 120
+shot pk_jian
+press Right 3
+wait 90
+shot pk_jian_right
+press A 3
+wait 120
+press A 3
+wait 90
+press A 3
+wait 120
+shot pk_flora
+press Up 3
+wait 90
+shot pk_flora_up
+press Right 3
+wait 90
+shot pk_flora_upright
