@@ -222,3 +222,12 @@ hall long (about 6 s). Jeff: move the whole Lucia part into the hall. Room: "I'm
 Gad's Express." Hall: "Lucia and I haven't been / partners long, but she's / great. Except for her temper.
 / (blank) / The job gets risky sometimes, / but honestly, that's why I / love it." Lobby unchanged. Seen in
 `opening_run`: all seven hall lines fit one box.
+
+## 10. Opening narration rewritten (Done, 2026-10-07)
+
+From the Japanese and Lunar 1 and 2 canon (docs/intro-analysis.md), revised with Jeff: "her champion the
+Dragonmaster" kept, no handstands, "beneath the Blue Star" and "a delicate peace... for now." added, a
+transition into the two races ("Two peoples came to share this world."), Caldor kept (Lunar 1 has Caldor
+Isle). The final text is `PROLOGUE` in feat_text.py (a whole-message rewrite, 8 pages, replacing the
+earlier piecemeal prologue edits). Seen page by page in `text_intro`: every line fits, the colon (code
+0x2D) shows, and the game goes on to the wake-up call.
