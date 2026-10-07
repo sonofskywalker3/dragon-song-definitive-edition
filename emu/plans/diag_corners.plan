@@ -1,0 +1,19 @@
+# Diagnostic: OAM of both engines while the enemy picker is up (where the cursor corners live).
+include boot_from_save
+include cheats_strong
+poke u16 0x020B4650 3
+include warp6
+wait 270
+press A 3
+wait 90
+press A 3
+wait 120
+shot pk_jian
+press Right 3
+wait 90
+peek u32 0x04000000 dispcntA
+peek u32 0x04001000 dispcntB
+dump 0x06401180 0x100 vramA_1180
+dump 0x06601180 0x100 vramB_1180
+dump 0x05000200 0x200 palA
+dump 0x05000600 0x200 palB
