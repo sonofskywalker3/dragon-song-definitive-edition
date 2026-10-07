@@ -82,6 +82,14 @@ TEXT_EDITS = (
     speaker_rename(5, "Tartallia", "Tartaglia", 4, "Gad's Express recipient Tartaglia"),
     speaker_rename(7, "Raiban", "Laban", 6, "Gad's Express recipient Laban"),
     speaker_rename(11, "Davida", "Devida", 2, "Gad's Express recipient Devida"),
+    # The field Y-button hint (Jian thinking aloud) opened with an "Anyway..." that follows nothing
+    # (Jeff, 2026-10-07; the hints are to become party chat, docs/playtest-feedback.md item 9)
+    TextEdit(
+        18,
+        "<Jian>\nAnyway...\n",
+        "<Jian>\n",
+        "first Y hint without the stray 'Anyway...'",
+    ),
 )
 
 

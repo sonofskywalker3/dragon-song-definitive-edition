@@ -11,7 +11,7 @@ is gone.
 |:-:|:-:|:-:|:-:|
 | ![Cherenkov wakes Jian](docs/screenshots/opening-wakeup.png) | ![Enemy picker in battle](docs/screenshots/battle-target-picker.png) | ![Battle sign reads L+R](docs/screenshots/battle-run-sign.png) | ![Victory screen counts EXP and silver](docs/screenshots/victory-silver.png) |
 
-This is an early demo (v0.1): the engine and battle changes are in, and the story rewrite has only just
+This is an early beta (v0.1.1): the engine and battle changes are in, and the story rewrite has only just
 started. Feedback is welcome in [Issues](../../issues).
 
 A ROM hack of Lunar: Dragon Song (Nintendo DS, USA) that fixes the game's systems so that playing it feels
@@ -74,10 +74,12 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 
 ### Story and text
 
-- **A new opening.** The prologue no longer repeats what the game shows you next. Instead of Jian
-  introducing himself to an empty room, the innkeeper shouts up the stairs to get him out of bed, and
-  Jian runs out of the inn, his thoughts introducing him on the way.
-- **"Her champion the Dragonmaster"** in the opening narration, instead of "her servant".
+- **A new opening narration**, retranslated from the Japanese release and checked against Lunar 1 and 2:
+  the Dragonmaster is Althena's champion (not her servant), Althena is the source of the world's magic,
+  and the Beastmen and Humans are set up as the Japanese has them, with the Beastmen in power and a peace
+  that only holds while the two races keep apart.
+- **A new wake-up.** Instead of Jian introducing himself to an empty room, the innkeeper shouts up the
+  stairs to get him out of bed, and Jian heads out of the inn, his thoughts introducing him on the way.
 
 ## How to play it
 
