@@ -32,14 +32,16 @@ SPEAKER_START = "<"  # stands for FB 06, which opens a speaker name
 SPEAKER_END = ">"  # FB 07 closes it
 PLACE_START = "{"  # stands for FB 04, the blue place-name color (closed by FB 07)
 PLACE_END = "}"
+NEWLINE = "\n"
 TEXT_CODES = {
     " ": b"\x00",
     ",": b"\x29",
     ".": b"\x2a",
     "!": b"\x24",
     "?": b"\x25",
+    ":": b"\x2d",
     "'": b"\x54",
-    "\n": b"\xfd",
+    NEWLINE: b"\xfd",
     SPEAKER_START: b"\xfb\x06",
     SPEAKER_END: b"\xfb\x07",
     PLACE_START: b"\xfb\x04",
@@ -73,43 +75,6 @@ def speaker_rename(script: int, old: str, new: str, count: int, note: str) -> Te
 
 
 TEXT_EDITS = (
-    TextEdit(
-        26,
-        "her servant the Dragonmaster\n",
-        # exactly 30 characters: the box wraps after it, so the line break goes
-        "her champion the Dragonmaster,",
-        "intro: the Dragonmaster is Althena's champion, not her servant",
-    ),
-    # Prologue trims (playtest feedback 3): no quotes around ordinary words, no "who loves acrobatics" and
-    # no "pair of them love excitement" paragraph. Where a shorter line would change the box's own wrap
-    # (30 characters, the space at the wrap is not stored), the line break is written out.
-    TextEdit(26, "The 'Beastmen'.\n", "The Beastmen.\n", "prologue: no quotes"),
-    TextEdit(26, "the 'Humans'.\n", "the Humans.\n", "prologue: no quotes"),
-    TextEdit(
-        26, "favor of the 'Beastmen'.", "favor of the Beastmen.", "prologue: no quotes"
-    ),
-    TextEdit(
-        26,
-        "The dynamic 'Beastmen' built amagnificent castle and lived aluxurious",
-        # "magnificent castle and lived a" is exactly 30 characters, so the box wraps after it by itself
-        "The dynamic Beastmen built a\nmagnificent castle and lived aluxurious",
-        "prologue: no quotes",
-    ),
-    TextEdit(
-        26,
-        "The 'Humans', desiring quietersurroundings",
-        "The Humans, desiring quieter\nsurroundings",
-        "prologue: no quotes",
-    ),
-    TextEdit(
-        26,
-        "A youth who loves acrobatics,\nnamed 'Jian Campbell',\nis making a living here as a\n"
-        "'courier', along with his\nfriend 'Lucia Collins'.\n\nThe pair of them love\n"
-        "excitement... especially when\nspiced with just a little\ndanger.",
-        "A youth named Jian Campbell\nis making a living here as a\ncourier, along with his\n"
-        "friend Lucia Collins.",
-        "prologue: Jian and Lucia without quotes, acrobatics or the excitement paragraph",
-    ),
     # Gad's Express recipients whose dialogue name differs from the job menu; the Japanese release uses
     # the menu's name in both places (docs/re-japanese.md)
     speaker_rename(1, "Bram", "Balam", 2, "Gad's Express recipient Balam"),
@@ -128,6 +93,121 @@ def encode_text(text: str) -> bytes:
     return b"".join(TEXT_CODES[c] for c in text)
 
 
+@dataclass(frozen=True)
+class MessageRewrite:
+    """Replace a whole message (the one starting at offset start in a script) with new pages.
+
+    Each page is a tuple of lines. A line of exactly LINE_WIDTH characters fills the box, which wraps
+    after it by itself, so no line break is stored after it (place-name braces do not count).
+    """
+
+    script: int
+    start: int
+    pages: tuple[tuple[str, ...], ...]
+    note: str
+
+
+LINE_WIDTH = 30
+NARRATION_PAGE = b"\xfe\xfc"  # end of page, then the narration's page start (as the vanilla prologue)
+NARRATION_END = b"\xfe\xff"
+
+# The opening narration (script 026 @ 0x08), rewritten from the Japanese and Lunar 1 and 2 canon with Jeff
+# (docs/intro-analysis.md, 2026-10-07).
+PROLOGUE = MessageRewrite(
+    26,
+    0x08,
+    (
+        (
+            "Long, long ago...",
+            "Beneath the Blue Star lay a",
+            "dead world, without grass,",
+            "without trees, without even",
+            "air.",
+            "",
+            "Then came the Goddess Althena,",
+            "her champion the Dragonmaster,",
+            "and the Four Dragons.",
+        ),
+        (
+            "Althena's magic brought water",
+            "to the earth, and the desert",
+            "of death turned green.",
+            "",
+            "Life filled the reborn land,",
+            "and people came to make their",
+            "homes there, blessed by the",
+            "Goddess.",
+        ),
+        (
+            "The Dragonmaster swore eternal",
+            "loyalty to the Goddess, and",
+            "with the Four Dragons stood",
+            "guard over the world.",
+            "Althena herself became the",
+            "wellspring of all its magic.",
+        ),
+        (
+            "Two peoples came to share",
+            "this world.",
+            "",
+            "The Beastmen: powerfully",
+            "built, stronger, faster and",
+            "hardier in every way...",
+        ),
+        (
+            "...and the Humans: deft with",
+            "tools, but small and frail.",
+            "",
+            "In time, power settled with",
+            "the stronger Beastmen.",
+        ),
+        (
+            "The Beastmen raised a regal",
+            "castle at the heart of the",
+            "world and lived in splendor,",
+            "while the Humans settled the",
+            "countryside and kept to",
+            "simple ways.",
+        ),
+        (
+            "So different were their lives",
+            "that the two races kept apart,",
+            "and that distance kept a",
+            "delicate peace...",
+            "for now.",
+        ),
+        (
+            "Turn now to {Port Searis},",
+            "a busy harbor town on the",
+            "continent of Caldor.",
+            "",
+            "Here Jian Campbell makes his",
+            "living as a courier, with his",
+            "partner, Lucia Collins.",
+        ),
+    ),
+    "opening narration rewritten (Japanese, Lunar canon; docs/intro-analysis.md)",
+)
+MESSAGE_REWRITES = (PROLOGUE,)
+
+
+def _page_bytes(lines: tuple[str, ...]) -> bytes:
+    out = b""
+    for i, line in enumerate(lines):
+        shown = len(line.replace(PLACE_START, "").replace(PLACE_END, ""))
+        if shown > LINE_WIDTH:
+            raise ValueError(f"line over {LINE_WIDTH} characters: {line!r}")
+        out += encode_text(line)
+        if i < len(lines) - 1 and shown < LINE_WIDTH:
+            out += TEXT_CODES[NEWLINE]
+    return out
+
+
+def rewrite_bytes(rewrite: MessageRewrite) -> bytes:
+    """The rewritten message as stored, terminator included."""
+    return NARRATION_PAGE.join(_page_bytes(p) for p in rewrite.pages) + NARRATION_END
+
+
 def _message_ops(data: bytes, start: int) -> list[int]:
     """Offsets of the message ops that show the text at start."""
     code = struct.unpack_from("<I", data, CODE_START)[0]
@@ -139,19 +219,29 @@ def _message_ops(data: bytes, start: int) -> list[int]:
     ]
 
 
-def _message_start(data: bytes, at: int) -> int:
-    """Start of the message containing offset at (the latest text start before it)."""
+def _message_starts(data: bytes) -> set[int]:
+    """Text offsets of every message op in a script."""
     code = struct.unpack_from("<I", data, CODE_START)[0]
-    starts = {
+    return {
         struct.unpack_from("<I", data, pc + OP_TARGET)[0]
         for pc in range(code, len(data) - OP_SIZE * 2 + 1, OP_SIZE)
         if struct.unpack_from("<H", data, pc)[0] == OP_MSG
     }
-    return max(s for s in starts if s <= at)
 
 
-def _script_patches(script: int, data: bytes, edits: list[TextEdit]) -> list[DataPatch]:
+def _message_start(data: bytes, at: int) -> int:
+    """Start of the message containing offset at (the latest text start before it)."""
+    return max(s for s in _message_starts(data) if s <= at)
+
+
+def _script_patches(
+    script: int,
+    data: bytes,
+    edits: list[TextEdit],
+    rewrites: list[MessageRewrite],
+) -> list[DataPatch]:
     by_message: dict[int, list[TextEdit]] = defaultdict(list)
+    whole = {r.start: r for r in rewrites}
     for edit in edits:
         old = encode_text(edit.old)
         if data.count(old) != edit.count:
@@ -167,12 +257,19 @@ def _script_patches(script: int, data: bytes, edits: list[TextEdit]) -> list[Dat
             at = data.find(old, at + len(old))
     patches = []
     end = len(data)
-    for start, message_edits in sorted(by_message.items()):
+    for start in sorted(by_message.keys() | whole.keys()):
+        message_edits = by_message.get(start, [])
         stop = data.index(TEXT_END, start) + 1
         message = data[start:stop]
+        notes = [e.note for e in message_edits]
+        if start in whole:
+            if start not in _message_starts(data):
+                raise ValueError(f"script {script}: no message starts at {start:#x}")
+            message = rewrite_bytes(whole[start])
+            notes.insert(0, whole[start].note)
         for edit in message_edits:
             message = message.replace(encode_text(edit.old), encode_text(edit.new))
-        note = "; ".join(e.note for e in message_edits)
+        note = "; ".join(notes)
         if len(message) == stop - start:
             patches.append(
                 DataPatch(ARCHIVE, script, start, data[start:stop], message, note)
@@ -197,14 +294,25 @@ def _script_patches(script: int, data: bytes, edits: list[TextEdit]) -> list[Dat
     return patches
 
 
-def text_patches(edits: tuple[TextEdit, ...] = TEXT_EDITS) -> tuple[DataPatch, ...]:
+def text_patches(
+    edits: tuple[TextEdit, ...] = TEXT_EDITS,
+    rewrites: tuple[MessageRewrite, ...] = MESSAGE_REWRITES,
+) -> tuple[DataPatch, ...]:
     entries = read_archive(VANILLA_SCRIPTS.read_bytes())
     by_script: dict[int, list[TextEdit]] = defaultdict(list)
+    rewrites_by_script: dict[int, list[MessageRewrite]] = defaultdict(list)
     for edit in edits:
         by_script[edit.script].append(edit)
+    for rewrite in rewrites:
+        rewrites_by_script[rewrite.script].append(rewrite)
     patches: list[DataPatch] = []
-    for script, script_edits in sorted(by_script.items()):
-        patches += _script_patches(script, decompress(entries[script]), script_edits)
+    for script in sorted(by_script.keys() | rewrites_by_script.keys()):
+        patches += _script_patches(
+            script,
+            decompress(entries[script]),
+            by_script[script],
+            rewrites_by_script[script],
+        )
     return tuple(patches)
 
 

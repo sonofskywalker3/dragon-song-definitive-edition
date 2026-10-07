@@ -1,0 +1,8 @@
+# New Game, then a savestate 'intro' just before the opening narration, for viewing it at normal speed:
+# EmuHawk --load-state=build/view/states/intro.State build/dsde.nds
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+save intro
