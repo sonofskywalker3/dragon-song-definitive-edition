@@ -1,0 +1,69 @@
+# Healing statue without the camera pan (feat_mp STATUE_CAMERA_CALLS): the test_statue_cure setup, then A on
+# the statue with the field state watched and a shot every 10 frames. Run with --save; compare vanilla.
+include boot_from_save
+pin u16 0x020B4650 1
+poke u16 0x020B6FE6 0x37D
+poke u8 0x020B6FE9 0xFF
+poke u32 0x020B4660 2
+poke u32 0x020B4668 5
+poke u32 0x020B4670 1
+poke u32 0x020B46BC 3
+poke u32 0x020B46C4 4
+poke u32 0x020B46CC 2
+wait 10
+dump 0x020B4660 0x14 jian_before
+dump 0x020B46BC 0x14 lucia_before
+watch u32 0x020B0010 field_state
+press Up 20
+wait 10
+shot sp_00
+press A 4
+wait 10
+shot sp_01
+wait 10
+shot sp_02
+wait 10
+shot sp_03
+wait 10
+shot sp_04
+wait 10
+shot sp_05
+wait 10
+shot sp_06
+wait 10
+shot sp_07
+wait 10
+shot sp_08
+wait 10
+shot sp_09
+wait 10
+shot sp_10
+wait 10
+shot sp_11
+wait 10
+shot sp_12
+wait 10
+shot sp_13
+wait 10
+shot sp_14
+wait 10
+shot sp_15
+wait 10
+shot sp_16
+wait 10
+shot sp_17
+wait 10
+shot sp_18
+wait 10
+shot sp_19
+wait 10
+shot sp_20
+wait 10
+shot sp_21
+wait 10
+shot sp_22
+wait 10
+shot sp_23
+wait 10
+shot sp_24
+dump 0x020B4660 0x14 jian_after

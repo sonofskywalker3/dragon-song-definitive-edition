@@ -129,6 +129,14 @@ STATUE_COPY_END = 0x0201F380
 STATUE_FIRST_WORD = 0xE5910014
 STATUE_LAST_WORD = 0xE5810018
 STATUS_MASK = 0xF
+# Using a statue pans the camera to centre it (field state 0x3C), waits for the pan, sparkles, then pans
+# back to Jian (0x0201FDF0) and waits again: about two seconds of camera for a statue Jian is already
+# standing at (Jeff, 2026-10-07). Both calls of the camera move (func_0201d878, 60 frames) go, so the
+# waits after them pass at once; the code is shared, so every statue in the game is affected.
+STATUE_CAMERA_CALLS = (
+    (0x0201FA98, 0xEBFFF776),  # bl func_0201d878: centre the statue
+    (0x0201FDF0, 0xEBFFF6A0),  # bl func_0201d878: back to Jian
+)
 
 MP_ECONOMY = Feature(
     "mp-economy",
@@ -202,6 +210,10 @@ costs:
     .word {ARM_NOP:#x}
 """,
             "healing statue also cures status",
+        ),
+        *(
+            Patch(addr, word, ARM_NOP, "healing statue: no camera pan")
+            for addr, word in STATUE_CAMERA_CALLS
         ),
     ),
 )

@@ -1,0 +1,61 @@
+# Healing statue at Fountain Square (object 0x37D near 224,184 on map 164): pin-warp there, stand below it facing
+# up, press A; field state and camera watched (F+0xBF0/0xBF2), shots every 10 frames. Run with --save.
+include boot_from_save
+wait 30
+pin u16 0x020B77EC 0xA4
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+poke u32 0x020B6CB4 0xE0000
+poke u32 0x020B6CB8 0xCC000
+wait 90
+press Up 2
+wait 30
+watch u32 0x020B0010 field_state
+watch u16 0x020B77D4 cam_x
+watch u16 0x020B77D6 cam_y
+shot fs_00
+press A 4
+wait 10
+shot fs_01
+wait 10
+shot fs_02
+wait 10
+shot fs_03
+wait 10
+shot fs_04
+wait 10
+shot fs_05
+wait 10
+shot fs_06
+wait 10
+shot fs_07
+wait 10
+shot fs_08
+wait 10
+shot fs_09
+wait 10
+shot fs_10
+wait 10
+shot fs_11
+wait 10
+shot fs_12
+wait 10
+shot fs_13
+wait 10
+shot fs_14
+wait 10
+shot fs_15
+wait 10
+shot fs_16
+wait 10
+shot fs_17
+wait 10
+shot fs_18
+wait 10
+shot fs_19
+wait 10
+shot fs_20
