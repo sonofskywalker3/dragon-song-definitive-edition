@@ -15,7 +15,7 @@ two closest colours of the art (the pixels of one move to the other, a change of
 that cannot be seen), then take that slot.
 
 The seal is drawn at build time: an oval starburst whose straight-edged points have whole-pixel
-corners, a cream centre, and two lines of pixel capitals.
+corners, filled blue, with two lines of cream pixel capitals.
 """
 
 import math
@@ -43,13 +43,11 @@ SEAL_WIDTH, SEAL_HEIGHT = 84, 40
 SEAL_X, SEAL_Y = 166, 80
 POINTS = 20  # star points around the rim, evenly spaced along it
 POINT_DEPTH = 5  # pixels from the tips to the notches between them
-BAND = 2  # blue pixels between the notches and the cream centre
 ARC_SAMPLES = 3600  # steps used to measure the rim's length
 
 RIM_BLUE = (48, 96, 208)
 RIM_DARK = (16, 32, 96)
-CREAM = (255, 244, 206)
-NAVY = (28, 38, 92)
+CREAM = (255, 244, 206)  # the lettering
 CLOSE_ENOUGH = (
     3 * 8 * 8
 )  # squared RGB distance: within about one 5-bit step per channel
@@ -123,15 +121,6 @@ def _inside(polygon: list[Pixel], x: float, y: float) -> bool:
     return inside
 
 
-def _outline(area: set[Pixel]) -> set[Pixel]:
-    """Pixels of an area that touch a pixel outside it."""
-    return {
-        (x, y)
-        for x, y in area
-        if any(n not in area for n in ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)))
-    }
-
-
 def seal_pixels() -> dict[Pixel, Rgb]:
     """The seal as {(x, y): colour}, in seal coordinates; missing pixels are transparent."""
     cx, cy = (SEAL_WIDTH - 1) / 2, (SEAL_HEIGHT - 1) / 2
@@ -146,15 +135,8 @@ def seal_pixels() -> dict[Pixel, Rgb]:
         for x in range(SEAL_WIDTH)
         if _inside(star, x, y)
     }
-    inner_rx, inner_ry = rx - POINT_DEPTH - BAND, ry - POINT_DEPTH - BAND
-    centre = {
-        (x, y)
-        for x, y in shape
-        if ((x - cx) / inner_rx) ** 2 + ((y - cy) / inner_ry) ** 2 <= 1
-    }
     out: dict[Pixel, Rgb] = dict.fromkeys(shape, RIM_BLUE)
-    out.update(dict.fromkeys(centre, CREAM))
-    out.update(dict.fromkeys(edge | _outline(centre), RIM_DARK))
+    out.update(dict.fromkeys(edge, RIM_DARK))
     for text, top in LINES:
         width = sum(len(FONT[c][0]) + 1 for c in text) - 1
         x = round(cx - width / 2)
@@ -162,7 +144,7 @@ def seal_pixels() -> dict[Pixel, Rgb]:
             for gy, row in enumerate(FONT[c]):
                 for gx, bit in enumerate(row):
                     if bit == "1":
-                        out[x + gx, top + gy] = NAVY
+                        out[x + gx, top + gy] = CREAM
             x += len(FONT[c][0]) + 1
     return out
 
@@ -199,7 +181,7 @@ def _seal_palette(art: bytes) -> tuple[list[Rgb], bytearray, dict[Rgb, int]]:
     ]
     tiles = bytearray(art[TILES_AT:])
     index_of: dict[Rgb, int] = {}
-    for colour in (RIM_BLUE, RIM_DARK, CREAM, NAVY):
+    for colour in (RIM_BLUE, RIM_DARK, CREAM):
         near = min(range(COLOURS), key=lambda i: _distance(palette[i], colour))
         if _distance(palette[near], colour) <= CLOSE_ENOUGH:
             index_of[colour] = near
