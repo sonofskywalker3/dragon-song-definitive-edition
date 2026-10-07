@@ -186,3 +186,20 @@ Jeff approved Jian's run lines (inner voice, no name tag, one box per map):
 2026-10-06: "'humans' and 'beastmen' need to have the ' removed still"): no quotes around Beastmen,
 Humans, Jian Campbell, courier and Lucia Collins; no "who loves acrobatics"; no "pair of them love
 excitement" paragraph. Checked in the emulator from a New Game (`text_intro`, `opening_run`).
+
+## 2. Opening lines revised (2026-10-07)
+
+Jeff rewrote Cherenkov's wake-up and Jian's run lines:
+
+> Cherenkov: Jian, get your lazy bones / out of bed! Lucia's gonna / skin you alive!
+> Jian: Wha...? She left already?!
+> Cherenkov: Keep this up and I'll rent / your room to someone useful!
+> Jian: I'm up! I'm up!
+>
+> Room: I'm Jian. I'm a courier for / Gad's Express. Lucia and I / haven't been partners long, / but she's great.
+> (page) Except for her temper.
+> Hall: The job gets risky sometimes, / but honestly, that's why I / love it.
+> Lobby: Well, that and getting to / work with Lucia every day. / If only we started later, / I'd have it made!
+
+Checked from a New Game in the emulator (`opening_run`): every box fits, the run reaches the street and
+hands back control. The room line's second page shows below the first after A, as the game's own pages do.
