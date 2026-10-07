@@ -4,7 +4,7 @@
 items and silver, you pick your own targets, battles are faster, spells cost less MP, and the microphone
 is gone.
 
-**[Download the latest patch](../../releases/latest)** (a `.bps` file; you need your own USA ROM, see
+**[Download the latest patch](../../releases)** (a `.bps` file; you need your own USA ROM, see
 [How to play it](#how-to-play-it)).
 
 | New opening | Running costs no HP | Run with L+R, no microphone | Silver from every battle |
