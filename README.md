@@ -1,4 +1,4 @@
-# Dragon Song Definitive Edition
+# Dragon Song: Definitive Edition
 
 **A fan patch that fixes "the worst RPG ever made."** Running no longer costs HP, every battle gives EXP,
 items and silver, you pick your own targets, battles are faster, spells cost less MP, and the microphone
