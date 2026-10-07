@@ -95,9 +95,8 @@ WAKE_UP = ("<Jian>\nI'm up! I'm up!",)
 RUN_ROOM = (
     (
         "<I'm Jian. I'm a courier for>\n<Gad's Express. Lucia and I>\n"
-        "<haven't been partners long,>\n<but she's great.>"
+        "<haven't been partners long,>\n<but she's great.>\n\n<Except for her temper.>"
     ),
-    "<Except for her temper.>",
 )
 RUN_HALL = (
     "<The job gets risky sometimes,>\n<but honestly, that's why I>\n<love it.>",

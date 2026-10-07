@@ -196,10 +196,9 @@ Jeff rewrote Cherenkov's wake-up and Jian's run lines:
 > Cherenkov: Keep this up and I'll rent / your room to someone useful!
 > Jian: I'm up! I'm up!
 >
-> Room: I'm Jian. I'm a courier for / Gad's Express. Lucia and I / haven't been partners long, / but she's great.
-> (page) Except for her temper.
+> Room: I'm Jian. I'm a courier for / Gad's Express. Lucia and I / haven't been partners long, / but she's great. / (blank line) / Except for her temper.
 > Hall: The job gets risky sometimes, / but honestly, that's why I / love it.
 > Lobby: Well, that and getting to / work with Lucia every day. / If only we started later, / I'd have it made!
 
 Checked from a New Game in the emulator (`opening_run`): every box fits, the run reaches the street and
-hands back control. The room line's second page shows below the first after A, as the game's own pages do.
+hands back control. The room line is one page (Jeff: no A press mid-run), the punchline after a blank line.
