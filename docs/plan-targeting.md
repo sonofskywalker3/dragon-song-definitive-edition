@@ -695,3 +695,20 @@ Seen in `tgt_no_leap` (Fast): the front enemies die at frames 3049 and 3077, the
 3087, the third swing hits slot 10 on the floor (300 -> 146) and the next round hits slot 9 (300 -> 164).
 `tgt_drop_exp`: the battle pays Jian 202 EXP and 101 silver, as without the drop. `tgt_multihit_jian` still goes
 9, 10, 10; `tgt_brackets` unchanged.
+
+### Drops as soon as a slot is empty (2026-10-07)
+
+Jeff: keep the list order, and let a back enemy drop as soon as its front slot is empty when the battle calls
+for it. `feat_targeting_drop.py`: every frame of an action (round state 7, battle work +0x2E) the tick asks
+func_02053ed4 for the battle's own refill mask (per column; in the Caucus fight, battle id 7, only once the
+whole front row is dead), leaves out columns whose dead front enemy is still fading out, and starts the refill
+there (three steps a frame). A drop still running at vanilla's refill (states 0x10/0x11) ends at once. The
+lunge follow-up ends a running drop first and only starts one itself (fading or not) when its attacker still
+has nobody in reach. A column whose front slot is empty from the start (no enemy placed there) drops at the
+first action instead of after it.
+
+Seen: `tgt_drop_column` (slot 9 killed by hit 1, slot 10 alive): the flyer behind 9 is in slot 9 at 3096
+during the attack while Jian's swings stay on 10 (3077, 3115); `diag_drop` / `tgt_no_leap`: the flyer above
+the empty slot 8 drops at the first action (2987..2997), Jian's third swing goes to it (slot 8, 3114) after
+both 9 and 10 die, 9 and 10 refill after their fades (3096, 3124); `tgt_drop_exp` 202 EXP / 101 silver;
+`tgt_multihit_jian` 9, 10, 10.

@@ -21,6 +21,7 @@ redirect too (feat_targeting_anim.py).
 
 from dsde.feat_targeting_anim import ANIM_PATCHES
 from dsde.feat_targeting_brackets import BRACKET_PATCHES
+from dsde.feat_targeting_drop import DROP_PATCHES
 from dsde.feat_targeting_picker import PICKER_PATCHES
 from dsde.patching import AsmPatch, CaveCode, Feature
 from dsde.targeting_consts import (
@@ -316,7 +317,7 @@ hit_dead:
     blt   hit_vanilla
     cmp   r4, #{LAST_ENEMY}
     bgt   hit_vanilla
-    bl    ${{cave_tgt_refill_finish}}
+    bl    ${{cave_tgt_drop_finish}}
     mov   r0, r6
     bl    ${{cave_tgt_rows}}
     mov   r1, r0
@@ -367,6 +368,7 @@ MANUAL_TARGETING = Feature(
         CaveCode("cave_tgt_pick", PICK_ASM, "Attack uses the chosen enemy"),
         CaveCode("cave_tgt_hit", HIT_ASM, "hit on a dead enemy moves on"),
         *PICKER_PATCHES,
+        *DROP_PATCHES,
         *ANIM_PATCHES,
         *BRACKET_PATCHES,
         _hook(
