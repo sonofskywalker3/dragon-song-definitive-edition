@@ -182,6 +182,6 @@ courier, along with his
 partner Lucia Collins.
 ```
 
-Not yet built: these are proposals for Jeff to pick from. The game wraps at 30 characters by itself and
+Built 2026-10-07 in a revised form (docs/playtest-feedback.md item 10); the draft above is the first proposal. The game wraps at 30 characters by itself and
 the stored text drops the space at each wrap (feat_text.py), so the build must check every page in the
 emulator.
