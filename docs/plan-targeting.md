@@ -676,14 +676,22 @@ Jeff: the picker's blue corners should also frame the highlighted enemy on the b
   screen), corners gone once the action starts; the Blue Dragon (`diag_brackets_boss`): the box runs off the
   left edge with the dragon, only its right corners show.
 
-## No leap at an out-of-reach enemy mid-combo (2026-10-07)
+## The back row drops mid-combo (2026-10-07)
 
-Jeff: Jian leapt up at a flying back-row enemy when his combo killed the last front-row enemy. The next-enemy
-search fell back to every row when nobody was in reach, and both mid-action redirects (the hit hook and the
-lunge follow-up in feat_targeting_anim.py) used it. Now `cave_tgt_reach` searches the attacker's rows only and
-the mid-action redirects use it: with nobody left in reach the remaining swings stay on the first target and
-whiff, as in vanilla. The game's refill brings the back row down after the action, and the next attack hits
-it in the front row. `cave_tgt_next` (reach, then every row) is kept for the start of an action only.
-Seen in `tgt_no_leap`: both front enemies die at frames 3049 and 3077, no flyer takes damage, slots 9 and 10
-are refilled at 3266 and the next round's attack hits slot 9 (300 -> 164); `tgt_multihit_jian` still goes
-9, 10, 10.
+Jeff: Jian leapt up at a flying back-row enemy when his combo killed the last front-row enemy; instead the
+flyer must come down during the attack so Jian can hit it. Two changes:
+
+- The next-enemy search used mid-action (`cave_tgt_reach`) only returns enemies in the attacker's rows; the
+  fallback to every row (`cave_tgt_next`) is kept for the start of an action only.
+- When nobody is left in reach, the lunge follow-up (feat_targeting_anim.py) asks REFILL_COLUMNS
+  (func_02053ed4) which columns have a living back enemy behind a dead front slot, writes the mask to battle
+  work +0xD2 and starts the game's own refill (func_02053918, vanilla's round state 0x11) now. It runs three
+  steps a frame from the sprite render hook, and the swings aim at the front slot the enemy drops into (the
+  column of the dead target if it has one). If a swing comes before the drop ends, the hit hook ends it first.
+  Ranged attackers reach the back row and never need it. On Normal speed deaths resolve at the end of the
+  action (no kill-on-hit), so the drop never starts there and the swings whiff as in vanilla.
+
+Seen in `tgt_no_leap` (Fast): the front enemies die at frames 3049 and 3077, the flyers are in slots 9 and 10 at
+3087, the third swing hits slot 10 on the floor (300 -> 146) and the next round hits slot 9 (300 -> 164).
+`tgt_drop_exp`: the battle pays Jian 202 EXP and 101 silver, as without the drop. `tgt_multihit_jian` still goes
+9, 10, 10; `tgt_brackets` unchanged.

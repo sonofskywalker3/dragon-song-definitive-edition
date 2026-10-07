@@ -316,6 +316,7 @@ hit_dead:
     blt   hit_vanilla
     cmp   r4, #{LAST_ENEMY}
     bgt   hit_vanilla
+    bl    ${{cave_tgt_refill_finish}}
     mov   r0, r6
     bl    ${{cave_tgt_rows}}
     mov   r1, r0
