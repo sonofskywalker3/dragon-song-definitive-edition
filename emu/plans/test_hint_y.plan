@@ -1,0 +1,9 @@
+# The field Y-button hint (Jian thinking aloud) in his room after the intro save (run with --save).
+include boot_from_save
+wait 120
+press Y 3
+wait 90
+shot hint_y
+press A 3
+wait 60
+shot hint_after
