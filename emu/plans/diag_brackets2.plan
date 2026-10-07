@@ -1,0 +1,7 @@
+# Diagnostic part 2: dump the battlers, the sprite pool and the OBJ buffer from state pk.
+load pk
+wait 1
+dump 0x228F82C 0x258 battlers9_10
+dump 0x2291D40 0x3000 pool
+dump 0x22A9500 0x10000 objbuf
+dump 0x07000000 0x800 oam

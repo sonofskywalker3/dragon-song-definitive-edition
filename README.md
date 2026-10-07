@@ -11,7 +11,7 @@ is gone.
 |:-:|:-:|:-:|:-:|
 | ![Cherenkov wakes Jian](docs/screenshots/opening-wakeup.png) | ![Enemy picker in battle](docs/screenshots/battle-target-picker.png) | ![Battle sign reads L+R](docs/screenshots/battle-run-sign.png) | ![Victory screen counts EXP and silver](docs/screenshots/victory-silver.png) |
 
-This is an early beta (v0.1.1): the engine and battle changes are in, and the story rewrite has only just
+This is an early beta (v0.1.2): the engine and battle changes are in, and the story rewrite has only just
 started. Feedback is welcome in [Issues](../../issues).
 
 A ROM hack of Lunar: Dragon Song (Nintendo DS, USA) that fixes the game's systems so that playing it feels
@@ -41,7 +41,9 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Bosses give EXP** (in the original they gave almost none): about ten regular enemies' worth from the
   area they are fought in.
 - **You pick targets** on the touch screen or with the D-pad, as in Lunar 1 and 2. If your target dies
-  before the hit lands, the attack moves to the next enemy; an attack is never wasted.
+  before the hit lands, the attack moves to the next enemy; an attack is never wasted. The
+  blue corners of the picker also frame the chosen enemy on the battlefield, so you can watch the enemies
+  instead of the menu.
 - **Enemies die on the hit that kills them.** A combo that kills several enemies shows each one die as it
   falls, while the attacker moves on, instead of all of them together at the end.
 - **Characters out of the party earn the same EXP as the party**, so nobody falls behind.

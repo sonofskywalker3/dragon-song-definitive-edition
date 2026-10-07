@@ -656,3 +656,22 @@ different from the plan above:
   for ids 0x1A0 and up and a count after anything outside 0xD8..0x113, so 0x19C is treated as a card at
   0x02044CE4. Verified in a scripted Blue Dragon fight (`tgt_bluedragon`): "Blue Dragon", then "Bubble"
   twice for the front-row bubbles.
+
+## Cursor corners on the field (2026-10-07)
+
+Jeff: the picker's blue corners should also frame the highlighted enemy on the battle field. Built in
+`feat_targeting_brackets.py` (part of `manual-targeting`):
+
+- Every battle sprite is a request in the pool at *0x020B8618 (0x30 bytes each); func_02033804 turns them
+  into OAM for both screens on one canvas, y 0..191 the touch screen and -192..-1 the top screen. The corner
+  tiles (OBJ tiles 0x46..0x49, 8bpp) are in the OBJ buffer both engines get, with identical palettes, so a
+  corner request lands correctly on either screen.
+- The hook replaces `bl 0x02033804` at 0x02031C58 (after every battler's request). While the picker is up it
+  bounds the opaque pixels of the highlighted enemy's request (pieces at +0x14, OAM shape/size in the piece's
+  attribute bits 4..7, tiles at 64 * ((tile >> 1 for 4bpp) + request +0x28) in *0x020B861C). The request's
+  +0x18 is the inverse of the drawn scale (func_02001364 = 0x1000000 / x, as the renderer uses it).
+- It submits a stack copy of each corner button (buttons 0..3, 200 bytes) moved to the box with func_02036360,
+  so the real buttons' animation is untouched.
+- Seen (`tgt_brackets`): Jian's picker on the skeleton and the spider, Flora's on the flying back row (top
+  screen), corners gone once the action starts; the Blue Dragon (`diag_brackets_boss`): the box runs off the
+  left edge with the dragon, only its right corners show.

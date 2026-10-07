@@ -1,0 +1,33 @@
+# Enemy picker corners on the field (feat_targeting_brackets.py): Jian's picker (front row), then
+# Flora's (both rows): front, Up to the back row on the top screen, Right; then the action (no corners).
+# Run with --save.
+include boot_from_save
+include cheats_strong
+poke u16 0x020B4650 3
+include warp6
+wait 270
+press A 3
+wait 90
+press A 3
+wait 120
+shot br_jian
+press Right 3
+wait 60
+shot br_jian_right
+press A 3
+wait 120
+press A 3
+wait 120
+shot br_flora
+press Up 3
+wait 60
+shot br_flora_up
+press Right 3
+wait 60
+shot br_flora_upright
+press Right 3
+wait 60
+shot br_flora_upright2
+press A 3
+wait 40
+shot br_action

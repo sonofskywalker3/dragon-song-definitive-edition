@@ -1,0 +1,18 @@
+# Diagnostic: the highlighted enemy's sprite request, pieces and tiles while the picker is up (run with --save).
+include boot_from_save
+include cheats_strong
+poke u16 0x020B4650 3
+include warp6
+wait 270
+press A 3
+wait 90
+press A 3
+wait 120
+shot pk_jian
+press Right 3
+wait 90
+shot pk_jian_right
+peek u32 0x020B8618 pool
+peek u32 0x020B861C objbuf
+peek u32 0x020B8640 battlers
+save pk
