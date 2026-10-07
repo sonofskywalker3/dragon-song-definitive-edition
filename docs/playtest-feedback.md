@@ -254,3 +254,12 @@ the run should be ready on entering a new area (running through a door carried t
 map). `walk-speed` scales every field step by 1.5 (a running frame's two steps make 3); measured 45 px in 30
 frames walking and 90 running (`diag_speed_field`). `timed-run` resets the run state when the map id changes
 (`diag_run_counter2`: state 0 on the first frame of the new map, running again at once on B).
+
+Why vanilla gated Lucia behind Jack (Jeff asked, 2026-10-07): nothing in the original script points to Jack. Cherenkov
+only says "she already left" (sets 0xC); Jian's Y hint then is "Oh, Lucia! Where have you been?" (script 018, a
+mistranslation of JP ルシアのヤツ…いったいどこに行ったんだ？ "Where the heck did Lucia go?"); the player has to
+knock on doors until Jack, in his own house (map 159), says he saw her at Fountain Square (sets 0xD); only then
+does the hint become "Now I remember! We were going to meet up at Fountain Square!" and Lucia appear. The
+Japanese works the same way, so it is the original design, not a localization loss; the only thing our opening
+removed is Jian's "Right then! I'd better go looking for Lucia...". Decision: override it, as built (the run
+sets 0xC and 0xD, map 164 checks 0xC): in our opening Jian is late to meet her, so he knows where.
