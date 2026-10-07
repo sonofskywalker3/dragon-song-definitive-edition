@@ -16,8 +16,8 @@ Request: +0x00 flags (bit 0 in use, 0x100 mirrored), +0x14 pointer to the frame'
 bytes: s16 x and y of its centre (scaled), u16 attributes with the OAM shape in bits 4..5 and the size in
 bits 6..7.
 
-The hook replaces the render call. It first runs a mid-attack front-row refill if one is going
-(feat_targeting_anim.py). While the enemy picker is up, it takes the highlighted enemy's
+The hook replaces the render call. It first runs the mid-action front-row drop
+(feat_targeting_drop.py). While the enemy picker is up, it takes the highlighted enemy's
 request and bounds the opaque pixels of its pieces (read from the OBJ tile buffer at *0x020B861C, which
 both engines get each frame: a piece's tiles start at 64 * ((tile >> 1 for 4bpp) + request +0x28), laid
 out row by row in 1D order; the enemy sprites are 64 x 64 pieces with wide transparent margins), and
@@ -110,7 +110,7 @@ OAM_SIZES = (
 
 BRACKETS_ASM = f"""
     push  {{r4-r11, lr}}
-    bl    ${{cave_tgt_refill_tick}}
+    bl    ${{cave_tgt_drop_tick}}
     sub   sp, sp, #{FRAME:#x}
     ldr   r4, br_state
     ldrb  r0, [r4, #{STATE_MODE}]

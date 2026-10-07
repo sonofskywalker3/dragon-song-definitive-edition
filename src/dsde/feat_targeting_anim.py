@@ -15,13 +15,14 @@ enemy before the next swing. A step that has a move of its own is just re-aimed.
 stays as the fallback for anything this misses.
 
 With nobody left in reach but a living back-row enemy behind a dead front slot (a melee attacker
-whose combo cleared the front row; a ranged one reaches the back row anyway), that enemy drops into
-the front row at once: the game's own refill, started now instead of after the action and run
-REFILL_STEPS_PER_FRAME steps a frame from the sprite render hook, and the swings aim at the slot it
-drops into (Jeff, 2026-10-07). If a swing comes before the drop ends, the hit hook ends it first, so
-the swing lands. Without a dead front slot to fill, the remaining swings whiff as in vanilla.
+whose combo cleared the front row; a ranged one reaches the back row anyway), any drop already
+running ends, and if that is still nobody, that enemy drops into the front row at once
+(feat_targeting_drop.py) and the swings aim at the slot it drops into (Jeff, 2026-10-07). If a
+swing comes before the drop ends, the hit hook ends it first, so the swing lands. Without a dead
+front slot to fill, the remaining swings whiff as in vanilla.
 """
 
+from dsde.feat_targeting_drop import FIRST_FRONT_SLOT, REFILL_COLUMNS
 from dsde.patching import AsmPatch, CaveCode
 from dsde.targeting_consts import (
     ACTION,
@@ -74,20 +75,6 @@ ANIM_STATE_ASM = """
     .word 0
 """
 ANIM_HOPPING = 0  # byte: 1 while our hop to a new target may still be running
-ANIM_REFILL = 1  # byte: 1 while a back-row enemy drops into the front row mid-attack
-
-# The front-row refill (vanilla runs it in round state 0x11, after the action): battle work +0xD2 is the
-# mask of columns to refill, +0xD4 the frame counter; REFILL_STEP lowers the back-row enemies of those
-# columns one frame and, at REFILL_FRAMES, copies each into the front slot of its column and returns 0.
-REFILL_COLUMNS = (
-    0x02053ED4  # () -> mask: columns whose back enemy lives and front enemy is dead
-)
-REFILL_STEP = 0x02053918
-REFILL_MASK = 0xD2
-REFILL_TIMER = 0xD4
-REFILL_LAST_FRAME = 0x3F  # the next step is the last: it copies
-REFILL_STEPS_PER_FRAME = 3  # 64 frames -> about 21, between two swings of a combo
-FIRST_FRONT_SLOT = 8  # front slot of column c is battler 8 + c
 
 # A step that only aims (STEP_AIM, nothing else), for re-aiming through STEP_SETUP
 AIM_STEP_ASM = f"""
@@ -169,17 +156,20 @@ fol_more:
     bl    ${{cave_tgt_reach}}
     cmp   r0, #0
     bge   fol_found
+    bl    ${{cave_tgt_drop_finish}}
+    mov   r0, r4
+    bl    ${{cave_tgt_rows}}
+    mov   r1, r0
+    mov   r0, r5
+    bl    ${{cave_tgt_reach}}
+    cmp   r0, #0
+    bge   fol_found
     bl    {REFILL_COLUMNS:#x}
     cmp   r0, #0
     beq   fol_done
-    ldr   r1, fol_work
-    ldr   r1, [r1]
-    strh  r0, [r1, #{REFILL_MASK:#x}]
-    mov   r2, #0
-    strh  r2, [r1, #{REFILL_TIMER:#x}]
-    ldr   r2, fol_anim
-    mov   r3, #1
-    strb  r3, [r2, #{ANIM_REFILL}]
+    mov   r6, r0
+    bl    ${{cave_tgt_drop_start}}
+    mov   r0, r6
     subs  r2, r5, #{FIRST_FRONT_SLOT}
     blt   fol_column
     mov   r3, #1
@@ -276,68 +266,6 @@ fol_aim:
     .word ${{cave_tgt_aim_step}}
 """
 
-# Every battle frame (called from the sprite render hook): run a mid-attack refill, several steps a frame
-REFILL_TICK_ASM = f"""
-    push  {{r4, r5, lr}}
-    ldr   r4, tick_anim
-    ldrb  r0, [r4, #{ANIM_REFILL}]
-    cmp   r0, #0
-    popeq {{r4, r5, pc}}
-    mov   r5, #{REFILL_STEPS_PER_FRAME}
-tick_step:
-    ldr   r0, tick_work
-    ldr   r0, [r0]
-    ldrsh r0, [r0, #{REFILL_MASK:#x}]
-    cmp   r0, #0
-    beq   tick_done
-    bl    {REFILL_STEP:#x}
-    cmp   r0, #0
-    beq   tick_done
-    subs  r5, r5, #1
-    bne   tick_step
-    pop   {{r4, r5, pc}}
-tick_done:
-    ldr   r0, tick_work
-    ldr   r0, [r0]
-    mov   r1, #0
-    strh  r1, [r0, #{REFILL_MASK:#x}]
-    strb  r1, [r4, #{ANIM_REFILL}]
-    pop   {{r4, r5, pc}}
-tick_anim:
-    .word ${{cave_tgt_anim_state}}
-tick_work:
-    .word {BATTLE_WORK_PTR:#x}
-"""
-
-# Before a hit on a dead target (the hit hook): a mid-attack refill still running ends at once, so the
-# enemy that is dropping is in its front slot for this hit
-REFILL_FINISH_ASM = f"""
-    push  {{r4, lr}}
-    ldr   r4, fin_anim
-    ldrb  r0, [r4, #{ANIM_REFILL}]
-    cmp   r0, #0
-    popeq {{r4, pc}}
-    ldr   r0, fin_work
-    ldr   r0, [r0]
-    ldrsh r1, [r0, #{REFILL_MASK:#x}]
-    cmp   r1, #0
-    beq   fin_done
-    mov   r1, #{REFILL_LAST_FRAME:#x}
-    strh  r1, [r0, #{REFILL_TIMER:#x}]
-    bl    {REFILL_STEP:#x}
-fin_done:
-    ldr   r0, fin_work
-    ldr   r0, [r0]
-    mov   r1, #0
-    strh  r1, [r0, #{REFILL_MASK:#x}]
-    strb  r1, [r4, #{ANIM_REFILL}]
-    pop   {{r4, pc}}
-fin_anim:
-    .word ${{cave_tgt_anim_state}}
-fin_work:
-    .word {BATTLE_WORK_PTR:#x}
-"""
-
 # Replaces `ands r0, r0, #0x10` (r0 = current step word, flags read by the next beq): the
 # attacker keeps moving while the step says so, or while our hop has frames left
 MOVING_ASM = f"""
@@ -375,8 +303,6 @@ ANIM_PATCHES = (
     CaveCode("cave_tgt_begin", BEGIN_ASM, "action starts: no hop"),
     CaveCode("cave_tgt_follow", FOLLOW_ASM, "animation follows a redirect"),
     CaveCode("cave_tgt_moving", MOVING_ASM, "attacker moves during a hop"),
-    CaveCode("cave_tgt_refill_tick", REFILL_TICK_ASM, "back row drops mid-attack"),
-    CaveCode("cave_tgt_refill_finish", REFILL_FINISH_ASM, "drop ends before the hit"),
     *(
         _hook(site, "bl ${cave_tgt_begin}", "action starts: no hop")
         for site in STEP_SETUP_START_CALLS
