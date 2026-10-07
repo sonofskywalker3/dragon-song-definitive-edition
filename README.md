@@ -75,7 +75,7 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 ### Story and text
 
 - **A new opening.** The prologue no longer repeats what the game shows you next. Instead of Jian
-  introducing himself to an empty room, the innkeeper shouts up the stairs that he has overslept again, and
+  introducing himself to an empty room, the innkeeper shouts up the stairs to get him out of bed, and
   Jian runs out of the inn, his thoughts introducing him on the way.
 - **"Her champion the Dragonmaster"** in the opening narration, instead of "her servant".
 

@@ -83,23 +83,31 @@ FADE_DEFAULT_FRAMES = -1  # 30 frames
 PAGE_BREAK = b"\xfe\xfd\xfd"  # end of page, then the layout the game's own messages use
 TEXT_END = b"\xff"
 
-# Dialogue (decided with Jeff 2026-10-06, docs/playtest-feedback.md item 2). Each tuple is the pages of
-# one message. Jian's run lines are his inner voice: every line in the alternate color, no name tag, as
-# the vanilla monologue. They come from his Japanese self-introduction minus what the prologue says.
-WAKE_CALL = ("<Cherenkov>\nJian! Overslept again?!\nLucia headed out hours ago!",)
-WAKE_REPLY = ("<Jian>\nWha...? She left already?!",)
-WAKE_PUSH = (
-    "<Cherenkov>\nKeep this up and I'll rent\nthe room to someone\nrespectable!",
+# Dialogue (decided with Jeff 2026-10-06, revised 2026-10-07, docs/playtest-feedback.md item 2). Each
+# tuple is the pages of one message. Jian's run lines are his inner voice: every line in the alternate
+# color, no name tag, as the vanilla monologue.
+WAKE_CALL = (
+    "<Cherenkov>\nJian, get your lazy bones\nout of bed! Lucia's gonna\nskin you alive!",
 )
+WAKE_REPLY = ("<Jian>\nWha...? She left already?!",)
+WAKE_PUSH = ("<Cherenkov>\nKeep this up and I'll rent\nyour room to someone useful!",)
 WAKE_UP = ("<Jian>\nI'm up! I'm up!",)
 RUN_ROOM = (
     (
         "<I'm Jian. I'm a courier for>\n<Gad's Express. Lucia and I>\n"
-        "<haven't been partners long.>"
+        "<haven't been partners long,>\n<but she's great.>"
+    ),
+    "<Except for her temper.>",
+)
+RUN_HALL = (
+    "<The job gets risky sometimes,>\n<but honestly, that's why I>\n<love it.>",
+)
+RUN_LOBBY = (
+    (
+        "<Well, that and getting to>\n<work with Lucia every day.>\n"
+        "<If only we started later,>\n<I'd have it made!>"
     ),
 )
-RUN_HALL = ("<It gets risky sometimes.>\n<Honestly? That's what I>\n<love about it.>",)
-RUN_LOBBY = ("<Lucia? She's great.>\n<Just don't tell her>\n<I said so.>",)
 CHERENKOV_LOBBY = (
     (
         "<Cherenkov>\nJian, what are you doing?!\nGet to {Fountain Square}!\n"
