@@ -26,6 +26,7 @@ from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_FIXES
 from dsde.feat_text_speed import TEXT_SPEED
 from dsde.feat_title_seal import TITLE_SEAL
+from dsde.feat_town_brackets import TOWN_BRACKET_PATCHES
 from dsde.feat_town_menu import TOWN_MENU_PATCHES
 from dsde.feat_walk import WALK_SPEED
 from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
@@ -248,7 +249,7 @@ BOSS_EXP = Feature(
     ),
 )
 
-TOWN_MENU = Feature("town-menu-dpad", TOWN_MENU_PATCHES)
+TOWN_MENU = Feature("town-menu-dpad", TOWN_MENU_PATCHES + TOWN_BRACKET_PATCHES)
 
 FEATURES: tuple[Feature, ...] = (
     NO_RUN_HP_COST,

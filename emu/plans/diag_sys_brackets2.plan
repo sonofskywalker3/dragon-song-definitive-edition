@@ -1,0 +1,5 @@
+# System menu bracket buttons (from state 'sys', the third System row selected): dump the button list at
+# 0x0213A664 (header 0xC, then 0x30 bytes per button; buttons 0..3 are the corners).
+load sys
+wait 1
+dump 0x0213A664 0xCC sysbtn

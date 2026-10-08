@@ -1,0 +1,59 @@
+# Place menu selection brackets (feat_town_brackets.py): from state 'town' (inn lobby, made by view_town on the
+# same ROM) walk out to the Port Searis menu (Inn 1F preselected, tab 1 row 0), then Down through the rows and
+# round, Right and Left through the tabs, Up, touch tab 0 (nothing selected: no brackets), touch its third row,
+# then A (confirm and leave). Shots after each step.
+load town
+press Down 60
+wait 150
+watch u16 0x020B8C5C sel
+watch u16 0x020B8C5E tab
+watch u32 0x020B0010 state
+shot tb_0
+press Down 3
+wait 25
+shot tb_down1
+press Down 3
+wait 25
+shot tb_down2
+press Down 3
+wait 25
+shot tb_down3
+press Down 3
+wait 25
+shot tb_wrap
+press Right 3
+wait 25
+shot tb_right
+press Left 3
+wait 25
+press Left 3
+wait 25
+shot tb_left2
+press Up 3
+wait 25
+shot tb_up
+touch 44 16 5
+wait 30
+shot tb_tab0
+touch 128 105 5
+wait 30
+shot tb_touch_row
+press A 3
+wait 12
+shot tb_confirm
+wait 150
+shot tb_after
+# After the menu: the field menu still draws its own sheet and brackets (X, Right to System, A).
+press X 3
+wait 90
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press A 3
+wait 60
+shot tb_field_system

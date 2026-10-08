@@ -984,3 +984,48 @@ movseq r0,#0; bx lr`, i.e. it returns with flags from
 r4..r11 must be preserved; sl = S, fp = 0xC are live). Whether the list keys should apply to overworld hubs
 too is a design call (the same code would work there; they have the same tabs/rows).
 
+
+## 4. Selection brackets (2026-10-08)
+
+Jeff: the place menu should show the white brackets that frame the selected option in the field menu's System
+screen. Built in `feat_town_brackets.py` (part of `town-menu-dpad`); test `test_town_brackets`.
+
+### How the System menu draws them (vanilla, `diag_sys_brackets`, `diag_sys_brackets2`)
+- In mode 5 the bottom screen is engine A (POWCNT bit 15 clear). The brackets are OAM 9..12: 8 x 8, 8bpp, OBJ
+  extended palette 0, OAM priority 0, tile 0x50; flips h, v, and both make the four corners. For the third row:
+  (52,76), (196,76), (52,108), (196,108). Each corner is blue with a white outline (a 1 px white edge, a 2 px
+  blue stroke).
+- They are buttons 0..3 of the System screen's button list at 0x0213A664 (header 0xC, then 0x30 bytes a button):
+  type 2 (static), resource 0, frame 0x1F, flags 0 / 8 / 0x10 / 0x18 (8 mirrors sideways, 0x10 upside down),
+  depth 0, palette 0, at points (56, y), (200, y), (56, y + 32), (200, y + 32) for a row sprite at x 40..216,
+  y..y + 32. The frame is one 8 x 8 piece centred on the point. The visible tag sits inside its 32 px sprite, so
+  the corners land in the gaps above and below it, 12 px in from its left end and 9 px from its right.
+- Buttons are drawn by func_020276fc(list, manager, dx, dy), which calls **func_0201b898(manager, resource,
+  frame, flags, [sp] x, y, palette, depth)** per button; func_0201af34(manager) then builds the OAM shadow (for
+  engine A at 0x02204900) and copies the used tiles into OBJ VRAM every frame.
+- Resource 0 of the field menu's manager *0x020AFF4C is `func_0201c334(manager, 4, 0x26, 0x1A, 0)`: archive 4
+  (sysmenupack.dat) entry 0x26 holds the tiles ("NTC8": 536 8bpp tiles, three 256-colour palettes, loaded into
+  extended palette slots 0..2) and entry 0x1A the frames ("CLT8", 45 frames). The field menu loads the same sheet
+  into the other manager too (slot 3).
+
+### Sprite managers in the place menu (mode 2)
+- *0x020AFF4C = 0x02204900 draws the top screen (engine A: the map, the Jian icon, buttons 0x020B791C) and
+  *0x020AFF50 = 0x0226E580 the bottom screen (engine B: buttons 0x020B7F28). The second manager (func_0201c5e8)
+  shares the first's tile store (0x50000 bytes, +0x6A4) and resource table (+0x1B10), so resource numbers are
+  common to both; +0x6B8 says which engine's palettes a load writes.
+- State 0 resets the resources (func_0201b41c) and loads three: bottom (0, 0x65, 0x64, slot 0) = rows and
+  YES/NO, 8bpp; bottom (0, 0x66, 0x67, 1) = tabs, 4bpp (standard OBJ palettes 1..6); top (7, 4, 3, 0) = map
+  icons. Hub switches (states 10 to 12, back to 1) keep them.
+- Row buttons 4..7: type 2, resource 0, centre (128, 41 + 32 r), sprite 240 x 32; the selected row shows frame
+  1 (the pressed look, 2 px lower). Tabs (buttons 8..12) have depth 1, the rows and YES/NO 0. A higher depth
+  submits earlier, so it lands at a lower OAM index and in front at equal OAM priority.
+
+### The patch
+- 0x02042F34 (`bl func_0201c334`, the last load of state 0) -> a cave that does that load, then loads the field
+  menu sheet into the bottom manager with its palettes in extended slots 4..6, and keeps the resource number.
+- 0x02043D64 (`bl func_020276fc` for the bottom buttons, every frame) -> a cave that submits the buttons, then,
+  in menu states 2..8, when +0x30 is not -1 and its row is on the shown tab (+0x32), submits frame 0x1F four
+  times with flags 0 / 8 / 0x10 / 0x18 at the selected row button's centre +-100 x, +-16 y, palette 4, depth 2
+  (in front of the tabs, as the row 0 top corners overlap the tab strip's edge).
+- Corners sit in the 8 px gaps between rows (rows 61..84 with shadow, next row from 93); the top corners of row 0
+  overlap the bottom edge of the tab strip, and the bottom corners of row 3 end just above the YES/NO bar.
