@@ -48,6 +48,9 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Town and world maps work with the D-pad.** In a "Select place to go" menu, Up and Down move through the
   places, Left and Right switch tabs, and A goes there. Touch works as before.
 
+- **Faster dialogue.** Hold **A** and text types three times as fast; you still press A again to turn the
+  page. Hold **B** and it types as fast and turns the pages by itself.
+
 ### Battles
 
 - **One battle mode.** The Combat / Virtue switch is gone: every battle gives EXP, items and silver, and the

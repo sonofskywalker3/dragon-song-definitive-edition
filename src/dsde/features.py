@@ -19,6 +19,7 @@ from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_run import NO_RUN_HP_COST, TIMED_RUN
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_FIXES
+from dsde.feat_text_speed import TEXT_SPEED
 from dsde.feat_title_seal import TITLE_SEAL
 from dsde.feat_town_menu import TOWN_MENU_PATCHES
 from dsde.feat_walk import WALK_SPEED
@@ -269,6 +270,7 @@ FEATURES: tuple[Feature, ...] = (
     GAD_EXPRESS,
     MIC_SIGN,
     OPENING,
+    TEXT_SPEED,
     TITLE_SEAL,
     TOWN_MENU,
 )
@@ -296,6 +298,7 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     GAD_EXPRESS.name,
     MIC_SIGN.name,
     OPENING.name,
+    TEXT_SPEED.name,
     TITLE_SEAL.name,
     TOWN_MENU.name,
 )

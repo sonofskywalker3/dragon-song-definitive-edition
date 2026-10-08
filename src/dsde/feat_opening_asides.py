@@ -1,15 +1,13 @@
 """Opening run: Jian's asides close by themselves when his walk ends (see feat_opening.py)."""
 
-from dsde.patching import AsmPatch, CaveCode
+from dsde.patching import CaveCode
 
 # Jian's asides close by themselves when his walk ends (Jeff, 2026-10-07: the walks are timed to the text).
 # The message op (handler func_02040910) waits each frame on MSG_UPDATE(window) until it returns 0; at the end
 # of a page the window's +0x2E is 1 (arrow shown) until A clears it, then the message's end closes the box.
 # While the run flag is set and the player's route is done, a waiting page is cleared as A would, so the box
-# closes. Text still typing finishes first; every other message is untouched.
-MSG_UPDATE_CALL = 0x02040B54  # bl func_0203b81c in the message op's wait state
-MSG_UPDATE_CALL_WORD = 0xEB_FFEB30
-MSG_UPDATE = 0x0203B81C
+# closes. Text still typing finishes first; every other message is untouched. The check runs first in the
+# message op's window update (feat_text_speed.py owns that call); it only touches r1.
 MSG_PAGE_WAIT = (
     0x2E  # byte in the message window: 1 at the end of a page, waiting for A
 )
@@ -25,17 +23,16 @@ AUTO_CLOSE_ASM = f"""
     ldr   r1, [r1]
     ldr   r1, [r1, #{RUN_FLAG_WORD:#x}]
     tst   r1, #{RUN_FLAG_BIT:#x}
-    beq   ac_update
+    bxeq  lr
     ldr   r1, ac_route
     ldr   r1, [r1]
     cmp   r1, #0
-    bne   ac_update
+    bxne  lr
     ldrb  r1, [r0, #{MSG_PAGE_WAIT:#x}]
     cmp   r1, #{PAGE_WAITING}
     moveq r1, #0
     strbeq r1, [r0, #{MSG_PAGE_WAIT:#x}]
-ac_update:
-    b     {MSG_UPDATE:#x}
+    bx    lr
 ac_context:
     .word {SCRIPT_CONTEXT_PTR:#x}
 ac_route:
@@ -44,12 +41,4 @@ ac_route:
 
 ASIDE_AUTOCLOSE = (
     CaveCode("cave_aside_autoclose", AUTO_CLOSE_ASM, "asides close as the walk ends"),
-    AsmPatch(
-        MSG_UPDATE_CALL,
-        MSG_UPDATE_CALL + 4,
-        MSG_UPDATE_CALL_WORD,
-        MSG_UPDATE_CALL_WORD,
-        "bl ${cave_aside_autoclose}",
-        "opening asides close as the walk ends",
-    ),
 )

@@ -324,3 +324,43 @@ on it (likely Jian countering) went through kill-on-hit, which wrote the death t
 return popped a data pointer into pc. Kill-on-hit now only acts on enemy slots 4..11; hits on the scratch copies
 keep vanilla's deferred damage. Not reproduced in the emulator (no way found yet to force a counter); the battle
 regressions (test_kill_on_hit, tgt_multihit_jian, tgt_no_leap, tgt_drop_column, tgt_drop_exp) are unchanged.
+Confirmed on the 3DS (Jeff, 2026-10-07, build 5e0fc15e): Jian countered and the game did not crash.
+
+## 19. Faster dialogue with A and B held (Done, 2026-10-07)
+
+Jeff: holding A should type text at 3x speed but still need a release and a fresh press to turn the page; holding
+B should type at 3x and turn pages by itself. `text-speed` (feat_text_speed.py) wraps the message op's window
+update (call at 0x02040B54): with A or B held it runs up to three updates a frame, stopping once the page waits;
+with B held, a page that has waited 8 frames gets A added to that frame's new keys for one update, so it turns
+exactly as a press would. Event and NPC dialogue only (shops, hub menus and battle text use other paths). The
+opening's aside auto-close (feat_opening_asides.py) is now a plain check the text-speed cave calls first.
+`test_textspeed_none/A/B`: intro page 1 is still typing after 600 frames with no keys, done after 283 frames with
+A held and then waits; with B held each page turns 9 frames after it ends.
+
+## 20. To do for a fresh session (Jeff, 2026-10-07, from the 3DS playtest)
+
+None of these is started. Each needs research first (find the code with the decomp in build/arm9_decomp_annot.c
+and the emulator plans), then a feature module, a test plan, a status.md row and README mention.
+
+1. **Start info screen is out of date.** Start in the field brings up an info screen; update its text to match
+   what the hack changed (one battle mode with EXP and silver, running, held L+R to flee, target picking, speeds,
+   and so on). Find which archive and message the screen shows first.
+2. **Select opens the save menu.** Select does nothing in the field now (vanilla used it in battle to flee; that
+   moved to held L+R, feat_battle_run.py). Make Select in the field open the menu straight at Save.
+3. **Select closes the menu.** Anywhere in the field menu, Select goes straight back to the map instead of pressing
+   B back through each layer.
+4. **Faster menus.** Menu navigation drags: look at window open/close and slide animations, cursor repeat delay
+   and page transitions in the field menu, and cut or speed them up.
+5. **No slowdown on ramps.** Walking up and down ramps/stairs slows the player. Find the slope factor in the field
+   movement code (feat_walk.py scales every step x1.5; the ramp code scales it down again) and drop it.
+6. **Lucia's attack animation is slow.** Speed it up on Fast/Fastest (see docs/re-battle-pacing.md and
+   feat_battle_pace.py for how the party's actions were paced).
+7. **Delay between attackers.** Cut the pause between one battler's action ending and the next one starting
+   (round state machine func_0202d22c; round state at battle work +0x2E).
+8. **Rename "Althena Conduct" to "Experience"** everywhere the player sees it (status screen, menus; the result
+   screen's Conduct window is already hidden, see status.md row 3). Find the strings in the English text archives;
+   watch the line widths.
+9. **Auto battle switches to Fastest.** When the player picks Auto in battle, set the battle speed to Fastest
+   (speed level in cave_speed_state, feat_battle_speed.py). Decide whether to restore the old speed when Auto ends.
+
+Also still open: item 16 (Gad and the first package) and item 17 (slow enemy attack animations).

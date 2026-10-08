@@ -1,0 +1,14 @@
+# Text speed (A): intro narration page waits and text pointer with A held (feat_text_speed.py).
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 20
+watch u8 0x020B78FE pagewait
+hold A
+wait 300
+shot ts_A_1
+wait 300
+shot ts_A_2
+release
+wait 60
