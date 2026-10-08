@@ -17,6 +17,11 @@ The battle system itself stays non-positional. It was different from Lunar 1 and
 - Reviews put both times at about 3 seconds. Measure the real timings from Eternal Blue Complete and copy them.
 - Watch in playtesting: Eternal Blue was criticized because enemies never tire, so they were hard to dodge.
   Dragon Song also shows enemies on the map. Start with the exact Eternal Blue timings and tune from there.
+- 2026-10-08 (Jeff): the timer only applies where enemies are about. The field screen's pocketwatch (the old
+  Virtue clock) is open there and its hand is the run gauge, sweeping during the dash and winding back during the
+  cooldown. Towns, rooms with no enemies, and cleared areas close the watch and let you run without a limit, like
+  Lunar letting you move faster in safe places. A cleared area closes the watch right after the last battle, so
+  going back for missed chests is quick.
 
 ## 2. Battle rewards and area clearing
 

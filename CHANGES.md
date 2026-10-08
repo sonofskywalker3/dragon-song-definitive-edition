@@ -6,9 +6,16 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Exploring
 
-- **Running costs no HP.** Hold B to dash for about 3 seconds, then it cools down for about 3 seconds, like the
-  Eternal Blue dash. Holding B runs once; press it again to run again. The run is ready again whenever you enter
-  a new area.
+- **Running costs no HP.** Where enemies are about, hold B to dash for about 3 seconds, then it cools down for
+  about 3 seconds, like the Eternal Blue dash. Holding B runs once; press it again to run again. The run is ready
+  again whenever you enter a new area.
+- **Run freely where it is safe.** In towns, in rooms with no enemies, and in any area once every enemy in it is
+  beaten, running has no time limit and no cooldown.
+- **The pocketwatch shows danger and the run.** The field screen's pocketwatch (the Virtue clock in the original)
+  is open while the area still has enemies, and its hand is the run gauge: it sweeps around while you dash and
+  winds back during the cooldown. It is closed in towns, in rooms with no enemies, and right after the battle that
+  beats an area's last enemy, so going back for missed chests is quicker. Enemies return when you come back, and
+  the watch opens again.
 - **Walking and running are both 50% faster than the original.** Running was twice the walking speed and still is,
   so it is now 3 times the original walking speed. Scripted walks in cutscenes keep their original speed.
 - **Ramps and stairs no longer slow you down.** On a slope you used to drop to less than half speed (walking 0.65
@@ -144,6 +151,13 @@ the design are in [docs/design.md](docs/design.md).
 - A crash when an enemy was killed by a counterattack during its own attack (v0.1.3).
 
 ## Version history
+
+### v0.1.5 (unreleased)
+
+- The pocketwatch is open while enemies are about, and its hand is the run gauge. It closes right after the
+  battle that beats an area's last enemy.
+- Running has no time limit in towns, in rooms with no enemies, and in cleared areas.
+- The guidebook's Run page explains the pocketwatch.
 
 ### v0.1.4 (2026-10-08)
 

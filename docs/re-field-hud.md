@@ -198,9 +198,19 @@ Proposed:
 - The watch, crystal, kill boxes, tag backing, and HP/MP panel have no touch rect (only buttons 0, 2, and 6 get
   one); tapping the watch and the crystal changed nothing in vanilla.
 
+## Built: `pocketwatch` (2026-10-08)
+
+Sections 4b to 4d are built in src/dsde/feat_watch.py and feat_run.py and verified in BizHawk (docs/status.md,
+plans emu/plans/watch_*.plan). Differences from the proposal:
+- The hand code replaces 0x02021F78..0x02021FDC (the whole Virtue clock block, so it does not depend on
+  `no-virtue-clock`) and joins vanilla at 0x02021FF0, past the `rsb` at 0x02021FEC: with the `rsb` the hand ran
+  counterclockwise during the dash.
+- The after-battle rebuild uses 0x020209A8 (every result path), not the scoped 0x0202096C; no side effect seen.
+- A door poke from a map to the same map does not restock (kills stayed 5 / 5); a door to another map and back
+  does (map 1 -> map 4 entrance 101 -> map 1 entrance 101).
+- Test pitfall: a symbol pulled onto Jian drops its chest on his spot, and the chest's collision then holds him.
+
 ## Open items
 
-- Test the 4b/4c/4d patches in BizHawk: hand direction, the HUD rebuild after the clearing battle, unlimited run
-  after clear and in towns, watch reopening on re-entry.
 - Pick a saved free flag for "hint new" and confirm script 018 only depends on script-set flags.
 - What map 4 is (closed watch although inside group 0).
