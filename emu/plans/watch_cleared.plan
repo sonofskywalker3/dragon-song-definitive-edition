@@ -1,0 +1,46 @@
+# Pocketwatch (docs/re-field-hud.md section 4): Jeff's save, Thieves' Woods already cleared.
+# The watch should be closed and running unlimited; a re-entry restocks the area and opens it.
+# Run with --save build/gifs/jeff/jeff.SaveRAM
+include boot_from_save
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B4906 group
+peek u16 0x020B77F4 spawns
+dump 0x020B4908 0x18 area
+peek u32 0x020B6CF0 run_flags
+shot c01_cleared
+save c_start
+# hold B and walk left for 6 s: the run state should stay 0 and the speed should not drop
+hold B,Left
+wait 30
+peek u32 0x020B6CB4 x0
+peek u32 0x020B6CF0 st0
+wait 60
+peek u32 0x020B6CB4 x1
+peek u32 0x020B6CF0 st1
+wait 60
+peek u32 0x020B6CB4 x2
+peek u32 0x020B6CF0 st2
+shot c02_running_2s
+wait 60
+peek u32 0x020B6CB4 x3
+peek u32 0x020B6CF0 st3
+wait 60
+peek u32 0x020B6CB4 x4
+peek u32 0x020B6CF0 st4
+shot c03_running_4s
+wait 60
+peek u32 0x020B6CB4 x5
+peek u32 0x020B6CF0 st5
+release
+wait 10
+# re-enter map 1 through a door (field state 0x86, entrance 400)
+poke u16 0x020B77EC 1
+poke u16 0x020B77F0 0x270f
+poke u16 0x020B77F2 400
+poke u32 0x020B0010 0x86
+wait 150
+peek u16 0x020B6BE4 map_now
+dump 0x020B4908 0x18 area_now
+shot c04_reentry
+save c_reentry

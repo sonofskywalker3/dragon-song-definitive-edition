@@ -1,5 +1,6 @@
 """Field running (design 1): no HP cost, and a timed run with a cooldown. See docs/re-field-battle.md section 1."""
 
+from dsde.feat_watch import WATCH_OPEN_CAVE, pocketwatch
 from dsde.patching import AsmPatch, CaveCode, Feature, Patch
 
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
@@ -7,11 +8,14 @@ from dsde.patching import AsmPatch, CaveCode, Feature, Patch
 # running, then cooldown until RUN_TICKS + COOLDOWN_TICKS. One tick = 2 frames at 60 fps.
 # As in Lunar 1 and 2, holding B runs once: after the cooldown the state waits at its end until B is
 # released, so running again needs a fresh press.
+# The timer only runs while the pocketwatch is open (enemies about, feat_watch.py). Where it is closed
+# (towns, rooms with no enemies, cleared areas) the state stays 0 and B runs for as long as it is held.
 FRAMES_PER_TICK = 2
 RUN_TICKS = 90  # 3 seconds
 COOLDOWN_TICKS = 90  # 3 seconds
 FRAME_COUNTER = 0x020B05BC
 FIELD_MAP = 0x020B6BE4  # s16 current map id (field state block)
+RUN_STATE = 0x020B6CF0  # player +0x40
 TIMED_RUN_BODY_ADDR = 0x020251AC
 TIMED_RUN_EXIT = 0x02024C58
 DPAD_MASK = 0xF0
@@ -19,9 +23,16 @@ DPAD_MASK = 0xF0
 COUNTER_MASK_HIGH = 0x1FC0
 COUNTER_MASK_LOW = 0x20
 
-# Part 1 sits in the freed too-tired check block: load the run state, then jump to part 2.
+# Part 1 sits in the freed too-tired check block: load the run state, then jump to part 2. With the
+# watch closed it clears the state and leaves [sp, #8] as vanilla set it (B held), so the run has no limit.
 TIMED_RUN_ASM_ENTRY = f"""
     ldr   r1, [r2]
+    bl    ${{cave_watch_open}}
+    cmp   r0, #0
+    biceq r1, r1, #{COUNTER_MASK_HIGH:#x}
+    biceq r1, r1, #{COUNTER_MASK_LOW:#x}
+    streq r1, [r2]
+    beq   {TIMED_RUN_EXIT:#x}
     mov   r3, r1, lsl #19
     mov   r3, r3, lsr #24
     ldr   r0, [sp, #8]
@@ -110,6 +121,7 @@ NO_RUN_HP_COST = Feature(
 TIMED_RUN = Feature(
     "timed-run",
     (
+        WATCH_OPEN_CAVE,
         CaveCode("cave_run_area_last", "    .word 0", "map the run state belongs to"),
         CaveCode("cave_run_area", RUN_AREA_ASM, "run ready again in a new area"),
         Patch(
@@ -136,3 +148,5 @@ TIMED_RUN = Feature(
         ),
     ),
 )
+
+POCKETWATCH = pocketwatch(RUN_STATE, RUN_TICKS, COOLDOWN_TICKS)

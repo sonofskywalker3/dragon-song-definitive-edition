@@ -1,0 +1,18 @@
+# Pocketwatch: can Jian walk and run after the clear? (k_cleared from watch_clear.plan). The drop chest
+# lands on Jian (the symbol was pulled onto him), so he is first moved 48 px up, off it
+load k_cleared
+watch u32 0x020B0010 fstate
+poke u32 0x020B6CB8 0x438000
+wait 5
+peek u32 0x020B6CB4 x0
+peek u32 0x020B6CB8 y0
+press Up 30
+peek u32 0x020B6CB8 y_walk_up
+press Left 30
+peek u32 0x020B6CB4 x_walk_left
+press B,Up 30
+peek u32 0x020B6CB8 y_run_up
+peek u32 0x020B6CF0 st
+press B,Right 30
+peek u32 0x020B6CB4 x_run_right
+shot m01
