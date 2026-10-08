@@ -1,0 +1,21 @@
+# still-hud: in Thieves' Woods (map 1) the Menu note, the portrait, and the party chat figures do not pulse.
+# Bottom-screen shots 4 frames apart over a full 32-frame pulse must match. Run with --save build/gifs/jeff/jeff.SaveRAM
+include boot_from_save
+wait 60
+peek u16 0x020B6CA8 pulse_phase
+shot s00
+wait 4
+shot s04
+wait 4
+shot s08
+wait 4
+shot s12
+wait 4
+shot s16
+wait 4
+shot s20
+wait 4
+shot s24
+wait 4
+shot s28
+peek u16 0x020B6CA8 pulse_phase_after

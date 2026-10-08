@@ -1,0 +1,15 @@
+# still-hud: tapping the party chat figures and the Menu note still works. Run with --save build/gifs/jeff/jeff.SaveRAM
+include boot_from_save
+wait 60
+touch 82 123 3
+wait 90
+shot chat
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 60
+touch 165 60 3
+wait 60
+shot menu

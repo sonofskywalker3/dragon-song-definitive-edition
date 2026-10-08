@@ -42,6 +42,8 @@ the design are in [docs/design.md](docs/design.md).
 - **The Adventure Guidebook (Start) describes this version:** running without an HP cost, saving with Select,
   battles, battle speeds, enemies, and blue chests, in the book's own lettering.
 - **"Althena Conduct" is called "Experience"** on the status screen.
+- **The field screen's icons hold still.** The Menu note, the party leader's portrait, and the party chat figures
+  no longer pulse all the time.
 
 ## Battles
 
@@ -145,6 +147,7 @@ the design are in [docs/design.md](docs/design.md).
 
 - Town and world map menus frame the chosen place with the System menu's corner brackets.
 - The victory screen's Silver line counts up from the silver you carried, like the experience lines.
+- The Menu note, the portrait, and the party chat figures on the field screen hold still.
 
 ### v0.1.3 (2026-10-08)
 
