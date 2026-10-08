@@ -345,6 +345,12 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
 1. **(Researched 2026-10-08, docs/re-field-menu.md: two picture pages in pack.dat, text drawn in) Start info screen is out of date.** Start in the field brings up an info screen; update its text to match
    what the hack changed (one battle mode with EXP and silver, running, held L+R to flee, target picking, speeds,
    and so on). Find which archive and message the screen shows first.
+   Draft panel texts (Jeff, 2026-10-08; Oxford comma, lowercase "experience", singular "blue chest"):
+   Towns: Run "Hold B to dash for about 3 seconds, then catch your breath. Running costs no HP."; Save adds "Or
+   press Select to jump straight to saving."; Heal and Equip unchanged. Fields: Battles "Every battle gives
+   experience, items, and silver."; Speed "Tap R in battle to cycle Fast (the default), Faster, and Normal. Hold
+   L+R to run away. The mic is ignored."; Enemies "Beaten enemies stay gone until you leave the area and come
+   back."; Blue Chest "A blue chest opens once every enemy in its area is beaten." Open: rename Fastest to Faster?
 2. **(Done 2026-10-08, `field-menu`; docs/re-field-menu.md) Select opens the save menu.** Select does nothing in the field now (vanilla used it in battle to flee; that
    moved to held L+R, feat_battle_run.py). Make Select in the field open the menu straight at Save.
 3. **(Done 2026-10-08, `field-menu`) Select closes the menu.** Anywhere in the field menu, Select goes straight back to the map instead of pressing
