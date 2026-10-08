@@ -1,0 +1,24 @@
+# Pocketwatch: from cleared map 1 (c_start, watch_cleared.plan) to the statue room (map 4, no enemies)
+# and back: map 1 restocks on entry, so the watch should open again
+load c_start
+# door: field state 0x86 with destination map and entrance, as a real door trigger sets them
+poke u16 0x020B77EC 4
+poke u16 0x020B77F0 0x270f
+poke u16 0x020B77F2 101
+poke u32 0x020B0010 0x86
+wait 180
+peek u16 0x020B6BE4 map4
+peek u16 0x020B77F4 spawns4
+shot r01_map4
+save r_map4
+poke u16 0x020B77EC 1
+poke u16 0x020B77F0 0x270f
+poke u16 0x020B77F2 101
+poke u32 0x020B0010 0x86
+wait 180
+peek u16 0x020B6BE4 map1
+dump 0x020B4908 0x18 area
+peek u32 0x020B6CB4 x
+peek u32 0x020B6CB8 y
+shot r02_map1
+save r_live

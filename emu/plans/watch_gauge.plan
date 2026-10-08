@@ -1,0 +1,76 @@
+# Pocketwatch: hand = run gauge. Hold B and walk from r_live (map 1 restocked, watch open)
+load r_live
+hold B,Down
+wait 10
+peek u32 0x020B6CF0 st_10
+peek u32 0x020B6CB8 y_10
+peek u16 0x020B6BE4 map_10
+shot g_10
+wait 20
+peek u32 0x020B6CF0 st_30
+peek u32 0x020B6CB8 y_30
+peek u16 0x020B6BE4 map_30
+shot g_30
+wait 30
+peek u32 0x020B6CF0 st_60
+peek u32 0x020B6CB8 y_60
+peek u16 0x020B6BE4 map_60
+shot g_60
+wait 30
+peek u32 0x020B6CF0 st_90
+peek u32 0x020B6CB8 y_90
+peek u16 0x020B6BE4 map_90
+shot g_90
+wait 30
+peek u32 0x020B6CF0 st_120
+peek u32 0x020B6CB8 y_120
+peek u16 0x020B6BE4 map_120
+shot g_120
+wait 30
+peek u32 0x020B6CF0 st_150
+peek u32 0x020B6CB8 y_150
+peek u16 0x020B6BE4 map_150
+shot g_150
+wait 30
+peek u32 0x020B6CF0 st_180
+peek u32 0x020B6CB8 y_180
+peek u16 0x020B6BE4 map_180
+shot g_180
+wait 20
+peek u32 0x020B6CF0 st_200
+peek u32 0x020B6CB8 y_200
+peek u16 0x020B6BE4 map_200
+shot g_200
+wait 40
+peek u32 0x020B6CF0 st_240
+peek u32 0x020B6CB8 y_240
+peek u16 0x020B6BE4 map_240
+shot g_240
+wait 30
+peek u32 0x020B6CF0 st_270
+peek u32 0x020B6CB8 y_270
+peek u16 0x020B6BE4 map_270
+shot g_270
+wait 30
+peek u32 0x020B6CF0 st_300
+peek u32 0x020B6CB8 y_300
+peek u16 0x020B6BE4 map_300
+shot g_300
+wait 30
+peek u32 0x020B6CF0 st_330
+peek u32 0x020B6CB8 y_330
+peek u16 0x020B6BE4 map_330
+shot g_330
+wait 30
+peek u32 0x020B6CF0 st_360
+peek u32 0x020B6CB8 y_360
+peek u16 0x020B6BE4 map_360
+shot g_360
+wait 20
+peek u32 0x020B6CF0 st_380
+peek u32 0x020B6CB8 y_380
+peek u16 0x020B6BE4 map_380
+shot g_380
+release
+wait 30
+shot g_end

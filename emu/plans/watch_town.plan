@@ -1,0 +1,36 @@
+# Pocketwatch in a town: the Port Searis inn hall (map 160, entrance 400, the door from Jian's room).
+# The watch should be closed and running unlimited; the Menu note and party chat icon still answer touch.
+# Run with --save build/emu/saves/start.SaveRAM (post-intro save, Jian's room)
+include boot_from_save
+wait 60
+peek u16 0x020B6BE4 room
+shot t00_room
+poke u16 0x020B77EC 160
+poke u16 0x020B77F0 0x270f
+poke u16 0x020B77F2 400
+poke u32 0x020B0010 0x86
+wait 200
+peek u16 0x020B6BE4 map
+peek u32 0x020B6CB4 x
+peek u32 0x020B6CB8 y
+shot t01_town
+include watch_shuttle_lr
+shot t02_after_shuttle
+watch u32 0x020B0010 fstate
+touch 158 40 3
+wait 60
+shot t03_menu_touch
+press B 3
+wait 60
+press B 3
+wait 60
+touch 82 123 3
+wait 90
+shot t04_chat_touch
+press A 3
+wait 60
+press A 3
+wait 60
+press A 3
+wait 60
+shot t05_back

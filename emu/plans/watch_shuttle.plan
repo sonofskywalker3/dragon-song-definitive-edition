@@ -1,0 +1,81 @@
+# Pocketwatch: run back and forth for 8 s with B held, sampling y every 30 frames (included by watch_* plans)
+hold B,Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up1
+peek u32 0x020B6CF0 st_up1
+hold B,Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn1
+peek u32 0x020B6CF0 st_dn1
+hold B,Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up2
+peek u32 0x020B6CF0 st_up2
+hold B,Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn2
+peek u32 0x020B6CF0 st_dn2
+hold B,Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up3
+peek u32 0x020B6CF0 st_up3
+hold B,Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn3
+peek u32 0x020B6CF0 st_dn3
+hold B,Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up4
+peek u32 0x020B6CF0 st_up4
+hold B,Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn4
+peek u32 0x020B6CF0 st_dn4
+hold B,Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up5
+peek u32 0x020B6CF0 st_up5
+hold B,Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn5
+peek u32 0x020B6CF0 st_dn5
+hold B,Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up6
+peek u32 0x020B6CF0 st_up6
+hold B,Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn6
+peek u32 0x020B6CF0 st_dn6
+hold B,Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up7
+peek u32 0x020B6CF0 st_up7
+hold B,Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn7
+peek u32 0x020B6CF0 st_dn7
+hold B,Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up8
+peek u32 0x020B6CF0 st_up8
+hold B,Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn8
+peek u32 0x020B6CF0 st_dn8

@@ -1,0 +1,156 @@
+# Pocketwatch: speed with the watch open (restocked map 1), then the clearing battle closes it,
+# then speed with it closed. Needs r_live from watch_reentry.plan in the same out dir.
+load r_live
+peek u16 0x020B6BE4 map
+include watch_shuttle
+shot k00_open_after_shuttle
+include cheats_strong
+# one enemy left: kills = total - 1
+peek u8 0x020B4913 total
+poke u8 0x020B4912 5
+peek u32 0x020B6CB4 jx
+peek u32 0x020B6CB8 jy
+# dump the field objects, then pull one enemy symbol (slot 2) onto Jian: contact starts a battle
+dump 0x020B6FD4 0x280 objs
+pin u32 0x020b7058 0x51A000
+pin u32 0x020b705c 0x46894A
+wait 10
+unpin
+include cheats_strong
+watch u8 0x020B4912 kills
+watch u32 0x020B0010 fstate
+wait 120
+shot k01_battle
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+wait 60
+wait 120
+peek u32 0x020B0010 fstate_field
+peek u8 0x020B4912 kills_after
+peek u8 0x020B4913 total_after
+peek u16 0x020B6BE4 map_after
+shot k02_after_clear
+save k_cleared
+# the drop chest lands on Jian (the symbol was pulled onto him): move him 48 px up, off it
+poke u32 0x020B6CB8 0x438000
+wait 5
+include watch_shuttle
+shot k03_closed_after_shuttle
