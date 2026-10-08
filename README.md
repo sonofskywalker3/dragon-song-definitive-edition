@@ -1,6 +1,6 @@
 # Dragon Song: Definitive Edition
 
-**A fan patch that fixes "the worst RPG ever made."** Running no longer costs HP, every battle gives EXP,
+**A fan patch that fixes "the worst RPG ever made."** Running no longer costs HP, every battle gives experience,
 items, and silver, you pick your own targets, battles are faster, spells cost less MP, and the microphone
 is gone.
 
@@ -32,86 +32,47 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 
 ## What it changes
 
-### Exploring
+The short version. Every change is listed in **[CHANGES.md](CHANGES.md)**, along with the version history, and
+how each one was built and tested is in [docs/status.md](docs/status.md).
 
-- **Running costs no HP.** Hold B to dash for about 3 seconds, then it cools down for about 3 seconds, like
-  the Eternal Blue dash. Holding B runs once; press it again to run again.
-- **Walking is 50% faster and running is 3 times the original walking speed.** The run is ready again
-  whenever you enter a new area, and ramps no longer slow you down.
-- **Enemies come back when you leave an area and return**, not instantly. Blue chests unlock once every
-  enemy in the area is beaten, at your own pace.
-- **No HP and MP refill for clearing an area.** Healing statues fully restore HP and MP and now also cure
-  status (poison and the like), with no camera pan:
-  the sparkle and heal happen at once.
-- **The save glitch is fixed.** Talking to Flora twice in the Underground Tunnel no longer locks out saving.
+**Exploring**
 
-- **Town and world maps work with the D-pad.** In a "Select place to go" menu, Up and Down move through the
-  places, Left and Right switch tabs, and A goes there. Touch works as before.
+- Running costs no HP: a timed dash with a short cooldown, like Eternal Blue.
+- Walking is 50% faster and running 3 times as fast, ramps and stairs included.
+- Enemies come back when you leave an area, not on a timer, and blue chests open once every monster in the area
+  is beaten.
+- Healing statues heal at once and cure status; clearing an area no longer refills you.
+- Town and world map menus work with the D-pad.
 
-- **Quicker menus.** **Select** in the field opens the Save screen directly (B still goes back to the
-  System menu), and **Select** anywhere in the menu drops straight back to the map. Menu screens and fades
-  are much faster, and held keys repeat.
+**Menus and text**
 
-- **The Adventure Guidebook (Start) is up to date**: running, saving with Select, battles, speeds,
-  enemies, and the blue chest, in the book's own lettering.
+- Select opens the Save screen, and Select anywhere in the menu goes straight back to the map.
+- Much faster menus, and hold A or B for faster text.
+- The Start guidebook explains this version's rules.
 
-- **Faster dialogue.** Hold **A** and text types three times as fast; you still press A again to turn the
-  page. Hold **B** and it types as fast and turns the pages by itself.
+**Battles**
 
-### Battles
+- One battle mode: experience, items, and silver from every fight, and bosses give experience.
+- You pick your own targets, and an attack is never wasted. With only one enemy in reach, Fight attacks it
+  right away.
+- Three battle speeds on R: Fast (the default), Faster, and Normal. Party attacks and the gaps between them are
+  quicker, and Auto switches to Faster.
+- No microphone: hold L and R to run away.
+- Benched characters keep up, and broken or stolen gear comes back.
 
-- **One battle mode.** The Combat / Virtue switch is gone: every battle gives EXP, items, and silver, and the
-  Virtue clock is removed.
-- **Battles drop silver**, based on the EXP the battle gives. The victory screen counts the silver up next to
-  the EXP, and a second page lists the items received.
-- **Bosses give EXP** (in the original they gave almost none): about ten regular enemies' worth from the
-  area they are fought in.
-- **You pick targets** on the touch screen or with the D-pad, as in Lunar 1 and 2. If your target dies
-  before the hit lands, the attack moves to the next enemy; an attack is never wasted. The
-  blue corners of the picker also frame the chosen enemy on the battlefield, so you can watch the enemies
-  instead of the menu. Not everyone can reach every enemy: Jian and Lucia only hit the front row, so
-  when only one enemy is in their reach (as in the first battles, one enemy in front and one flying
-  behind), Fight attacks it right away without showing the picker. With two or more in reach, you pick.
-- **Enemies die on the hit that kills them.** A combo that kills several enemies shows each one die as it
-  falls, while the attacker moves on, instead of all of them together at the end.
-- **Characters out of the party earn the same EXP as the party**, so nobody falls behind.
-- **Broken gear comes back after the battle**, and an item stolen by a thief is returned if you win.
-- **Leaving characters leave their gear behind** in the inventory, so it is not lost with them.
-- **No microphone.** Run from a battle by holding **L and R** together for half a second on the command
-  screen (the battle sign says L+R). L and R no longer fast-forward.
-- **Battle speed:** tap **R** to cycle **Fast** (the default), Faster, and Normal (the original timing).
-  Fast trims waits throughout a battle: quicker moves, kills, camera turns, and intro and victory screens. The
-  first temple battle takes 25 seconds on Fast, against 32 with the original game's own fast-forward held
-  down and 38 without it. On Fast and Faster, Lucia, Gabryel, and Rufus attack faster, and the next
-  character no longer waits for a defeated enemy's sparkles to finish. Picking **Auto** switches to Faster.
-- **Jian's curse no longer weakens his attack** (the story around the curse is still to be rewritten).
+**Spells and MP**
 
-### MP, items, and shops
+- Spells cost about 40% of their old MP, and Lucia learns them one level at a time.
+- MP items restore a flat amount, and Mental Gum is sold in shops.
 
-- **Spells cost about 40% of their old MP** (Healing Water 4 instead of 10, Tender Rain 12 instead of 30,
-  and so on). Lucia (and later Flora) learns them by level, one every level or two, finishing with Miracle
-  Tears at level 12, instead of getting six of them by level 5.
-- **Mental Gum restores 20 MP and Mental Drop 50 MP**, instead of a small share of max MP. Mental Gum costs
-  1000 silver and is sold in every item shop from the third town on; Mental Drop is still a rare reward.
+**Gad's Express**
 
-### Gad's Express
+- Delivery jobs grow with your journey, with a better-paying "future" job.
 
-- **Delivery jobs grow with your journey.** An office's rank starts at 1 and goes up by one with each new
-  town you reach (not with deliveries made), and it only offers jobs whose items you can actually find by
-  then.
-- **One "future" job** among the offers, shown in red, asks for items from further ahead and pays 1.5 times
-  as much.
-- **Recipient names match.** Ten people had one name in the job menu and another in their own dialogue;
-  both now use the name from the Japanese release.
+**Story**
 
-### Story and text
-
-- **A new opening narration**, retranslated from the Japanese release and checked against Lunar 1 and 2:
-  the Dragonmaster is Althena's champion (not her servant), Althena is the source of the world's magic,
-  and the Beastmen and Humans are set up as the Japanese has them, with the Beastmen in power and a peace
-  that only holds while the two races keep apart.
-- **A new wake-up.** Instead of Jian introducing himself to an empty room, the innkeeper shouts up the
-  stairs to get him out of bed, and Jian heads out of the inn, his thoughts introducing him on the way.
+- A new opening narration, retranslated from the Japanese release, and a new wake-up scene. The rest of the story
+  and dialogue is next.
 
 ## How to play it
 
@@ -135,7 +96,7 @@ whose closing list of fixes for Lunar: Dragon Song lines up closely with what th
 Thanks for the reminder that this game deserved another look.
 
 Lunar: Dragon Song was developed by Japan Art Media with Game Arts and published by Marvelous Interactive
-(Japan), Ubisoft (North America) and Rising Star Games (Europe). This repository contains no game data;
+(Japan), Ubisoft (North America), and Rising Star Games (Europe). This repository contains no game data;
 you need your own copy of the game.
 
 ## Building it yourself
