@@ -1,10 +1,10 @@
-"""Town map menus work with the D-pad (Jeff, 2026-10-07).
+"""Town and world map menus work with the D-pad (Jeff, 2026-10-07).
 
-A town's "Select place to go" menu (game mode 2, func_02042c08, the same code for every hub map 0x104..0x126)
-lists the places as pages of four rows behind tabs on the touch screen; only touch could switch tabs, and the
-D-pad dragged the Jian icon around the town map instead. In towns now: Up/Down move through the rows of the
-tab, Left/Right switch tabs, A goes (vanilla), and touch works as before. The overworld hubs (0x104..0x11C,
-where func_0204273c is true) keep their free D-pad cursor, which scrolls the world map.
+A "Select place to go" menu (game mode 2, func_02042c08, the same code for every hub map 0x104..0x126: the
+world map hubs 0x104..0x11C and the towns from 0x11D) lists the places as pages of four rows behind tabs on the
+touch screen; only touch could switch tabs, and the D-pad dragged the Jian icon around the map instead. Now, in
+towns and on the world map alike (Jeff found the switch between the two jarring): Up/Down move through the rows
+of the tab, Left/Right switch tabs, A goes (vanilla), and touch works as before.
 
 Menu state at S = 0x020B8C2C: +0x30 selected entry (index into the visible list, -1 none), +0x32 tab (page of
 four), +0x38 number of visible entries. Research and tests: docs/re-field-battle.md "Town map menu".
@@ -13,7 +13,7 @@ four), +0x38 number of visible entries. Research and tests: docs/re-field-battle
   returns that when something was touched; otherwise a new D-pad press becomes a touch of a row (setting the
   tab first for Left/Right), so the vanilla touch path plays the sound, switches the page, highlights the row,
   moves the Jian icon to the place and shows YES/NO, ready for A.
-- The free-cursor test (`ands r0, held, #0xF0`) sees no D-pad in towns, so a held key does not drag the icon.
+- The free-cursor test (`ands r0, held, #0xF0`) sees no D-pad, so a held key does not drag the icon.
 """
 
 from dsde.patching import AsmPatch, CaveCode
@@ -25,7 +25,7 @@ TOUCH_HIT_CALL_WORD = 0xEBFF8FB6
 TOUCH_HIT = 0x020273B0
 FREE_CURSOR_TEST = 0x0204364C  # ands r0, r0, #0xF0 (held D-pad keys)
 FREE_CURSOR_TEST_WORD = 0xE21000F0
-IS_OVERWORLD = 0x0204273C  # () -> true on the scrolling overworld hubs
+NO_KEYS = 0  # the free-cursor test sees no D-pad
 PAD_NEW = 0x020AFF7A  # u16 keys newly pressed this frame (pad struct 0x020AFF74 + 6)
 MENU = 0x020B8C2C
 MENU_SELECTED = 0x30  # s16, -1 none
@@ -38,16 +38,11 @@ KEY_RIGHT = 0x10
 KEY_LEFT = 0x20
 KEY_UP = 0x40
 KEY_DOWN = 0x80
-DPAD = 0xF0
 
 TOWN_KEYS_ASM = f"""
     push  {{r4-r8, lr}}
     bl    {TOUCH_HIT:#x}
     cmn   r0, #1
-    popne {{r4-r8, pc}}
-    bl    {IS_OVERWORLD:#x}
-    cmp   r0, #0
-    mvnne r0, #0
     popne {{r4-r8, pc}}
     ldr   r1, tk_pad
     ldrh  r1, [r1]
@@ -127,36 +122,22 @@ tk_menu:
     .word {MENU:#x}
 """
 
-# Replaces `ands r0, r0, #0xF0`: the flags it leaves decide the free cursor. Towns: no D-pad.
-TOWN_CURSOR_ASM = f"""
-    push  {{r0, lr}}
-    bl    {IS_OVERWORLD:#x}
-    cmp   r0, #0
-    pop   {{r0, lr}}
-    andsne r0, r0, #{DPAD:#x}
-    movseq r0, #0
-    bx    lr
-"""
-
 TOWN_MENU_PATCHES = (
-    CaveCode("cave_town_keys", TOWN_KEYS_ASM, "town menu: D-pad picks rows and tabs"),
-    CaveCode(
-        "cave_town_cursor", TOWN_CURSOR_ASM, "town menu: D-pad leaves the map icon"
-    ),
+    CaveCode("cave_town_keys", TOWN_KEYS_ASM, "map menus: D-pad picks rows and tabs"),
     AsmPatch(
         TOUCH_HIT_CALL,
         TOUCH_HIT_CALL + 4,
         TOUCH_HIT_CALL_WORD,
         TOUCH_HIT_CALL_WORD,
         "bl ${cave_town_keys}",
-        "town menu: D-pad picks rows and tabs",
+        "map menus: D-pad picks rows and tabs",
     ),
     AsmPatch(
         FREE_CURSOR_TEST,
         FREE_CURSOR_TEST + 4,
         FREE_CURSOR_TEST_WORD,
         FREE_CURSOR_TEST_WORD,
-        "bl ${cave_town_cursor}",
-        "town menu: D-pad leaves the map icon",
+        f"ands r0, r0, #{NO_KEYS}",
+        "map menus: the D-pad no longer drags the map icon",
     ),
 )

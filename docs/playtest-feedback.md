@@ -305,3 +305,8 @@ return) and speed up or shorten the slow ones on Fast/Fastest, e.g. faster movem
 Also from the same session: in Thieves' Woods (one enemy front, one back) Fight attacked at once without the picker.
 That is by design: Jian and Lucia reach the front row only, and with one valid target the attack confirms. Jeff may
 prefer the picker to show anyway.
+
+Follow-up (same day): Jeff found going from the D-pad town menus to the world map's free cursor jarring, so the
+list controls now apply to every hub, the world map included (the selected place moves the icon, and the view with
+it); the D-pad no longer drags the icon anywhere. `test_worldmap_dpad`: Leave town (flag 0x1E1 poked) picked with
+Left + Up + A, world map 260 loads, a held Down does not move the icon.
