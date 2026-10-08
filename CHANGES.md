@@ -6,9 +6,9 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Exploring
 
-- **Running costs no HP.** Where enemies are about, hold B to dash for about 3 seconds, then it cools down for
-  about 3 seconds, like the Eternal Blue dash. Holding B runs once; press it again to run again. The run is ready
-  again whenever you enter a new area.
+- **Running costs no HP.** Where enemies are about, press B to dash for about 3 seconds, then it cools down for
+  about 3 seconds, like the Eternal Blue dash. A press starts the whole dash, so you can let go of B and keep
+  running. Holding B runs once; press it again to run again. The run is ready again whenever you enter a new area.
 - **Run freely where it is safe.** In towns, in rooms with no enemies, and in any area once every enemy in it is
   beaten, running has no time limit and no cooldown.
 - **The pocketwatch shows danger and the run.** The field screen's pocketwatch (the Virtue clock in the original)
@@ -157,7 +157,9 @@ the design are in [docs/design.md](docs/design.md).
 - The pocketwatch is open while enemies are about, and its hand is the run gauge. It closes right after the
   battle that beats an area's last enemy.
 - Running has no time limit in towns, in rooms with no enemies, and in cleared areas.
-- The guidebook's Run page explains the pocketwatch.
+- A press of B starts the whole dash; letting go no longer ends it early (so tapping B cannot be used to
+  sprint forever either).
+- The guidebook explains the pocketwatch, and its Heal panel says statues work from any side and cure status.
 
 ### v0.1.4 (2026-10-08)
 

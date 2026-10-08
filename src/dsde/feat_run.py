@@ -6,7 +6,9 @@ from dsde.patching import AsmPatch, CaveCode, Feature, Patch
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
 # 8-bit counter at +0x40 bits 5..12 (the old HP drain counter): 0 = ready, 1..RUN_TICKS =
 # running, then cooldown until RUN_TICKS + COOLDOWN_TICKS. One tick = 2 frames at 60 fps.
-# As in Lunar 1 and 2, holding B runs once: after the cooldown the state waits at its end until B is
+# A press of B starts the whole dash: letting go does not end it early (Jeff, 2026-10-08), so a run
+# always costs the full dash and cooldown and tapping B cannot add up to an unlimited sprint. As in
+# Lunar 1 and 2, holding B runs once: after the cooldown the state waits at its end until B is
 # released, so running again needs a fresh press.
 # The timer only runs while the pocketwatch is open (enemies about, feat_watch.py). Where it is closed
 # (towns, rooms with no enemies, cleared areas) the state stays 0 and B runs for as long as it is held.
@@ -73,12 +75,6 @@ TIMED_RUN_ASM_BODY = f"""
     movne r3, #1
     b     store
 active:
-    cmp   r3, #{RUN_TICKS}
-    bhi   tick
-    cmp   r0, #0
-    moveq r3, #{RUN_TICKS + 1}
-    beq   store
-tick:
     tst   r12, #{FRAMES_PER_TICK - 1}
     addeq r3, r3, #1
     cmp   r3, #{RUN_TICKS + COOLDOWN_TICKS}

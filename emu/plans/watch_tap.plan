@@ -1,0 +1,100 @@
+# Timed run: a short press of B starts the whole dash; walking on without B keeps running until the
+# dash ends, then the cooldown. Up and down so Jian stays on map 1 (r_live from watch_reentry.plan).
+load r_live
+press B,Up 4
+hold Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up1
+peek u32 0x020B6CF0 st_up1
+shot tap_up1
+hold Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn1
+peek u32 0x020B6CF0 st_dn1
+shot tap_dn1
+hold Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up2
+peek u32 0x020B6CF0 st_up2
+shot tap_up2
+hold Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn2
+peek u32 0x020B6CF0 st_dn2
+shot tap_dn2
+hold Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up3
+peek u32 0x020B6CF0 st_up3
+shot tap_up3
+hold Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn3
+peek u32 0x020B6CF0 st_dn3
+shot tap_dn3
+hold Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up4
+peek u32 0x020B6CF0 st_up4
+shot tap_up4
+hold Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn4
+peek u32 0x020B6CF0 st_dn4
+shot tap_dn4
+hold Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up5
+peek u32 0x020B6CF0 st_up5
+shot tap_up5
+hold Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn5
+peek u32 0x020B6CF0 st_dn5
+shot tap_dn5
+hold Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up6
+peek u32 0x020B6CF0 st_up6
+shot tap_up6
+hold Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn6
+peek u32 0x020B6CF0 st_dn6
+shot tap_dn6
+hold Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up7
+peek u32 0x020B6CF0 st_up7
+shot tap_up7
+hold Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn7
+peek u32 0x020B6CF0 st_dn7
+shot tap_dn7
+hold Up
+wait 30
+release
+peek u32 0x020B6CB8 y_up8
+peek u32 0x020B6CF0 st_up8
+shot tap_up8
+hold Down
+wait 30
+release
+peek u32 0x020B6CB8 y_dn8
+peek u32 0x020B6CF0 st_dn8
+shot tap_dn8

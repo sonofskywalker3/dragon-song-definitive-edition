@@ -55,8 +55,13 @@ PANELS = (
     PanelText(
         TOWNS_TOP,
         0,
-        "Hold the B Button to dash for about 3 seconds, then catch your breath. Running costs no HP. "
+        "Press the B Button to dash for about 3 seconds, then catch your breath. Running costs no HP. "
         "Once the pocketwatch closes, run freely.",
+    ),
+    PanelText(
+        TOWNS_TOP,
+        1,
+        "Althena Statues can be seen in many places. Press the A Button beside one to fully heal and cure.",
     ),
     PanelText(
         TOWNS_BOTTOM,

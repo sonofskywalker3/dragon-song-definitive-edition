@@ -6,7 +6,7 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 
 | Design item | Feature | State |
 |---|---|---|
-| 1. Running | `timed-run` | Verified in emulator: no HP cost; 179 frames running, 180 frames cooldown; holding B runs once, a fresh press is needed to run again (as in Lunar 1 and 2). Only while the pocketwatch is open (`pocketwatch`); where it is closed the run has no limit |
+| 1. Running | `timed-run` | Verified in emulator: no HP cost; 179 frames running, 180 frames cooldown; holding B runs once, a fresh press is needed to run again (as in Lunar 1 and 2); a press starts the whole dash, letting go does not end it (`watch_tap`: a 4-frame press of B, then walking without B, runs until tick 90, then walks through the cooldown, and the hand turns without a jump, build/watch/tap_strip.png). Only while the pocketwatch is open (`pocketwatch`); where it is closed the run has no limit |
 | 2. One battle mode | `one-battle-mode` | Verified: battles use Virtue rules (EXP, kills count) and every kill also rolls items; field mode toggle disabled |
 | 2. Result screen item list | `result-screens` | Verified (plans `test_result_silver1`, `test_result_silver3`, `test_result_noitems`): after the EXP page, A opens a second page, "Items received!" with the dropped items, then A leaves. Only shown when items dropped; with no items one A on the EXP page leaves the battle as in the original. EXP (202), silver (150 -> 251) and the items are still granted. Shows at most 4 items, as in the original |
 | 2. Virtue clock removed | `no-virtue-clock` | Verified: clock stays 0 after a kill (original: +1 per frame, 3600 = 60 s) |
