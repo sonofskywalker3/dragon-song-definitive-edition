@@ -57,4 +57,4 @@ Out of date: Run (no HP cost, timed run) and the whole Fields page (one battle m
 restock on entry, Experience). Heal, Save and Equip still hold. Plan: redraw the ruled-line text into the vanilla
 bitmaps at build time (DataPatch of pack entries 0xAB/0xAC/0xAE/0xAF), keeping the panels and using existing
 palette indexes; glyphs cut from the vanilla bitmaps or the dialogue font. The Blue Boxes panel becomes
-"Blue Chests" (Jeff: it's blue chest).
+"Blue Chest" (Jeff: singular). Draft panel texts are in the session notes of 2026-10-08 (playtest-feedback item 20.1).

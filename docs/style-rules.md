@@ -104,7 +104,10 @@ Dragon Song's USA text does the same (173 to 9).
 - Stammering uses a hyphen ("I-I hear music") at most once per scene, and only once the encoder writes
   "-" (section 5).
 - "OK", not "okay" (Dragon Song uses "OK" 111 times and "okay" never).
-- "Blue chest", not "blue box" (Jeff, 2026-10-08; the vanilla guidebook says "Blue Boxes").
+- "Blue chest", not "blue box", and singular where it reads naturally (Jeff, 2026-10-08; the vanilla guidebook
+  says "Blue Boxes").
+- "experience" is lowercase in running text: it is a common noun, not a name like Althena Conduct (Jeff,
+  2026-10-08). A screen label may start with a capital ("Experience" over "Next" on the status screen).
 - Oxford comma in every list of three or more: "Experience, items, and silver" (Jeff, 2026-10-08). This
   covers game text, the guidebook pages, the README, and release notes.
 - Exclamation budget per page (sentences ending in "!"; a "?!" counts as a question), by character: Flora and Lucia (excited) 3; Jian, Gabryel, Gad, Cherenkov 2;
