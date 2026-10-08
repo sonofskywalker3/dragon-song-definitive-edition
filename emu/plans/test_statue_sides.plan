@@ -1,0 +1,101 @@
+# statue-any-side: the healing statue in Roland Forest (map 34, object 0x37D at 308,468) from the front, both
+# sides, the back and a corner. Needs state room (Jian's room: statue_warp_states on our ROM with --save,
+# statue_find_maps on the vanilla ROM). Warps in at entrance 102 and walks up to the statue's clearing; then for
+# each side puts Jian about 28 px off the statue, walks into it, sets HP 5 and MP 1, presses A, reads HP/MP.
+load room
+wait 5
+pin u16 0x020B77EC 34
+pin u16 0x020B77F2 102
+pin u8 0x020B77EE 0
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+press Up 100
+wait 10
+save m34
+peek u32 0x020B466C max_hp
+peek u32 0x020B4674 max_mp
+load m34
+wait 5
+poke u32 0x020B6CB4 0x134000
+poke u32 0x020B6CB8 0x1ee000
+wait 10
+press Up 16
+wait 10
+poke u32 0x020B4668 5
+poke u32 0x020B4670 1
+dump 0x020B6CB4 0x14 front_south_pos
+shot front_south_a
+press A 4
+wait 150
+peek u32 0x020B4668 front_south_hp
+peek u32 0x020B4670 front_south_mp
+shot front_south_b
+load m34
+wait 5
+poke u32 0x020B6CB4 0x114000
+poke u32 0x020B6CB8 0x1d4000
+wait 10
+press Right 16
+wait 10
+poke u32 0x020B4668 5
+poke u32 0x020B4670 1
+dump 0x020B6CB4 0x14 side_west_pos
+shot side_west_a
+press A 4
+wait 150
+peek u32 0x020B4668 side_west_hp
+peek u32 0x020B4670 side_west_mp
+shot side_west_b
+load m34
+wait 5
+poke u32 0x020B6CB4 0x154000
+poke u32 0x020B6CB8 0x1d4000
+wait 10
+press Left 16
+wait 10
+poke u32 0x020B4668 5
+poke u32 0x020B4670 1
+dump 0x020B6CB4 0x14 side_east_pos
+shot side_east_a
+press A 4
+wait 150
+peek u32 0x020B4668 side_east_hp
+peek u32 0x020B4670 side_east_mp
+shot side_east_b
+load m34
+wait 5
+poke u32 0x020B6CB4 0x134000
+poke u32 0x020B6CB8 0x1b8000
+wait 10
+press Down 16
+wait 10
+poke u32 0x020B4668 5
+poke u32 0x020B4670 1
+dump 0x020B6CB4 0x14 back_north_pos
+shot back_north_a
+press A 4
+wait 150
+peek u32 0x020B4668 back_north_hp
+peek u32 0x020B4670 back_north_mp
+shot back_north_b
+load m34
+wait 5
+poke u32 0x020B6CB4 0x11e000
+poke u32 0x020B6CB8 0x1ea000
+wait 10
+press Up,Right 16
+wait 10
+poke u32 0x020B4668 5
+poke u32 0x020B4670 1
+dump 0x020B6CB4 0x14 corner_southwest_pos
+shot corner_southwest_a
+press A 4
+wait 150
+peek u32 0x020B4668 corner_southwest_hp
+peek u32 0x020B4670 corner_southwest_mp
+shot corner_southwest_b

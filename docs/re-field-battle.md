@@ -404,6 +404,40 @@ All are single ARM instruction edits in arm9.bin (file offset = address - 0x0200
 - State 0x3D onward after the sparkle: check whether any "area cleared" message depends on state 0x3C before
   shortcutting it.
 
+### 2.11 Which side of a healing statue answers A (confirmed, 2026-10-08)
+
+Researched for Jeff's "You can't activate a statue from the sides or back" (fix: `statue-any-side`,
+src/dsde/feat_statue.py).
+
+- A in the field (func_0201e6a0, loop at 0x0201F2A4) walks the 32 map objects. Talk objects (kind 1, +0x14) and
+  chests (kind 4) first pass the shared check func_020260f4(Jian, object) at 0x0201F2C0; a chest also needs
+  `object y < Jian y` (Jian below it), a talk object with id 0x37D is a statue, anything else is a talk.
+- func_020260f4: the point 8 px ahead of Jian (his facing vector, Q12 tables *0x020A7878 for x and *0x020A7874
+  for y, indexed by the table at 0x0208D9B4) must be within 15 px of the object on both axes, and the octant of
+  the direction from the object to Jian must be within one of Jian's facing. Facing (Jian +0x17 low 3 bits,
+  also F+0xE3 = 0x020B6CC7): 0 up, 1 up-right, 2 right, 3 down-right, 4 down, 5 down-left, 6 left, 7 up-left; the
+  diagonals are the 2:1 field diagonals (angles 333.5 and 26.5 degrees, not 45).
+- Statue-only rule (0x0201F300..0x0201F348): unless the statue's +0x15 byte is 0xFF,
+  `(abs(facing - t) + 1) & 7 <= 2` with t = 7 when the statue's +0x17 low bits are 2, else t = 1. So Jian must
+  face up, up-right, or right (or left, up-left, or up for a statue with facing 2).
+- Statues found by pin-warping to maps 0 to 39 on the vanilla ROM (`emu/plans/statue_find_maps.plan`): map 4
+  Thieves' Woods (604,232; +0x15 = 0, facing 6), map 12 Delrich Temple (196,124; 0x10, 6), map 19 (256,1032;
+  0x10, 2), map 34 Roland Forest (308,468; 0, 6). Fountain Square (map 164, 224,184) has +0x15 = 0xFF. Real
+  entrances to warp to: map 4 entrances 101 to 103, map 12 101 and 102, map 19 101, map 34 101 and 102 (pin
+  0x020B77EC map, 0x020B77F2 entrance, 0x020B77EE facing while walking out of Jian's room; the map then draws
+  properly, unlike a position poke after an entrance-less warp).
+- A statue's footprint is bigger than a person's: walking into it, Jian stops 18 to 26 px from its centre at the
+  sides and 16 to 22 px behind it, so the 8 + 15 px reach fails there even when the facing rule would pass.
+- Vanilla, Roland Forest statue (`emu/plans/test_statue_sides.plan`, shots build/statue/vanilla_sides): heals
+  from below facing up and from the lower-left corner facing up-right; not from the left side (24 px, facing
+  right), the right side (24 px, facing left), or behind (facing down). Delrich Temple (16 approach directions x
+  8 facings, scratch matrix): only facings 0 to 2 from the front and the left side's front corner. Our build
+  before the fix behaves the same.
+- Fix: 0x0201F2C0 calls a cave that sends every object except a statue straight on to func_020260f4; a statue
+  answers when Jian is within 30 px of its centre and his facing vector is within about 67.5 degrees of the
+  direction to it (dot^2 * 7 >= distance^2 * 256^2, facing vectors in 8.8). The statue-only rule's `bgt` at
+  0x0201F348 is a NOP.
+
 ## 3. Battle targeting, EXP distribution and level-up choices
 
 All addresses are ARM9 (loaded at 0x02000000). Function names are the dsd/Ghidra names in

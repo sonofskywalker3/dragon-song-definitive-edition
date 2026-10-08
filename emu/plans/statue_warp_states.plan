@@ -1,0 +1,32 @@
+# Warp from Jian's room (start save) to the statue maps at real entrances (map, entrance and facing pinned
+# while walking out of the room door) and save a state at each: e12_101 Delrich Temple, e4_103
+# Thieves' Woods. Run with --save. test_statue_sides needs room, test_statue_others room and e12_101.
+include boot_from_save
+wait 30
+save room
+pin u16 0x020B77EC 12
+pin u16 0x020B77F2 101
+pin u8 0x020B77EE 1
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+save e12_101
+shot e12_101
+load room
+wait 5
+pin u16 0x020B77EC 4
+pin u16 0x020B77F2 103
+pin u8 0x020B77EE 1
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+save e4_103
+shot e4_103
