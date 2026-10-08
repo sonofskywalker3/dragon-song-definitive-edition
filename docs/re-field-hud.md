@@ -209,6 +209,13 @@ plans emu/plans/watch_*.plan). Differences from the proposal:
 - A door poke from a map to the same map does not restock (kills stayed 5 / 5); a door to another map and back
   does (map 1 -> map 4 entrance 101 -> map 1 entrance 101).
 - Test pitfall: a symbol pulled onto Jian drops its chest on his spot, and the chest's collision then holds him.
+- Nothing open is ever seen after the clearing battle (watch_timing.plan, watch_frames.plan, shots every frame):
+  map reload with the old kill count at frame 1497 (state 0x7A), kill counted and HUD rebuilt closed at 1518
+  (0x7B), but the bottom screen is black from the result pages until 1535; the fade-in (0x63/0x64) starts at
+  1536 with the lid already shut, and control returns at 1551 (build/watch/return_frames.png).
+- Test pitfall: a savestate made with an older build of the ROM breaks battles after a rebuild (the game's file
+  table in RAM points at the old file offsets; the battle never ends). Make states again from boot after every
+  rebuild that changes data files.
 
 ## Open items
 

@@ -1,0 +1,244 @@
+# Pocketwatch: every frame from the end of the clearing battle to field control (r_live from
+# watch_reentry.plan made with the same ROM, in the same out dir)
+load r_live
+peek u16 0x020B6BE4 map
+include watch_shuttle
+shot k00_open_after_shuttle
+include cheats_strong
+# one enemy left: kills = total - 1
+peek u8 0x020B4913 total
+poke u8 0x020B4912 5
+peek u32 0x020B6CB4 jx
+peek u32 0x020B6CB8 jy
+# dump the field objects, then pull one enemy symbol (slot 2) onto Jian: contact starts a battle
+dump 0x020B6FD4 0x280 objs
+pin u32 0x020b7058 0x51A000
+pin u32 0x020b705c 0x46894A
+wait 10
+unpin
+include cheats_strong
+watch u8 0x020B4912 kills
+watch u32 0x020B0010 fstate
+wait 120
+shot k01_battle
+exec 0x02020870 map_reload
+exec 0x020209A8 hud_rebuild
+wait 400
+press Right 3
+wait 20
+press A 3
+wait 60
+shot b_auto
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+hold A
+shot p1475
+wait 1
+shot p1476
+wait 1
+shot p1477
+wait 1
+release
+shot p1478
+wait 1
+shot p1479
+wait 1
+shot p1480
+wait 1
+shot p1481
+wait 1
+shot p1482
+wait 1
+shot p1483
+wait 1
+shot p1484
+wait 1
+shot p1485
+wait 1
+shot p1486
+wait 1
+shot p1487
+wait 1
+shot p1488
+wait 1
+shot p1489
+wait 1
+shot p1490
+wait 1
+shot p1491
+wait 1
+shot p1492
+wait 1
+shot p1493
+wait 1
+shot p1494
+wait 1
+shot p1495
+wait 1
+shot p1496
+wait 1
+shot p1497
+wait 1
+shot p1498
+wait 1
+shot p1499
+wait 1
+hold A
+shot p1500
+wait 1
+shot p1501
+wait 1
+shot p1502
+wait 1
+release
+shot p1503
+wait 1
+shot p1504
+wait 1
+shot p1505
+wait 1
+shot p1506
+wait 1
+shot p1507
+wait 1
+shot p1508
+wait 1
+shot p1509
+wait 1
+shot p1510
+wait 1
+shot p1511
+wait 1
+shot p1512
+wait 1
+shot p1513
+wait 1
+shot p1514
+wait 1
+shot p1515
+wait 1
+shot p1516
+wait 1
+shot p1517
+wait 1
+shot p1518
+wait 1
+shot p1519
+wait 1
+shot p1520
+wait 1
+shot p1521
+wait 1
+shot p1522
+wait 1
+shot p1523
+wait 1
+shot p1524
+wait 1
+hold A
+shot p1525
+wait 1
+shot p1526
+wait 1
+shot p1527
+wait 1
+release
+shot p1528
+wait 1
+shot p1529
+wait 1
+shot p1530
+wait 1
+shot p1531
+wait 1
+shot p1532
+wait 1
+shot p1533
+wait 1
+shot p1534
+wait 1
+shot p1535
+wait 1
+shot p1536
+wait 1
+shot p1537
+wait 1
+shot p1538
+wait 1
+shot p1539
+wait 1
+shot p1540
+wait 1
+shot p1541
+wait 1
+shot p1542
+wait 1
+shot p1543
+wait 1
+shot p1544
+wait 1
+shot p1545
+wait 1
+shot p1546
+wait 1
+shot p1547
+wait 1
+shot p1548
+wait 1
+shot p1549
+wait 1
+hold A
+shot p1550
+wait 1
+shot p1551
+wait 1
+shot p1552
+wait 1
+release
+shot p1553
+wait 1
+shot p1554
+wait 1
+shot p1555
+wait 1
+shot p1556
+wait 1
+shot p1557
+wait 1
+shot p1558
+wait 1
+shot p1559
+wait 1
+shot p1560
+wait 1
+release
+peek u8 0x020B4912 kills_after
+peek u32 0x020B0010 fstate_field
