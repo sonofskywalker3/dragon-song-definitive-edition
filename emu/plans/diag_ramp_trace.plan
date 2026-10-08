@@ -1,0 +1,14 @@
+# Diagnostic (ramp slowdown): who writes the slope region list (0x020B6C20 count, 0x020B6C24 pointer)
+include boot_from_save
+trace 0x020B6C20 count
+trace 0x020B6C24 ptr
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u32 0x020B6C20 nregions
+peek u32 0x020B6C24 regions

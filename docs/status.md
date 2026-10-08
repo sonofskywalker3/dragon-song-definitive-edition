@@ -35,6 +35,7 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 | Spell levels | `spell-levels` | Verified (`test_spell_levels_1/5/12`, first temple battle with Lucia's level pinned): Lucia's battle magic list holds Healing Water at level 1; Healing Water, Cure Squall and Quick at level 5 (Escape is field-only); two pages at level 12. Schedule in feat_spell_levels.py (playtest-feedback.md item 20.10); the max MP test is gone |
 | Experience name | `experience-name` | Verified (`diag_field_menu`, shot fm_x_a_a): the status screen reads "Experience" over "Next". Both arm9 copies of "Althena Conduct" (0x020A4377 result banner, 0x020A665E status label) become "Experience" padded with spaces to the old length, since the string lists are reached through offset tables. No script text uses the name |
 | Auto battle is Fastest | `battle-speed` | Verified (`test_auto_fastest`, first temple battle): picking Auto and OK turns the speed level (0x020B8540) from 0 (Fast) to 2 (Fastest) on that frame. The speed cave watches the Auto flag (battle work +0x28) and sets the setting to Fastest when it turns on; R still cycles |
+| No ramp slowdown | `walk-speed` | Verified (`diag_ramp_speed`, Delrich Temple slope region at (603,345)): before, walking on the ramp moved 0.65 px a frame (flat 1.5) and running 1.3 (flat 3.0); after, 1.5 walking in every direction, 1.5 diagonal (still turned along the slope) and 3.0 running, and the speed-table path at 0x02024F14 is never taken. One word: 0x02024D88 `mov r6, r5` -> `mov r6, #0` |
 
 ## Test notes
 

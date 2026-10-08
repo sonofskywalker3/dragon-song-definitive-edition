@@ -37,7 +37,7 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Running costs no HP.** Hold B to dash for about 3 seconds, then it cools down for about 3 seconds, like
   the Eternal Blue dash. Holding B runs once; press it again to run again.
 - **Walking is 50% faster and running is 3 times the original walking speed.** The run is ready again
-  whenever you enter a new area.
+  whenever you enter a new area, and ramps no longer slow you down.
 - **Enemies come back when you leave an area and return**, not instantly. Blue chests unlock once every
   enemy in the area is beaten, at your own pace.
 - **No HP and MP refill for clearing an area.** Healing statues fully restore HP and MP and now also cure

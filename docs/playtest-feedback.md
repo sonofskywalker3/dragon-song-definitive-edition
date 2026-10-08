@@ -351,7 +351,9 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
    B back through each layer.
 4. **Faster menus.** Menu navigation drags: look at window open/close and slide animations, cursor repeat delay
    and page transitions in the field menu, and cut or speed them up.
-5. **No slowdown on ramps.** Walking up and down ramps/stairs slows the player. Find the slope factor in the field
+5. **(Done 2026-10-08, in `walk-speed`: slope regions used a 0.65 step on a path that also skipped the x1.5, so
+   walking fell from 1.5 to 0.65 px a frame; `diag_ramp_speed`, map 6 slope: 1.5 walking, 3.0 running, as flat)
+   No slowdown on ramps.** Walking up and down ramps/stairs slows the player. Find the slope factor in the field
    movement code (feat_walk.py scales every step x1.5; the ramp code scales it down again) and drop it.
 6. **Lucia's attack animation is slow.** Speed it up on Fast/Fastest (see docs/re-battle-pacing.md and
    feat_battle_pace.py for how the party's actions were paced).
