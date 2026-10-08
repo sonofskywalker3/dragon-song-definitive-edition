@@ -22,7 +22,7 @@ is gone.
   </tr>
 </table>
 
-This is an early beta (v0.1.2): the engine and battle changes are in, and the story rewrite has only just
+This is an early beta (v0.1.3): the engine and battle changes are in, and the story rewrite has only just
 started. Feedback is welcome in [Issues](../../issues).
 
 A ROM hack of Lunar: Dragon Song (Nintendo DS, USA) that fixes the game's systems so that playing it feels
