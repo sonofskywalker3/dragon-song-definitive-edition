@@ -362,5 +362,16 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
    watch the line widths.
 9. **Auto battle switches to Fastest.** When the player picks Auto in battle, set the battle speed to Fastest
    (speed level in cave_speed_state, feat_battle_speed.py). Decide whether to restore the old speed when Auto ends.
+10. **Lucia learns spells by level, not all at once.** Jeff: six spells at level 5 is too much this early. Vanilla
+    unlocks a spell when max MP reaches its vanilla cost (feat_mp.py keeps that test via cave_unlock_cost), so at
+    level 5 (29 max MP) she already has Escape, Cure Squall, Healing Water, Quick, Grand Weapon and Grand Shell.
+    The spell table (0x0209497C, 0x0C per spell) has a Lucia minimum level byte at +0x08 and a Flora one at +0x09,
+    all 0 in vanilla; func_02050c50 already tests them. Set the levels and make the unlock cost test always pass
+    (cave_unlock_cost returns 0). Schedule Jeff approved:
+    Healing Water 1, Cure Squall 3, Escape 5, Quick 7, Tender Rain 9, Grand Weapon 11, Grand Shell 13,
+    Divine Rain 15, Miracle Tears 18. First check how fast Lucia levels through the early areas so the big spells
+    land at sensible story points, and confirm in the emulator (vanilla and patched) at levels 1, 5 and 18. Flora
+    joins later at a higher level: either the same schedule or her byte stays 0 (keep 255 on spell 5, Miracle
+    Tears, which she never gets). Check that a save made with spells already known does not break.
 
 Also still open: item 16 (Gad and the first package) and item 17 (slow enemy attack animations).
