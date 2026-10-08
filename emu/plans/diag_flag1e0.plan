@@ -1,0 +1,3 @@
+# peek the flag byte holding 0x1E0..0x1E7
+load town
+peek u8 0x0220465C flags1e0

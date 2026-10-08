@@ -45,7 +45,7 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
   the sparkle and heal happen at once.
 - **The save glitch is fixed.** Talking to Flora twice in the Underground Tunnel no longer locks out saving.
 
-- **Town maps work with the D-pad.** In a town's "Select place to go" menu, Up and Down move through the
+- **Town and world maps work with the D-pad.** In a "Select place to go" menu, Up and Down move through the
   places, Left and Right switch tabs, and A goes there. Touch works as before.
 
 ### Battles

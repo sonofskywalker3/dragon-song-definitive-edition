@@ -1,0 +1,35 @@
+# World map menu with the D-pad: from state 'town' (inn lobby), unlock the 'Leave town' exit (flag 0x1E1, keeping
+# 0x1E2), walk out, pick Leave town (tab 0 row 0) and travel; on the world map menu: Down, Down, Right, Up, Left.
+load town
+poke u8 0x0220465C 6
+press Down 60
+wait 150
+watch u16 0x020B6BE4 map
+watch u16 0x020B8C5C sel
+watch u16 0x020B8C5E tab
+press Left 3
+wait 25
+press Up 3
+wait 25
+shot wm_town
+press A 3
+wait 300
+shot wm_0
+press Down 3
+wait 40
+shot wm_1
+press Down 3
+wait 40
+shot wm_2
+press Right 3
+wait 40
+shot wm_3
+press Up 3
+wait 40
+shot wm_4
+press Left 3
+wait 40
+shot wm_5
+press Down 40
+wait 20
+shot wm_held
