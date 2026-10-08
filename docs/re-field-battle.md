@@ -831,3 +831,156 @@ and screenshotting the location label (`diag_map_name.plan.N`); object ids from 
 - The town map menu (map 285) is not driven by Left/Right/L/R/Down in the harness; to reach a map in tests,
   pin-warp from Jian's room as above (the player lands at x = 9999 and needs a position poke; the map's
   entry script may not run, so entry-time object removal cannot be tested this way).
+
+## Town map menu ("Select place to go") and the D-pad (2026-10-07)
+
+Researched for Jeff's request to use the D-pad in the town menus (feat_town_menu.py). The research notes follow;
+the probe plans were scratch only. The menu code 0x02042000..0x02044100 is identical in vanilla and our build.
+
+## 1. Code
+
+### Entry / mode
+- It is a separate top-level game mode, not a field state. Main loop (decomp line ~527) calls
+  `table 0x020A062C [ *(0x020B000C) ]`; mode 2 = **func_02042c08** (table entry 0x020A0634).
+  Verified: at the town state `0x020B000C = 2`. (Mode 1 = 0x0201E6A0 field, mode 3 = 0x020297D4 battle.)
+- The same sub-state word as the field, `0x020B0010` (= 0x020AFF84 + 0x8C), is the menu's own state:
+  0 init (load gfx/sprites, func_02041d38 town-unlock byte, music) -> 1 build list -> 2 first frame (select
+  the place you came from) -> **3 = per-frame input loop** -> 7 confirmed -> 8 fade/leave (-> 0x99 = mode change)
+  ; 10/11 = switch to another hub (destination map >= 0x104), 12 = wait fade.
+  Verified: town state has 0x020B0010 = 3; A gives 3 -> 7 -> 8 -> 0x99 -> 0x9A (run.log probe3).
+- func_02042c08 is used by **every hub map 0x104..0x126**: overworld maps 0x104..0x11C (func_0204273c true:
+  scrolling map, cursor clamp 0x1F0000/0x180000) and town maps 0x11D.. (no scrolling, clamp 0xF0000/0xC0000).
+
+### State struct S = 0x020B8C2C (size 0x50, cleared in state 0)
+| off | type | meaning |
+|---|---|---|
+| +0x04 | s16 | touch flag copy |
+| +0x08, +0x0C | s32 20.12 | map cursor x, y (the Jian icon on the top screen = top sprite list 0x020B791C sprite 5) |
+| +0x10 | s32 | cursor glide speed (func_02027324 accel) |
+| +0x14, +0x16 | s16 | top BG scroll (overworld only) |
+| +0x18 | s32 | "going to another hub" flag |
+| +0x28, +0x2A, +0x2C | u16 | sprite resource ids (buttons/rows, map icons, tabs) |
+| **+0x30** | s16 | **selected entry** (index into the visible list, 0..count-1), **-1 = none** |
+| **+0x32** | s16 | **current tab** (page; tab t shows entries 4t..4t+3) |
+| +0x34 | ptr | hub table entry (0x020A3B20 + (map-0x104)*0xC) |
+| **+0x38** | s32 | **visible entry count** |
+| **+0x3C** | u8[] | visible entry -> exit-list index (S+0x3C = 0x020B8C68) |
+
+Port Searis at the saved state: count 11, list bytes 01..0B (exit 0 "Leave town" hidden), tab 1, sel 4 (Inn 1F).
+Number of tabs = (count+3)/4 = 3. Tab sprites exist for 8..12, so max 5 tabs.
+
+### Functions
+- **func_02042190(idx)**: select entry idx. Sets tab +0x32 = idx/4, calls func_0204244c (redraw page), unhighlights
+  the old entry (func_0204206c if +0x30 != -1), sets +0x30 = idx, sets cursor +8/+0xC exactly to the destination
+  x,y, highlights row sprite (idx&3)+4 (anim at 0x020B7F42 + n*0x30), recolours the row text, slides YES/NO in
+  (func_02042b6c(1,0)). Does NOT play a sound (callers do).
+- **func_0204244c()**: draw the page for tab +0x32: row labels into BG, row sprites 4..7 (func_020428bc, table
+  0x020A41A8: x 128, y 41/73/105/137, only min(4, count-4*tab) rows), sets +0x30 = -1, func_020425f8 (tab sprites
+  8.. : active tab anim 5, others anim i; hides YES/NO via func_02042b6c(0,0)), bottom text "Select place to go".
+- func_0204206c: unhighlight current +0x30. func_020426c0(map): visible index of the entry whose map == map, or -1.
+- **func_02043fd8(0, n)**: menu sound. n = 0 cursor/move, 1 confirm, 2 buzzer, 3 cancel.
+- func_020273b0(0x020B7F28, touch): bottom-screen sprite id under a new touch, or -1.
+- func_0201d8f8(map, x, p3, entrance): next-map request: 0x020B77E4+8 map (0x020B77EC), +0xC x, +0xE p3,
+  0x020B6BE4+0xC0A (= 0x020B77EE) entrance byte.
+
+### Per-frame loop (state 2/3, from 0x020433EC)
+Keys read at function start: `[sp+0x10] = func_0201a3b8(pad)` = pad+0xA = **held** (every frame, NOT repeat:
+func_0201a2f4 writes +0xA = current keys; targeting_consts labels it "pressed or repeating", which is wrong),
+`[sp+0x14] = func_0201a3b0(pad)` = pad+6 = newly pressed.
+Only while no fade (func_02018c78(3) == 0):
+1. 0x020434D0 `bl 0x020273b0` -> r4 = touched bottom sprite id.
+2. **Touched (r4 != -1)**, 0x020434E4..:
+   - id < 8: press look `*(u16*)(0x020B7F42 + id*0x30) = *(s16*)(0x020A418A + id*8) + 1`.
+   - id 1 (YES, right bottom): as A. id 3 (NO, left bottom): as B.
+   - else sound 0 (0x020435C8), then id 8..12 = **tab**: +0x30 = -1, +0x32 = id-8, func_0204244c (0x020435E4);
+     other ids (rows 4..7) = **destination**: func_02042190(id + 4*tab - 4) (0x02043600..0x02043610).
+3. **Not touched** (0x02043618): saves cursor x,y to [sp+0x44]/[sp+0x48] (0x02043644/48), then
+   0x0204364C `ands r0, held, #0xF0`:
+   - D-pad held -> **free cursor**: cursor += dir*2 px per frame (func_020272d8), and if something was selected:
+     unhighlight, hide icon, +0x30 = -1. Clamp.
+   - no D-pad -> **snap** (0x0204373C): first visible entry within 16 px (x and y) of the cursor: glide toward it.
+   - 0x0204383C: if the cursor moved this frame and now sits exactly on an entry i: sound 0, func_02042190(i),
+     +0x30 = i.
+   - 0x020438DC: `new & 0xC03` (A,B,X,Y): ==1 (A alone): sel == -1 -> sound 2 (buzz); else state 7 + sound 1.
+     ==2 (B alone): sound 3, re-select the entry for the place you came from (F+4, 0x020B6BE8 = previous map
+     via func_020426c0). **B does not leave the menu** (there is no cancel; you leave by picking a place).
+   - 0x020439DC: move top sprite 5 (Jian icon) to the cursor.
+4. State 7 (0x020439E4): entry = exits[S+0x3C[sel]]; map < 0x104 -> func_0201d8f8(map, 9999, e+9, e+6), fade,
+   state 8; else (another hub) F+4 = current, F+0 = new map, +0x18 = 1, state 10.
+
+### Why "nothing moved" in earlier D-pad tests
+The D-pad drives the free map cursor (the Jian icon on the top screen), not the list. A short press moves it
+2 px/frame, unselects, and the snap pulls it straight back to the same place (re-selected, so nothing visible).
+Held 20 frames it walks 40 px down, ends with nothing selected and YES/NO hidden (probe1 p1/p2: +0x30 = -1,
+cursor y 0x56 -> 0x7E). L/R are not read at all. A "picked Inn 1F" because state 2 preselects the entry for the
+map you came from (lobby 155 -> Inn 1F), so A confirms it. B re-selects that same entry.
+
+## 2. Data
+- Hub table **0x020A3B20 + (map - 0x104) * 0xC**: {u32 exit list, s16 count, s16 bg gfx id (+6, func_02042768),
+  u32 music (+8, func_0206f830)}. Port Searis = 0x020A3C4C: list 0x020A3844, 12 exits, bg 0x8C, music 0x11.
+- Exit (0xC bytes): s16 map, s16 x, s16 y (map coords in px, top screen), s16 entrance (+6), u8 flag (+8),
+  u8 (+9, passed to func_0201d8f8 p3; 100 everywhere here), s16 label (+10).
+- Visibility (state 1): flag 0 = always; else shown only if story flag 0x1E0 + flag is set
+  (func_02041918(*0x020B4640, flag)).
+- Label text: 0x020A70B4 + u16 table 0x020A6FA4[label], FF-terminated, game charset (A = 0x02, a = 0x3A, space 0).
+- Tabs have no names: the active tab always shows the same label image ("MAIN"-looking, anim 5); inactive tabs
+  are dark blank tabs at x = 0x2C + 0x2E*t, y 16 (touch box x-28..x+28, y 12..28). Tabs are just pages of 4.
+
+Port Searis exits (index: map, x, y, entrance, flag, label):
+| i | map | x,y | ent | flag | text | tab/row now |
+|---|---|---|---|---|---|---|
+| 0 | 260 (0x104 overworld) | 20,102 | 0 | 1 (0x1E1) | Leave town | hidden now |
+| 1 | 151 | 146,104 | 1 | 0 | Weapon Shop | 0/0 |
+| 2 | 152 | 204,90 | 1 | 0 | Armor Shop | 0/1 |
+| 3 | 153 | 80,152 | 1 | 0 | Item Shop | 0/2 |
+| 4 | 154 | 46,168 | 7 | 0 | Gad's Express | 0/3 |
+| 5 | 155 | 122,86 | 7 | 0 | Inn 1F | 1/0 |
+| 6 | 156 | 168,134 | 7 | 0 | Restaurant | 1/1 |
+| 7 | 157 | 188,34 | 7 | 0 | Jose's house | 1/2 |
+| 8 | 158 | 36,68 | 7 | 0 | Isabella's house | 1/3 |
+| 9 | 159 | 60,42 | 7 | 0 | Jack's house | 2/0 |
+| 10 | 164 | 96,106 | 1 | 0 | Fountain Square | 2/1 |
+| 11 | 165 | 202,147 | 3 | 62 (0x21E) | Loto Pier | 2/2 |
+Screens: build/tm_res/t0.png (tab 0), t1.png (tab 1), t2.png (tab 2). (This also names maps 151..154, 165.)
+Once "Leave town" is unlocked the list becomes 12 entries and every entry shifts by one (Leave town = tab 0 row 0).
+
+## 3. Patch points for a D-pad handler
+
+### Recommended: "virtual touch" at the touch read, 0x020434D0
+Replace `0x020434D0: bl 0x020273b0` (word 0xEBFF8FB6) with `bl town_keys` (cave). At entry r0 = 0x020B7F28,
+r1 = touch struct; r4..r11 must be preserved (r4 is set from the return value right after). The hook:
+```
+id = func_020273b0(r0, r1); if (id != -1) return id;          // touch unchanged
+new = *(u16*)0x020AFF7A;  S = 0x020B8C2C; n = S+0x38; if n == 0 return -1
+tab = S+0x32; sel = S+0x30; rows = min(4, n - 4*tab)
+Up/Down (new & 0x40 / 0x80):
+   row = sel == -1 ? (Down ? 0 : rows-1) : (sel - 4*tab) -/+ 1 wrapped in 0..rows-1
+   if (4*tab + row == sel) return -1;  return 4 + row          // vanilla row path
+Left/Right (new & 0x20 / 0x10), only if ntabs = (n+3)/4 > 1:
+   t = tab -/+ 1 wrapped; row = sel == -1 ? 0 : sel - 4*tab; row = min(row, rows(t) - 1)
+   *(s16*)(S+0x32) = t; return 4 + row                          // vanilla row path selects 4t+row
+return -1
+```
+Returning a row id runs exactly the touch code: press look on row sprite, sound 0, func_02042190(id + 4*tab - 4),
+which switches the tab, redraws the page and tab sprites, highlights the row, moves the Jian icon to the place
+and slides YES/NO in, so A then works at once (vanilla A path, untouched). Returning 8+t instead would give the
+vanilla tab-touch behaviour (tab switch, nothing selected, A buzzes until Up/Down).
+Verified by poking the call to a constant for one frame (probe4, build/tm_res/v1..v4.png, run.log):
+- `0x020434D0 = mov r0,#6` with +0x32 poked to 0 (from tab 1 / Inn 1F): sound(0,0), func_02042190(2), tab 1 -> 0,
+  sel -> 2, "Item Shop" highlighted, YES/NO shown, Jian icon at the Item Shop (v1).
+- `mov r0,#10`: vanilla tab path, tab 2, sel -1, YES/NO hidden (v2).
+- +0x32 = 2 and `mov r0,#5`: func_02042190(9), Fountain Square selected (v3); then A -> next map 164 entrance 1.
+(Touching tabs/rows/YES the normal way also verified: probe2 t0..t2r1.)
+Also patch 0x0204364C (below) or the held D-pad keeps dragging the free cursor on non-hook frames.
+
+### Disable the free D-pad cursor: 0x0204364C
+`0x0204364C: ands r0, r0, #0xF0` (0xE21000F0) -> `ands r0, r0, #0` (0xE2100000): never take the free-cursor
+branch, always snap. Verified (probe4): with it, Down held 20 frames moves nothing; A still confirms.
+Caveat: this also removes the free cursor on the **overworld** hubs (0x104..0x11C), where it scrolls the world
+map. If that should stay, make it a `bl` hook instead: `bl hook` where hook does
+(r0 = held keys at entry) `push {r0,lr}; bl 0x0204273c; cmp r0,#0; pop {r0,lr}; andnes r0,r0,#0xF0;
+movseq r0,#0; bx lr`, i.e. it returns with flags from
+`ands r0, keys, #0xF0` on overworld and `movs r0, #0` on towns (flags survive `bx lr`; r0-r3,r12 are free here,
+r4..r11 must be preserved; sl = S, fp = 0xC are live). Whether the list keys should apply to overworld hubs
+too is a design call (the same code would work there; they have the same tabs/rows).
+

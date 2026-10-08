@@ -1,0 +1,36 @@
+# Town menu with the D-pad (feat_town_menu.py): from state 'town' (Jian in the inn lobby on this build) walk out
+# to the Port Searis menu (Inn 1F preselected), then Down, Down, Right, Right, Left, Up, then Down held 30
+# frames (the map icon must not move), then A. Run with --out build/townd after view_town.plan.
+load town
+press Down 60
+wait 150
+watch u16 0x020B8C5C sel
+watch u16 0x020B8C5E tab
+shot td_0
+press Down 3
+wait 25
+shot td_1
+press Down 3
+wait 25
+shot td_2
+press Right 3
+wait 25
+shot td_3
+press Right 3
+wait 25
+shot td_4
+press Left 3
+wait 25
+shot td_5
+press Up 3
+wait 25
+shot td_6
+peek u32 0x020B8C34 cursor_x
+press Down 30
+wait 10
+peek u32 0x020B8C34 cursor_x2
+shot td_held
+watch u16 0x020B6BE4 map
+press A 3
+wait 150
+shot td_after

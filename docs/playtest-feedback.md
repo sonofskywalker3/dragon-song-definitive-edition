@@ -279,3 +279,12 @@ Jeff: the walks are timed to the text, so close each aside when Jian reaches the
 set and the player's route is done (0x020B6CEC = 0), a page waiting for A (window +0x2E = 1) is cleared as A
 would, so the box closes. Text still typing finishes first; other messages are untouched. `test_aside_autoclose`:
 from the bedroom state with no input at all, Jian goes hall (26), lobby (428), town map (766).
+
+## 15. Town map menu with the D-pad (Done, 2026-10-07)
+
+Jeff: tapping tabs to see the place lists is not intuitive. `feat_town_menu.py` (feature `town-menu-dpad`): in
+towns, Up/Down move through the rows, Left/Right switch tabs (keeping the row where it exists), A goes; touch is
+unchanged; the overworld hubs keep their free D-pad cursor. (The DS has no stick; the 3DS Circle Pad reaches DS
+games as the D-pad, so the map cursor stays on the stylus in towns.) `test_town_dpad`: Down, Down, Right, Right,
+Left, Up give Inn 1F -> Restaurant -> Jose's house -> Loto Pier -> Item Shop -> Loto Pier -> Fountain Square,
+holding Down moves one row, A goes to the place (map 165); `test_town_touch`: a row tap and YES still work.
