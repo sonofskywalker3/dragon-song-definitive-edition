@@ -17,6 +17,7 @@ from dataclasses import dataclass
 
 from dsde.archive import decompress, read_archive
 from dsde.feat_text import ARCHIVE, VANILLA_SCRIPTS, encode_text, text_patches
+from dsde.feat_opening_asides import ASIDE_AUTOCLOSE
 from dsde.patching import DataPatch, Feature
 
 SCRIPT = 1
@@ -350,4 +351,10 @@ def opening_patches() -> tuple[DataPatch, ...]:
     return tuple(patches)
 
 
-OPENING = Feature("opening-run", opening_patches())
+OPENING = Feature(
+    "opening-run",
+    (
+        *opening_patches(),
+        *ASIDE_AUTOCLOSE,
+    ),
+)
