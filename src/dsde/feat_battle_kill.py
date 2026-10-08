@@ -1,4 +1,4 @@
-"""Enemies die on the hit that kills them (playtest feedback 8), on Fast and Fastest.
+"""Enemies die on the hit that kills them (playtest feedback 8), on Fast and Faster.
 
 Vanilla defers damage: each hit adds to the target's pending damage (stat record +0x60) and HP only drops
 when the action ends. Then round state 0xC applies it to every battler (func_020532ac -> func_02053384) and
@@ -6,7 +6,7 @@ spawns the death sparkles (func_0202cdfc), and state 0xD holds and fades all the
 screen blend; dying battlers get flag 0x1000000, semi-transparent, then 0x2000000, gone). So a combo that
 kills three enemies shows them all dying together after the last hit.
 
-Here, on Fast and Fastest:
+Here, on Fast and Faster:
 - The hit function (func_02030b44) applies an enemy target's pending damage right after the hit
   (func_02053384: HP drops; on a kill the dying flag, death animation, sound and item roll), and on a kill
   spawns that enemy's sparkles at once and starts its own death timer.

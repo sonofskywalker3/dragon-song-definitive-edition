@@ -1,4 +1,4 @@
-"""Faster party attacks and no wait for the death sparkles, on Fast and Fastest (Jeff, 2026-10-08).
+"""Faster party attacks and no wait for the death sparkles, on Fast and Faster (Jeff, 2026-10-08).
 
 Jeff: Lucia's attack is slow, and there is too long a wait between one character's attack and the next.
 Measured on Fast in the first temple battle (docs/re-battle-pacing.md section "Actor flow"): Lucia's one-hit
@@ -7,7 +7,7 @@ played at 1x; and after a kill the round sat in state 0xD until the death sparkl
 151 frames after the hit), so Jian landing home to Lucia leaving took 150 frames.
 
 - Sprites advance by 0x100 * (1 + level) a sprite update (func_02031e08, level from 0x020B8540). For the
-  acting copy (battlers 12 and 13) of a party member other than Jian, the level gets ACTOR_BONUS more (Fastest's
+  acting copy (battlers 12 and 13) of a party member other than Jian, the level gets ACTOR_BONUS more (Faster's
   sprite speed, the original game's R fast-forward); Jian already felt right and keeps his speed. The death
   sparkles (effect battlers 0x16..0x1D) get FX_BONUS more.
 - State 0xD runs vanilla's hold and fade of deferred deaths first, then waited (func_0202cb44) for every

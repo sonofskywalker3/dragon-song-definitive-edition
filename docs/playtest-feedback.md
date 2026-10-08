@@ -151,7 +151,7 @@ Jeff (2026-10-06): when Jian's 3-hit combo kills several enemies, they all die t
 hit. He wants each enemy to die right after the hit that kills it, while Jian moves on and hits the next
 one. Asked to build it (2026-10-06).
 
-Done 2026-10-06 on Fast and Fastest (Normal stays vanilla): each enemy dies on its killing hit, with its
+Done 2026-10-06 on Fast and Faster (Normal stays vanilla): each enemy dies on its killing hit, with its
 halo and sparkles, then fades while Jian carries on. See docs/status.md.
 
 ## 2 (continued). Wake-up call text (decided 2026-10-06)
@@ -300,7 +300,7 @@ hands over the package.
 On the 3DS, Jian's attacks feel good but being attacked is slow. The Ice Mongrel (Thieves' Woods) hops forward four
 times, attacks, then hops back four times. The battle-pace work sped up the party's moves, kills and camera, not
 the enemies' own action scripts. To do: survey every enemy's attack animation (action script steps: hops, approach,
-return) and speed up or shorten the slow ones on Fast/Fastest, e.g. faster movement steps or fewer hops.
+return) and speed up or shorten the slow ones on Fast/Faster, e.g. faster movement steps or fewer hops.
 
 Also from the same session: in Thieves' Woods (one enemy front, one back) Fight attacked at once without the picker.
 That is by design: Jian and Lucia reach the front row only, and with one valid target the attack confirms. Jeff may
@@ -350,7 +350,7 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
    press Select to jump straight to saving."; Heal and Equip unchanged. Fields: Battles "Every battle gives
    experience, items, and silver."; Speed "Tap R in battle to cycle Fast (the default), Faster, and Normal. Hold
    L+R to run away. The mic is ignored."; Enemies "Beaten enemies stay gone until you leave the area and come
-   back."; Blue Chest "A blue chest opens once every enemy in its area is beaten." Open: rename Fastest to Faster?
+   back."; Blue Chest "A blue chest opens once every enemy in its area is beaten." Fastest renamed Faster (Jeff, 2026-10-08).
 2. **(Done 2026-10-08, `field-menu`; docs/re-field-menu.md) Select opens the save menu.** Select does nothing in the field now (vanilla used it in battle to flee; that
    moved to held L+R, feat_battle_run.py). Make Select in the field open the menu straight at Save.
 3. **(Done 2026-10-08, `field-menu`) Select closes the menu.** Anywhere in the field menu, Select goes straight back to the map instead of pressing
@@ -361,7 +361,7 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
    walking fell from 1.5 to 0.65 px a frame; `diag_ramp_speed`, map 6 slope: 1.5 walking, 3.0 running, as flat)
    No slowdown on ramps.** Walking up and down ramps/stairs slows the player. Find the slope factor in the field
    movement code (feat_walk.py scales every step x1.5; the ramp code scales it down again) and drop it.
-6. **(Done 2026-10-08, `battle-flow`: Lucia's Fight 204 -> 76 frames on Fast) Lucia's attack animation is slow.** Speed it up on Fast/Fastest (see docs/re-battle-pacing.md and
+6. **(Done 2026-10-08, `battle-flow`: Lucia's Fight 204 -> 76 frames on Fast) Lucia's attack animation is slow.** Speed it up on Fast/Faster (see docs/re-battle-pacing.md and
    feat_battle_pace.py for how the party's actions were paced).
 7. **(Done 2026-10-08, `battle-flow`: no wait for the death sparkles; Jian -> Lucia gap 92 -> 16 frames)
    Delay between attackers.** Cut the pause between one battler's action ending and the next one starting
@@ -369,9 +369,9 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
 8. **(Done 2026-10-08, `experience-name`) Rename "Althena Conduct" to "Experience"** everywhere the player sees it (status screen, menus; the result
    screen's Conduct window is already hidden, see status.md row 3). Find the strings in the English text archives;
    watch the line widths.
-9. **(Done 2026-10-08, in `battle-speed`: the setting switches to Fastest the frame Auto turns on, R still
+9. **(Done 2026-10-08, in `battle-speed`: the setting switches to Faster the frame Auto turns on, R still
    cycles, and it stays where it is after Auto; `test_auto_fastest`: speed level 0 -> 2 on OK) Auto battle
-   switches to Fastest.** When the player picks Auto in battle, set the battle speed to Fastest
+   switches to Faster.** When the player picks Auto in battle, set the battle speed to Faster
    (speed level in cave_speed_state, feat_battle_speed.py). Decide whether to restore the old speed when Auto ends.
 10. **(Done 2026-10-08, `spell-levels`) Lucia learns spells by level, not all at once.** Jeff: six spells at level 5 is too much this early. Vanilla
     unlocks a spell when max MP reaches its vanilla cost (feat_mp.py keeps that test via cave_unlock_cost), so at
