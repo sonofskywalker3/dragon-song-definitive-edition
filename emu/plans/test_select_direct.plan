@@ -1,0 +1,60 @@
+# Select shortcuts, direct (feat_menu_shortcuts.py). The heap log (cave_heap_log, 0x01FFA674 in this build) should
+# hold only the menu's own buffer on the top menu. Select -> save screen (no state 3 or 0x35 before 0x3D);
+# B, B -> top; Select -> field; Items (cursor 4), Select -> field; Items, B, B (normal); Select, Select;
+# Status, Select; X still opens the menu.
+include boot_from_save
+wait 250
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+press Select 2
+wait 100
+shot sd_save
+press B 3
+wait 40
+shot sd_system
+press B 3
+wait 40
+shot sd_top
+dump 0x01FFA674 0x40 log_top
+press Select 2
+wait 90
+shot sd_field1
+press X 3
+wait 70
+poke u8 0x02139F40 4
+press A 3
+wait 70
+shot sd_items
+dump 0x01FFA674 0x40 log_items
+press Select 2
+wait 90
+shot sd_field2
+press X 3
+wait 70
+poke u8 0x02139F40 4
+press A 3
+wait 70
+shot sd_items2
+press B 3
+wait 40
+dump 0x01FFA674 0x40 log_items_back
+press B 3
+wait 90
+shot sd_field3
+press Select 2
+wait 100
+shot sd_save2
+press Select 2
+wait 90
+shot sd_field4
+press X 3
+wait 70
+press A 3
+wait 50
+shot sd_status
+press Select 2
+wait 90
+shot sd_field5
+press X 3
+wait 70
+shot sd_top_final

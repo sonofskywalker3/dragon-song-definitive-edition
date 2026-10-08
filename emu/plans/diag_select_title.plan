@@ -1,0 +1,11 @@
+# Title sign memory (0x02139EE8) along the direct Select-to-save path.
+include boot_from_save
+wait 250
+watch u32 0x020B0010 state
+watch u32 0x02139FF8 work24
+watch u32 0x02139F7C f5c20
+watch u32 0x02139EE8 title0
+watch u32 0x02139EF4 title_c
+press Select 2
+wait 120
+dump 0x02139EE8 0x10 title_end
