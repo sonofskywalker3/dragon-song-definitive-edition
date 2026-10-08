@@ -35,7 +35,7 @@ is gone.
   </tr>
 </table>
 
-This is an early beta (v0.1.3). A lot of the systems work is done, and more is coming as playtesting turns up
+This is an early beta (v0.1.4). A lot of the systems work is done, and more is coming as playtesting turns up
 what still drags, such as trimming the fluff from enemy attack animations. Work on the story has started too:
 better character development, smoother rough edges, and no more retcons or contradictions with Lunar 1 and 2.
 Feedback is welcome in [Issues](../../issues).
