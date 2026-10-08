@@ -145,7 +145,7 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Version history
 
-### Unreleased
+### v0.1.4 (2026-10-08)
 
 - Town and world map menus frame the chosen place with the System menu's corner brackets.
 - The victory screen's Silver line counts up from the silver you carried, like the experience lines.
