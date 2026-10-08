@@ -1,0 +1,26 @@
+# Research (docs/re-field-hud.md): the field bottom screen in town (Jian's room) and in map 6 (run with --save)
+include boot_from_save
+wait 60
+shot town
+peek u16 0x020B6BE4 map
+peek u8 0x020B4848 mode
+touch 188 77 3
+wait 30
+shot town_tap_portrait
+peek u8 0x020B4848 mode_after_town_tap
+include warp6
+wait 200
+shot dungeon
+peek u16 0x020B6BE4 map
+peek u8 0x020B4848 mode
+touch 188 77 3
+wait 30
+shot dungeon_tap_portrait
+peek u8 0x020B4848 mode_after_tap
+wait 10
+shot dungeon_tap_portrait_b
+press R 3
+wait 30
+shot dungeon_R
+peek u8 0x020B4848 mode_after_R
+save hud_dungeon

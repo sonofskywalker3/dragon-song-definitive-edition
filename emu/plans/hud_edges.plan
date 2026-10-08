@@ -1,0 +1,17 @@
+# Research (docs/re-field-hud.md): do the bottom-screen edges walk Jian? (needs hud_d0)
+load hud_d0
+peek u32 0x020B6CB4 x0
+peek u32 0x020B6CB8 y0
+touch 4 96 40
+peek u32 0x020B6CB4 x_after_left_edge
+peek u32 0x020B6CB8 y_after_left_edge
+touch 250 96 40
+peek u32 0x020B6CB4 x_after_right_edge
+touch 128 4 40
+peek u32 0x020B6CB8 y_after_top_edge
+touch 128 188 40
+peek u32 0x020B6CB8 y_after_bottom_edge
+touch 73 54 3
+wait 20
+peek u32 0x020AFF84 dummy
+peek u32 0x020B6CB4 x_after_watch_tap
