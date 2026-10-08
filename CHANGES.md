@@ -9,15 +9,15 @@ the design are in [docs/design.md](docs/design.md).
 - **Running costs no HP.** Hold B to dash for about 3 seconds, then it cools down for about 3 seconds, like the
   Eternal Blue dash. Holding B runs once; press it again to run again. The run is ready again whenever you enter
   a new area.
-- **Walking is 50% faster, and running is 3 times the original walking speed.** Scripted walks in cutscenes keep
-  their original speed.
+- **Walking and running are both 50% faster than the original.** Running was twice the walking speed and still is,
+  so it is now 3 times the original walking speed. Scripted walks in cutscenes keep their original speed.
 - **Ramps and stairs no longer slow you down.** On a slope you used to drop to less than half speed (walking 0.65
   pixels a frame instead of 1.5 in this hack). Diagonal input still follows the slope.
 - **Enemies come back when you leave an area and return**, not on a timer. The Virtue clock is gone.
 - **Blue chests stay locked until every monster in the area is beaten**, at your own pace. The monster count is
   below the pocketwatch. An opened blue chest stays open.
 - **No HP and MP refill for clearing an area** (the original gave back 30%).
-- **Healing statues heal at once.** They fully restore HP and MP, now also cure status (poison and the like),
+- **Healing statues heal more quickly.** They fully restore HP and MP, now also cure status (poison and the like),
   and no longer pan the camera over to the statue and back.
 - **Healing statues work from any side.** Press A facing the statue from the front, either side, or behind it.
   The original only answered from in front of it.
@@ -154,8 +154,8 @@ the design are in [docs/design.md](docs/design.md).
 
 ### v0.1.3 (2026-10-08)
 
-- Walking 50% faster and running 3 times as fast; no slowdown on ramps; the run is ready again in each new area.
-- Healing statues heal at once, with no camera pan.
+- Walking and running 50% faster than the original; no slowdown on ramps; the run is ready again in each new area.
+- Healing statues heal more quickly, with no camera pan.
 - Lucia is at Fountain Square without finding Jack first.
 - Select opens the Save screen, and Select in the menu goes straight back to the map; faster menus.
 - Town and world map menus work with the D-pad.
