@@ -271,3 +271,11 @@ camera move func_0201d878 (statue - (0x80, 0x50), 60 frames) and 0x3D waits for 
 pans back to Jian the same way and waits. Both calls are NOPs now (feat_mp STATUE_CAMERA_CALLS), in the code
 every statue shares. `test_statue_fountain` (Fountain Square, map 164): vanilla 193 frames from A to control
 (3C, 3D +60, 3E, 3F, 40 +60), ours 73 (3C, 3E, 3F); the sparkle plays on Jian and the camera stays put.
+
+## 14. Opening asides close by themselves (Done, 2026-10-07)
+
+Jeff: the walks are timed to the text, so close each aside when Jian reaches the door instead of waiting for A.
+`feat_opening_asides.py` hooks the message op's per-frame window update (0x02040B54): while the run flag 0x1DF is
+set and the player's route is done (0x020B6CEC = 0), a page waiting for A (window +0x2E = 1) is cleared as A
+would, so the box closes. Text still typing finishes first; other messages are untouched. `test_aside_autoclose`:
+from the bedroom state with no input at all, Jian goes hall (26), lobby (428), town map (766).
