@@ -1,13 +1,18 @@
-"""Field menu shortcuts and speed (Jeff, 2026-10-07 playtest; research in docs/re-field-menu.md).
+"""Field menu shortcuts and speed (Jeff, 2026-10-07 and 2026-10-08 playtests; research in docs/re-field-menu.md).
 
-- Select in the field opens the menu straight at Save: it opens the menu as X does, then presses A for the
-  player on System (top menu) and on Save (System list), so the game's own save path runs (and its lock still
-  refuses where saving is not allowed).
-- Select anywhere in the menu goes back to the map: it presses B for the player every frame until the menu
-  starts its exit fade, so each screen frees its own buffers on its own way out.
-- The menu is quicker: screen changes wait 6 frames instead of 19 and no longer wait for the icon and tab
-  animations, the fades into and out of the menu take 10 frames instead of 30, and a held key repeats after
-  12 frames, then every 4 (was 30, then every frame).
+- Select in the field opens the save screen. Behind a black screen it opens the menu as X does and presses A
+  for the player on System (top menu) and on Save (System list), with every screen change instant, then shows
+  the save screen. The game's own path runs, so each screen sets itself up, B on the save screen goes back to
+  the System list as usual, and the save lock still refuses where saving is not allowed.
+- Select anywhere in the menu goes straight back to the map: behind a black screen it presses B for the player
+  every frame, with every screen change instant, until the menu starts its exit, so each screen frees its own
+  buffers on its own way out (jumping to the exit states would skip that; docs/re-field-menu.md). The screen
+  stays black through the menu's exit until the field fades in; the field clears the flags.
+- A shortcut gives up after SHORTCUT_LIMIT frames and shows the screen again, so a refused save cannot leave it
+  black.
+- The menu is quicker: screen changes wait 6 frames instead of 19 (none during a shortcut) and no longer wait
+  for the icon and tab animations, the fades into and out of the menu take 10 frames instead of 30, and a held
+  key repeats after 12 frames, then every 4 (was 30, then every frame).
 
 The field (mode 1, state 0x14) reads new keys into r7: X opens the menu (state 0xA6), Start the guidebook,
 nothing reads Select. The menu (mode 5, func_02059f84) keeps its state in MODE_STATE, the cursor in MENU_CURSOR
@@ -22,6 +27,12 @@ MENU_PAD_CALL = (
     0x02059F98  # bl func_0201a3b8 at the menu's entry, result unused; r0 = pad
 )
 MENU_PAD_CALL_WORD = 0xEBFF0106
+CHANGE_FLOOR_TEST = (
+    0x02061CAC  # state 0x4F (screen change): cmp r0, #0x13 (frames waited)
+)
+BACK_FLOOR_TEST = 0x02061E2C  # state 0x5B (going back): cmp r0, #0x13
+FLOOR_TEST_WORD = 0xE3500013
+FLOOR = 6  # frames a screen change waits (vanilla 19); 0 during a shortcut
 MODE_STATES = 0x020AFF84  # + MODE_STATE_OFFSET = 0x020B0010, the current mode's state
 MODE_STATE_OFFSET = 0x8C
 MENU_CURSOR = 0x02139F40  # byte; the key mode flag is the word at +4
@@ -33,105 +44,142 @@ KEY_SELECT = 0x4
 KEY_X = 0x400
 STATE_TOP = 3  # top menu
 STATE_SYSTEM = 0x35  # System list
+STATE_SLOTS = 0x3D  # save screen (album slots)
 STATE_EXIT = 0x5C  # exit fade, then back to the field
 CURSOR_SYSTEM = 8  # top menu entry
 CURSOR_SAVE = 2  # System list entry
-# Flags: byte 0 unwinding (Select in the menu), byte 1 save shortcut stage (1 top menu, 2 System list)
-SAVE_STAGE_START = 0x100  # halfword: stage 1, not unwinding
+BRIGHTNESS = (
+    0x0400006C  # master brightness, main screen; the sub screen's is SUB_SCREEN further
+)
+SUB_SCREEN = 0x1000
+BLACK = 0x8010  # brightness down, full
+NORMAL_BRIGHTNESS = 0
+SHORTCUT_LIMIT = 120  # frames
+# Flags word: byte 0 unwinding (Select in the menu), byte 1 save shortcut stage, byte 2 frames it has run
+UNWIND = 1
+SAVE_STAGE_START = 0x100  # stage 1, not unwinding, no frames
 STAGE_TOP = 1
 STAGE_SYSTEM = 2
+STAGE_SLOTS = 3
 
+# Replaces `ands r1, r7, #0x400` (r7 = new keys) every field frame: sets the flags for this frame's key (none:
+# cleared, so a menu opened by touch never inherits a shortcut) and leaves Z clear when X or Select opens the menu.
 FIELD_ASM = f"""
-    ands  r1, r7, #{KEY_X:#x}
-    movne r0, #0
-    bne   fs_store
-    ands  r1, r7, #{KEY_SELECT:#x}
-    bxeq  lr
-    mov   r0, #{SAVE_STAGE_START:#x}
-fs_store:
+    push  {{r0}}
     ldr   r1, fs_flags
-    strh  r0, [r1]
-    movs  r1, #1
+    mov   r0, #0
+    tst   r7, #{KEY_SELECT:#x}
+    movne r0, #{SAVE_STAGE_START:#x}
+    tst   r7, #{KEY_X:#x}
+    movne r0, #0
+    str   r0, [r1]
+    pop   {{r0}}
+    ands  r1, r7, #{KEY_X:#x}
+    bxne  lr
+    ands  r1, r7, #{KEY_SELECT:#x}
     bx    lr
 fs_flags:
     .word ${{cave_menu_flags}}
 """
 
 MENU_ASM = f"""
+    push  {{r4, lr}}
     ldr   r1, mk_mode
     ldr   r2, [r1, #{MODE_STATE_OFFSET:#x}]
     ldrh  r3, [r0, #{PAD_NEW}]
     ldr   r12, mk_flags
     tst   r3, #{KEY_SELECT:#x}
-    beq   mk_unwind
+    beq   mk_running
     cmp   r2, #{STATE_EXIT:#x}
-    movlo r1, #1
-    strhlo r1, [r12]
-mk_unwind:
+    movlo r1, #{UNWIND}
+    strlo r1, [r12]
+mk_running:
+    ldr   r1, [r12]
+    cmp   r1, #0
+    popeq {{r4, pc}}
+    ldrb  r1, [r12, #2]
+    add   r1, r1, #1
+    strb  r1, [r12, #2]
+    cmp   r1, #{SHORTCUT_LIMIT}
+    bhs   mk_done
+    ldr   r1, mk_bright
+    ldr   r4, mk_black
+    strh  r4, [r1]
+    add   r1, r1, #{SUB_SCREEN:#x}
+    strh  r4, [r1]
     ldrb  r1, [r12]
     cmp   r1, #0
     beq   mk_save
     cmp   r2, #{STATE_EXIT:#x}
-    movhs r1, #0
-    strbhs r1, [r12]
     orrlo r3, r3, #{KEY_B:#x}
     strhlo r3, [r0, #{PAD_NEW}]
-    bx    lr
+    pop   {{r4, pc}}
 mk_save:
     ldrb  r1, [r12, #1]
     cmp   r1, #{STAGE_TOP}
-    bne   mk_save2
-    cmp   r2, #{STATE_TOP}
-    bxne  lr
-    ldr   r1, mk_cursor
-    ldr   r2, [r1, #{KEY_MODE}]
-    cmp   r2, #0
-    bxeq  lr
-    mov   r2, #{CURSOR_SYSTEM}
-    strb  r2, [r1]
-    orr   r3, r3, #{KEY_A:#x}
-    strh  r3, [r0, #{PAD_NEW}]
-    mov   r1, #{STAGE_SYSTEM}
-    strb  r1, [r12, #1]
-    bx    lr
-mk_save2:
+    beq   mk_top
     cmp   r1, #{STAGE_SYSTEM}
-    bxne  lr
+    beq   mk_system
+    cmp   r2, #{STATE_SLOTS:#x}
+    popne {{r4, pc}}
+    b     mk_done
+mk_top:
+    cmp   r2, #{STATE_TOP}
+    popne {{r4, pc}}
+    mov   r4, #{CURSOR_SYSTEM}
+    mov   r1, #{STAGE_SYSTEM}
+    b     mk_pick
+mk_system:
     cmp   r2, #{STATE_SYSTEM:#x}
-    bxne  lr
-    ldr   r1, mk_cursor
-    ldr   r2, [r1, #{KEY_MODE}]
-    cmp   r2, #0
-    bxeq  lr
-    mov   r2, #{CURSOR_SAVE}
-    strb  r2, [r1]
+    popne {{r4, pc}}
+    mov   r4, #{CURSOR_SAVE}
+    mov   r1, #{STAGE_SLOTS}
+mk_pick:
+    ldr   r2, mk_cursor
+    ldr   lr, [r2, #{KEY_MODE}]
+    cmp   lr, #0
+    popeq {{r4, pc}}
+    strb  r4, [r2]
     orr   r3, r3, #{KEY_A:#x}
     strh  r3, [r0, #{PAD_NEW}]
-    mov   r1, #0
     strb  r1, [r12, #1]
-    bx    lr
+    pop   {{r4, pc}}
+mk_done:
+    mov   r1, #0
+    str   r1, [r12]
+    ldr   r1, mk_bright
+    mov   r4, #{NORMAL_BRIGHTNESS}
+    strh  r4, [r1]
+    add   r1, r1, #{SUB_SCREEN:#x}
+    strh  r4, [r1]
+    pop   {{r4, pc}}
 mk_mode:
     .word {MODE_STATES:#x}
 mk_cursor:
     .word {MENU_CURSOR:#x}
 mk_flags:
     .word ${{cave_menu_flags}}
+mk_bright:
+    .word {BRIGHTNESS:#x}
+mk_black:
+    .word {BLACK:#x}
+"""
+
+# Replaces `cmp r0, #0x13` in both screen change states (r0 = frames waited); r2 is free there.
+FLOOR_ASM = f"""
+    ldr   r2, fl_flags
+    ldr   r2, [r2]
+    cmp   r2, #0
+    moveq r2, #{FLOOR}
+    movne r2, #0
+    cmp   r0, r2
+    bx    lr
+fl_flags:
+    .word ${{cave_menu_flags}}
 """
 
 # (address, old word, new word, note): measured in docs/re-field-menu.md
 MENU_SPEED = (
-    (
-        0x02061CAC,
-        0xE3500013,
-        0xE3500006,
-        "screen change (state 0x4F) waits 6 frames, not 19",
-    ),
-    (
-        0x02061E2C,
-        0xE3500013,
-        0xE3500006,
-        "going back (state 0x5B) waits 6 frames, not 19",
-    ),
     (
         0x02061C84,
         0x1A0000C2,
@@ -175,6 +223,22 @@ FIELD_MENU = Feature(
             MENU_PAD_CALL_WORD,
             "bl ${cave_menu_keys}",
             "menu: Select closes it; save shortcut",
+        ),
+        CaveCode(
+            "cave_menu_floor",
+            FLOOR_ASM,
+            "menu: screen changes wait 6 frames, none in a shortcut",
+        ),
+        *(
+            AsmPatch(
+                addr,
+                addr + 4,
+                FLOOR_TEST_WORD,
+                FLOOR_TEST_WORD,
+                "bl ${cave_menu_floor}",
+                "menu: screen changes wait 6 frames, none in a shortcut",
+            )
+            for addr in (CHANGE_FLOOR_TEST, BACK_FLOOR_TEST)
         ),
         *(Patch(addr, old, new, note) for addr, old, new, note in MENU_SPEED),
     ),

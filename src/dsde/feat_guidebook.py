@@ -50,7 +50,7 @@ class PanelText:
     heading: str | None = None
 
 
-# Oxford comma, lowercase "experience", singular "blue chest" (docs/style-rules.md).
+# Oxford comma, lowercase "experience" (docs/style-rules.md). Blue Chest panel: Jeff's wording, 2026-10-08.
 PANELS = (
     PanelText(
         TOWNS_TOP,
@@ -85,7 +85,8 @@ PANELS = (
     PanelText(
         FIELDS_BOTTOM,
         1,
-        "A blue chest opens once every enemy in its area is beaten.",
+        "Blue chests remain locked until every monster in the area is killed. Monster count is tracked "
+        "below the pocketwatch.",
         heading="Blue Chest",
     ),
 )

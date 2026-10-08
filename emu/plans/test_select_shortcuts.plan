@@ -1,0 +1,127 @@
+# Select shortcuts (feat_field_menu.py), frame by frame: Select in the field -> save screen behind a black
+# screen; B -> System list; Select -> field; X, A (Status), Select -> field; X, B as before.
+include boot_from_save
+wait 250
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+press Select 2
+wait 3
+shot ss_open_1
+wait 3
+shot ss_open_2
+wait 3
+shot ss_open_3
+wait 3
+shot ss_open_4
+wait 3
+shot ss_open_5
+wait 3
+shot ss_open_6
+wait 3
+shot ss_open_7
+wait 3
+shot ss_open_8
+wait 3
+shot ss_open_9
+wait 3
+shot ss_open_10
+wait 3
+shot ss_open_11
+wait 3
+shot ss_open_12
+wait 3
+shot ss_open_13
+wait 3
+shot ss_open_14
+wait 3
+shot ss_open_15
+wait 3
+shot ss_open_16
+wait 3
+shot ss_open_17
+wait 3
+shot ss_open_18
+wait 3
+shot ss_open_19
+wait 3
+shot ss_open_20
+wait 3
+shot ss_open_21
+wait 3
+shot ss_open_22
+wait 3
+shot ss_open_23
+wait 3
+shot ss_open_24
+wait 30
+shot ss_save
+press B 3
+wait 40
+shot ss_system
+press A 3
+wait 40
+shot ss_save2
+press Select 2
+wait 3
+shot ss_close_1
+wait 3
+shot ss_close_2
+wait 3
+shot ss_close_3
+wait 3
+shot ss_close_4
+wait 3
+shot ss_close_5
+wait 3
+shot ss_close_6
+wait 3
+shot ss_close_7
+wait 3
+shot ss_close_8
+wait 3
+shot ss_close_9
+wait 3
+shot ss_close_10
+wait 3
+shot ss_close_11
+wait 3
+shot ss_close_12
+wait 3
+shot ss_close_13
+wait 3
+shot ss_close_14
+wait 3
+shot ss_close_15
+wait 3
+shot ss_close_16
+wait 3
+shot ss_close_17
+wait 3
+shot ss_close_18
+wait 3
+shot ss_close_19
+wait 3
+shot ss_close_20
+wait 3
+shot ss_close_21
+wait 3
+shot ss_close_22
+wait 3
+shot ss_close_23
+wait 3
+shot ss_close_24
+wait 30
+shot ss_field
+press X 3
+wait 60
+press A 3
+wait 40
+shot ss_status
+press Select 3
+wait 90
+shot ss_field2
+press X 3
+wait 60
+press B 3
+wait 80
+shot ss_field3
