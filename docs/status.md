@@ -34,6 +34,7 @@ Build the ROM with `uv run python -m dsde.patches` (writes `build/dsde.nds`). Fe
 | Text speed | `text-speed` | Verified (`test_textspeed_none/A/B`, intro narration): holding A types three times as fast (page 1 done in 283 frames, still typing at 600 with no keys) and the page waits for a fresh press; holding B types as fast and turns each page 9 frames after it ends (playtest-feedback.md item 19) |
 | Spell levels | `spell-levels` | Verified (`test_spell_levels_1/5/12`, first temple battle with Lucia's level pinned): Lucia's battle magic list holds Healing Water at level 1; Healing Water, Cure Squall and Quick at level 5 (Escape is field-only); two pages at level 12. Schedule in feat_spell_levels.py (playtest-feedback.md item 20.10); the max MP test is gone |
 | Experience name | `experience-name` | Verified (`diag_field_menu`, shot fm_x_a_a): the status screen reads "Experience" over "Next". Both arm9 copies of "Althena Conduct" (0x020A4377 result banner, 0x020A665E status label) become "Experience" padded with spaces to the old length, since the string lists are reached through offset tables. No script text uses the name |
+| Auto battle is Fastest | `battle-speed` | Verified (`test_auto_fastest`, first temple battle): picking Auto and OK turns the speed level (0x020B8540) from 0 (Fast) to 2 (Fastest) on that frame. The speed cave watches the Auto flag (battle work +0x28) and sets the setting to Fastest when it turns on; R still cycles |
 
 ## Test notes
 

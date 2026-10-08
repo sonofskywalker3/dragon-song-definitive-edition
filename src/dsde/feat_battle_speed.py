@@ -11,6 +11,10 @@ frame before its (now disabled) L/R hold fast-forward. That store becomes a call
 for the current setting instead: Normal is the original game, Fast is the pacing package of
 feat_battle_pace.py with no acceleration, Fastest is the package plus the game's old R speed (sprites 3x,
 spell effects 2x). The setting lives in ITCM, starts at Fast and lasts until power-off.
+
+Picking Auto battle switches the setting to Fastest (Jeff, 2026-10-08): the frame the Auto flag (battle work
++0x28, 1 while Auto is on; func_020297d4 then lets func_02050f1c pick every command) turns on. R still cycles
+the speed during Auto, and the setting stays where it is when Auto ends.
 """
 
 from dsde.patching import AsmPatch, CaveCode, Feature
@@ -30,11 +34,17 @@ SPEED_LEVELS = (
     2,
 )  # game acceleration for Normal, Fast (battle-pace only), Fastest
 DEFAULT_SETTING = 1  # Fast
+FASTEST_SETTING = 2
+BATTLE_WORK = 0x020B8550  # pointer to the battle work
+AUTO_FLAG = 0x28  # s16 in the battle work: 1 while Auto battle is on
+AUTO_ON = 1
 
-# Bytes: +0 setting (index into SPEED_LEVELS), +1 armed (R pressed without L), +2 R held last frame
+# Bytes: +0 setting (index into SPEED_LEVELS), +1 armed (R pressed without L), +2 R held last frame,
+# +3 Auto on last frame
 STATE_SETTING = 0
 STATE_ARMED = 1
 STATE_R_BEFORE = 2
+STATE_AUTO_BEFORE = 3
 STATE_ASM = f"""
     .byte {DEFAULT_SETTING}, 0, 0, 0
 """
@@ -77,6 +87,20 @@ spd_apply:
     movne r3, #1
     moveq r3, #0
     strb  r3, [r2, #{STATE_R_BEFORE}]
+    ldr   r0, spd_work
+    ldr   r0, [r0]
+    cmp   r0, #0
+    beq   spd_level_out
+    ldrsh r0, [r0, #{AUTO_FLAG:#x}]
+    cmp   r0, #{AUTO_ON}
+    moveq r0, #1
+    movne r0, #0
+    ldrb  r3, [r2, #{STATE_AUTO_BEFORE}]
+    strb  r0, [r2, #{STATE_AUTO_BEFORE}]
+    cmp   r0, r3
+    movgt r3, #{FASTEST_SETTING}
+    strbgt r3, [r2, #{STATE_SETTING}]
+spd_level_out:
     ldrb  r3, [r2, #{STATE_SETTING}]
     ldr   r2, spd_levels
     ldrb  r3, [r2, r3]
@@ -89,6 +113,8 @@ spd_levels:
     .word ${{cave_speed_levels}}
 spd_level:
     .word {SPEED_LEVEL:#x}
+spd_work:
+    .word {BATTLE_WORK:#x}
 """
 
 BATTLE_SPEED = Feature(
