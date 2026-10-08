@@ -14,7 +14,9 @@ Here, on Fast and Fastest:
   KILL_HOLD frames with the halo, then KILL_FADE frames of the same blend fade state 0xD uses, then the
   enemy is gone (0x2000000). Timers of battlers that are not dying are cleared, so nothing carries over.
 - State 0xC's sparkle pass (a copy of func_0202cdfc) skips enemies whose death is already running.
-Party targets keep the deferred damage. Normal stays vanilla: no timer ever starts, and the sparkle pass
+Party targets keep the deferred damage, and so do hits on the acting scratch copies (battlers 12 and 13: an enemy
+countered during its own attack is hit as battler 12; kill-on-hit on it wrote its death timer past the 12-entry
+table into this routine and crashed the 3DS, Jeff 2026-10-07). Normal stays vanilla: no timer ever starts, and the sparkle pass
 behaves like the original.
 """
 
@@ -63,6 +65,8 @@ KILL_ON_HIT_ASM = f"""
     ldr   r0, [r5]
     tst   r0, #{ENEMY_FLAG}
     beq   done
+    cmp   r4, #{BATTLER_SLOTS}
+    bge   done
     mov   r0, r4
     bl    {APPLY_DAMAGE:#x}
     cmp   r0, #{DIED}
