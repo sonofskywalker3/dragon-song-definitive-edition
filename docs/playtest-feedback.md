@@ -360,7 +360,9 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
 8. **(Done 2026-10-08, `experience-name`) Rename "Althena Conduct" to "Experience"** everywhere the player sees it (status screen, menus; the result
    screen's Conduct window is already hidden, see status.md row 3). Find the strings in the English text archives;
    watch the line widths.
-9. **Auto battle switches to Fastest.** When the player picks Auto in battle, set the battle speed to Fastest
+9. **(Done 2026-10-08, in `battle-speed`: the setting switches to Fastest the frame Auto turns on, R still
+   cycles, and it stays where it is after Auto; `test_auto_fastest`: speed level 0 -> 2 on OK) Auto battle
+   switches to Fastest.** When the player picks Auto in battle, set the battle speed to Fastest
    (speed level in cave_speed_state, feat_battle_speed.py). Decide whether to restore the old speed when Auto ends.
 10. **(Done 2026-10-08, `spell-levels`) Lucia learns spells by level, not all at once.** Jeff: six spells at level 5 is too much this early. Vanilla
     unlocks a spell when max MP reaches its vanilla cost (feat_mp.py keeps that test via cave_unlock_cost), so at
