@@ -1,21 +1,16 @@
-"""MP economy (design 8): cheaper spells that still unlock at the same levels, flat MP items, Mental Gum
+"""MP economy (design 8): cheaper spells, flat MP items, Mental Gum
 in shops, and healing statues that also cure status. Research: docs/re-mp-jobs-rings.md section 1.
 
-Spells unlock when the character's max MP reaches the spell's cost (func_02050c50). The unlock test now
-reads the vanilla cost from a copy table in the cave, so new costs change only what casting takes
-(func_0206aabc, which also applies the Holy Umbrella and Magic Booster reductions).
+New costs change only what casting takes (func_0206aabc, which also applies the Holy Umbrella and Magic Booster
+reductions): spells are learned by level (feat_spell_levels.py), not when max MP reaches the cost.
 """
 
-import struct
-from pathlib import Path
 
-from dsde.patching import ARM9_BASE, ARM_NOP, AsmPatch, CaveCode, Feature, Patch
+from dsde.patching import ARM_NOP, AsmPatch, CaveCode, Feature, Patch
 
-VANILLA_ARM9 = Path(__file__).resolve().parents[2] / "extract" / "arm9" / "arm9.bin"
 
 SPELL_COST_TABLE = 0x0209497C  # u32 cost at +4 of each 0x0C-byte spell entry
 SPELL_ENTRY_SIZE = 0x0C
-SPELL_COUNT = 0x26
 NEW_SPELL_COSTS = {  # spell index: (name, vanilla cost, new cost), about 40%
     1: ("Healing Water", 10, 4),
     2: ("Tender Rain", 30, 12),
@@ -27,27 +22,6 @@ NEW_SPELL_COSTS = {  # spell index: (name, vanilla cost, new cost), about 40%
     8: ("Grand Weapon", 24, 10),
     9: ("Grand Shell", 28, 10),
 }
-UNLOCK_COST_CALL = (
-    0x02050DE8  # func_02050c50: bl func_020500c4 (spell cost) before the max MP test
-)
-UNLOCK_COST_CALL_WORD = 0xEBFFFCB5
-
-
-def _vanilla_costs() -> bytes:
-    data = VANILLA_ARM9.read_bytes()
-    costs = [
-        struct.unpack_from(
-            "<I", data, SPELL_COST_TABLE - ARM9_BASE + i * SPELL_ENTRY_SIZE
-        )[0]
-        for i in range(SPELL_COUNT)
-    ]
-    return bytes(costs)
-
-
-def _cost_table_asm() -> str:
-    return "\n".join(f"    .byte {cost}" for cost in _vanilla_costs())
-
-
 # Medicine: func_0206a8b8 adds maxMP * value / 100 for effect flag 0x20. The single-target MP items
 # (Mental Gum 20, Mental Drop 50, flags 0x80000023) now add the value itself; the all-allies card
 # (flags 0xC0000023) keeps its percentage. The temp target at 0x0213B91C holds MP at +0xC, max at +0x10.
@@ -141,25 +115,6 @@ STATUE_CAMERA_CALLS = (
 MP_ECONOMY = Feature(
     "mp-economy",
     (
-        CaveCode(
-            "cave_unlock_cost",
-            f"""
-    adr   r1, costs
-    ldrb  r0, [r1, r0]
-    bx    lr
-costs:
-{_cost_table_asm()}
-""",
-            "spell unlock test uses the vanilla MP cost",
-        ),
-        AsmPatch(
-            UNLOCK_COST_CALL,
-            UNLOCK_COST_CALL + 4,
-            UNLOCK_COST_CALL_WORD,
-            UNLOCK_COST_CALL_WORD,
-            "bl ${cave_unlock_cost}",
-            "spells unlock at the vanilla max MP",
-        ),
         *(
             Patch(
                 SPELL_COST_TABLE + index * SPELL_ENTRY_SIZE,

@@ -1,0 +1,6 @@
+# Character records (0x020B4664 + id * 0x5C): level at +0 (spell level test in func_02050c50), max MP at +0x10.
+include boot_from_save
+wait 60
+dump 0x020B4664 0x5C jian
+dump 0x020B46C0 0x5C lucia
+dump 0x020B4778 0x5C flora
