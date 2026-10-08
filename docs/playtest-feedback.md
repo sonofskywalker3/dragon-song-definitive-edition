@@ -310,3 +310,7 @@ Follow-up (same day): Jeff found going from the D-pad town menus to the world ma
 list controls now apply to every hub, the world map included (the selected place moves the icon, and the view with
 it); the D-pad no longer drags the icon anywhere. `test_worldmap_dpad`: Leave town (flag 0x1E1 poked) picked with
 Left + Up + A, world map 260 loads, a held Down does not move the icon.
+
+Decision (Jeff, same day): keep the one-valid-target rule (it saves time) but document it, because new players
+reach the first battles (one enemy in front, one flying behind) and would think target picking is broken. Done in
+the README and the release notes. If feedback says the feature "does not work", show the picker anyway.

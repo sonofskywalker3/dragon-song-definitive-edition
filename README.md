@@ -59,7 +59,9 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **You pick targets** on the touch screen or with the D-pad, as in Lunar 1 and 2. If your target dies
   before the hit lands, the attack moves to the next enemy; an attack is never wasted. The
   blue corners of the picker also frame the chosen enemy on the battlefield, so you can watch the enemies
-  instead of the menu.
+  instead of the menu. Not everyone can reach every enemy: Jian and Lucia only hit the front row, so
+  when only one enemy is in their reach (as in the first battles, one enemy in front and one flying
+  behind), Fight attacks it right away without showing the picker. With two or more in reach, you pick.
 - **Enemies die on the hit that kills them.** A combo that kills several enemies shows each one die as it
   falls, while the attacker moves on, instead of all of them together at the end.
 - **Characters out of the party earn the same EXP as the party**, so nobody falls behind.
