@@ -282,6 +282,30 @@ control is still wanted after playtesting, add the three-level Select toggle of 
 default and Normal as the original game, which matches the remasters' three speeds and in-battle
 switching while keeping L and R for running. Skip P8 and S5.
 
+## 6. Actor flow (2026-10-08, feature `battle-flow`)
+
+Jeff (3DS, Fast): Lucia's attack is slow and the wait between characters is long. Measured on Fast in the first
+temple battle (Jian + Lucia, `diag_pace2_fast`; every hit kills):
+
+| | Jian's Fight (state 7) | gap after it | Lucia's Fight | Jian lands -> Lucia leaps |
+|---|---|---|---|---|
+| Fast before | 203 | 92 (state 0xD 77) | 204 | 150 |
+| Fast after | 203 | 16 | 76 | about 34 |
+| Normal (unchanged) | 217 | 151 + refill 64 | 218 | |
+
+- Lucia, Gabryel, Rufus and cursed Jian share the one-hit script at 0x020958C0 (16-byte steps; word 0 bits 0..1:
+  1 = wait for the animation, 2 = fixed frames). Almost all of Lucia's 204 frames wait on her animations (row 1 of
+  0x020953D4: 17 18 19 19 1A 19 1B 1C 1C), whose cels last 6 frames. Sprites advance by 0x100 * (1 + level) a
+  sprite update (func_02031e08, level loaded at 0x02031FF0); a cel lasts at least 2 frames, so +2 levels (3x)
+  is the limit through the sprite level.
+- After a kill, state 0xD first runs vanilla's hold and fade of deferred deaths (+0xCE phases 1, 2), then waited
+  in func_0202cb44 for the effect battlers 0x16..0x1D (the death sparkles: 151 frames at 1x, 75 at 2x or 3x).
+- `battle-flow` (Fast and Fastest only): the acting copy of a party member other than Jian animates at +2
+  levels and the sparkles at +1; state 0xD waits only while a kill-on-hit death timer runs, or the full vanilla
+  wait when no enemy is left alive (end of battle unchanged: `tgt_drop_exp` still pays 202 EXP and 101 silver).
+  Jian keeps his speed: Jeff said his attacks already felt right.
+- Not measured: Gabryel, Rufus, Flora, spells cast on Fast (the +2 also applies to cast poses), bosses.
+
 ## Sources (remasters)
 
 - Steam store page, LUNAR Remastered Collection: https://store.steampowered.com/app/3255380/LUNAR_Remastered_Collection/

@@ -1,0 +1,75 @@
+# Pacing diagnostic 2 (Lucia's attack and the gap between actors). Default Fast speed.
+# Party of Jian and Lucia (party2_strong) in the first Delrich Temple battle; both Fight (strong: each kills).
+# Logs main state, round state (battle work 0x02282940 +0x2E), actor (+0x32), work +0xCE/+0xD0, battler 12
+# (0x0228FBB0) step +0xCC, step counter +0xCE, sprite flags +0xFA, sequence +0xFC, cel +0xFE; battler 13 step;
+# effect battler 0x16 flags (first death sparkle slot); speed level; every step start; the six animation
+# pointers of the action (work +0x5C) every 40 frames.
+include party2_strong
+wait 270
+
+peek u32 0x020B8550 battle_work
+peek u32 0x020B8640 battlers
+peek u8 0x01FF9C18 speed_setting
+peek u32 0x01FF9C1C speed_levels
+watch u32 0x020B0010 main_state
+watch u16 0x0228296E round_state
+watch u16 0x02282972 actor
+watch u16 0x02282A0E w_ce
+watch u16 0x02282A10 w_d0
+watch u16 0x0228FC7C b12_step
+watch u16 0x0228FCAA b12_fa
+watch u16 0x0228FCAC b12_seq
+watch u16 0x0228FCAE b12_cel
+watch u16 0x0228FDA8 b13_step
+watch u8 0x02290768 fx16
+watch u8 0x02290894 fx17
+watch u32 0x020B8540 speed_level
+exec 0x020316E0 step_start
+# Manual
+press A 3
+wait 30
+# Jian: Fight, pick, OK
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+# Lucia: Fight, pick, OK
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+shot p2_after_cmds
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 40
+dump 0x0228299C 24 anim_ptrs
+wait 800
+shot p2_end

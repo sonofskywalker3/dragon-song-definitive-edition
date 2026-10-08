@@ -75,7 +75,8 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Battle speed:** tap **R** to cycle Normal (the original timing), **Fast** (the default) and Fastest.
   Fast trims waits throughout a battle: quicker moves, kills, camera turns, intro and victory screens. The
   first temple battle takes 25 seconds on Fast, against 32 with the original game's own fast-forward held
-  down and 38 without it. Picking **Auto** switches to Fastest.
+  down and 38 without it. On Fast and Fastest, Lucia, Gabryel and Rufus attack faster, and the next
+  character no longer waits for a defeated enemy's sparkles to finish. Picking **Auto** switches to Fastest.
 - **Jian's curse no longer weakens his attack** (the story around the curse is still to be rewritten).
 
 ### MP, items and shops

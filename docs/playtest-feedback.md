@@ -355,9 +355,10 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
    walking fell from 1.5 to 0.65 px a frame; `diag_ramp_speed`, map 6 slope: 1.5 walking, 3.0 running, as flat)
    No slowdown on ramps.** Walking up and down ramps/stairs slows the player. Find the slope factor in the field
    movement code (feat_walk.py scales every step x1.5; the ramp code scales it down again) and drop it.
-6. **Lucia's attack animation is slow.** Speed it up on Fast/Fastest (see docs/re-battle-pacing.md and
+6. **(Done 2026-10-08, `battle-flow`: Lucia's Fight 204 -> 76 frames on Fast) Lucia's attack animation is slow.** Speed it up on Fast/Fastest (see docs/re-battle-pacing.md and
    feat_battle_pace.py for how the party's actions were paced).
-7. **Delay between attackers.** Cut the pause between one battler's action ending and the next one starting
+7. **(Done 2026-10-08, `battle-flow`: no wait for the death sparkles; Jian -> Lucia gap 92 -> 16 frames)
+   Delay between attackers.** Cut the pause between one battler's action ending and the next one starting
    (round state machine func_0202d22c; round state at battle work +0x2E).
 8. **(Done 2026-10-08, `experience-name`) Rename "Althena Conduct" to "Experience"** everywhere the player sees it (status screen, menus; the result
    screen's Conduct window is already hidden, see status.md row 3). Find the strings in the English text archives;
