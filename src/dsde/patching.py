@@ -17,6 +17,7 @@ from dsde.archive import compress, decompress, read_archive, write_archive
 
 ARM9_BASE = 0x02000000
 ARM_NOP = 0xE1A00000
+WORD = 4
 # New code goes in ITCM after the game's own 0x2E0 bytes. The game sets up an ITCM arena there
 # but never allocates from it (only arena 0 is used, see func_02004c18 callers).
 ITCM_BASE = 0x01FF8000
@@ -83,6 +84,19 @@ class Feature:
 
     name: str
     patches: tuple[Patch | AsmPatch | DataPatch | CaveCode, ...]
+
+
+def byte_patches(arm9: bytes, edits: dict[int, int], note: str) -> tuple[Patch, ...]:
+    """Patch the bytes in edits (address -> byte) of vanilla arm9, one aligned word at a time."""
+    patches = []
+    for addr in sorted({a & ~(WORD - 1) for a in edits}):
+        old = struct.unpack_from("<I", arm9, addr - ARM9_BASE)[0]
+        new = bytearray(old.to_bytes(WORD, "little"))
+        for i in range(WORD):
+            if addr + i in edits:
+                new[i] = edits[addr + i]
+        patches.append(Patch(addr, old, int.from_bytes(new, "little"), note))
+    return tuple(patches)
 
 
 def _caves(features: list[Feature]) -> list[CaveCode]:

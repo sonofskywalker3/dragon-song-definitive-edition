@@ -1,0 +1,45 @@
+# Field menu tour from Jian's room: Start (info), Select, X (menu) and the status screen.
+include boot_from_save
+wait 60
+press Start 3
+wait 60
+shot fm_start
+press B 3
+wait 60
+press Start 3
+wait 60
+shot fm_start_again
+press A 3
+wait 60
+shot fm_start_a
+press B 3
+wait 60
+press B 3
+wait 60
+press Select 3
+wait 60
+shot fm_select
+press B 3
+wait 60
+press X 3
+wait 60
+shot fm_x
+press A 3
+wait 60
+shot fm_x_a
+press A 3
+wait 60
+shot fm_x_a_a
+press B 3
+wait 40
+press B 3
+wait 40
+press Down 3
+wait 20
+shot fm_x_down
+press A 3
+wait 60
+shot fm_x_down_a
+press A 3
+wait 60
+shot fm_x_down_a_a

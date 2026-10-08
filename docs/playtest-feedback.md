@@ -357,7 +357,7 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
    feat_battle_pace.py for how the party's actions were paced).
 7. **Delay between attackers.** Cut the pause between one battler's action ending and the next one starting
    (round state machine func_0202d22c; round state at battle work +0x2E).
-8. **Rename "Althena Conduct" to "Experience"** everywhere the player sees it (status screen, menus; the result
+8. **(Done 2026-10-08, `experience-name`) Rename "Althena Conduct" to "Experience"** everywhere the player sees it (status screen, menus; the result
    screen's Conduct window is already hidden, see status.md row 3). Find the strings in the English text archives;
    watch the line widths.
 9. **Auto battle switches to Fastest.** When the player picks Auto in battle, set the battle speed to Fastest

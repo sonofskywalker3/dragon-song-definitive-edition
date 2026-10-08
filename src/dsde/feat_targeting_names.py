@@ -21,7 +21,7 @@ from pathlib import Path
 
 from dsde.archive import decompress, read_archive
 from dsde.mce import TRANSPARENT, Sprite, read_cell
-from dsde.patching import ARM9_BASE, AsmPatch, CaveCode, DataPatch, Patch
+from dsde.patching import ARM9_BASE, AsmPatch, CaveCode, DataPatch, Patch, byte_patches
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 VANILLA_ARM9 = PROJECT_ROOT / "extract" / "arm9" / "arm9.bin"
@@ -63,7 +63,6 @@ SPECIES_RECORD = 0x1C
 SPECIES_SPRITE = 0x10
 CHANNEL_BITS = 5
 CHANNEL_MASK = 0x1F
-WORD = 4
 
 
 def encode_name(text: str) -> bytes:
@@ -84,19 +83,6 @@ def _offset_addr(item: int) -> int:
     return NAME_OFFSETS + 2 * item
 
 
-def _word_patches(arm9: bytes, edits: dict[int, int], note: str) -> tuple[Patch, ...]:
-    """Patch the bytes in edits (address -> byte), one aligned word at a time."""
-    patches = []
-    for addr in sorted({a & ~(WORD - 1) for a in edits}):
-        old = _word(arm9, addr)
-        new = bytearray(old.to_bytes(WORD, "little"))
-        for i in range(WORD):
-            if addr + i in edits:
-                new[i] = edits[addr + i]
-        patches.append(Patch(addr, old, int.from_bytes(new, "little"), note))
-    return tuple(patches)
-
-
 def _name_patches() -> tuple[Patch, ...]:
     arm9 = VANILLA_ARM9.read_bytes()
 
@@ -112,7 +98,7 @@ def _name_patches() -> tuple[Patch, ...]:
     edits = {NAME_STRINGS + summon + i: b for i, b in enumerate(name)}
     for i, b in enumerate(donor.to_bytes(2, "little")):
         edits[_offset_addr(SPARE_CARD) + i] = b
-    return _word_patches(arm9, edits, f"item {SUMMON_CARD:#x} named {SUMMON_NAME}")
+    return byte_patches(arm9, edits, f"item {SUMMON_CARD:#x} named {SUMMON_NAME}")
 
 
 def _rgb(color: int) -> tuple[int, int, int]:
