@@ -53,16 +53,19 @@ how each one was built and tested is in [docs/status.md](docs/status.md).
 **Exploring**
 
 - Running costs no HP: a timed dash with a short cooldown, like Eternal Blue.
-- Walking is 50% faster and running 3 times as fast, ramps and stairs included.
-- Enemies come back when you leave an area, not on a timer, and blue chests open once every monster in the area
+- Walking and running are 50% faster than vanilla, and ramps and stairs no longer slow you down.
+- Enemies come back when you leave an area, not on a timer, and blue chests are unlocked once every monster in the area
   is beaten.
-- Healing statues heal at once and cure status; clearing an area no longer refills you.
+- Healing statues heal more quickly and cure status.
+- Clearing an area no longer recovers hp/mp.
 - Town and world map menus work with the D-pad.
 
 **Menus and text**
 
 - Select opens the Save screen, and Select anywhere in the menu goes straight back to the map.
-- Much faster menus, and hold A or B for faster text.
+- Much faster menus.
+- Hold A to make text print 3x faster. Still stops at transitions for another A press.
+- Hold B to make text print 3x faster and auto-advance.
 - The Start guidebook explains this version's rules.
 
 **Battles**
@@ -70,10 +73,11 @@ how each one was built and tested is in [docs/status.md](docs/status.md).
 - One battle mode: experience, items, and silver from every fight, and bosses give experience.
 - You pick your own targets, and an attack is never wasted. With only one enemy in reach, Fight attacks it
   right away.
-- Three battle speeds on R: Fast (the default), Faster, and Normal. Party attacks and the gaps between them are
+- Switch between three battle speeds by pressing R: Fast (the default), Faster, and Normal. Party attacks and the gaps between them are
   quicker, and Auto switches to Faster.
 - No microphone: hold L and R to run away.
-- Benched characters keep up, and broken or stolen gear comes back.
+- Benched characters gain the same exp as the party, including before you meet them.
+- Gear and items that are broken or stolen during battle are returned after you win.
 
 **Spells and MP**
 
