@@ -314,3 +314,13 @@ Left + Up + A, world map 260 loads, a held Down does not move the icon.
 Decision (Jeff, same day): keep the one-valid-target rule (it saves time) but document it, because new players
 reach the first battles (one enemy in front, one flying behind) and would think target picking is broken. Done in
 the README and the release notes. If feedback says the feature "does not work", show the picker anyway.
+
+## 18. Crash: an enemy killed during its own attack (Fixed, 2026-10-07)
+
+Jeff on the 3DS: a fly attacked Jian, died where it stood (sparkles, no fade), then "Undefined instruction" at
+PC 0x0228EBD8 with lr 0x01FF9EA0 (inside cave_kill_on_hit). The acting enemy is drawn as scratch battler 12; a hit
+on it (likely Jian countering) went through kill-on-hit, which wrote the death timer for index 12 past its
+12-entry table into the first word of cave_kill_on_hit (`push {r4, lr}` became `push {r2, r5, lr}`), so the next
+return popped a data pointer into pc. Kill-on-hit now only acts on enemy slots 4..11; hits on the scratch copies
+keep vanilla's deferred damage. Not reproduced in the emulator (no way found yet to force a counter); the battle
+regressions (test_kill_on_hit, tgt_multihit_jian, tgt_no_leap, tgt_drop_column, tgt_drop_exp) are unchanged.
