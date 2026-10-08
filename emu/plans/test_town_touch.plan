@@ -1,0 +1,13 @@
+# Town menu: touch still works with feat_town_menu.py (tap a row, then YES).
+load town
+press Down 60
+wait 150
+watch u16 0x020B8C5C sel
+watch u16 0x020B8C5E tab
+touch 128 73 5
+wait 40
+shot tt_row
+watch u16 0x020B6BE4 map
+touch 230 180 5
+wait 150
+shot tt_after
