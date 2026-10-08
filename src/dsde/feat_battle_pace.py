@@ -1,7 +1,7 @@
 """Battle pacing package: the "Fast" part of the battle speed setting (design 7).
 
 Normal is the original game. Fast applies the changes below, measured and chosen in
-docs/re-battle-pacing.md (candidates P2 to P12). Fastest is Fast plus the game's own animation
+docs/re-battle-pacing.md (candidates P2 to P12). Faster is Fast plus the game's own animation
 acceleration (feat_battle_speed.py). Every change asks the setting in cave_speed_state at run time,
 so Normal stays exactly vanilla.
 
@@ -29,7 +29,7 @@ so Normal stays exactly vanilla.
 
 from dsde.patching import AsmPatch, CaveCode, Feature
 
-PACE_STEP = 2  # frames counted per frame on Fast and Fastest
+PACE_STEP = 2  # frames counted per frame on Fast and Faster
 STEP_COUNTER_ADD = (
     0x0203153C,
     0xE2800001,
@@ -131,7 +131,7 @@ pick_state:
 """
 
 
-# Replaces `bl func_0202c3e8` in round state 0xE: r0 = 0 (no numbers to wait for) on Fast and Fastest.
+# Replaces `bl func_0202c3e8` in round state 0xE: r0 = 0 (no numbers to wait for) on Fast and Faster.
 NUMBER_WAIT_ASM = f"""
     ldr   r0, nw_state
     ldrb  r0, [r0]
@@ -181,7 +181,7 @@ count_state:
 
 COUNT_ASM = count_asm("r0")
 
-# Replaces `sub r0, r0, #1` of the kill fade counter: - PACE_STEP on Fast and Fastest. The flags are
+# Replaces `sub r0, r0, #1` of the kill fade counter: - PACE_STEP on Fast and Faster. The flags are
 # not read before the next compare, so they need not be kept.
 FADE_ASM = f"""
     push  {{r1, lr}}
@@ -196,7 +196,7 @@ fade_state:
 """
 
 # Replaces `ands r0, r1, #3` (r1 = pour frame counter; the next instructions return unless Z is set):
-# on Fast and Fastest r0 = 0 with Z set, so the pour step and its A check run every frame.
+# on Fast and Faster r0 = 0 with Z set, so the pour step and its A check run every frame.
 POUR_ASM = """
     ldr   r0, pour_state
     ldrb  r0, [r0]

@@ -221,7 +221,7 @@ the default package above is the middle level:
 |---|---|---|---|
 | 1 | Normal (original) | 0 | original |
 | 2 | Fast (default) | 2 | halved, trims of 4.2 |
-| 3 | Fastest | 3 (sprites 4x, effects 2x) | divided by 3 |
+| 3 | Faster | 3 (sprites 4x, effects 2x) | divided by 3 |
 
 - **What it scales**: everything that counts frames in battle through one multiplier k read by every
   hook: sprite accumulator (already reads 0x020B8540), effect timer (same), step counter, move counter,
@@ -238,7 +238,7 @@ the default package above is the middle level:
   the remasters" matters more than convenience, keep it in RAM only and reset to Fast on load (the
   remasters reportedly reset on load, uncertain).
 - **Input** (L and R are taken):
-  - **Select cycles the level** during battle (Normal, Fast, Fastest). Select is free in battle since the
+  - **Select cycles the level** during battle (Normal, Fast, Faster). Select is free in battle since the
     run moved to L+R (commit 37e74a4); no battle input code read pad bit 0x4 in what I checked
     (func_0203a34c, func_0203aa10; uncertain beyond those). X is used (opens a window from the command
     screen, func_0203a34c `& 0x400`).
@@ -300,7 +300,7 @@ temple battle (Jian + Lucia, `diag_pace2_fast`; every hit kills):
   is the limit through the sprite level.
 - After a kill, state 0xD first runs vanilla's hold and fade of deferred deaths (+0xCE phases 1, 2), then waited
   in func_0202cb44 for the effect battlers 0x16..0x1D (the death sparkles: 151 frames at 1x, 75 at 2x or 3x).
-- `battle-flow` (Fast and Fastest only): the acting copy of a party member other than Jian animates at +2
+- `battle-flow` (Fast and Faster only): the acting copy of a party member other than Jian animates at +2
   levels and the sparkles at +1; state 0xD waits only while a kill-on-hit death timer runs, or the full vanilla
   wait when no enemy is left alive (end of battle unchanged: `tgt_drop_exp` still pays 202 EXP and 101 silver).
   Jian keeps his speed: Jeff said his attacks already felt right.

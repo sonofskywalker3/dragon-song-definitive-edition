@@ -1,4 +1,4 @@
-"""Battle speed setting: tap R to cycle Normal, Fast and Fastest (design 7).
+"""Battle speed setting: tap R to cycle Normal, Fast and Faster (design 7).
 
 Like the 2025 Lunar remasters, a three-step battle speed the player changes at any time in battle, but
 on the R trigger alone: L+R held is the run chord (hold-lr-to-run), so R cycles the speed when it is
@@ -9,10 +9,10 @@ The game already scales battle animation by a speed level at 0x020B8540 (sprites
 spell effects at 1 + level / 2; docs/re-curse-battle-speed.md 2.1), which func_020297d4 zeroes every
 frame before its (now disabled) L/R hold fast-forward. That store becomes a call that writes the level
 for the current setting instead: Normal is the original game, Fast is the pacing package of
-feat_battle_pace.py with no acceleration, Fastest is the package plus the game's old R speed (sprites 3x,
+feat_battle_pace.py with no acceleration, Faster is the package plus the game's old R speed (sprites 3x,
 spell effects 2x). The setting lives in ITCM, starts at Fast and lasts until power-off.
 
-Picking Auto battle switches the setting to Fastest (Jeff, 2026-10-08): the frame the Auto flag (battle work
+Picking Auto battle switches the setting to Faster (Jeff, 2026-10-08): the frame the Auto flag (battle work
 +0x28, 1 while Auto is on; func_020297d4 then lets func_02050f1c pick every command) turns on. R still cycles
 the speed during Auto, and the setting stays where it is when Auto ends.
 """
@@ -32,7 +32,7 @@ SPEED_LEVELS = (
     0,
     0,
     2,
-)  # game acceleration for Normal, Fast (battle-pace only), Fastest
+)  # game acceleration for Normal, Fast (battle-pace only), Faster
 DEFAULT_SETTING = 1  # Fast
 FASTEST_SETTING = 2
 BATTLE_WORK = 0x020B8550  # pointer to the battle work

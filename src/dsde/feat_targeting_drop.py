@@ -6,7 +6,7 @@ dead; in the Caucus fight, battle 7, only once the whole front row is dead), bat
 +0xD4 counts the frames, and REFILL_STEP (func_02053918) lowers the back enemies one frame at a time and
 at the end copies each into the front slot of its column (battler and stat record, turn order fixed up).
 
-Jeff (2026-10-07): with kill-on-hit (Fast and Fastest) a front enemy dies mid-action, and the enemy behind
+Jeff (2026-10-07): with kill-on-hit (Fast and Faster) a front enemy dies mid-action, and the enemy behind
 it should drop in as soon as the slot is empty, as the battle calls for. Every frame of an action (round
 state 7) the tick asks REFILL_COLUMNS, leaves out the columns that were already due when the action started
 (a front slot empty from the start of the battle or from an earlier action: vanilla refills those after
