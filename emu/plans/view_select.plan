@@ -1,0 +1,24 @@
+# Select shortcut demo at normal speed (feat_field_menu.py): Select -> save screen, B -> System, Select -> map;
+# X, A (Status), Select -> map; Select -> save screen, Select -> map. Saves 'field' in Jian's room first:
+# EmuHawk --config=build/view_config.ini --load-state=<out>/states/field.State build/dsde.nds
+include boot_from_save
+wait 250
+save field
+speed 100
+wait 120
+press Select 3
+wait 150
+press B 3
+wait 120
+press Select 3
+wait 150
+press X 3
+wait 90
+press A 3
+wait 120
+press Select 3
+wait 150
+press Select 3
+wait 150
+press Select 3
+wait 240

@@ -24,12 +24,18 @@
   (`func_020591a4`): 29 frames, then every frame.
 
 `field-menu` (feat_field_menu.py), measured (`test_field_menu`, `test_field_menu_save`):
-- Select in the field opens the save screen: behind a black screen it presses A on System and on Save with
-  screen changes instant (Jeff, 2026-10-08: skip the picking, do not show it), the save screen in 47 frames;
-  A, A saves ("Save complete"); B goes back to the System list.
-- Select in the menu presses B every frame, behind a black screen and with screen changes instant, until the
-  menu exits; the screen stays black until the field fades in. The field clears the flags every frame. On the
-  "saved" message (state 0x42, A only) and the 240-frame message (0x50) it waits for them to end.
+- Select in the field opens the save screen directly (Jeff, 2026-10-08: no picking, no hidden presses). The menu
+  loads as for X; its first screen change (state 2 sets 0x4F towards 3) is sent to the System setup 0x33 with
+  the cursor at 0 and the header tab tucked away (func_02059bcc(0, 0)); at 0x34, before the System list shows,
+  the next change goes to the save setup 0x3B with the save flag 0x02139EF4 = 1 and the cursor at 0, as the
+  Save pick leaves them (`diag_save_path`: picking System, then Save, each set the cursor to 0). The menu is
+  held black over those frames (func_02018cbc(3, 0, 0)) and fades in on the save screen (3, 0x80, 10).
+  Without the tab tuck the header kept "Menu"; with the cursor at 2 the open album was No.2.
+- Select anywhere in the menu jumps to the exit (0x5C). The exit frees only the menu's buffer; sub-screens free
+  theirs on their way back (Magic and Items one block at 0x02139EF0, the grey-box entry two, Items' own code
+  more: three blocks in all). Hooks on func_02005298 (alloc) and func_02005224 (free) keep a log of the
+  blocks allocated in mode 5; Select frees every logged block but the menu's own, then jumps. Not during the
+  save write (0x40, 0x41).
 - Screen waits 19 -> 6 frames and no animation wait; fades 30 -> 10; key repeat 12, then every 4. First input
   after X 37 frames (was 72), Status 11 (42), back about 10 (41). Not checked: Magic, the grey-box entry,
   Message Speed, Music Hall. The menu load (about 22) and field reload (about 41) remain.

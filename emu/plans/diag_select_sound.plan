@@ -1,0 +1,11 @@
+# Select shortcuts: which sounds play (func_020284d8, r0 = sound) and the master brightness while they run.
+include boot_from_save
+wait 250
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+watch u16 0x0400006C bright
+exec 0x020284D8 sound
+press Select 2
+wait 120
+press Select 2
+wait 120

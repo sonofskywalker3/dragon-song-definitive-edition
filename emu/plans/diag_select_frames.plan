@@ -1,0 +1,40 @@
+# Direct Select-to-save, frame by frame (feat_menu_shortcuts.py).
+include boot_from_save
+wait 250
+watch u32 0x020B0010 state
+press Select 2
+wait 28
+wait 1
+shot fr_1
+wait 1
+shot fr_2
+wait 1
+shot fr_3
+wait 1
+shot fr_4
+wait 1
+shot fr_5
+wait 1
+shot fr_6
+wait 1
+shot fr_7
+wait 1
+shot fr_8
+wait 1
+shot fr_9
+wait 1
+shot fr_10
+wait 1
+shot fr_11
+wait 1
+shot fr_12
+wait 1
+shot fr_13
+wait 1
+shot fr_14
+wait 1
+shot fr_15
+wait 1
+shot fr_16
+wait 60
+shot fr_end

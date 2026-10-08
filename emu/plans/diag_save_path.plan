@@ -1,0 +1,22 @@
+# The normal path to the save screen (X, System, Save) with the values the shortcut has to match.
+include boot_from_save
+wait 250
+press X 3
+wait 70
+poke u8 0x02139F40 8
+watch u32 0x020B0010 state
+watch u32 0x02139FF8 work24
+watch u32 0x02139F7C f5c20
+watch u8 0x02139F40 cursor
+watch u8 0x02139FD4 album
+watch u8 0x02139EF4 saveflag
+dump 0x02139EE8 0x10 title_top
+press A 3
+wait 60
+dump 0x02139EE8 0x10 title_system
+press Down 3
+wait 30
+press A 3
+wait 80
+dump 0x02139EE8 0x10 title_save
+shot sp_save
