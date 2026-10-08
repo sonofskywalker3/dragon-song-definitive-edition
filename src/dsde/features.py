@@ -12,6 +12,7 @@ from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
 from dsde.feat_curse import NO_CURSE_PENALTY
 from dsde.feat_experience_name import EXPERIENCE_NAME
+from dsde.feat_field_menu import FIELD_MENU
 from dsde.feat_gad import GAD_EXPRESS
 from dsde.feat_mic_sign import MIC_SIGN
 from dsde.feat_mp import MP_ECONOMY
@@ -279,6 +280,7 @@ FEATURES: tuple[Feature, ...] = (
     EXPERIENCE_NAME,
     TITLE_SEAL,
     TOWN_MENU,
+    FIELD_MENU,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -310,4 +312,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     EXPERIENCE_NAME.name,
     TITLE_SEAL.name,
     TOWN_MENU.name,
+    FIELD_MENU.name,
 )

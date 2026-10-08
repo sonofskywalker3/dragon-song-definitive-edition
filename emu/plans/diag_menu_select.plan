@@ -1,0 +1,65 @@
+# Prototype ROM (build/diag_menu_proto.py): Select in the field -> save slot screen; Select in the menu
+# closes it from any depth; X still opens the menu normally; key repeat.
+include boot_from_save
+wait 250
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+watch u8 0x02139F40 cursor
+press Select 3
+wait 20
+shot ss_20
+wait 40
+shot ss_60
+wait 40
+shot ss_100
+wait 60
+shot ss_160
+# back out one level to the System list, then Select closes everything
+press B 3
+wait 60
+shot ss_sys
+press Select 3
+wait 10
+shot ss_unwind10
+wait 30
+shot ss_unwind40
+wait 90
+shot ss_field1
+# X still opens the top menu; Status then Select
+press X 3
+wait 90
+shot ss_top
+hold Down
+wait 40
+release
+wait 10
+hold Up
+wait 40
+release
+wait 10
+press A 3
+wait 60
+shot ss_status
+press Select 3
+wait 150
+shot ss_field2
+# Items screen then Select
+press X 3
+wait 90
+press Down 3
+wait 10
+press Down 3
+wait 10
+press A 3
+wait 70
+shot ss_items
+press Select 3
+wait 150
+shot ss_field3
+# Select while the field is idle again, then X open/close by B to check flags are clean
+press X 3
+wait 90
+shot ss_top2
+press B 3
+wait 120
+shot ss_field4

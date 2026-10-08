@@ -1,0 +1,44 @@
+# Field menu (X): mode/state timeline per screen, to map the menu state machine and its waits.
+include boot_from_save
+wait 250
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+press X 3
+wait 10
+shot mt_x10
+wait 20
+shot mt_x30
+wait 60
+shot mt_x90
+press A 3
+wait 60
+shot mt_a
+press B 3
+wait 60
+shot mt_a_b
+press Right 3
+wait 30
+shot mt_r1
+press Right 3
+wait 30
+shot mt_r2
+press Right 3
+wait 30
+shot mt_r3
+press Right 3
+wait 30
+shot mt_r4
+press Right 3
+wait 30
+shot mt_r5
+press Down 3
+wait 30
+shot mt_d1
+press Down 3
+wait 30
+shot mt_d2
+press B 3
+wait 90
+shot mt_b_out
+wait 60
+shot mt_end

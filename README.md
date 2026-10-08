@@ -48,6 +48,9 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Town and world maps work with the D-pad.** In a "Select place to go" menu, Up and Down move through the
   places, Left and Right switch tabs, and A goes there. Touch works as before.
 
+- **Quicker menus.** **Select** in the field jumps straight to the Save screen, and **Select** anywhere in
+  the menu goes straight back to the map. Menu screens and fades are much faster, and held keys repeat.
+
 - **Faster dialogue.** Hold **A** and text types three times as fast; you still press A again to turn the
   page. Hold **B** and it types as fast and turns the pages by itself.
 

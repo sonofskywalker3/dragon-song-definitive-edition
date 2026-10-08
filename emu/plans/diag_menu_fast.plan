@@ -1,0 +1,46 @@
+# Field menu with the 19-frame floor of transition states 0x4F/0x5B cut to 1 (RAM code poke), and the
+# menu's 30-frame fades cut to 10. Compare frame timeline with diag_menu_timing.
+include boot_from_save
+wait 250
+poke u32 0x02061CAC 0xE3500001
+poke u32 0x02061E2C 0xE3500001
+poke u32 0x02061E54 0xE3A0200A
+poke u32 0x0205A23C 0xE3A0200A
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+watch u8 0x02139F40 cursor
+press X 3
+wait 15
+shot fs_x15
+wait 15
+shot fs_x30
+wait 60
+shot fs_top
+press A 3
+wait 5
+shot fs_a5
+wait 10
+shot fs_a15
+wait 55
+shot fs_status
+press B 3
+wait 5
+shot fs_b5
+wait 10
+shot fs_b15
+wait 55
+shot fs_top2
+press Right 3
+wait 10
+press A 3
+wait 10
+shot fs_sub_10
+wait 60
+shot fs_sub
+press B 3
+wait 70
+press B 3
+wait 10
+shot fs_out10
+wait 90
+shot fs_field

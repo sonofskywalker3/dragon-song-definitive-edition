@@ -342,14 +342,14 @@ A held and then waits; with B held each page turns 9 frames after it ends.
 None of these is started. Each needs research first (find the code with the decomp in build/arm9_decomp_annot.c
 and the emulator plans), then a feature module, a test plan, a status.md row and README mention.
 
-1. **Start info screen is out of date.** Start in the field brings up an info screen; update its text to match
+1. **(Researched 2026-10-08, docs/re-field-menu.md: two picture pages in pack.dat, text drawn in) Start info screen is out of date.** Start in the field brings up an info screen; update its text to match
    what the hack changed (one battle mode with EXP and silver, running, held L+R to flee, target picking, speeds,
    and so on). Find which archive and message the screen shows first.
-2. **Select opens the save menu.** Select does nothing in the field now (vanilla used it in battle to flee; that
+2. **(Done 2026-10-08, `field-menu`; docs/re-field-menu.md) Select opens the save menu.** Select does nothing in the field now (vanilla used it in battle to flee; that
    moved to held L+R, feat_battle_run.py). Make Select in the field open the menu straight at Save.
-3. **Select closes the menu.** Anywhere in the field menu, Select goes straight back to the map instead of pressing
+3. **(Done 2026-10-08, `field-menu`) Select closes the menu.** Anywhere in the field menu, Select goes straight back to the map instead of pressing
    B back through each layer.
-4. **Faster menus.** Menu navigation drags: look at window open/close and slide animations, cursor repeat delay
+4. **(Done 2026-10-08, `field-menu`: first input 72 -> 37 frames, screen change 42 -> 11, back 41 -> 10) Faster menus.** Menu navigation drags: look at window open/close and slide animations, cursor repeat delay
    and page transitions in the field menu, and cut or speed them up.
 5. **(Done 2026-10-08, in `walk-speed`: slope regions used a 0.65 step on a path that also skipped the x1.5, so
    walking fell from 1.5 to 0.65 px a frame; `diag_ramp_speed`, map 6 slope: 1.5 walking, 3.0 running, as flat)

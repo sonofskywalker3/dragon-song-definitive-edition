@@ -1,0 +1,14 @@
+# Does writing the top-menu cursor byte (0x02139F40) then pressing A pick that entry?
+include boot_from_save
+wait 250
+watch u32 0x020B0010 state
+watch u8 0x02139F40 cursor
+watch u32 0x02139F44 keymode
+press X 3
+wait 90
+poke u8 0x02139F40 8
+wait 1
+shot cp_poked
+press A 3
+wait 70
+shot cp_after

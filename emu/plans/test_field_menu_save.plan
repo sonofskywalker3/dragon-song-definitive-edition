@@ -1,0 +1,18 @@
+# Select-to-Save (feat_field_menu.py) really saves: Select, then A on album No.1 and A through the prompts.
+include boot_from_save
+wait 250
+watch u32 0x020B0010 state
+press Select 3
+wait 100
+press A 3
+wait 40
+shot fsave_1
+press A 3
+wait 60
+shot fsave_2
+press A 3
+wait 120
+shot fsave_3
+press A 3
+wait 60
+shot fsave_4

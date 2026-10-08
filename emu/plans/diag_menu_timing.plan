@@ -1,0 +1,71 @@
+# Vanilla timings of the field menu: every screen, fade callers (exec 0x02018cbc logs LR), key repeat.
+include boot_from_save
+wait 250
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+watch u8 0x02139F40 cursor
+watch u8 0x02139F5A rep
+exec 0x02018CBC fade
+press X 3
+wait 90
+shot tm_top
+# key repeat: hold Right 60 frames
+hold Right
+wait 60
+release
+wait 30
+# back to Status (cursor 0)
+hold Left
+wait 60
+release
+wait 30
+# Status, then each sub screen and back
+press A 3
+wait 70
+shot tm_status
+press B 3
+wait 70
+press Down 3
+wait 20
+press A 3
+wait 70
+shot tm_sub2
+press B 3
+wait 70
+press Right 3
+wait 20
+press A 3
+wait 70
+shot tm_sub3
+press B 3
+wait 70
+press Down 3
+wait 20
+press A 3
+wait 70
+shot tm_sub4
+press B 3
+wait 70
+press Right 3
+wait 20
+press Right 3
+wait 20
+press Right 3
+wait 20
+press A 3
+wait 70
+shot tm_system
+press Down 3
+wait 20
+shot tm_system_d
+press A 3
+wait 90
+shot tm_save
+press B 3
+wait 70
+shot tm_save_b
+press B 3
+wait 70
+press B 3
+wait 120
+shot tm_field

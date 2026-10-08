@@ -1,0 +1,28 @@
+# Prototype ROM + the transition/fade cuts of diag_menu_fast2 (RAM pokes): frames from Select to the
+# save slot screen, and from Select (inside Status) back to the field.
+include boot_from_save
+wait 250
+poke u32 0x02061C84 0xE1A00000
+poke u32 0x02061CA0 0xE1A00000
+poke u32 0x02061E20 0xE1A00000
+poke u32 0x02061CAC 0xE3500006
+poke u32 0x02061E2C 0xE3500006
+poke u32 0x02061E54 0xE3A0200A
+poke u32 0x0205A23C 0xE3A0200A
+poke u32 0x02021468 0xE3A0200A
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+press Select 3
+wait 100
+shot sf_save
+press Select 3
+wait 100
+shot sf_field
+press X 3
+wait 60
+press A 3
+wait 40
+shot sf_status
+press Select 3
+wait 100
+shot sf_field2
