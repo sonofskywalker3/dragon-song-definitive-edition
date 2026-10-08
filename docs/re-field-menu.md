@@ -24,9 +24,11 @@
   (`func_020591a4`): 29 frames, then every frame.
 
 `field-menu` (feat_field_menu.py), measured (`test_field_menu`, `test_field_menu_save`):
-- Select in the field opens the menu and presses A on System and on Save: the slot screen in 72 frames; A, A
-  saves ("Save complete").
-- Select in the menu presses B every frame until the exit fade: Status to field control in 72 frames. On the
+- Select in the field opens the save screen: behind a black screen it presses A on System and on Save with
+  screen changes instant (Jeff, 2026-10-08: skip the picking, do not show it), the save screen in 47 frames;
+  A, A saves ("Save complete"); B goes back to the System list.
+- Select in the menu presses B every frame, behind a black screen and with screen changes instant, until the
+  menu exits; the screen stays black until the field fades in. The field clears the flags every frame. On the
   "saved" message (state 0x42, A only) and the 240-frame message (0x50) it waits for them to end.
 - Screen waits 19 -> 6 frames and no animation wait; fades 30 -> 10; key repeat 12, then every 4. First input
   after X 37 frames (was 72), Status 11 (42), back about 10 (41). Not checked: Magic, the grey-box entry,

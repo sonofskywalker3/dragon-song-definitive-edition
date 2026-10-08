@@ -48,8 +48,9 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Town and world maps work with the D-pad.** In a "Select place to go" menu, Up and Down move through the
   places, Left and Right switch tabs, and A goes there. Touch works as before.
 
-- **Quicker menus.** **Select** in the field jumps straight to the Save screen, and **Select** anywhere in
-  the menu goes straight back to the map. Menu screens and fades are much faster, and held keys repeat.
+- **Quicker menus.** **Select** in the field opens the Save screen directly (B still goes back to the
+  System menu), and **Select** anywhere in the menu drops straight back to the map. Menu screens and fades
+  are much faster, and held keys repeat.
 
 - **The Adventure Guidebook (Start) is up to date**: running, saving with Select, battles, speeds,
   enemies, and the blue chest, in the book's own lettering.
