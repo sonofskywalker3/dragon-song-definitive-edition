@@ -1,0 +1,37 @@
+# System menu selection brackets (vanilla research for the place-menu brackets): X, Right to System, A, then
+# Down through the System list; shots and OAM / display register dumps at each step.
+# Run on the vanilla ROM with --save; saves state 'sys' for diag_sys_brackets2.
+include boot_from_save
+wait 250
+press X 3
+wait 90
+shot sb_top
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+peek u8 0x02139F40 cursor
+shot sb_top_sys
+press A 3
+wait 60
+shot sb_sys0
+peek u32 0x04000000 dispcnt_a
+peek u32 0x04001000 dispcnt_b
+peek u16 0x04000304 powcnt
+dump 0x07000000 1024 oam_a
+dump 0x07000400 1024 oam_b
+press Down 3
+wait 30
+shot sb_sys1
+dump 0x07000000 1024 oam_a1
+dump 0x07000400 1024 oam_b1
+press Down 3
+wait 30
+shot sb_sys2
+dump 0x07000000 1024 oam_a2
+dump 0x07000400 1024 oam_b2
+save sys

@@ -24,7 +24,8 @@ the design are in [docs/design.md](docs/design.md).
 - **The Underground Tunnel save glitch is fixed.** Talking to Flora twice there no longer locks out saving.
 - **Town and world map menus work with the D-pad.** In a "Select place to go" menu, Up and Down pick a place,
   Left and Right switch tabs, and A goes there. Touch works as before, and the D-pad no longer drags the map
-  icon around.
+  icon around. The chosen place is framed by the same corner brackets as the selected option in the
+  System menu.
 
 ## Menus and text
 
@@ -139,6 +140,10 @@ the design are in [docs/design.md](docs/design.md).
 - A crash when an enemy was killed by a counterattack during its own attack (v0.1.3).
 
 ## Version history
+
+### Unreleased
+
+- Town and world map menus frame the chosen place with the System menu's corner brackets.
 
 ### v0.1.3 (2026-10-08)
 

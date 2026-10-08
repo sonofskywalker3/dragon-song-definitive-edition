@@ -1,0 +1,16 @@
+# Town place menu sprites (research for the selection brackets): from state 'town', walk out to the Port
+# Searis menu, log the sprite submits for one frame and dump OAM and the display registers.
+load town
+press Down 60
+wait 150
+shot tb_menu
+peek u32 0x04000000 dispcnt_a
+peek u32 0x04001000 dispcnt_b
+peek u16 0x04000304 powcnt
+dump 0x07000000 1024 oam_a
+dump 0x07000400 1024 oam_b
+dump 0x020B8C2C 0x50 menu
+save townmenu
+exec 0x0201B898 submit898
+exec 0x020276FC buttons
+wait 1

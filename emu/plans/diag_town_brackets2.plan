@@ -1,0 +1,5 @@
+# Town place menu row buttons (from state 'townmenu'): dump the button list 0x020B7F28 (masks, buttons 0..12).
+load townmenu
+wait 1
+dump 0x020B7F28 0x270 btn
+peek u32 0x020B0010 state
