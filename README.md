@@ -16,22 +16,22 @@ is gone.
   <tr>
     <th width="33%">Running costs no HP</th>
     <th width="33%">Experience, silver, and items from every battle</th>
-    <th width="33%">Select goes straight to Save</th>
+    <th width="33%">Select goes straight to Save, and exits the menu from any screen</th>
   </tr>
   <tr>
     <td><img src="docs/screenshots/running.gif" alt="Jian walks, then runs through a mine; the party's HP stays the same" width="256"></td>
     <td><img src="docs/screenshots/rewards.gif" alt="Victory screen counts up EXP and silver, then lists the items received" width="256"></td>
-    <td><img src="docs/screenshots/select-save.gif" alt="Select opens the Save screen from the field" width="256"></td>
+    <td><img src="docs/screenshots/select-save.gif" alt="Select opens the Save screen from the field, and Select again goes back to the map" width="256"></td>
   </tr>
   <tr>
     <th>Pick your own targets</th>
-    <th>Run with L+R, no microphone</th>
-    <th>Town and world map menus on the D-pad</th>
+    <th>Navigate towns and the world map with the D-pad</th>
+    <th></th>
   </tr>
   <tr>
     <td><img src="docs/screenshots/battle-target-picker.png" alt="Enemy picker in battle, corners on the enemy" width="256"></td>
-    <td><img src="docs/screenshots/battle-run-sign.png" alt="Battle sign reads L+R" width="256"></td>
     <td><img src="docs/screenshots/town-menu-dpad.gif" alt="Picking a place in town with the D-pad" width="256"></td>
+    <td></td>
   </tr>
 </table>
 
