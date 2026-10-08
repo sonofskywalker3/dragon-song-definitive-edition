@@ -55,7 +55,8 @@ PANELS = (
     PanelText(
         TOWNS_TOP,
         0,
-        "Hold the B Button to dash for about 3 seconds, then catch your breath. Running costs no HP.",
+        "Hold the B Button to dash for about 3 seconds, then catch your breath. Running costs no HP. "
+        "Once the pocketwatch closes, run freely.",
     ),
     PanelText(
         TOWNS_BOTTOM,
