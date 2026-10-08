@@ -51,6 +51,9 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Quicker menus.** **Select** in the field jumps straight to the Save screen, and **Select** anywhere in
   the menu goes straight back to the map. Menu screens and fades are much faster, and held keys repeat.
 
+- **The Adventure Guidebook (Start) is up to date**: running, saving with Select, battles, speeds,
+  enemies, and the blue chest, in the book's own lettering.
+
 - **Faster dialogue.** Hold **A** and text types three times as fast; you still press A again to turn the
   page. Hold **B** and it types as fast and turns the pages by itself.
 

@@ -14,6 +14,7 @@ from dsde.feat_curse import NO_CURSE_PENALTY
 from dsde.feat_experience_name import EXPERIENCE_NAME
 from dsde.feat_field_menu import FIELD_MENU
 from dsde.feat_gad import GAD_EXPRESS
+from dsde.feat_guidebook import GUIDEBOOK
 from dsde.feat_mic_sign import MIC_SIGN
 from dsde.feat_mp import MP_ECONOMY
 from dsde.feat_opening import OPENING
@@ -281,6 +282,7 @@ FEATURES: tuple[Feature, ...] = (
     TITLE_SEAL,
     TOWN_MENU,
     FIELD_MENU,
+    GUIDEBOOK,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -313,4 +315,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     TITLE_SEAL.name,
     TOWN_MENU.name,
     FIELD_MENU.name,
+    GUIDEBOOK.name,
 )

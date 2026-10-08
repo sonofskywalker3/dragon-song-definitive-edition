@@ -32,7 +32,7 @@
   after X 37 frames (was 72), Status 11 (42), back about 10 (41). Not checked: Magic, the grey-box entry,
   Message Speed, Music Hall. The menu load (about 22) and field reload (about 41) remain.
 
-## Start: the Adventure Guidebook (not changed yet)
+## Start: the Adventure Guidebook (`guidebook`, 2026-10-08)
 
 Script 027 (`build/unpacked/script/027.bin`) shows one page and closes on A, B or touch. Op 0x32 sub 0x31 tests the
 map id (0x020B6BE4) < 0x97: towns (0x97 and up) show the Towns page, lower maps the Fields page. The pages are
@@ -58,3 +58,11 @@ restock on entry, Experience). Heal, Save and Equip still hold. Plan: redraw the
 bitmaps at build time (DataPatch of pack entries 0xAB/0xAC/0xAE/0xAF), keeping the panels and using existing
 palette indexes; glyphs cut from the vanilla bitmaps or the dialogue font. The Blue Boxes panel becomes
 "Blue Chest" (Jeff: singular). Draft panel texts are in the session notes of 2026-10-08 (playtest-feedback item 20.1).
+
+Built (feat_guidebook.py, guidebook_font.py, guidebook_pages.py): the body letters are cut from the vanilla lines
+whose pieces match their characters one to one (lines sit at whole-row offsets, found from their ink profiles);
+E, F, H, N, O, T, j, 3, comma, parentheses, and + are drawn by hand in the same style. Changed lines are wiped
+to the paper colour of each row and the new text wrapped over the same ruled lines (letter gap 1, word gap 6,
+text no further right than column 117, as vanilla). Headings are white letters with a 2-pixel black outline, as
+vanilla (the outlines merge into the pill look). Changed: Towns Run (all), Save (from "save." on); Fields all four
+panels and headings (Battles, Speed, Enemies, Blue Chest). `test_guidebook`: both pages in game.

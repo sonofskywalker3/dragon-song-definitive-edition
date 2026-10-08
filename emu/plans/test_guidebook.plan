@@ -1,0 +1,16 @@
+# Adventure Guidebook (feat_guidebook.py): Start in Jian's room shows the Towns page; B closes it; then the
+# Delrich Temple (map 6, via diag_ramp_warp6, no battle on arrival) shows the Fields page.
+include boot_from_save
+wait 250
+press Start 3
+wait 90
+shot gb_towns
+press B 3
+wait 90
+include diag_ramp_warp6
+wait 120
+press Start 3
+wait 90
+shot gb_fields
+press B 3
+wait 60
