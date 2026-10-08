@@ -1,0 +1,37 @@
+# Start in the field: what the info screen shows, page by page; mode/state timeline.
+include boot_from_save
+wait 250
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+shot st_field
+press Start 3
+wait 30
+shot st_30
+wait 60
+shot st_90
+wait 90
+shot st_180
+press A 3
+wait 60
+shot st_a1
+press A 3
+wait 60
+shot st_a2
+press A 3
+wait 60
+shot st_a3
+press A 3
+wait 60
+shot st_a4
+press A 3
+wait 60
+shot st_a5
+press A 3
+wait 60
+shot st_a6
+press B 3
+wait 60
+shot st_b
+press A 3
+wait 120
+shot st_end

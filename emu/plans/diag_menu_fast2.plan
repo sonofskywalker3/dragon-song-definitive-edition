@@ -1,0 +1,69 @@
+# Field menu with the transition states 0x4F/0x5B no longer waiting for the icon/tab animations
+# (bne -> nop) and a 4-frame floor; all three 30-frame menu fades cut to 10. Look for glitches.
+include boot_from_save
+wait 250
+poke u32 0x02061C84 0xE1A00000
+poke u32 0x02061CA0 0xE1A00000
+poke u32 0x02061E20 0xE1A00000
+poke u32 0x02061CAC 0xE3500004
+poke u32 0x02061E2C 0xE3500004
+poke u32 0x02061E54 0xE3A0200A
+poke u32 0x0205A23C 0xE3A0200A
+poke u32 0x02021468 0xE3A0200A
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+watch u8 0x02139F40 cursor
+press X 3
+wait 60
+shot f2_top
+press A 3
+wait 4
+shot f2_a4
+wait 6
+shot f2_a10
+wait 50
+shot f2_status
+press B 3
+wait 6
+shot f2_b6
+wait 50
+shot f2_top2
+press Down 3
+wait 10
+press Down 3
+wait 10
+press A 3
+wait 8
+shot f2_items8
+wait 50
+shot f2_items
+press B 3
+wait 60
+press Right 3
+wait 10
+press Down 3
+wait 10
+shot f2_sys_cursor
+press A 3
+wait 8
+shot f2_sys8
+wait 50
+shot f2_sys
+press Down 3
+wait 10
+press A 3
+wait 8
+shot f2_save8
+wait 50
+shot f2_save
+press B 3
+wait 50
+shot f2_save_b
+press B 3
+wait 50
+shot f2_sys_b
+press B 3
+wait 8
+shot f2_exit8
+wait 60
+shot f2_field

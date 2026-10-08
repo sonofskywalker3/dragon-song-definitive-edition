@@ -1,0 +1,27 @@
+# Field menu (feat_field_menu.py): Select in the field opens the menu at the save slot screen (menu state 0x3D);
+# Select there goes back to the field (mode 1); X, A opens Status, Select goes back to the field; X opens the
+# menu and B closes it as before. Logs the mode (0x020B000C: 1 field, 5 menu) and state (0x020B0010).
+include boot_from_save
+wait 250
+watch u32 0x020B000C mode
+watch u32 0x020B0010 state
+press Select 3
+wait 100
+shot fmenu_save
+press Select 3
+wait 100
+shot fmenu_field
+press X 3
+wait 60
+press A 3
+wait 40
+shot fmenu_status
+press Select 3
+wait 100
+shot fmenu_field2
+press X 3
+wait 60
+shot fmenu_top
+press B 3
+wait 80
+shot fmenu_field3
