@@ -342,7 +342,8 @@ A held and then waits; with B held each page turns 9 frames after it ends.
 None of these is started. Each needs research first (find the code with the decomp in build/arm9_decomp_annot.c
 and the emulator plans), then a feature module, a test plan, a status.md row and README mention.
 
-1. **(Researched 2026-10-08, docs/re-field-menu.md: two picture pages in pack.dat, text drawn in) Start info screen is out of date.** Start in the field brings up an info screen; update its text to match
+1. **(Done 2026-10-08, `guidebook`: Run, Save, and the whole Fields page redrawn with the guidebook's own letters;
+   `test_guidebook`) Start info screen is out of date.** Start in the field brings up an info screen; update its text to match
    what the hack changed (one battle mode with EXP and silver, running, held L+R to flee, target picking, speeds,
    and so on). Find which archive and message the screen shows first.
    Draft panel texts (Jeff, 2026-10-08; Oxford comma, lowercase "experience", singular "blue chest"):
