@@ -1,0 +1,31 @@
+# Select in the field, frame by frame from the press (feat_menu_shortcuts.py): no Menu button animation.
+include boot_from_save
+wait 250
+watch u32 0x020B0010 state
+press Select 2
+shot fp_1
+wait 1
+shot fp_2
+wait 1
+shot fp_3
+wait 1
+shot fp_4
+wait 1
+shot fp_5
+wait 1
+shot fp_6
+wait 1
+shot fp_7
+wait 1
+shot fp_8
+wait 1
+shot fp_9
+wait 1
+shot fp_10
+wait 1
+shot fp_11
+wait 1
+shot fp_12
+wait 1
+wait 80
+shot fp_end

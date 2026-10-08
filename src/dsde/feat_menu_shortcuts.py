@@ -1,6 +1,7 @@
 """Select shortcuts in and out of the field menu (Jeff, 2026-10-08), jumping straight there, no keys pressed.
 
-- Select in the field opens the menu straight at the save screen. The menu loads as for X; its first screen
+- Select in the field opens the menu straight at the save screen. The field fades out and the menu loads as
+  for X, without X's select sound and Menu button animation; its first screen
   change, from loading to the top menu (state 0x4F towards 3), is sent to the System setup (0x33) instead, as
   picking System would; once that has set up the screen (state 0x34, before the System list shows), the next
   screen change goes to the save screen's setup (0x3B) with what picking Save sets: the save flag 0x02139EF4, the
@@ -45,6 +46,7 @@ FIRST_ENTRY = (
 PAD_NEW = 6
 KEY_SELECT = 0x4
 KEY_X = 0x400
+FIELD_TO_MENU = 0xA6  # field state: fade out, then the menu (what X goes to after its button animation)
 STATE_LOAD = 0  # the menu's first state: loads it and allocates its buffer
 STATE_TOP = 3
 STATE_CHANGE = 0x4F
@@ -71,24 +73,35 @@ STAGE_WAITING = 1  # menu loading: its first screen change goes to the System se
 STAGE_SYSTEM = 2  # System set up: switch to the save screen as picking Save does, before the list shows
 STAGE_ARRIVING = 3
 
-# Replaces `ands r1, r7, #0x400` (r7 = new keys) every field frame: sets the flags for this frame's key (none:
-# cleared, so a menu opened by touch never inherits a shortcut) and leaves Z clear when X or Select opens the menu.
+# Replaces `ands r1, r7, #0x400` (r7 = new keys) every field frame; Z clear means X opens the menu (with the
+# select sound and the touch-screen Menu button's press animation). Select instead goes to the field's fade into
+# the menu (FIELD_TO_MENU) itself and answers "not opening", so neither plays. The flags are set for this frame's
+# key (none: cleared, so a menu opened by touch never inherits a shortcut).
 FIELD_ASM = f"""
     push  {{r0}}
     ldr   r1, fs_flags
     mov   r0, #0
-    tst   r7, #{KEY_SELECT:#x}
-    movne r0, #{OPEN_START:#x}
     tst   r7, #{KEY_X:#x}
-    movne r0, #0
+    bne   fs_store
+    tst   r7, #{KEY_SELECT:#x}
+    beq   fs_store
+    mov   r0, #{OPEN_START:#x}
+    str   r0, [r1]
+    ldr   r1, fs_mode
+    mov   r0, #{FIELD_TO_MENU:#x}
+    str   r0, [r1, #{MODE_STATE_OFFSET:#x}]
+    pop   {{r0}}
+    ands  r1, r7, #{KEY_X:#x}
+    bx    lr
+fs_store:
     str   r0, [r1]
     pop   {{r0}}
     ands  r1, r7, #{KEY_X:#x}
-    bxne  lr
-    ands  r1, r7, #{KEY_SELECT:#x}
     bx    lr
 fs_flags:
     .word ${{cave_menu_flags}}
+fs_mode:
+    .word {MODE_STATES:#x}
 """
 
 # Replaces `bl func_0201a3b8` at the menu's entry, every menu frame. r0 = pad.
