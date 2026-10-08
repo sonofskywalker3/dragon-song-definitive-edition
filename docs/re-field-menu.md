@@ -56,4 +56,5 @@ Current text (line breaks at the ruled lines, original spelling):
 Out of date: Run (no HP cost, timed run) and the whole Fields page (one battle mode, no clock, no clear refill,
 restock on entry, Experience). Heal, Save and Equip still hold. Plan: redraw the ruled-line text into the vanilla
 bitmaps at build time (DataPatch of pack entries 0xAB/0xAC/0xAE/0xAF), keeping the panels and using existing
-palette indexes; glyphs cut from the vanilla bitmaps or the dialogue font.
+palette indexes; glyphs cut from the vanilla bitmaps or the dialogue font. The Blue Boxes panel becomes
+"Blue Chests" (Jeff: it's blue chest).
