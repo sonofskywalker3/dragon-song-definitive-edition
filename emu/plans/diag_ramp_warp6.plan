@@ -1,0 +1,18 @@
+# Diagnostic (ramp slowdown): warp from Jian's room to map 6 (Delrich Temple) with its enemy symbols
+# (objects 2..6) held at the far spot (312,544) so no battle starts. Jian is left where the door puts him.
+pin u32 0x020B705C 0x220000
+pin u32 0x020B7058 0x138000
+pin u32 0x020B709C 0x220000
+pin u32 0x020B7098 0x138000
+pin u32 0x020B70DC 0x220000
+pin u32 0x020B70D8 0x138000
+pin u32 0x020B711C 0x220000
+pin u32 0x020B7118 0x138000
+pin u32 0x020B715C 0x220000
+pin u32 0x020B7158 0x138000
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200

@@ -1,0 +1,29 @@
+# Diagnostic (ramp slowdown): stand on map 6's slope region (centre 603,345, angle 320) and look around
+include boot_from_save
+include diag_ramp_warp6
+peek u16 0x020B6BE4 map
+peek u32 0x020B6CB4 xArrive
+peek u32 0x020B6CB8 yArrive
+shot arrive
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 60
+shot ramp_centre
+exec 0x02024D84 slope
+exec 0x02024F14 scaled
+watch u32 0x020B6CB4 x
+watch u32 0x020B6CB8 y
+press Up 8
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 2
+press Down 8
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 2
+press Left 8
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 2
+press Right 8
+shot after

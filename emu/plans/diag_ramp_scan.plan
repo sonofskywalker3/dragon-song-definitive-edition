@@ -1,0 +1,22 @@
+# Diagnostic (ramp slowdown): log slope regions on map 163 and the Inn hall (map 160)
+include boot_from_save
+wait 10
+peek u16 0x020B6BE4 map
+peek u32 0x020B6C20 nregions
+peek u32 0x020B6C24 regions
+exec 0x02024D84 slope
+exec 0x02024E28 type3
+exec 0x02024F14 scaled
+pin u16 0x020B77EC 160
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+peek u32 0x020B6C20 nregions
+peek u32 0x020B6C24 regions
+peek u32 0x020B6CB4 x
+peek u32 0x020B6CB8 y
+shot hall

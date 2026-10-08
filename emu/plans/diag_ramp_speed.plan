@@ -1,0 +1,47 @@
+# Ramp slowdown test. Map 6 (Delrich Temple) slope region 1 of 5: type 1, angle 320, centre (603,345),
+# half extents about 14 x 16 px. Logs the per-frame position (20.12 fixed, 0x1000 = 1 px) while walking
+# 8 frames each way from the centre, after a flat-ground baseline at (540,345).
+# exec "slope" = slope region found under the player (0x02024D84); exec "scaled" = the step took the
+# speed-table path (0x02024F14, r6 = speed index, table 0x0209E034: 1.0, 0.65, 0.6, 0.6).
+# Before the fix (build with walk x1.5): flat 0x1800/frame (1.5 px), slope 0xA66/frame (0.65 px).
+include boot_from_save
+include diag_ramp_warp6
+peek u16 0x020B6BE4 map
+# flat baseline
+poke u32 0x020B6CB4 0x21C000
+poke u32 0x020B6CB8 0x159000
+wait 60
+shot flat
+exec 0x02024D84 slope
+exec 0x02024F14 scaled
+watch u32 0x020B6CB4 x
+watch u32 0x020B6CB8 y
+press Right 8
+# on the slope, centre (603,345)
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 120
+shot ramp
+press Up 8
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 2
+press Down 8
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 2
+press Left 8
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 2
+press Right 8
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 2
+press Up,Right 8
+poke u32 0x020B6CB4 0x25B000
+poke u32 0x020B6CB8 0x159000
+wait 2
+# running on the slope (hold B)
+press Right,B 8
+shot after

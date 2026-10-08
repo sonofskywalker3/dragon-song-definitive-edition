@@ -1,0 +1,7 @@
+# Diagnostic (ramp slowdown): dump map 6's region list and show where Jian lands
+include boot_from_save
+include warp6
+peek u32 0x020B6C20 nregions
+peek u32 0x020B6C24 regions
+dump 0x021D6B34 80 regions
+shot temple
