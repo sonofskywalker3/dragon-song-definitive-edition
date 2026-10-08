@@ -5,7 +5,6 @@ New costs change only what casting takes (func_0206aabc, which also applies the 
 reductions): spells are learned by level (feat_spell_levels.py), not when max MP reaches the cost.
 """
 
-
 from dsde.patching import ARM_NOP, AsmPatch, CaveCode, Feature, Patch
 
 
