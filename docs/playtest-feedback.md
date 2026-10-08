@@ -288,3 +288,9 @@ unchanged; the overworld hubs keep their free D-pad cursor. (The DS has no stick
 games as the D-pad, so the map cursor stays on the stylus in towns.) `test_town_dpad`: Down, Down, Right, Right,
 Left, Up give Inn 1F -> Restaurant -> Jose's house -> Loto Pier -> Item Shop -> Loto Pier -> Fountain Square,
 holding Down moves one row, A goes to the place (map 165); `test_town_touch`: a row tap and YES still work.
+
+## 16. Gad and the first package (Open, after v0.1.3; Jeff 2026-10-07)
+
+Gad should be properly angry that Jian is hours late. Compare his lines with the Japanese (`python -m dsde.jp_text`)
+and rewrite the package pickup scene. Drop the Gad's Express job-picking interface for this first delivery: Gad just
+hands over the package.
