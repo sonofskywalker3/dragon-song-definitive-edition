@@ -294,3 +294,14 @@ holding Down moves one row, A goes to the place (map 165); `test_town_touch`: a 
 Gad should be properly angry that Jian is hours late. Compare his lines with the Japanese (`python -m dsde.jp_text`)
 and rewrite the package pickup scene. Drop the Gad's Express job-picking interface for this first delivery: Gad just
 hands over the package.
+
+## 17. Slow enemy attack animations (Open, Jeff 2026-10-07)
+
+On the 3DS, Jian's attacks feel good but being attacked is slow. The Ice Mongrel (Thieves' Woods) hops forward four
+times, attacks, then hops back four times. The battle-pace work sped up the party's moves, kills and camera, not
+the enemies' own action scripts. To do: survey every enemy's attack animation (action script steps: hops, approach,
+return) and speed up or shorten the slow ones on Fast/Fastest, e.g. faster movement steps or fewer hops.
+
+Also from the same session: in Thieves' Woods (one enemy front, one back) Fight attacked at once without the picker.
+That is by design: Jian and Lucia reach the front row only, and with one valid target the attack confirms. Jeff may
+prefer the picker to show anyway.
