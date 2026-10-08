@@ -19,7 +19,7 @@ is gone.
     <th width="33%">Select goes straight to Save, and exits the menu from any screen</th>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/running.gif" alt="Jian walks, then runs through a mine; the party's HP stays the same" width="256"></td>
+    <td><img src="docs/screenshots/running.gif" alt="Jian walks, then runs through the Thieves' Woods; the party's HP stays the same" width="256"></td>
     <td><img src="docs/screenshots/rewards.gif" alt="Victory screen counts up EXP and silver, then lists the items received" width="256"></td>
     <td><img src="docs/screenshots/select-save.gif" alt="Select opens the Save screen from the field, and Select again goes back to the map" width="256"></td>
   </tr>
