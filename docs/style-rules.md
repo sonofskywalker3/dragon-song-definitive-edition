@@ -104,6 +104,8 @@ Dragon Song's USA text does the same (173 to 9).
 - Stammering uses a hyphen ("I-I hear music") at most once per scene, and only once the encoder writes
   "-" (section 5).
 - "OK", not "okay" (Dragon Song uses "OK" 111 times and "okay" never).
+- Oxford comma in every list of three or more: "Experience, items, and silver" (Jeff, 2026-10-08). This
+  covers game text, the guidebook pages, the README, and release notes.
 - Exclamation budget per page (sentences ending in "!"; a "?!" counts as a question), by character: Flora and Lucia (excited) 3; Jian, Gabryel, Gad, Cherenkov 2;
   Rufus 1; Zethos, the Dragons and priests 1. Measured for comparison, per 100 words: Ruby 11, Hiro 6 to
   7, EBC Lucia 2, Ghaleon 3.
@@ -115,7 +117,7 @@ Dragon Song's USA text does the same (173 to 9).
 - A sentence is at most 2 lines (about 12 words).
 - A page is at most 4 lines (hard limit 5, section 5.2). Dragon Song's median page is 13 words.
 - Length follows the character. PS1 medians per speech: Alex 3 words, Hiro 7, Ruby 13, Ronfar 16, Leo 24.
-  Here: Jian and Rufus short (1 to 2 lines per page usually), Lucia, Gabryel and Flora medium, Gad and
+  Here: Jian and Rufus short (1 to 2 lines per page usually), Lucia, Gabryel, and Flora medium, Gad and
   Cherenkov 2 to 3 lines at most.
 - A long speech (a lore explanation, a confession) is split into pages of one idea each, and after 3 pages
   someone else gets a line, even if it is only "..." or a question.

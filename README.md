@@ -1,7 +1,7 @@
 # Dragon Song: Definitive Edition
 
 **A fan patch that fixes "the worst RPG ever made."** Running no longer costs HP, every battle gives EXP,
-items and silver, you pick your own targets, battles are faster, spells cost less MP, and the microphone
+items, and silver, you pick your own targets, battles are faster, spells cost less MP, and the microphone
 is gone.
 
 **[Download the latest patch](../../releases/latest)** (a `.bps` file; you need your own USA ROM, see
@@ -56,7 +56,7 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 
 ### Battles
 
-- **One battle mode.** The Combat / Virtue switch is gone: every battle gives EXP, items and silver, and the
+- **One battle mode.** The Combat / Virtue switch is gone: every battle gives EXP, items, and silver, and the
   Virtue clock is removed.
 - **Battles drop silver**, based on the EXP the battle gives. The victory screen counts the silver up next to
   the EXP, and a second page lists the items received.
@@ -75,14 +75,14 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 - **Leaving characters leave their gear behind** in the inventory, so it is not lost with them.
 - **No microphone.** Run from a battle by holding **L and R** together for half a second on the command
   screen (the battle sign says L+R). L and R no longer fast-forward.
-- **Battle speed:** tap **R** to cycle Normal (the original timing), **Fast** (the default) and Fastest.
-  Fast trims waits throughout a battle: quicker moves, kills, camera turns, intro and victory screens. The
+- **Battle speed:** tap **R** to cycle Normal (the original timing), **Fast** (the default), and Fastest.
+  Fast trims waits throughout a battle: quicker moves, kills, camera turns, and intro and victory screens. The
   first temple battle takes 25 seconds on Fast, against 32 with the original game's own fast-forward held
-  down and 38 without it. On Fast and Fastest, Lucia, Gabryel and Rufus attack faster, and the next
+  down and 38 without it. On Fast and Fastest, Lucia, Gabryel, and Rufus attack faster, and the next
   character no longer waits for a defeated enemy's sparkles to finish. Picking **Auto** switches to Fastest.
 - **Jian's curse no longer weakens his attack** (the story around the curse is still to be rewritten).
 
-### MP, items and shops
+### MP, items, and shops
 
 - **Spells cost about 40% of their old MP** (Healing Water 4 instead of 10, Tender Rain 12 instead of 30,
   and so on). Lucia (and later Flora) learns them by level, one every level or two, finishing with Miracle

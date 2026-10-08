@@ -159,7 +159,7 @@ PROLOGUE = MessageRewrite(
             "this world.",
             "",
             "The Beastmen: powerfully",
-            "built, stronger, faster and",
+            "built, stronger, faster, and",
             "hardier in every way...",
         ),
         (
