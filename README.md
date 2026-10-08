@@ -81,7 +81,8 @@ the state of every change, with how it was tested, is in [docs/status.md](docs/s
 ### MP, items and shops
 
 - **Spells cost about 40% of their old MP** (Healing Water 4 instead of 10, Tender Rain 12 instead of 30,
-  and so on), and they are still learned at exactly the same levels as before.
+  and so on). Lucia (and later Flora) learns them by level, one every level or two, finishing with Miracle
+  Tears at level 12, instead of getting six of them by level 5.
 - **Mental Gum restores 20 MP and Mental Drop 50 MP**, instead of a small share of max MP. Mental Gum costs
   1000 silver and is sold in every item shop from the third town on; Mental Drop is still a rare reward.
 

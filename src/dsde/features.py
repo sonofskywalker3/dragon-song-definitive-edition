@@ -17,6 +17,7 @@ from dsde.feat_opening import OPENING
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_run import NO_RUN_HP_COST, TIMED_RUN
+from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_FIXES
 from dsde.feat_text_speed import TEXT_SPEED
@@ -266,6 +267,7 @@ FEATURES: tuple[Feature, ...] = (
     BATTLE_PACE,
     KILL_ON_HIT,
     MP_ECONOMY,
+    SPELL_LEVELS_FEATURE,
     WALK_SPEED,
     GAD_EXPRESS,
     MIC_SIGN,
@@ -294,6 +296,7 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     BATTLE_PACE.name,
     KILL_ON_HIT.name,
     MP_ECONOMY.name,
+    SPELL_LEVELS_FEATURE.name,
     WALK_SPEED.name,
     GAD_EXPRESS.name,
     MIC_SIGN.name,

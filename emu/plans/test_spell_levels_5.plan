@@ -1,0 +1,22 @@
+# Spell levels (feat_spell_levels.py): Lucia at level 5 (index 4 at 0x020B46C0) opens Special in the first
+# temple battle; the list shows the spells learned by then. Run with --save.
+include party2_strong
+pin u32 0x020B46C0 4
+include warp6
+wait 270
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press A 3
+wait 30
+press Right 3
+wait 20
+press A 3
+wait 40
+shot spells_lv5
+press Down 3
+wait 20
+shot spells_lv5_down
