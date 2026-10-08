@@ -145,6 +145,11 @@ items (for example 0xE8 Dagon, 0xE9 Hellbird) in the battle Item menu under Card
 Jeff (follow-up): the "collection" cards (the ones with no battle use, only collected) should be given
 real uses. To find: which cards are collection-only and what effect slots the card system supports.
 
+Jeff (2026-10-08, replaces the refill idea if it works out): make cards a bit more common, but each card found is
+one use, and you stock them. Ideally drop the points (durability) altogether and track only the quantity, like any
+other item. Waiting: after the story work. To find as well: how the battle Item menu lists cards (one entry with
+points vs. a stack), where the drop rate is, and whether stackable cards fit the item record.
+
 ## 8. Multi-hit kills die at the end of the combo (Done, `kill-on-hit`)
 
 Jeff (2026-10-06): when Jian's 3-hit combo kills several enemies, they all die together after his last
@@ -390,3 +395,14 @@ and the emulator plans), then a feature module, a test plan, a status.md row and
     Tears, which she never gets). Check that a save made with spells already known does not break.
 
 Also still open: item 16 (Gad and the first package) and item 17 (slow enemy attack animations).
+
+## 21. HUD and field decisions (Jeff, 2026-10-08)
+
+- Leader portrait (the old Combat/Virtue switch, dead since `one-battle-mode`): leave it. It holds still now, so
+  nothing invites a tap, and a tap teaches you it does nothing.
+- Crystal and portrait keep the Combat look although battles use Virtue rules: fine. The crystal shows only while
+  the pocketwatch is open (blue gem; grey stone when closed), so it is a second "monsters left" sign.
+- Place selector: free movement (stylus drag, or a held button plus the D-pad) is **on hold** until players ask for
+  it.
+- Party chat lines that know the map, and Gad's first package (item 16): with the story work. Battle cards (item 7):
+  after that.
