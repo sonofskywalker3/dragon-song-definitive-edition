@@ -21,11 +21,14 @@ between battles. All four windows open, slide, and close together as in the orig
 comes from the silver-drops feature (cave_silver_gained), which sets it in func_02052fb8 right
 after the windows are opened and before their first draw.
 
-The amount counts up while the EXP pours into the member lines, like the EXP does. The battle round
-context keeps the EXP still to pay out at +0x148, set to twice the battle's pool (members get the
-doubled pool) at the same moment as the silver, and counted down as the EXP pours; the line shows the
-silver gained minus half of what is left, so it reaches the full amount when the pour ends (or at
-once when A skips it). The text routine runs every frame for an open window, so no extra hook."""
+Like the member lines, which show each character's total EXP counting up, the Silver line shows the
+silver carried, counting up from what the party had before the battle (Jeff, 2026-10-08: a gain
+counting up from 0 next to totals looked wrong). silver-drops has already added the battle's silver
+to the purse when the windows open. The battle round context keeps the EXP still to pay out at
++0x148, set to twice the battle's pool (members get the doubled pool) at the same moment as the
+silver, and counted down as the EXP pours; the line shows the purse minus half of what is left
+(at most the silver gained), so it reaches the purse when the pour ends (or at once when A skips
+it). The text routine runs every frame for an open window, so no extra hook."""
 
 from dsde.patching import AsmPatch, CaveCode
 
@@ -60,6 +63,7 @@ DRAW_STRING = 0x02045114
 DRAW_NUMBER = 0x02045208  # (target, right x, y, value, [sp] palette)
 ROUND_CTX_PTR = 0x020B8550  # pointer to the battle round context
 POOL_LEFT = 0x148  # round context: EXP still to pay out (twice the pool)
+PURSE = 0x020B4824  # u32 silver carried (features.SILVER)
 BLACK_PALETTE = 0  # the vanilla "Althena Conduct" label and every EXP amount
 NAME_X = 1
 NUMBER_X = 0x10
@@ -170,13 +174,18 @@ SILVER_TEXT_ASM = f"""
     bl    {DRAW_STRING:#x}
     mov   r0, #{BLACK_PALETTE}
     str   r0, [sp]
-    ldr   r3, silver_gained
-    ldr   r3, [r3]
     ldr   r1, round_ctx
     ldr   r1, [r1]
     ldr   r1, [r1, #{POOL_LEFT:#x}]
     add   r1, r1, #1
-    subs  r3, r3, r1, lsr #1
+    mov   r1, r1, lsr #1
+    ldr   r3, silver_gained
+    ldr   r3, [r3]
+    cmp   r1, r3
+    movhi r1, r3
+    ldr   r3, purse
+    ldr   r3, [r3]
+    subs  r3, r3, r1
     movlt r3, #0
     mov   r0, r6
     add   r1, r4, #{NUMBER_X}
@@ -186,6 +195,8 @@ SILVER_TEXT_ASM = f"""
     pop   {{r4, r5, r6, pc}}
 silver_gained:
     .word ${{cave_silver_gained}}
+purse:
+    .word {PURSE:#x}
 round_ctx:
     .word {ROUND_CTX_PTR:#x}
 silver_name:

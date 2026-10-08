@@ -48,8 +48,8 @@ the design are in [docs/design.md](docs/design.md).
 ### Rewards
 
 - **One battle mode.** The Combat / Virtue switch is gone: every battle gives experience, items, and silver.
-- **Battles drop silver**, as much as the battle's experience. The victory screen counts the silver up next to the
-  experience, and a second page lists the items received.
+- **Battles drop silver**, as much as the battle's experience. The victory screen counts your silver up from what you
+  carried, as it counts each character's experience up from their total, and a second page lists the items received.
 - **Bosses give experience** (in the original they gave almost none): about ten regular enemies' worth from the
   area they are fought in.
 - **Characters out of the party earn the same experience as the party**, including characters who have not
@@ -144,6 +144,7 @@ the design are in [docs/design.md](docs/design.md).
 ### Unreleased
 
 - Town and world map menus frame the chosen place with the System menu's corner brackets.
+- The victory screen's Silver line counts up from the silver you carried, like the experience lines.
 
 ### v0.1.3 (2026-10-08)
 

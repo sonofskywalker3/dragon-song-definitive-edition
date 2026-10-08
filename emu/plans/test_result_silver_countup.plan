@@ -1,5 +1,5 @@
 # Silver count-up on the EXP page (result-screens): screenshots every 40 frames while the EXP pours;
-# the Silver line must count up from 0 to 101 with the pour. Jian alone, first temple battle. Run with --save. 52 A presses win the first Delrich Temple battle (victory near frame 4260).
+# the Silver line counts the purse up by 101 with the pour (see test_result_purse_countup). Jian alone, first temple battle. Run with --save. 52 A presses win the first Delrich Temple battle (victory near frame 4260).
 watch u16 0x020B85C8 result_sub
 watch u32 0x020B4824 silver
 watch u32 0x020B4694 jian_exp32

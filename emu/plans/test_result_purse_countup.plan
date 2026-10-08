@@ -1,0 +1,133 @@
+# Silver line on the EXP page shows the purse counting up (result-screens): the purse is set to 1240 before
+# the first Delrich Temple battle (101 silver); with no A during the pour the line counts 1240 -> 1341. Run with --save.
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u32 0x01FF8344 silver_gained
+include boot_from_save
+include cheats_strong
+include warp6
+poke u32 0x020B4824 1240
+dump 0x0213B930 0x200 inv_before
+wait 300
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+wait 20
+shot cu_01
+wait 20
+shot cu_02
+wait 20
+shot cu_03
+wait 20
+shot cu_04
+wait 20
+shot cu_05
+wait 20
+shot cu_06
+wait 20
+shot cu_07
+wait 20
+shot cu_08
+wait 20
+shot cu_09
+wait 20
+shot cu_10
+wait 20
+shot cu_11
+wait 20
+shot cu_12
+wait 20
+shot cu_13
+wait 20
+shot cu_14
+wait 20
+shot cu_15
+wait 20
+shot cu_16
+wait 20
+shot cu_17
+wait 20
+shot cu_18
+wait 20
+shot cu_19
+wait 20
+shot cu_20
+wait 20
+shot cu_21
+wait 20
+shot cu_22
+wait 20
+shot cu_23
+wait 20
+shot cu_24
+press A 3
+wait 60
+shot r1_items
