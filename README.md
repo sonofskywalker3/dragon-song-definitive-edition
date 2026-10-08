@@ -7,23 +7,38 @@ is gone.
 **[Download the latest patch](../../releases/latest)** (a `.bps` file; you need your own USA ROM, see
 [How to play it](#how-to-play-it)).
 
+<p align="center">
+  <img src="docs/screenshots/battle-speeds.gif" alt="The same battle side by side on Normal, Fast, and Faster" width="776"><br>
+  <em>The same battle on each battle speed: Normal (the original timing), Fast (the default), and Faster.</em>
+</p>
+
 <table>
   <tr>
-    <th width="25%">New opening</th>
-    <th width="25%">Pick your own targets</th>
-    <th width="25%">Run with L+R, no microphone</th>
-    <th width="25%">Silver from every battle</th>
+    <th width="33%">Running costs no HP</th>
+    <th width="33%">Experience, silver, and items from every battle</th>
+    <th width="33%">Select goes straight to Save</th>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/opening-wakeup.png" alt="Cherenkov wakes Jian" width="200"></td>
-    <td><img src="docs/screenshots/battle-target-picker.png" alt="Enemy picker in battle, corners on the enemy" width="200"></td>
-    <td><img src="docs/screenshots/battle-run-sign.png" alt="Battle sign reads L+R" width="200"></td>
-    <td><img src="docs/screenshots/victory-silver.png" alt="Victory screen counts EXP and silver" width="200"></td>
+    <td><img src="docs/screenshots/running.gif" alt="Jian walks, then runs through a mine; the party's HP stays the same" width="256"></td>
+    <td><img src="docs/screenshots/rewards.gif" alt="Victory screen counts up EXP and silver, then lists the items received" width="256"></td>
+    <td><img src="docs/screenshots/select-save.gif" alt="Select opens the Save screen from the field" width="256"></td>
+  </tr>
+  <tr>
+    <th>Pick your own targets</th>
+    <th>Run with L+R, no microphone</th>
+    <th>Town and world map menus on the D-pad</th>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/battle-target-picker.png" alt="Enemy picker in battle, corners on the enemy" width="256"></td>
+    <td><img src="docs/screenshots/battle-run-sign.png" alt="Battle sign reads L+R" width="256"></td>
+    <td><img src="docs/screenshots/town-menu-dpad.gif" alt="Picking a place in town with the D-pad" width="256"></td>
   </tr>
 </table>
 
-This is an early beta (v0.1.3): the engine and battle changes are in, and the story rewrite has only just
-started. Feedback is welcome in [Issues](../../issues).
+This is an early beta (v0.1.3). A lot of the systems work is done, and more is coming as playtesting turns up
+what still drags, such as trimming the fluff from enemy attack animations. Work on the story has started too:
+better character development, smoother rough edges, and no more retcons or contradictions with Lunar 1 and 2.
+Feedback is welcome in [Issues](../../issues).
 
 A ROM hack of Lunar: Dragon Song (Nintendo DS, USA) that fixes the game's systems so that playing it feels
 like Lunar 1 and 2 (Silver Star Story Complete and Eternal Blue Complete). The battle system stays the game's
@@ -71,8 +86,9 @@ how each one was built and tested is in [docs/status.md](docs/status.md).
 
 **Story**
 
-- A new opening narration, retranslated from the Japanese release, and a new wake-up scene. The rest of the story
-  and dialogue is next.
+- Under way: better character development, smoothing off the rough edges, and removing the retcons and
+  contradictions with Lunar 1 and 2. So far: a new opening narration, retranslated from the Japanese release,
+  and a new wake-up scene.
 
 ## How to play it
 
