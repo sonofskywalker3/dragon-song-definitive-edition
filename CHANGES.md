@@ -19,6 +19,8 @@ the design are in [docs/design.md](docs/design.md).
 - **No HP and MP refill for clearing an area** (the original gave back 30%).
 - **Healing statues heal at once.** They fully restore HP and MP, now also cure status (poison and the like),
   and no longer pan the camera over to the statue and back.
+- **Healing statues work from any side.** Press A facing the statue from the front, either side, or behind it.
+  The original only answered from in front of it.
 - **Lucia is at Fountain Square** once Cherenkov tells you she left. The original only put her there after you
   had found Jack in his house, and nothing in the game points you to him.
 - **The Underground Tunnel save glitch is fixed.** Talking to Flora twice there no longer locks out saving.
@@ -148,6 +150,7 @@ the design are in [docs/design.md](docs/design.md).
 - Town and world map menus frame the chosen place with the System menu's corner brackets.
 - The victory screen's Silver line counts up from the silver you carried, like the experience lines.
 - The Menu note, the portrait, and the party chat figures on the field screen hold still.
+- Healing statues work from the sides and from behind, not only from the front.
 
 ### v0.1.3 (2026-10-08)
 

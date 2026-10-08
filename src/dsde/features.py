@@ -23,6 +23,7 @@ from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_run import NO_RUN_HP_COST, TIMED_RUN
 from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
+from dsde.feat_statue import STATUE_ANY_SIDE
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_FIXES
 from dsde.feat_text_speed import TEXT_SPEED
@@ -286,6 +287,7 @@ FEATURES: tuple[Feature, ...] = (
     FIELD_MENU,
     GUIDEBOOK,
     STILL_HUD,
+    STATUE_ANY_SIDE,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
@@ -320,4 +322,5 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     FIELD_MENU.name,
     GUIDEBOOK.name,
     STILL_HUD.name,
+    STATUE_ANY_SIDE.name,
 )

@@ -1,0 +1,98 @@
+# statue-any-side regression: a talk object and a chest still answer A exactly as before (the statue reach
+# cave passes every other object to the shared check func_020260f4). Needs states room (Jian's room) and
+# e12_101 (Delrich Temple room, map 12, entrance 101) from statue_warp_states (our ROM, with --save; the vanilla
+# ROM needs room from statue_find_maps and the same warp). Field state 0x28 = talk, 0x42 = chest opens.
+watch u32 0x020B0010 field_state
+load room
+wait 5
+dump 0x020B6FD4 0x20 room_obj0
+dump 0x020B6CB4 0x14 room_jian
+press Up 20
+wait 5
+dump 0x020B6CB4 0x14 talk_pos
+shot talk_a
+press A 4
+wait 60
+shot talk_b
+load room
+wait 5
+press Left 20
+wait 5
+dump 0x020B6CB4 0x14 talk_away_pos
+press A 4
+wait 60
+shot talk_away_b
+load e12_101
+wait 5
+poke u32 0x020B6CB4 0x9C000
+poke u32 0x020B6CB8 0xAC000
+wait 10
+press Up 10
+wait 5
+dump 0x020B6CB4 0x14 chest_pos
+shot chest_a
+press A 4
+wait 90
+shot chest_b
+load e12_101
+wait 5
+poke u32 0x020B6CB4 0x80000
+poke u32 0x020B6CB8 0x98000
+wait 10
+press Right 10
+wait 5
+dump 0x020B6CB4 0x14 chest_side_pos
+press A 4
+wait 90
+shot chest_side_b
+# A townsperson: Cherenkov at the inn counter (map 155 Inn 1F, entrance 101, talk object 0x3C at 236,208),
+# from the left facing right and from below facing up; field state 0x28 = talk.
+load room
+wait 5
+pin u16 0x020B77EC 155
+pin u16 0x020B77F2 101
+pin u8 0x020B77EE 3
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 10
+save lobby
+load lobby
+wait 5
+poke u32 0x020B6CB4 0xce000
+poke u32 0x020B6CB8 0xd0000
+wait 5
+press Right 10
+wait 5
+dump 0x020B6CB4 0x14 npc_left_pos
+shot npc_left_a
+press A 4
+wait 60
+shot npc_left_b
+press A 4
+wait 30
+press A 4
+wait 30
+press A 4
+wait 30
+load lobby
+wait 5
+poke u32 0x020B6CB4 0xec000
+poke u32 0x020B6CB8 0xec000
+wait 5
+press Up 10
+wait 5
+dump 0x020B6CB4 0x14 npc_below_pos
+shot npc_below_a
+press A 4
+wait 60
+shot npc_below_b
+press A 4
+wait 30
+press A 4
+wait 30
+press A 4
+wait 30

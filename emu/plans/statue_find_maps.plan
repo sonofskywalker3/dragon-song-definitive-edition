@@ -1,0 +1,445 @@
+# Find maps with healing statues (object id 0x37D): boot, save Jian's room, then pin-warp to each map and dump
+# the object table. Vanilla ROM. Saves state room.
+include boot_to_field
+wait 30
+save room
+load room
+wait 5
+pin u16 0x020B77EC 0
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 1
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 2
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 3
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 4
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 5
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 7
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 8
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 9
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 10
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 11
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 12
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 13
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 14
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 15
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 16
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 17
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 18
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 19
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 20
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 21
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 22
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 23
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 24
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 25
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 26
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 27
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 28
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 29
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 30
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 31
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 32
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 33
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 34
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 35
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 36
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 37
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 38
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
+load room
+wait 5
+pin u16 0x020B77EC 39
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects
