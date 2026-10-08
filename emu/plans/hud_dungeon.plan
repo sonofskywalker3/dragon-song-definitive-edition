@@ -1,0 +1,40 @@
+# Research (docs/re-field-hud.md): field bottom screen in Thieves' Woods (map 1) from Jeff's save
+# (run with --save build/gifs/jeff/jeff.SaveRAM)
+include boot_from_save
+wait 60
+peek u16 0x020B6BE4 map
+peek u8 0x020B4848 mode
+peek u16 0x020B77F4 spawns
+dump 0x020B4908 0x18 area
+save hud_d0
+shot d_mode0
+wait 4
+shot d_mode0_f4
+wait 4
+shot d_mode0_f8
+wait 4
+shot d_mode0_f12
+touch 188 77 3
+wait 30
+peek u8 0x020B4848 mode_after_tap
+shot d_tap1
+touch 188 77 3
+wait 30
+peek u8 0x020B4848 mode_after_tap2
+press R 3
+wait 30
+peek u8 0x020B4848 mode_after_R
+shot d_R
+press R 3
+wait 30
+peek u8 0x020B4848 mode_after_R2
+touch 195 117 3
+wait 30
+peek u8 0x020B4848 mode_after_crystal
+shot d_crystal
+touch 73 54 3
+wait 30
+shot d_watch
+touch 82 123 3
+wait 60
+shot d_tag

@@ -1,0 +1,19 @@
+# Research (docs/re-field-hud.md): does the crystal (HUD button 1) react to a nearby enemy? Logs every
+# write to its animation byte while an enemy symbol is moved close to Jian (needs hud_restock)
+load hud_restock
+trace 0x020B7F71 btn1_anim
+trace 0x020B7F70 btn1_bank
+wait 300
+shot c_far
+dump 0x020B7F64 0x30 btn1
+poke u32 0x020B70D8 0x1A0000
+poke u32 0x020B70DC 0x180000
+wait 3
+shot c_mid
+poke u32 0x020B70D8 0x200000
+poke u32 0x020B70DC 0x1C0000
+wait 3
+shot c_near
+dump 0x020B7F64 0x30 btn1_near
+wait 30
+shot c_after

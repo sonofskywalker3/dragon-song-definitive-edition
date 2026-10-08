@@ -1,0 +1,37 @@
+# Research (docs/re-field-hud.md): un-clear Thieves' Woods (kills = 0) so the spawner refills it, then
+# watch the HUD while enemies wander (needs the hud_d0 state from hud_dungeon.plan in the same out dir)
+load hud_d0
+poke u8 0x020B4912 0
+wait 100
+dump 0x020B4908 0x18 area
+dump 0x020B7F28 0x1A0 buttons
+save hud_restock
+shot e00
+wait 8
+shot e01
+wait 8
+shot e02
+wait 8
+shot e03
+wait 8
+shot e04
+press Down 40
+shot e05
+press Down 40
+shot e06
+press Down 40
+shot e07
+press Down 40
+shot e08
+press Left 40
+shot e09
+press Left 40
+shot e10
+press Left 40
+shot e11
+press Left 40
+shot e12
+dump 0x020B6FD4 0x800 objs
+peek u32 0x020B6CB4 x
+peek u32 0x020B6CB8 y
+peek u16 0x020AFF84 dummy
