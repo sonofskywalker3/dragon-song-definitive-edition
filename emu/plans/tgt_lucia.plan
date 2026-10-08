@@ -1,0 +1,33 @@
+# Enemy picker with Lucia in the party (slot 1 = character 1): Jian, then the Fight of Lucia.
+# Flora's (both rows): front, Up to the back row on the top screen, Right; then the action (no corners).
+# Run with --save.
+include boot_from_save
+include cheats_strong
+poke u16 0x020B4650 1
+include warp6
+wait 270
+press A 3
+wait 90
+press A 3
+wait 120
+shot br_jian
+press Right 3
+wait 60
+shot br_jian_right
+press A 3
+wait 120
+press A 3
+wait 120
+shot br_lucia
+press Up 3
+wait 60
+shot br_lucia_up
+press Right 3
+wait 60
+shot br_lucia_upright
+press Right 3
+wait 60
+shot br_lucia_upright2
+press A 3
+wait 40
+shot br_action
