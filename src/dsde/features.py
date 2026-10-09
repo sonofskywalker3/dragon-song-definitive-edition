@@ -12,6 +12,7 @@ from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
 from dsde.feat_curse import NO_CURSE_PENALTY
 from dsde.feat_enemy_moves import ENEMY_QUICK_STEPS, ENEMY_SHORT_MOVES
+from dsde.feat_enemy_preload import ENEMY_PRELOAD
 from dsde.feat_enemy_speed import ENEMY_SPELL_SPEED, ENEMY_SPRITE_SPEED
 from dsde.feat_experience_name import EXPERIENCE_NAME
 from dsde.feat_field_menu import FIELD_MENU
@@ -298,6 +299,8 @@ FEATURES: tuple[Feature, ...] = (
     ENEMY_SPELL_SPEED,
     ENEMY_SHORT_MOVES,
     ENEMY_QUICK_STEPS,
+    # Sound bank switch moved before the enemy moves (docs/re-battle-pacing.md 7, P9). Off by default.
+    ENEMY_PRELOAD,
     # Place-aware party chat on Y (docs/re-party-chat.md). Off by default while Jeff writes the lines.
     PARTY_CHAT,
 )

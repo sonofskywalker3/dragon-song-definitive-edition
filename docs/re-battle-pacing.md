@@ -127,12 +127,11 @@ frame (`diag_pace_frames`, `diag_pace_spell`).
 - **Lag frames (frames where the game did not finish its update) are few and clustered:**
   - opening the command window each round: 11 lag frames inside the 30-frame slide-in (2845..2855,
     3766..3776);
-  - **2 frames at each enemy action-script step that switches animation slot** (steps 1, 2 and 4 of the
-    enemy script: 3476, 3508, 3535 and again for enemy 10). Each is a 3-frame hitch, 3 per enemy turn,
-    visible as a small stutter as the enemy starts its lunge, its swing and its return. Likely a
-    synchronous sprite data load when the slot changes (uncertain; Jian's steps never lag, party sprites
-    may be preloaded). Preloading in round state 5, which already loads the actor's animations
-    (func_0201a710 loop), would be the fix to try;
+  - **2 frames at steps 1, 2 and 4 of the enemy lunge script** (3476, 3508, 3535 and again for enemy 10).
+    Each is a 3-frame hitch, 3 per enemy turn, visible as a small stutter as the enemy starts its lunge,
+    its swing and its return. First guessed to be a sprite load at an animation slot switch; **the cause
+    is a sound bank load** (confirmed 2026-10-09, section 7: the lunge's steps 1, 2 and 4 are the steps
+    that play a sound, and its sounds alternate between two banks that cannot both be loaded);
   - battle start (7 frames) and the victory setup (5 frames).
   - Lucia's Heal had **no** lag frames and no long repeats.
 - **Repeated identical frames:** 123 of 603 frames (both screens) were identical to the previous one, in
@@ -160,7 +159,7 @@ means from the forced-speed ROMs; other figures are estimates from the budget.
 | P6 | **Do not wait for damage numbers** at the end of an action (state 0xE skips func_0202c3e8) | all of the 0xE wait: **56** (28 per enemy turn), up to 64 at level 2 | Hook the `bl func_0202c3e8` at the top of case 0xE in func_0202d22c to return 0; the numbers keep animating over the next actor's camera turn (29 slots) | Medium-low. Numbers overlap the start of the next turn. Combine with P5 rather than replace it |
 | P7 | **Faster camera turns**: 16 to 8 frames | 8 to 10 per actor: **~25** | 0x0202D67C `mov r2, #0x10` (func_02028540 duration in round state 5) and the round-end call in func_020297d4 case 8 | Low-medium: a faster swing can look like a snap. Small gain |
 | P8 | **Overlap the next actor with the previous actor's return** | up to 30 per enemy turn | Battler 12 (and 13) is the single scratch copy every action runs on, and func_0202d22c only starts the next actor from state 1. Overlap needs a second scratch battler or starting the next camera turn during the return step | **High**: deep change to the round machine. Not recommended; P2 halves the return move instead |
-| P9 | **Preload enemy animation slots** (remove the 2-frame hitches) | 6 frames per enemy turn, mainly smoothness | Load both animation slots in round state 5 (where func_0201a710 already runs per actor) | Medium: needs the cause confirmed first (uncertain) |
+| P9 | **Move enemy sound bank loads off the action** (the 2-frame hitches; section 7) | no frames saved; the first load of a turn lands on a still frame | Built as `enemy-preload` (off by default): switch the bank before step 0 | Low-medium; loads between two banks inside one action stay (heap too small) |
 | P10 | **Intro trim**: rows 32 to 16 each, columns 16 to 8, hold 64 to 16 | **~110 per battle** | func_020297d4 case 4 (`0x20` compares) and case 5 (`0xF`, `0x3F`) | Low. The enemies still appear column by column |
 | P11 | **EXP pour**: accept A on any frame; optionally 2 frames per step instead of 4 | up to 256 per battle when skipped; 128 if halved | func_02052c2c: move the A check out of the `& 3` gate | Very low |
 | P12 | **Command window slide-in** 32 to 16 | 16 per round | counter +0x36 limit 0x1F in func_0203aa10 / func_0203a34c | Low |
@@ -305,6 +304,100 @@ temple battle (Jian + Lucia, `diag_pace2_fast`; every hit kills):
   wait when no enemy is left alive (end of battle unchanged: `tgt_drop_exp` still pays 202 EXP and 101 silver).
   Jian keeps his speed: Jeff said his attacks already felt right.
 - Not measured: Gabryel, Rufus, Flora, spells cast on Fast (the +2 also applies to cast poses), bosses.
+
+## 7. Enemy action hitches are sound bank loads (P9, 2026-10-09, feature `enemy-preload`)
+
+### 7.1 Cause (confirmed, vanilla and DE)
+
+The hitch is not a sprite load: round state 5 already queues every animation slot the actor uses
+(func_0201a710 / func_0201a7d8, async) and state 6 waits for the queue (func_0201a530) before step 0. The
+lunge's lagging steps are not even the slot switches (0x02095334: step 1 keeps slot 1, step 3 changes the
+animation without lag). What steps 1, 2 and 4 share is a **step sound** (u16 at step +6, played by
+func_020316e0 through func_02067448).
+
+- func_02028234 plays a battle sound id. Ids 0x1F..0x5C need a sound effect bank: **bank 2** for 0x1F, 0x23,
+  0x25..0x39, **bank 3** for 0x22, 0x3A..0x4A, **bank 4** for 0x4B..0x5C (its jump table); lower ids (hits
+  0x16, 0x1C, 0x1D, steps 0x13, 0x19) are in the system bank and never switch. The loaded bank is s16
+  0x020B8564 (-1 at battle start). When a sound needs another bank, func_02028234 stops a flagged looping
+  sound (func_02028434), pops the sound heap to level 3 (func_02043eb0) and loads the bank and its wave
+  archive (func_02043f5c, NNS bank load) **from the card, synchronously**.
+- The sound heap is a static 512 KB frame heap (0x020B9D20, created by func_020441ec; heap 0x020B9D60 to
+  0x02139D20). In battle, level 1 holds the system bank 0 and its waves (about 160 KB), levels 2 and 3 the
+  battle music (about 173 KB), level 4 one effect bank. Free with no effect bank: 190,684 bytes (measured).
+  The banks with their wave archives (sound_data.sdat): bank 2 142,760 bytes, bank 3 164,672, bank 4
+  129,148. **Two effect banks never fit at once** (2 + 4 = 271,908). The main heap (OS heap 0, 2 MB at
+  0x02140540..) had only 225 KB free (largest block) at the command phase of a one-enemy battle, so a
+  second buffer is not an option either.
+- A switch costs **2 lag frames** for bank 2 or 4 and **3** for bank 3 (the read size). Measured with exec
+  hooks: 0x020297D4 (battle main, a frame without a line is a lag frame), 0x02028234 (sound played), and
+  0x020283D4 (the switch branch, r0 = the old bank). In every run, every switch gave 2 or 3 lag frames on
+  the same frames as two NNS file reads from 0x02086B64, and no enemy action lagged without a switch.
+
+What that means per action: a species whose action uses one bank lags once, on the first sound, and only
+when the previous sound in the battle came from another bank (in a battle against one species: turn 1
+only). The generic lunge plays 0x52 (bank 4, the move sound), 0x28 (bank 2, the attack sound), then 0x52
+again, so it reloads twice **inside every turn** (3 times when bank 4 was not loaded): the temple battle of
+1.2. Sounds come from three places: step sounds (step +6: func_02067448(12, kind, 0); kinds 1 and 3 read the
+species table 0x02096EDC + 0x1C * species at +4 and +6), animation cel sounds (cel +4 of the slot data,
+func_02032a0c, then func_02067448(12, kind, 1): kind 1 reads +8; the hopper Tick's 0x29 comes this way),
+and the effect scripts of skills (func_0203162c, effect battlers 14+; kind 0x12 is 0x3A, the cast sound).
+
+### 7.2 The fix (`enemy-preload`, off by default)
+
+src/dsde/feat_enemy_preload.py. Both `bl func_020316e0` that start step 0 at the end of round state 6
+(0x0202D840, 0x0202D874) call a cave first. For an enemy actor (battler 4..11) it predicts the first sound
+of the action that needs a bank, in play order: per step, the step sound, then the cel sounds of the step's
+animation (slot data at battle work +0x5C + 4 * slot, loaded by then: animation table at +8, 0xC per
+animation, first cel +0, cel count +8; cel table at +0xC, 0x18 per cel). For a skill whose own steps play
+none, the first target's effect script (work +0x78), with only the kinds that do not read a battler. If the
+bank differs from 0x020B8564 it does what func_02028234 does (stop the flagged sound, pop, load, store the
+bank) and then runs func_020316e0(12). The load's lag frames fall between the end of the camera turn and the
+first step, where the screen is still, and the action's first sound finds its bank loaded.
+
+It cannot remove a reload inside one action (the lunge's 4, 2, 4): that needs two banks in memory (7.1).
+Not covered: party actors, the follow-up actor (round states 0x14..0x16), and the reaction sounds of round
+states 8..11 (Jian's counter plays 0x42, bank 3).
+
+### 7.3 Measured (forced battles of docs/re-enemy-attacks.md 1.1, two turns each)
+
+Lag frames inside the enemy action (round state 7) per turn, turn 1 / turn 2; in brackets the lag frames the
+fix moved to the still frame before step 0. Before = current build, after = `--with enemy-preload`; Fast.
+Vanilla gives the same numbers as before (Tick not run on vanilla). For Druid and Gronk the third moved frame
+falls on step 0's first frame, before the caster moves.
+
+| Species (folder) | Bank sounds | Before | After |
+|---|---|---|---|
+| Ice Mongrel (020_Ice_Mongrel_a0_attack) | 0x5A (4) | 2 / 0 | 0 (2) / 0 |
+| Onlooker (004_Onlooker_a0_attack, lunge 0x020952E4) | 0x4C (4) | 2 / 0 | 0 (2) / 0 |
+| Bealzebub (044_Bealzebub_a0_attack, lunge 0x02095334) | 0x52 (4), 0x28 (2), 0x52 (4) | 6 / 4 | 4 (2) / 4 |
+| Shreeker (008_Shreeker_a0_attack, hopper) | none | 0 / 0 | 0 / 0 |
+| Tick (040_Tick_a0_attack, hopper, cel sound) | 0x29 (2) | 2 / 0 | 0 (2) / 0 |
+| Shaitan (092_Shaitan_a0_attack, glide) | 0x4F (4) | 2 / 0 | 0 (2) / 0 |
+| Druid (132_Druid_a0_skill18, caster) | 0x3A (3, effect) | 3 / 0 | 0 (3) / 0 |
+| Sasquatch, boss (136_Sasquatch_a0_attack) | 0x55 (4) | 2 / 0 | 0 (2) / 0 |
+| Gronk, boss (142_Gronk_a0_skill18) | 0x3A (3, effect) | 3 / 0 | 0 (3) / 0 |
+
+- Normal speed (Bealzebub, Ice Mongrel, Druid, Gronk): the same numbers as Fast.
+- Script frames (`enemy_anims_run`, Fast, turn 1 / turn 2): each turn-1 action is 2 or 3 frames shorter
+  (Ice Mongrel 68 to 65, Bealzebub 37 to 34, Druid 138 to 135), turn 2 unchanged: the frames moved, the turn
+  is as long as before.
+- Frames (`frame_NNNN.png`, both screens every 2nd frame) identical at the same index: Shreeker 35 of 35,
+  Bealzebub 27 of 28, Ice Mongrel 38 of 43, Sasquatch 80 of 86, Shaitan 86 of 117, Druid 47 of 78, Gronk 44
+  of 68; the rest differ only in timing (the enemy's pose and effects one shot apart, and Jian's
+  idle cel, which keeps its own phase), checked side by side for Shaitan and Druid. No new or missing
+  content. All runs completed both turns.
+- Temple battle (Delrich Temple by warp6, Jian's HP pinned, Manual, 8 enemy turns: Bealzebub-family row 45,
+  Tick, Thanatos): lag frames inside enemy actions 26 before, 16 after; 10 moved to the still frame. The 16
+  left are row 45's lunge reloading inside its turns (4 per turn); 3 more in round state 11 (the counter's
+  bank 3 sound) are unchanged.
+
+Recordings: build/p9/rec (after) and build/p9/rec_before; lag surveys build/p9/s_*.txt (not committed). To
+re-measure, add `exec 0x020297D4 main`, `exec 0x020283D4 switch` and `exec 0x02028234 play` to a plan and
+compare the logged frame numbers with the `rec` log (rec frame F of a turn is run frame start + F - 1).
+
+Risk: the bank now changes up to one action earlier than before, so a sound of the previous action still
+playing from the old bank stops sooner (vanilla stops it too, at the first sound that switches). Whether
+any audible tail is cut was not checked (uncertain); listen on hardware before turning it on.
 
 ## Sources (remasters)
 
