@@ -93,6 +93,20 @@ STEAL_ITEMS = range(
 INVENTORY = 0x0213B930
 STEAL_STOCK = 5
 
+# Bosses whose action is not the chance roll: func_020695c0 overrides it by battle type and round
+# (Gronk every 20th round action 3, Zethos action 1 or 3, Red and White Dragon every 5th round action 2,
+# Black Dragon every 4th action 1, Blue Dragon every 4th round below half HP action 2) and Dark Jian copies
+# Jian's command (func_0202efdc). For these the action is also written into the actor when its action
+# starts: func_02068890 -> func_02068034(battler) in round state 5, battler +0xC0 action index, +0x84 AI
+# command (1 physical, 2 skill), +0x86 skill id.
+ACTION_SETUP = 0x02068034
+SETUP_FORCED_ROWS = frozenset({142, 143, 147, 148, 149, 150, 151})
+# Natural actions of those rows that stall or lose turns when forced this way (measured with the chance
+# table alone: the summary picks the turn that ran the action's own script)
+SETUP_FORCE_SKIP = frozenset({(149, 0), (150, 1)})
+AI_PHYSICAL = 1
+AI_SKILL = 2
+
 # Boss row -> event battle id (func_0202b948; docs/re-enemies.md)
 BOSS_BATTLES = {
     136: 1, 137: 2, 138: 3, 139: 0x0F, 140: 0x10, 141: 4, 142: 5, 143: 6, 144: 7, 145: 7,
@@ -318,6 +332,17 @@ def make_plan(
         lines.append(speed_pin)
     for row in battle_rows(action):
         lines += force_row_lines(data, row, action.index if row == action.row else None)
+    if (
+        action.row in SETUP_FORCED_ROWS
+        and (action.row, action.index) not in SETUP_FORCE_SKIP
+    ):
+        skill = bool(action.flags & ACTION_USES_SKILL)
+        lines += [
+            f"execpokereg {ACTION_SETUP:#010x} 0 0xC0 u32 {action.index}",
+            f"execpokereg {ACTION_SETUP:#010x} 0 0x84 u16 {AI_SKILL if skill else AI_PHYSICAL}",
+        ]
+        if skill:
+            lines.append(f"execpokereg {ACTION_SETUP:#010x} 0 0x86 u16 {action.skill}")
     if action.flags & ACTION_STEAL:
         lines += [
             f"poke u8 {INVENTORY + item - 1:#010x} {STEAL_STOCK}"

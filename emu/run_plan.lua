@@ -21,6 +21,8 @@
 --   include NAME                 run emu/plans/NAME.plan (same folder as the plan) inline
 --   execpoke ADDR KIND TARGET VALUE   whenever the CPU executes ADDR, write VALUE to TARGET first
 --                                (a breakpoint-style poke; used to force a battle formation)
+--   execpokereg ADDR REG OFFSET KIND VALUE   whenever the CPU executes ADDR, write VALUE to [rREG] + OFFSET
+--                                (e.g. a field of the battler a function was called with)
 --   rec NAME EVERY TURNS SHOTTURNS [ROW]   log every frame of the next TURNS enemy turns (battle work actor
 --                                >= 4 in battle main state 8) to NAME.rec, with a shot of both screens
 --                                every EVERY frames during the first SHOTTURNS of them (rec/NAME_tT_fF.png); with ROW, only
@@ -282,6 +284,16 @@ for line in io.lines(path) do
 			writers[kind](target, value)
 		end, tonumber(words[2]), "execpoke" .. execpoke_count)
 		say("execpoke at " .. words[2] .. ": " .. words[4] .. " = " .. words[5])
+	elseif cmd == "execpokereg" then
+		local reg, offset, kind, value = "ARM9 r" .. words[3], tonumber(words[4]), words[5], tonumber(words[6])
+		execpoke_count = execpoke_count + 1
+		event.on_bus_exec(function()
+			local base = emu.getregisters()[reg]
+			if base and valid_ptr(base) then
+				writers[kind](base + offset, value)
+			end
+		end, tonumber(words[2]), "execpoke" .. execpoke_count)
+		say("execpokereg at " .. words[2] .. ": [r" .. words[3] .. "] + " .. words[4] .. " = " .. words[6])
 	elseif cmd == "rec" then
 		rec = { name = words[2], every = tonumber(words[3]), turns = tonumber(words[4]),
 			shotturns = tonumber(words[5] or words[4]), row = tonumber(words[6] or ""), turn = 0,
