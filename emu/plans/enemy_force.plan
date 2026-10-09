@@ -1,0 +1,57 @@
+# Force one enemy into a regular battle and record its turns (docs/re-enemy-attacks.md). Run with --save.
+# Example: one Ice Mongrel (row 20) alone, action 0 always, on Fast. Generated plans for every action come
+# from `uv run python -m dsde.enemy_anims_run` (src/dsde/enemy_anims.py builds the same lines per row).
+include boot_from_save
+include cheats_strong
+# Delrich Temple (map 6), standing off the enemy spawn points (as boss_gronk.plan)
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+include cheats_strong
+# Jian's battle HP (stat record 0 + 0x14) stays 999
+pinptr u32 0x020B8620 0x14 999
+# Speed setting byte (cave_speed_state, ITCM) pinned to Fast (1); Auto would switch it to Faster.
+# The address moves when features change: dsde.enemy_anims_run.speed_pin prints the current one.
+pin u8 0x01FF9C6C 1
+# Row 20 (0x02097CE4 + 20 * 0x54 = 0x02098374): HP 30000 at level 0 and 98, AI class 3, action 0 always
+poke u16 0x02098378 30000
+poke u16 0x0209838C 30000
+poke u32 0x02098374 0x3
+poke u16 0x020983A0 100
+poke u16 0x020983A2 100
+poke u16 0x020983A4 100
+poke u16 0x020983A6 100
+# Formation: at func_0202bc28's entry (right after func_0202b948 filled ctx 0x020B85B8), lead row +0x32 and
+# the eight slots +0x34..+0x42 (slot i = battler 4 + i) are overwritten: only slot 5 (front, a ground
+# species' lead slot) holds row 20
+execpoke 0x0202BC28 u16 0x020B85EA 20
+execpoke 0x0202BC28 u16 0x020B85EC 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85EE 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F0 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F2 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F4 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F6 20
+execpoke 0x0202BC28 u16 0x020B85F8 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85FA 0xFFFF
+# Start a regular (non-event) battle, formation 0, through the field's own battle state
+poke u16 0x020B7838 0
+poke u16 0x020B783A 0
+poke u32 0x020B0010 0x73
+# Record two turns of row 20, shots every 2nd frame of the first (build/emu/rec/ice_*.png, ice.rec)
+rec ice 2 2 1 20
+waituntil u32 0x020B0010 7 3000
+wait 110
+shot ice_cmd
+# Auto battle: Right, A, A (confirm)
+press Right 3
+wait 10
+press A 3
+wait 20
+press A 3
+waitrec 9000
+shot ice_end
+battlers

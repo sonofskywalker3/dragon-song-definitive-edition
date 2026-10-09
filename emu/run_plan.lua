@@ -19,6 +19,16 @@
 --   find HEXBYTES LABEL          log every main RAM address where the byte pattern occurs
 --   speed PERCENT                emulation speed (default 800)
 --   include NAME                 run emu/plans/NAME.plan (same folder as the plan) inline
+--   execpoke ADDR KIND TARGET VALUE   whenever the CPU executes ADDR, write VALUE to TARGET first
+--                                (a breakpoint-style poke; used to force a battle formation)
+--   rec NAME EVERY TURNS SHOTTURNS [ROW]   log every frame of the next TURNS enemy turns (battle work actor
+--                                >= 4 in battle main state 8) to NAME.rec, with a shot of both screens
+--                                every EVERY frames during the first SHOTTURNS of them (rec/NAME_tT_fF.png); with ROW, only
+--                                turns of enemies of that enemy row count
+--   pinptr KIND PTR OFFSET VALUE  like pin, at [PTR] + OFFSET (the pointer is read every frame; skipped
+--                                while it is null), e.g. the party's battle HP behind 0x020B8620
+--   waituntil KIND ADDR VALUE N  advance frames until ADDR holds VALUE, at most N frames
+--   waitrec N                    advance frames until rec has logged its turns, at most N frames
 local ROOT = (os.getenv("DSDE_EMU_OUT") or "C:/Users/Jeff/Documents/Projects/Dragon Song Definitive Edition/build/emu"):gsub("\\", "/") .. "/"
 local BUS = "ARM9 System Bus"
 
@@ -28,10 +38,64 @@ local frame = 0
 local watches = {}
 local pins = {}
 local held = {}
+local rec = nil -- enemy turn recorder (see `rec`)
+local execpoke_count = 0
 
 local function say(msg)
 	log:write(string.format("[%6d] %s\n", frame, msg))
 	log:flush()
+end
+
+local function valid_ptr(p)
+	return p >= 0x02000000 and p < 0x02400000
+end
+
+-- One frame of the enemy turn recorder. A turn is the run of frames in which the battle work's
+-- actor (+0x32) is an enemy (>= 4) while the battle main state (0x020B0010) is 8 (the round). With a
+-- row filter, turns of enemies of other rows are skipped (not logged, not counted).
+function rec_frame()
+	local main = memory.read_u32_le(0x020B0010, BUS)
+	local work = memory.read_u32_le(0x020B8550, BUS)
+	local bat = memory.read_u32_le(0x020B8640, BUS)
+	if not (valid_ptr(work) and valid_ptr(bat)) then
+		return
+	end
+	local actor = memory.read_s16_le(work + 0x32, BUS)
+	local active = main == 8 and actor >= 4 and actor < 12
+	local current = active and actor or -1
+	if current ~= rec.actor then
+		-- the turn changed: close the open one, then maybe open a new one
+		if rec.in_turn then
+			rec.in_turn = false
+			rec.file:write(string.format("end %d frame %d\n", rec.turn, frame))
+			if rec.turn >= rec.turns then
+				rec.done = true
+			end
+		end
+		rec.actor = current
+		if active and not rec.done then
+			local row = memory.read_u32_le(bat + actor * 300 + 4, BUS)
+			if rec.row == nil or rec.row == row then
+				rec.turn = rec.turn + 1
+				rec.in_turn = true
+				rec.start = frame
+				rec.file:write(string.format("turn %d actor %d row %d frame %d\n", rec.turn, actor, row, frame))
+			end
+		end
+	end
+	if rec.in_turn then
+		local b = bat + 12 * 300
+		local rs = memory.read_u16_le(work + 0x2E, BUS)
+		rec.file:write(string.format("f %d rs %d step %d cnt %d scr %08X x %08X y %08X z %08X lvl %d cam %d\n",
+			frame - rec.start, rs, memory.read_s16_le(b + 0xCC, BUS), memory.read_s16_le(b + 0xCE, BUS),
+			memory.read_u32_le(b + 0xC8, BUS), memory.read_u32_le(b + 0xD4, BUS), memory.read_u32_le(b + 0xD8, BUS),
+			memory.read_u32_le(b + 0xDC, BUS), memory.read_u32_le(0x020B8540, BUS),
+			memory.read_s16_le(work + 0x36, BUS)))
+		if rec.turn <= rec.shotturns and (frame - rec.start) % rec.every == 0 then
+			client.screenshot(string.format("%srec/%s_t%d_f%04d.png", ROOT, rec.name, rec.turn, frame - rec.start))
+		end
+	end
+	rec.file:flush()
 end
 
 local readers = {
@@ -61,10 +125,20 @@ local function step(input, analog)
 		joypad.setanalog(analog)
 	end
 	for _, pin in ipairs(pins) do
-		writers[pin.kind](pin.addr, pin.value)
+		if pin.ptr then
+			local base = memory.read_u32_le(pin.ptr, BUS)
+			if valid_ptr(base) then
+				writers[pin.kind](base + pin.offset, pin.value)
+			end
+		else
+			writers[pin.kind](pin.addr, pin.value)
+		end
 	end
 	emu.frameadvance()
 	frame = frame + 1
+	if rec then
+		rec_frame()
+	end
 	for _, w in ipairs(watches) do
 		local v = readers[w.kind](w.addr)
 		if v ~= w.last then
@@ -141,6 +215,9 @@ for line in io.lines(path) do
 	elseif cmd == "pin" then
 		pins[#pins + 1] = { kind = words[2], addr = tonumber(words[3]), value = tonumber(words[4]) }
 		say("pin " .. words[3] .. " = " .. words[4])
+	elseif cmd == "pinptr" then
+		pins[#pins + 1] = { kind = words[2], ptr = tonumber(words[3]), offset = tonumber(words[4]), value = tonumber(words[5]) }
+		say("pinptr [" .. words[3] .. "] + " .. words[4] .. " = " .. words[5])
 	elseif cmd == "unpin" then
 		pins = {}
 		say("unpin all")
@@ -198,6 +275,35 @@ for line in io.lines(path) do
 				memory.read_u32_le(o + 4, BUS), memory.read_u32_le(o + 0x10, BUS))
 		end
 		say("battlers " .. table.concat(parts, " "))
+	elseif cmd == "execpoke" then
+		local target, kind, value = tonumber(words[4]), words[3], tonumber(words[5])
+		execpoke_count = execpoke_count + 1
+		event.on_bus_exec(function()
+			writers[kind](target, value)
+		end, tonumber(words[2]), "execpoke" .. execpoke_count)
+		say("execpoke at " .. words[2] .. ": " .. words[4] .. " = " .. words[5])
+	elseif cmd == "rec" then
+		rec = { name = words[2], every = tonumber(words[3]), turns = tonumber(words[4]),
+			shotturns = tonumber(words[5] or words[4]), row = tonumber(words[6] or ""), turn = 0,
+			in_turn = false, done = false, actor = -1,
+			file = io.open(ROOT .. words[2] .. ".rec", "w") }
+		say("rec " .. words[2])
+	elseif cmd == "waituntil" then
+		local kind, addr, value, limit = words[2], tonumber(words[3]), tonumber(words[4]), tonumber(words[5])
+		local n = 0
+		while readers[kind](addr) ~= value and n < limit do
+			step(nil)
+			n = n + 1
+		end
+		say(string.format("waituntil %s = %s after %d frames", words[3], words[4], n))
+	elseif cmd == "waitrec" then
+		local limit = tonumber(words[2])
+		local n = 0
+		while rec and not rec.done and n < limit do
+			step(nil)
+			n = n + 1
+		end
+		say(string.format("waitrec done=%s turns=%d after %d frames", tostring(rec and rec.done), rec and rec.turn or 0, n))
 	elseif cmd == "speed" then
 		client.speedmode(tonumber(words[2]))
 	elseif cmd == "include" then
