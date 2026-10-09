@@ -12,3 +12,8 @@ tools/
 # Python
 .venv/
 __pycache__/
+
+# Other Lunar games and their extracted scripts (local only)
+lunar_scripts/
+research_notes/
+reports/
