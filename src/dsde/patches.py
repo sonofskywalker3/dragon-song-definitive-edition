@@ -1,4 +1,10 @@
-"""Builds a patched ROM: copy extract/, apply the chosen features, run dsd."""
+"""Builds a patched ROM: copy extract/, apply the chosen features, run dsd.
+
+    uv run python -m dsde.patches                      # Engine edition -> build/dsde.nds
+    uv run python -m dsde.patches --edition story      # Story edition -> build/dsde-story.nds
+    uv run python -m dsde.patches --with party-chat    # an edition plus extra features
+    uv run python -m dsde.patches timed-run walk-speed # exactly these features
+"""
 
 import argparse
 import logging
@@ -6,14 +12,22 @@ import re
 import shutil
 import subprocess
 from pathlib import Path
+from types import MappingProxyType
 
-from dsde.features import DEFAULT_FEATURES, FEATURES
+from dsde.features import EDITIONS, FEATURES, REQUIRES
 from dsde.patching import PatchError, apply_arm9, apply_data, build_itcm, layout_cave
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXTRACT = PROJECT_ROOT / "extract"
 DSD = PROJECT_ROOT / "tools" / "dsd.exe"
 OUTPUT_ROM = PROJECT_ROOT / "build" / "dsde.nds"
+DEFAULT_EDITION = "engine"
+EDITION_OUTPUTS = MappingProxyType(
+    {
+        "engine": OUTPUT_ROM,
+        "story": PROJECT_ROOT / "build" / "dsde-story.nds",
+    }
+)
 # Your own DS ARM7 BIOS dump (16 KB). With it dsd encrypts the secure area and writes its checksum
 # (header 0x6C); without it the checksum stays 0, which emulators ignore and real hardware may not.
 ARM7_BIOS = PROJECT_ROOT / "tools" / "bios7.bin"
@@ -29,6 +43,12 @@ def build(
     unknown = set(feature_names) - wanted.keys()
     if unknown:
         raise PatchError(f"unknown features: {sorted(unknown)}")
+    for name, needed in REQUIRES.items():
+        if name in feature_names and (
+            needed not in feature_names
+            or feature_names.index(needed) > feature_names.index(name)
+        ):
+            raise PatchError(f"{name} needs {needed} built before it")
     chosen = [wanted[name] for name in feature_names]
     mod_extract = output.parent / f"{output.stem}_extract"
     if mod_extract.exists():
@@ -66,20 +86,28 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(prog="dsde.patches")
     parser.add_argument(
-        "features", nargs="*", help="feature names; default is the shipping set"
+        "features", nargs="*", help="feature names; default is the edition's set"
+    )
+    parser.add_argument(
+        "--edition",
+        choices=sorted(EDITIONS),
+        default=DEFAULT_EDITION,
+        help="engine (mechanics only, vanilla wording) or story (engine plus the rewrite)",
     )
     parser.add_argument(
         "--with",
         dest="extra",
         nargs="+",
         default=[],
-        help="features to build on top of the shipping set (ignored with explicit features)",
+        help="features to build on top of the edition's set (ignored with explicit features)",
     )
-    parser.add_argument("--output", type=Path, default=OUTPUT_ROM)
+    parser.add_argument(
+        "--output", type=Path, help="default build/dsde.nds, or build/dsde-story.nds"
+    )
     parser.add_argument("--arm7-bios", type=Path, default=ARM7_BIOS)
     args = parser.parse_args()
-    names = args.features or [*DEFAULT_FEATURES, *args.extra]
-    build(names, args.output, args.arm7_bios)
+    names = args.features or [*EDITIONS[args.edition], *args.extra]
+    build(names, args.output or EDITION_OUTPUTS[args.edition], args.arm7_bios)
 
 
 if __name__ == "__main__":

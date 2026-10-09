@@ -7,9 +7,15 @@ patch holds only our own bytes. Format: https://www.romhacking.net/documents/746
 Usage:
     uv run python -m dsde.bps create <original.nds> <patched.nds> <out.bps>
     uv run python -m dsde.bps apply <original.nds> <patch.bps> <out.nds>
+    uv run python -m dsde.bps release <original.nds> X.Y.Z [--out-dir build/release]
+
+`release` builds both editions (docs/plan-two-editions.md) and writes
+"Dragon Song Definitive Edition vX.Y.Z (Engine).bps" and "(Story).bps", each round-trip checked, with the
+SHA-1s for the release notes.
 """
 
 import argparse
+import hashlib
 import logging
 import struct
 import zlib
@@ -27,6 +33,9 @@ KEY = 32  # bytes per index key
 STRIDE = 64  # source positions indexed: one every STRIDE bytes
 MIN_SAME = 8  # shortest same-offset run worth its own action
 MIN_COPY = KEY  # shortest moved run worth a copy
+
+RELEASE_NAME = "Dragon Song Definitive Edition v{version} ({edition}).bps"
+RELEASE_DIR = Path(__file__).resolve().parents[2] / "build" / "release"
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +175,39 @@ def apply(source: bytes, patch: bytes) -> bytes:
     return bytes(target)
 
 
+def write_patch(source: bytes, target: bytes, out: Path) -> bytes:
+    """Create a patch, check it rebuilds target, and write it."""
+    patch = create(source, target)
+    if apply(source, patch) != target:
+        raise BpsError("round trip failed")
+    out.write_bytes(patch)
+    logger.info("wrote %s (%d bytes), round trip checked", out, len(patch))
+    return patch
+
+
+def release(original: Path, version: str, out_dir: Path = RELEASE_DIR) -> list[Path]:
+    """Build every edition and write its release patch; log the SHA-1s for the notes."""
+    from dsde.features import EDITIONS
+    from dsde.patches import build
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    source = original.read_bytes()
+    written = []
+    for edition, features in EDITIONS.items():
+        rom = build(list(features), out_dir / f"dsde-{edition}.nds")
+        target = rom.read_bytes()
+        out = out_dir / RELEASE_NAME.format(version=version, edition=edition.title())
+        patch = write_patch(source, target, out)
+        logger.info(
+            "%s: patch SHA-1 %s, patched ROM SHA-1 %s",
+            out.name,
+            hashlib.sha1(patch).hexdigest(),
+            hashlib.sha1(target).hexdigest(),
+        )
+        written.append(out)
+    return written
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(prog="dsde.bps")
@@ -175,15 +217,17 @@ def main() -> None:
         cmd.add_argument("original", type=Path)
         cmd.add_argument(second, type=Path)
         cmd.add_argument("out", type=Path)
+    cmd = sub.add_parser("release", help="build both editions and their .bps files")
+    cmd.add_argument("original", type=Path)
+    cmd.add_argument("version", help="X.Y.Z, without the v")
+    cmd.add_argument("--out-dir", type=Path, default=RELEASE_DIR)
     args = parser.parse_args()
+    if args.command == "release":
+        release(args.original, args.version, args.out_dir)
+        return
     source = args.original.read_bytes()
     if args.command == "create":
-        target = args.patched.read_bytes()
-        patch = create(source, target)
-        if apply(source, patch) != target:
-            raise BpsError("round trip failed")
-        args.out.write_bytes(patch)
-        logger.info("wrote %s (%d bytes), round trip checked", args.out, len(patch))
+        write_patch(source, args.patched.read_bytes(), args.out)
     else:
         args.out.write_bytes(apply(source, args.patch.read_bytes()))
         logger.info("wrote %s", args.out)
