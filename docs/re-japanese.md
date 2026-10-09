@@ -41,6 +41,8 @@ There is no 力 glyph: the text writes 魔法カ with katakana カ for 魔法力
 04 place-name colour, 03 item colour; FB 07 ends any of them), FC (one byte, mostly right after a page
 break), FD new line, FE page break, FF end.
 - Scripts: in `script/NNN.bin` a speaker name sits between FB 06 and FB 07, as in the USA scripts.
+- Whole-script dump, USA and Japanese side by side per message op: `uv run python -m dsde.text_dump`
+  (`build/text/script_NNN.txt`; `--grep REGEX` to search, `--usa-only`). Used for docs/story-characters.md.
 - The shop string table (Gad's Express recipient names are entries 75 to 128) has its u16 offsets at 0x020A3DC0
   (129 entries, same layout as the USA table at 0x020A4D28) and its text at 0x020A3EC4.
 
