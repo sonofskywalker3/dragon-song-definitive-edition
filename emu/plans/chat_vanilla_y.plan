@@ -1,0 +1,25 @@
+# Research (docs/re-party-chat.md): the vanilla Y hint (script 018) from a save; run with --save
+include boot_from_save
+wait 60
+peek u16 0x020B6BE4 map
+peek u32 0x020B4640 main_ctx
+dump 0x02204620 0x5C flags_before
+shot v_before
+press Y 3
+wait 2
+peek u32 0x020B4644 hint_ctx
+wait 30
+shot v_y_30
+wait 90
+shot v_y_120
+press A 3
+wait 60
+shot v_y_a1
+press A 3
+wait 60
+shot v_y_a2
+press A 3
+wait 60
+shot v_y_a3
+peek u32 0x020B4644 hint_ctx_after
+dump 0x02204620 0x5C flags_after
