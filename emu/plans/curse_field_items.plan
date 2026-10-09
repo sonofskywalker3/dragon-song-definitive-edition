@@ -1,0 +1,41 @@
+# curse-no-healing, field menu: Healing Gum on cursed Jian (refused, kept), then on Lucia (heals).
+# Jian 5/28 HP, Lucia 5 HP. Story flag 0x33 (word 1 bit 19 of the flags at 0x02204620) poked on.
+include boot_from_save
+pin u16 0x020B4650 1
+poke u32 0x02204624 0x80000
+poke u32 0x020B4668 5
+poke u32 0x020B46C4 5
+poke u8 0x0213BA43 5
+wait 30
+dump 0x02204620 0x10 flag_words
+press X 3
+wait 120
+press Down 8
+wait 20
+press Down 8
+wait 30
+shot fi_menu_items
+press A 8
+wait 60
+shot fi_items_page
+press Down 8
+wait 20
+press A 8
+wait 60
+shot fi_item_pick
+press A 8
+wait 60
+shot fi_target
+press A 8
+wait 150
+shot fi_after_jian
+peek u32 0x020B4668 jian_hp_after_gum
+peek u8 0x0213BA43 gum_count_after_jian
+press Right 8
+wait 20
+shot fi_target_lucia
+press A 8
+wait 150
+shot fi_after_lucia
+peek u32 0x020B46C4 lucia_hp_after_gum
+peek u8 0x0213BA43 gum_count_after_lucia

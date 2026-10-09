@@ -1,0 +1,23 @@
+# curse-no-healing control: the same as curse_field_spell.plan with no curse flag (an uncursed save): Jian heals.
+# herself (heals, 4 MP). Jian and Lucia at 5 HP; story flag 0x33 poked on (word 1 of the flags at 0x02204620).
+include boot_from_save
+poke u32 0x020B4668 5
+poke u32 0x020B46C4 5
+include mp_open_special
+shot fs_list
+press A 8
+wait 60
+shot fs_target_jian
+press A 8
+wait 150
+shot fs_after_jian
+peek u32 0x020B4668 jian_hp_after
+peek u32 0x020B46CC lucia_mp_after_jian
+press Right 8
+wait 20
+shot fs_target_lucia
+press A 8
+wait 150
+shot fs_after_lucia
+peek u32 0x020B46C4 lucia_hp_after
+peek u32 0x020B46CC lucia_mp_after_lucia

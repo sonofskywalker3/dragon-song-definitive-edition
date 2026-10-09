@@ -1,0 +1,129 @@
+# curse-no-healing in the Zethos fight (event battle 6), Jian alone, story flag 0x33 on. Every round Jian uses a
+# Healing Gum on himself: rounds 0 to 2 it does nothing and goes back in the bag; from round 3 Zethos's skill
+# 21 clears the battle curse flag (0x020B8614) and the Gum heals. Round counter: battle ctx +0x0A (0x020B85C2).
+# Jian 400 of 999 HP, strong stats. Battle Jian at [0x020B8620] (0x0228E860 in these runs): HP +0x14.
+include boot_from_save
+pin u16 0x020B464C 0
+pin u16 0x020B4650 65535
+pin u16 0x020B4654 65535
+pin u32 0x020B466C 999
+pin u8 0x020B4678 255
+pin u8 0x020B467C 255
+pin u8 0x020B4684 255
+pin u8 0x020B468C 255
+poke u32 0x020B4668 400
+poke u8 0x0213BA43 20
+poke u32 0x02204624 0x80000
+# warp6 without the final move onto an enemy spawn point (as boss_gronk.plan)
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+poke u16 0x020B7838 1
+poke u16 0x020B783A 6
+poke u32 0x020B0010 0x73
+wait 240
+peek u32 0x020B8620 battle_chars
+peek u16 0x020B85BE event_battle_id
+battlers
+watch u16 0x020B8614 battle_curse
+watch u16 0x020B85C2 round
+watch u32 0x0228E874 jian_hp
+watch u8 0x0213BA43 gum_count
+shot z_start
+press A 8
+wait 60
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+shot z_r0_target
+press A 8
+wait 200
+shot z_r0_a
+wait 200
+shot z_r0_b
+wait 1000
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+shot z_r1_target
+press A 8
+wait 200
+shot z_r1_a
+wait 200
+shot z_r1_b
+wait 1000
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+shot z_r2_target
+press A 8
+wait 200
+shot z_r2_a
+wait 200
+shot z_r2_b
+wait 1000
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+shot z_r3_target
+press A 8
+wait 200
+shot z_r3_a
+wait 200
+shot z_r3_b
+wait 1000
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+shot z_r4_target
+press A 8
+wait 200
+shot z_r4_a
+wait 200
+shot z_r4_b
+wait 1000
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+shot z_r5_target
+press A 8
+wait 200
+shot z_r5_a
+wait 200
+shot z_r5_b
+wait 1000
