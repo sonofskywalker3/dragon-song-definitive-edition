@@ -45,6 +45,7 @@ LAST = 0x80000000
 KIND_MASK = 3
 KIND_ANIM = 1
 KIND_FIXED = 2
+MOVING = 0x10  # the mover advances while the current step has it
 PARTIAL_HOP = 0x10000  # move a quarter of the way (with 0x20000 clear)
 
 
@@ -60,6 +61,13 @@ class Cut:
 
 def keep(*indexes: int) -> tuple[Cut, ...]:
     return tuple(Cut(i) for i in indexes)
+
+
+def land(src: int) -> Cut:
+    """Cap the settle animation after a hop home, keeping the moving bit (0x10) so a hop that is still in
+    the air when the step starts (a lag frame after an interrupt) finishes instead of freezing mid-arc
+    (the mover only counts while the current step has 0x10)."""
+    return Cut(src, frames=LAND, flags=-2)
 
 
 def cap(src: int, frames: int, last: bool = False) -> Cut:
@@ -87,6 +95,8 @@ def build_steps(data: bytes, script: int, cuts: tuple[Cut, ...]) -> list[bytes]:
         flags = struct.unpack_from("<I", raw)[0]
         if cut.flags == -1:  # cap: animation wait -> fixed
             flags = (flags & ~KIND_MASK) | KIND_FIXED
+        elif cut.flags == -2:  # land: cap that keeps the mover running
+            flags = (flags & ~KIND_MASK) | KIND_FIXED | MOVING
         elif cut.flags is not None:
             flags = cut.flags
         flags &= ~LAST
@@ -164,7 +174,7 @@ HOP_QUICK = (  # 0x02095780 family: crouch, hop, (landing dropped), wind-up, hit
     cap(4, WINDUP),
     Cut(5),
     *keep(7, 8),
-    cap(9, LAND),
+    land(9),
 )
 QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
     0x02095FC0: (
@@ -175,7 +185,7 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         Cut(14),
         Cut(16, flags=HOP_OUT_FULL, frames=HOP_FRAMES),
         Cut(17),
-        cap(27, LAND),
+        land(27),
     ),
     0x02095780: HOP_QUICK,
     # two hits (0x41 then 0xC1): Deuce, Orcus, Gideon
@@ -187,7 +197,7 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         cap(6, WINDUP),
         Cut(7),
         *keep(9, 10),
-        cap(11, LAND),
+        land(11),
     ),
     # Zethos x8010: hits 0x41, 0x41, 0xC1
     0x02095DF0: (
@@ -198,7 +208,7 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         cap(7, WINDUP),
         Cut(8),
         *keep(10, 11),
-        cap(12, LAND),
+        land(12),
     ),
     # Dark Jian: hits 0x41, 0x41, 0xC1
     0x02095C70: (
@@ -207,7 +217,7 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         cap(4, WINDUP),
         *keep(5, 6, 7),
         *keep(9, 10),
-        cap(11, LAND),
+        land(11),
     ),
     # Zethos skill 21: hop in, two 30-frame effect pauses, hop home
     0x02095D30: (
@@ -218,7 +228,7 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         Cut(6, frames=PAUSE),
         Cut(7),
         *keep(9, 10),
-        cap(11, LAND),
+        land(11),
     ),
     0x020955E0: (
         cap(0, PREP),
@@ -228,7 +238,7 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         Cut(4),
         cap(5, PREP),
         Cut(6, frames=GLIDE_FRAMES),
-        cap(7, LAND),
+        land(7),
     ),
     0x02095820: (
         cap(0, PREP),
@@ -240,7 +250,7 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         Cut(6),
         cap(7, PREP),
         Cut(8, frames=GLIDE_FRAMES),
-        cap(9, LAND),
+        land(9),
     ),
     0x020952E4: (
         Cut(0, frames=LUNGE_PAUSE),
