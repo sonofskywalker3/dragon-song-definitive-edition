@@ -1602,9 +1602,13 @@ where they overlap.
   remembers everything (including the human life), and keeps that memory even after releasing the power
   (this is Lunar 1's Luna and Lunar 2's Goddess Tower recording). The villain's control can suppress her
   awakened self for a while (Ghaleon in Lunar 1, Ignatius here). She confesses to Jian's party, privately,
-  that the Blue Star was destroyed by her hand (or because of her choice, whichever the Japanese Lunar 2
-  wording supports) as the price of sealing Zophar, and that she has spent the centuries since making a
-  home for its people. **Being the goddess is her self-inflicted penance** for the Blue Star: each rebirth is
+  what the Japanese Lunar 2 actually says (first-hand transcript, docs/research-lunar-lore.md correction):
+  the people of the Blue Star begged her for salvation, she and Lucia "barely" sealed Zophar, the star she
+  was entrusted with went into its long sleep, and she brought the few survivors to a dead moon and has
+  spent every life since managing its magic to wake it. The wound is a world she could not save and a seal
+  that barely held, not a destruction by her hand (the "destroyed it as the price of the seal" line is a
+  Wikipedia claim the game does not contain). The cost she admits only in private is the one Lunar 2's Blue
+  Dragon starts to say and Lucia silences: what using her power to seal Zophar means for this world. **Being the goddess is her self-inflicted penance** for the Blue Star she could not save: each rebirth is
   another term served, the power is the weight she chose to carry, and "the world is not ready" is also "I
   have not finished paying." Lucia's rebirth was meant to be the one where the debt was paid and she could
   set it down; Ignatius proves it is not, and she takes it up again. Lunar 1 then becomes her release, not
