@@ -34,7 +34,9 @@ outside the data folders, pass paths as arguments, and run Python with `-I`.
 | `lsb_file_offset.patch` | A two-line patch to lsb's `write_script.c` that adds `(file-offset X)` to each run-commands/options node, so the dump can cite offsets. |
 | `l2ebc.py` | Lunar 2: Eternal Blue Complete (PS1): unpacks `DATA.IDX/PAK/UPD` (a port of wdtools `l2eb_data`) and scans `SCN/` with Supper's string reader from `l2eb_txt.cpp`. That reader is commented out upstream, so it is ported here. |
 | `harmony.py` | Silver Star Harmony (PSP): unpacks `ScriptPack.dat` (FPAC of gzip members) and reads the UTF-16 dialogue in each `LTCV` script file. Written from scratch, because no tool exists. |
-| `ips_text.py` | Lunar: Walking School (Game Gear): reads an IPS patch (records, merged regions, the font it draws) and dumps the Aeon Genesis English script from the patch alone, no ROM needed. Custom one-byte table derived from the patch's font (glyph = byte - 0x10); `09 xx` is a portrait. |
+| `ips_text.py` | Lunar: Walking School (Game Gear): reads an IPS patch (records, merged regions, the font it draws) and dumps the Aeon Genesis English script from the patch alone, no ROM needed, in message-id order (via `gg.py`), then the strings no id reaches as "leftover". Custom one-byte table derived from the patch's font (glyph = byte - 0x10); `09 xx` is a portrait. |
+| `gg.py` | Walking School (Game Gear) message engine, traced in the Japanese ROM: ids `F0nn`-`FEnn` = block, index; block table at 0x14AE; messages found by skipping 00-terminated strings with the control parameter counts at 0x149D. `jp` dumps the Japanese ROM (kana table from its font, voiced kana from context; no kanji), `pair` writes Japanese and English side by side by id. |
+| `msl.py` | Mahou Gakuen Lunar! (Saturn): runs studio-lucia's `msl_script_dump` on `S00.FLD`-`S12.FLD`, turns its CSVs (Shift JIS decoded to UTF-8) into the dump, and makes the offsets file offsets using the FLD header. |
 | `gba_legend.py` | Lunar Legend (GBA): `script` decompresses the 78 per-map LZSS event-script blocks and dumps the inline dialogue, narration, and choices. `strings` dumps the uncompressed menu, item, and name strings. Format below. |
 | `sss_saturn.py` | Silver Star Story (Saturn, Japan), both the 1996 disc (plain `TEXT/` folder; `--original` passes lsb's `sss` flag) and the 1997 MPEG disc (`TEXT.DAT` bundle, unpacked here). Runs lsb in 2-byte mode through `sssc.decode_texts`. `sjis` converts `AR_BOOK.TXT` (the voiced FMV script, Shift-JIS) to UTF-8. |
 | `lsb_unmapped_glyph.patch` | A second lsb patch: a font code missing from `font_table.txt` prints as `{XXXX}` instead of vanishing. |
@@ -79,6 +81,11 @@ python -I $T/l2ebc.py $L/l2ebc_ps1/disc1/DATA.IDX $L/l2ebc_ps1/disc1/DATA.PAK $L
 python -I $T/discfs.py extract "<Harmony>.cso" $L/harmony_psp/files "*ScriptPack.dat"
 python -I $T/harmony.py $L/harmony_psp/files/PSP_GAME/USRDIR/LUNAR/DATA/PACK/ScriptPack.dat $L/harmony_psp/work $L/harmony_psp/script_en.txt
 python -I $T/ips_text.py dump "$L/roms/Lunar - Sanposuru Gakuen (Japan) [T-En by Aeon Genesis v1.00].ips" $L/walking_school_gg/script_en.txt
+python -I $T/gg.py jp   "$L/roms/Lunar - Sanposuru Gakuen (Japan).gg" $L/walking_school_gg/script_jp.txt
+python -I $T/gg.py pair "$L/roms/Lunar - Sanposuru Gakuen (Japan).gg" "$L/roms/Lunar - Sanposuru Gakuen (Japan) [T-En by Aeon Genesis v1.00].gg" $L/walking_school_gg/jp_en.txt
+bin/mame/chdman extractcd -i "roms/Mahou Gakuen Lunar! (Japan) (1M).chd" -o discs/msl_saturn/msl.cue -ob discs/msl_saturn/msl.bin   # from $L
+python -I $T/discfs.py extract $L/discs/msl_saturn/msl.bin $L/msl_saturn_jp/files "S??.FLD"
+python -I $T/msl.py $L/tools/msl_script_tools/target/release/msl_script_dump.exe $L/msl_saturn_jp/files $L/msl_saturn_jp/csv $L/msl_saturn_jp/script_jp.txt
 python -I $T/gba_legend.py script  "$L/roms/Lunar Legend (USA).gba" $L/legend_gba/script_en.txt
 python -I $T/gba_legend.py strings "$L/roms/Lunar Legend (USA).gba" $L/legend_gba/strings_en.txt
 # Saturn, Japan (track 1 of each bin is MODE1/2352 ISO9660; discfs.py reads it as is)
@@ -105,7 +112,8 @@ enough.
 | Lunar 2 (Saturn) | `l2eb_saturn.py`. Both discs carry byte-identical `1`, `2`, and `3` (only the 49-byte `4` differs), so disc 1 is enough. Counts include duplicates: many map variants repeat the same NPC lines. The narrated prologue is subtitle pictures in data file 1234 (MrConan1 `l2_subt_extract`, 4bpp), not text; it was transcribed by eye. | Done: 8,025 messages. |
 | Lunar 2 (PS1 JP) | The text encoding differs (2-byte). `l2ebc.py`'s reader is English-only. MrConan1's `l2_txt_decode` type 1 reads JP PSX `ES` blocks (Shift-JIS words 0x8000-0x9FFF); `l2eb_saturn.py` could add it. | Needs work (no disc). |
 | Harmony (PSP JP) | `harmony.py` should work as is, because the text is UTF-16 (kana and kanji are just more code points). | Untested. |
-| Walking School (GG JP) | `ips_text.py` reads only the English patch. The Japanese ROM's text is untouched by it; ripping it needs the ROM, its kana table, and its pointer tables. | Needs the ROM. |
+| Walking School (GG JP) | `gg.py jp` (Japanese) and `gg.py pair` (side by side with the English, by the game's own message ids). | Done: 1,649 messages; 1,649 of 1,649 ids pair up. |
+| Mahou Gakuen Lunar! (Saturn JP) | `msl.py` around studio-lucia/msl_script_tools (`cargo build --release`; it pulls fldtools from crates.io). | Done: 10,750 messages, no speakers. |
 | Lunar Legend (GBA JP) | `gba_legend.py script ROM OUT --jp`. The decompressor, opcodes, and u16 units are engine code, and the pointer table is found by search. `--jp` accepts any glyph byte (kana probably 0x20-0xA1) and the two-byte units (high byte 0x10-0x1F = kanji, printed as `{Wxxxx}`). Names need a table drawn from the JP font; the on-demand glyph loader has not been traced. | Untested (no JP ROM). |
 
 ## Lunar Legend (GBA) script format
@@ -129,3 +137,25 @@ to the decompressor, and a read callback on its text led to the renderer.
 
 The USA dump has 10,144 messages: 9,984 boxes and 160 choices.
 
+## Walking School (Game Gear) message engine
+
+Traced in the Japanese ROM; the Aeon Genesis patch keeps it and only repoints the blocks.
+
+- **Ids**: a 16-bit id at or above 0xF000 is `block = high byte - 0xF0`, `index = low byte`
+  (0x12F7). Scripts store ids big-endian (`F2 3D`); code loads them (`LD HL,0xFE7D`).
+- **Block table**: 0x14AE, 15 entries of (bank, address); the bank goes in slot 1 and the next
+  bank in slot 2. Block 3 is empty. Japanese text is in banks 4-7, 0x1B, 0x1D, and 0x1F; the
+  English patch points the table at 0x80000-0xAE996.
+- **Lookup** (0x129E): skip `index` 00-terminated strings. Bytes below 0x10 are controls and
+  skip the parameter count in the table at 0x149D (`00 00 00 01 01 01 02 02 02 01 04 00 01 03 00 00`);
+  a parameter can be 00. Nothing stores a block's length, so `gg.BLOCK_LENGTHS` records where
+  each block's text ends (next block, or data), cross-checked against the other ROM.
+- **Text**: 01 line break, 0B wait and clear, 09 xx portrait, 03 xx word xx of the list at
+  0x76B0 (English 0x96800). The English item descriptions use 07 as a one-byte line break.
+- **Japanese table**: the font at 0x48200, tile = byte - 0x10: punctuation 10-1F, digits 20-29,
+  A-Z 2A-43, a-z 44-5D, ー 5E, あ-ん 5F-8C, small ぁ-っ 8D-95, ア-ン 96-C3, small ァ-ッ C4-CC.
+  CD-FF are the voiced kana (が-ぽ, ヴ, ガ-ポ). They have no tile of their own (tiles CD-FF are
+  window borders; ゛ and ゜ at 1C/1D sit at the bottom of the tile, as if drawn on the row
+  above), so they were read from context. No kanji.
+- **Alignment**: of the 692 ids with portraits, 684 have the same portrait sequence in both
+  ROMs; the 8 others are lines the translators moved between neighboring messages.
