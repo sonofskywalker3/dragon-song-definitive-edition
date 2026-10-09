@@ -349,15 +349,22 @@ ENGINE_FEATURES: tuple[str, ...] = (
     ENEMY_SPELL_SPEED.name,
     ENEMY_QUICK_STEPS.name,
 )
-STORY_FEATURES: tuple[str, ...] = ENGINE_FEATURES + (
-    TEXT_EDITS_FEATURE.name,
-    OPENING.name,  # the walk-out and its flags: Story only (Jeff, 2026-10-09: the Engine intro is vanilla)
-    OPENING_TEXT.name,
-    TITLE_SEAL_STORY.name,
+STORY_FEATURES: tuple[str, ...] = (
+    ENGINE_FEATURES
+    + (
+        TEXT_EDITS_FEATURE.name,
+        OPENING.name,  # the walk-out and its flags: Story only (Jeff, 2026-10-09: the Engine intro is vanilla)
+        OPENING_TEXT.name,
+        TITLE_SEAL_STORY.name,
+    )
 )
 EDITIONS = MappingProxyType({"engine": ENGINE_FEATURES, "story": STORY_FEATURES})
 DEFAULT_FEATURES = ENGINE_FEATURES
 # A feature that patches another feature's bytes, and so must be built after it.
 REQUIRES = MappingProxyType(
-    {OPENING_TEXT.name: OPENING.name, TITLE_SEAL_STORY.name: TITLE_SEAL.name}
+    {
+        OPENING.name: TEXT_SPEED.name,
+        OPENING_TEXT.name: OPENING.name,
+        TITLE_SEAL_STORY.name: TITLE_SEAL.name,
+    }
 )
