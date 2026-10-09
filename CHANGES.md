@@ -157,6 +157,11 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Version history
 
+### v0.1.6 (unreleased)
+
+- Dark Jian's copied Special is quicker on Fast too (218 frames down to 70); the spikes, the flinch, and the
+  number are unchanged.
+
 ### v0.1.5 (2026-10-09)
 
 - Monsters attack faster on Fast: every enemy turn is cut (median 166 frames to 58) while the swing, the hit,
