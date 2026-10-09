@@ -1630,7 +1630,17 @@ where they overlap.
   (Lunar is a home, not a waiting room; its people would not go back if they could; her work today is her
   guilt, not what is best for them now). She almost hears it and cannot accept it, because accepting it means
   forgiving herself; she takes the power back up. Dyne gets the second try, 500 years later.
-- **Lucia's human mirror (Jeff, 2026-10-09, shape decided; the event is his to pick):** Lucia the human has
+- **Lucia's human mirror, decided (Jeff, 2026-10-09; to be workshopped in the writing):** Lucia was not born,
+  she was reborn, so she arrived as a foundling and was raised by adoptive parents (canon-shaped: Luna was a
+  foundling raised by Alex's family). Her foster mother was strict but loving; Lucia, rebellious as teens are,
+  stayed out well past curfew one night, and when she came home her mother was dead. The doctor told her
+  nothing could have been done even had she been there; she has never believed him. Tightening that fuses it
+  with the courier thread: that night she was the one who was supposed to be there to run for help, so her
+  need is not only "be exactly where people need me" but "never be the reason help came late": hence the
+  courier work, hence never late, hence "You're late, Jian. Again" has teeth, hence "we barely managed to
+  seal him" is the same wound at the size of a world. What Jian gives her across the game is the doctor's
+  sentence, said by someone she finally believes. Superseded candidate list follows for reference:
+- **(earlier candidates)** Lucia the human has
   something of her own she cannot forgive herself for, and Jian's relationship with her, which never asks her
   to earn it, pushes her toward forgiving herself as a human before the Chamber of Rebirth shows the same
   wound at the goddess's scale. Write the human beat first (Port Searis to Sungrid Bridge, in skits and one
@@ -1650,7 +1660,13 @@ where they overlap.
   silver sisters Asti and Liza [Mega CD names; the Saturn calls them Alicia and Rina], Dyne, Alex) is future
   history relative to Dragon Song and may be seeded as prophecy or left for Lunar 2 players to recognize.
   Jian is not on that list because he gives the rings back and says "I don't want to be a Dragonmaster"
-  (021 #26); keep that line. Ignatius is not on it because he fell. The first Dragonmaster came with
+  (021 #26); keep that line. Ignatius is not on it because he fell. **Canon dates none of Zeon, Loka, or the
+  sisters, so they are not named inside Dragon Song's present (Jeff, 2026-10-09).** They may appear only in a
+  future-facing frame: a short **epilogue in the Lunar 1 era**, Dyne and Althena before her final rebirth
+  (canon: 15 years before Alex she "shared her heart with Dyne" and chose a human life at the cost of his
+  power; he is "Dyne of the Four Heroes of the Black Dragon War," 黒竜戦役, in the Lunar 2 list). Dyne says
+  to her what Jian said; she answers, "You know, someone I once knew told me the same thing. I wish I'd
+  listened to him." The Dragonmasters between can be names on her lips there. The first Dragonmaster came with
   Althena long before this story (do not use "greened the world" in our text); Ignatius is only the latest.
 - **Keepers from the vanilla climax:** Jian giving back the Dragon Rings (021 #26), "You fear yourself"
   (021 #28), the reached hand (021 #38), Althena's "the future must come from each one of you" as the thing
