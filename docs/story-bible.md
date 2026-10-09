@@ -1328,6 +1328,13 @@ That might be you." (docs/intro-analysis.md section 4).
 
 ## 10. The curse: what removing it leaves, and what can carry it
 
+**Decided (Jeff, 2026-10-09): the curse stays in the Story edition.** It is redefined: Jian cannot be healed
+except by the Goddess's power at statues (no items, no healing spells on him) while cursed; he keeps his
+attack. It still keeps any beastman army from recruiting him, which is why Zethos cursed him. It breaks on
+round 3 of the Zethos fight: Zethos, "I may have been wrong about you. Let's make this a fair fight," then the
+flash; Jian can use items again from that turn. The options below about removing the curse are superseded;
+what remains useful here is the list of scenes the curse touches. See docs/plan-two-editions.md.
+
 Decided: the curse goes, and so does Zethos's blast at the end of the San Coliseum (docs/design.md section
 11). Design 11 also gives Gabryel's new reason to bring Jian: she plays the impressed fan of the human
 champion and points him at a bigger fight, the Beast King's open challenge, which turns out to be a ploy to
