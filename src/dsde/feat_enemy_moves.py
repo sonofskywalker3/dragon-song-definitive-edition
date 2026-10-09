@@ -105,7 +105,9 @@ def steps_asm(steps: list[bytes]) -> str:
 
 
 # ---- lever 1: movement only ----------------------------------------------------------------------------
-HOP_IN_FULL = 0x00031016  # the fourth hop in: arc 0x20 (0x10000) to the absolute target (0x20000)
+HOP_IN_FULL = (
+    0x00031016  # the fourth hop in: arc 0x20 (0x10000) to the absolute target (0x20000)
+)
 HOP_OUT_FULL = 0x00039016  # the fourth hop home (0x8000); arc 0x40 left the screen top
 GLIDE_FRAMES = 20  # was 60 (0x020955E0, 0x02095820)
 LUNGE_PAUSE = 2  # was 8
