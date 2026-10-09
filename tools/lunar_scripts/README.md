@@ -35,7 +35,7 @@ outside the data folders, pass paths as arguments, and run Python with `-I`.
 | `l2ebc.py` | Lunar 2: Eternal Blue Complete (PS1): unpacks `DATA.IDX/PAK/UPD` (a port of wdtools `l2eb_data`) and scans `SCN/` with Supper's string reader from `l2eb_txt.cpp`. That reader is commented out upstream, so it is ported here. |
 | `harmony.py` | Silver Star Harmony (PSP): unpacks `ScriptPack.dat` (FPAC of gzip members) and reads the UTF-16 dialogue in each `LTCV` script file. Written from scratch, because no tool exists. |
 | `ips_text.py` | Lunar: Walking School (Game Gear): reads an IPS patch (records, merged regions, the font it draws) and dumps the Aeon Genesis English script from the patch alone, no ROM needed. Custom one-byte table derived from the patch's font (glyph = byte - 0x10); `09 xx` is a portrait. |
-| `gba_legend.py` | Lunar Legend (GBA): **partial**. It dumps only the uncompressed strings (item descriptions, names, and menus). The dialogue is compressed with a scheme that has not been found. |
+| `gba_legend.py` | Lunar Legend (GBA): `script` decompresses the 78 per-map LZSS event-script blocks and dumps the inline dialogue, narration, and choices. `strings` dumps the uncompressed menu, item, and name strings. Format below. |
 
 ## One-time setup on Windows (what was needed)
 
@@ -74,7 +74,8 @@ python -I $T/l2ebc.py $L/l2ebc_ps1/disc1/DATA.IDX $L/l2ebc_ps1/disc1/DATA.PAK $L
 python -I $T/discfs.py extract "<Harmony>.cso" $L/harmony_psp/files "*ScriptPack.dat"
 python -I $T/harmony.py $L/harmony_psp/files/PSP_GAME/USRDIR/LUNAR/DATA/PACK/ScriptPack.dat $L/harmony_psp/work $L/harmony_psp/script_en.txt
 python -I $T/ips_text.py dump "$L/roms/Lunar - Sanposuru Gakuen (Japan) [T-En by Aeon Genesis v1.00].ips" $L/walking_school_gg/script_en.txt
-python -I $T/gba_legend.py "Lunar Legend (USA).gba" $L/legend_gba/strings_en.txt
+python -I $T/gba_legend.py script  "$L/roms/Lunar Legend (USA).gba" $L/legend_gba/script_en.txt
+python -I $T/gba_legend.py strings "$L/roms/Lunar Legend (USA).gba" $L/legend_gba/strings_en.txt
 ```
 
 Both SSSC discs and all three L2EBC discs carry the same data archive, so disc 1 is
@@ -90,4 +91,26 @@ enough.
 | Lunar 2 (PS1 JP) | The text encoding differs (2-byte). `l2ebc.py`'s reader is English-only. Use studio-lucia/eternaldata notes and MrConan1/lunar2_eb_sat_tools (Saturn) as the reference. | Needs work. |
 | Harmony (PSP JP) | `harmony.py` should work as is, because the text is UTF-16 (kana and kanji are just more code points). | Untested. |
 | Walking School (GG JP) | `ips_text.py` reads only the English patch. The Japanese ROM's text is untouched by it; ripping it needs the ROM, its kana table, and its pointer tables. | Needs the ROM. |
-| Lunar Legend (GBA JP) | Same block as the English: the dialogue compression is unknown. | Blocked. |
+| Lunar Legend (GBA JP) | `gba_legend.py script ROM OUT --jp`. The decompressor, opcodes, and u16 units are engine code, and the pointer table is found by search. `--jp` accepts any glyph byte (kana probably 0x20-0xA1) and the two-byte units (high byte 0x10-0x1F = kanji, printed as `{Wxxxx}`). Names need a table drawn from the JP font; the on-demand glyph loader has not been traced. | Untested (no JP ROM). |
+
+## Lunar Legend (GBA) script format
+
+Found by tracing in BizHawk (mGBA core): a write callback on the EWRAM script buffer led
+to the decompressor, and a read callback on its text led to the renderer.
+
+- **Pointer table** (USA): ROM 0x7FD564, 140 u32 pointers (one per map slot) to 78 distinct
+  blocks at 0x62DAE4-0x6BF042.
+- **Block (LZSS)**: `u32 size, u32 data_len, data[data_len], flag bits`. Flags are LSB first,
+  one per token: 0 = literal byte; 1 = u16 LE `v` from the data, copy `(v >> 12) + 3` bytes
+  from `(v & 0xFFF) + 1` back. The decoder is at 0x08000D9C (state at IWRAM 0x03001990).
+- **Script**: decompressed to EWRAM 0x02016000. It holds 256 u16 event offsets, then
+  bytecode from 0x02016200 (80 opcodes, handler table at 0x0862D6C0). Text is inline in
+  op `00 xx nnnn yyyy` (dialogue), op `17 xx xx xx nnnn` (narration), and op `33 nn ...`
+  (8-byte header, a choice), followed by u16 units up to `0F00`.
+- **Units** are u16 LE. High byte 0 = a glyph, using the same table as the plain strings plus
+  the punctuation listed in `gba_legend.py`. Otherwise the high byte is a control and the
+  low byte its parameter: 07 wait, 08 new box, 09 line break, 0A auto-advance (frames),
+  0D/0E portrait, 0F end.
+
+The USA dump has 10,144 messages: 9,984 boxes and 160 choices.
+
