@@ -17,6 +17,9 @@ script 0x02095334); the median is 166; the longest is Morus' steal (578). Fast o
 so the animation-driven steps (type 1) are untouched and dominate: Shaitan's 469 Fast frames are 409
 animation, 60 fixed (confirmed, timing.json).
 
+Cutting these down: docs/plan-enemy-attacks.md (features enemy-sprite-speed, enemy-spell-speed,
+enemy-short-moves, enemy-quick-steps; off by default).
+
 ## 1. Forcing a battle (reusable)
 
 ### 1.1 Regular enemies (confirmed: 3 proof species, then all 34 normal species)
