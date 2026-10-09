@@ -1,0 +1,118 @@
+# Lunar: The Silver Star (Sega CD) proper-noun restorer for scriptrip_tss output.
+# Format as in wdtools / studio-lucia lunar_eb_script substitutions.txt: "orig | Replacement;"
+# Longer names first. Pronoun rules copied from lunar_eb_script/substitutions.txt.
+# Pronouns: "I", "I'm", etc.
+i' | I';
+i  | I ;
+.i.  | .I. ;
+.i  | .I ;
+
+b1 | B1;
+b2 | B2;
+b3 | B3;
+b4 | B4;
+b5 | B5;
+b6 | B6;
+b7 | B7;
+b8 | B8;
+b9 | B9;
+b10 | B10;
+b11 | B11;
+b12 | B12;
+b13 | B13;
+b14 | B14;
+b15 | B15;
+
+1f | 1F;
+2f | 2F;
+3f | 3F;
+4f | 4F;
+5f | 5F;
+6f | 6F;
+7f | 7F;
+8f | 8F;
+9f | 9F;
+10f | 10F;
+11f | 11F;
+12f | 12F;
+13f | 13F;
+14f | 14F;
+15f | 15F;
+
+1a | 1A;
+1b | 1B;
+1c | 1C;
+1d | 1D;
+
+2a | 2A;
+2b | 2B;
+2c | 2C;
+2d | 2D;
+
+3a | 3A;
+3b | 3B;
+3c | 3C;
+3d | 3D;
+
+4a | 4A;
+4b | 4B;
+4c | 4C;
+4d | 4D;
+goddess althena | Goddess Althena;
+magic emperor ghaleon | Magic Emperor Ghaleon;
+the magic emperor | the Magic Emperor;
+master ghaleon | Master Ghaleon;
+dragonmaster dyne | Dragonmaster Dyne;
+dragonmaster alex | Dragonmaster Alex;
+white dragon cave | White Dragon Cave;
+white dragon | White Dragon;
+red dragon | Red Dragon;
+blue dragon | Blue Dragon;
+black dragon | Black Dragon;
+dragon diamond | Dragon Diamond;
+magic guild | Magic Guild;
+goddess tower | Goddess Tower;
+silver spire | Silver Spire;
+grindery | Grindery;
+althena | Althena;
+ghaleon | Ghaleon;
+alex | Alex;
+luna | Luna;
+nall | Nall;
+ramus | Ramus;
+dyne | Dyne;
+mia | Mia;
+kyle | Kyle;
+jessica | Jessica;
+nash | Nash;
+xenobia | Xenobia;
+quark | Quark;
+mel | Mel;
+lemia | Lemia;
+royce | Royce;
+laike | Laike;
+tempest | Tempest;
+fresca | Fresca;
+myght | Myght;
+burg | Burg;
+saith | Saith;
+meribia | Meribia;
+vane | Vane;
+caldor isle | Caldor Isle;
+caldor | Caldor;
+hobbel isle | Hobbel Isle;
+hobbel | Hobbel;
+lann isle | Lann Isle;
+lann | Lann;
+nanza | Nanza;
+marius zone | Marius Zone;
+marius | Marius;
+iluk | Iluk;
+reza | Reza;
+meryod | Meryod;
+taben | Taben;
+talon mine | Talon Mine;
+weird woods | Weird Woods;
+dragonmaster | Dragonmaster;
+mr/ms | Mr/ms;
+ms. jessica | Ms. Jessica;
