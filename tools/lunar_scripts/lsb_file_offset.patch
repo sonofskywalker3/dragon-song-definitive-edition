@@ -1,0 +1,20 @@
+diff --git a/write_script.c b/write_script.c
+index 9b76787..d9e73f0 100644
+--- a/write_script.c
++++ b/write_script.c
+@@ -1091,6 +1091,7 @@ int writeScript(FILE* outFile){
+ 	                fprintf(outFile, "(run-commands id=%s\r\n", formatVal(pNode->id + 9000));
+ 				else
+ 					fprintf(outFile, "(run-commands id=%s\r\n", formatVal(pNode->id));
++                fprintf(outFile, "    (file-offset %X)\r\n", pNode->fileOffset);
+ 
+                 while (rpNode != NULL) {
+ 
+@@ -1138,6 +1139,7 @@ int writeScript(FILE* outFile){
+                 runParamType* rpNode = NULL;
+ 
+                 fprintf(outFile, "(options id=%s\r\n", formatVal(pNode->id));
++                fprintf(outFile, "    (file-offset %X)\r\n", pNode->fileOffset);
+ 
+                 /* Print the 2 required parameters */
+                 fprintf(outFile, "    (jmpparam %s)\r\n", formatVal(pNode->subParams[0].value));

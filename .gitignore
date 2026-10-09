@@ -6,14 +6,15 @@ build/
 *.sav
 *.dsv
 
-# Downloaded tool binaries
-tools/
+# Downloaded tool binaries (but our own Lunar script extractors are source)
+tools/*
+!tools/lunar_scripts/
 
 # Python
 .venv/
 __pycache__/
 
 # Other Lunar games and their extracted scripts (local only)
-lunar_scripts/
+/lunar_scripts/
 research_notes/
 reports/
