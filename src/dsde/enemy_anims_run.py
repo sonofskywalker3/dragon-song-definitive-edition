@@ -102,9 +102,9 @@ def make_setup(rom: Path, out: Path, extra: tuple[str, ...]) -> Setup:
     symbols = layout_cave([by_name[name] for name in [*DEFAULT_FEATURES, *extra]])
     cuts: dict[int, tuple[int, list[Step]]] = {}
     for prefix, cut_set in CUT_SETS.items():
-        if f"cave_{prefix}_table" not in symbols:
-            continue
         for script, raws in cut_scripts(cut_set).items():
+            if label(prefix, script) not in symbols:
+                continue
             steps = []
             for i, raw in enumerate(raws):
                 flags, _, anim, sound, frames = struct.unpack("<IIhhh", raw[:14])
