@@ -96,13 +96,19 @@ OP_SET_FLAG = 0x19
 OP_CLEAR_FLAG = 0x1A
 OP_FADE = 0x1D
 OP_WAIT_FADE = 0x1E
+OP_FIELD = 0x32  # handler func_0203e5c8, a switch on its first argument
+FIELD_RELOAD = 1  # reload the current map (func_0201d92c); with RELOAD_WITH_HUD also the bottom screen
+RELOAD_WITH_HUD = 1  # load flags 0xFFFFFF5F (0x100: HUD rebuilt), func_02071518 (field screens back), and the
+# message window marked closed (ctx +0x29A = 0), as an event's end does (field states 0x4D..0x4F). The vanilla
+# self-introduction's subroutine 0x7508 uses the same op. Without it the bottom screen keeps the last message box
+# ("Right then!") during the walk, under the HUD once the map changes.
+RESTORE_SLOT = "restore"
 OP_ROUTE = 0x44
 OP_WAIT_ROUTE = 0x45
 GOTO_MAP_WARP = 2
 CMP_VAR_EQ_IMM = 0x0002  # operand 0 from var (+0x204), operand 1 immediate, compare ==
 VAR_MAP = 1  # map entry events: var 0 = 1, var 1 = the map id
 MSG_BOX = 0x0001  # the flag the vanilla wake-up messages use
-FADE_TOP = 1
 FADE_BOTH = 3
 FADE_FULL = 0x80
 FADE_DEFAULT_FRAMES = -1  # 30 frames
@@ -247,6 +253,8 @@ def _engine_program() -> list[Item]:
     return [
         Label("walk"),
         flags,
+        Label(RESTORE_SLOT),
+        _op(OP_FIELD, FIELD_RELOAD) + struct.pack("<HH", RELOAD_WITH_HUD, 0),
         *run("r_room"),
         *aside_slot("slot_room"),
         _op(OP_WAIT_ROUTE, PLAYER),
@@ -258,8 +266,7 @@ def _engine_program() -> list[Item]:
         _op(OP_JUMP) + struct.pack("<I", VANILLA_MAP_ENTRY),
         Label("hall"),
         if_flag_clear_goto(RUN_FLAG, VANILLA_MAP_ENTRY),
-        Label("fade_hall"),
-        fade_in(FADE_TOP),
+        fade_in(),
         *run("r_hall"),
         *aside_slot("slot_hall"),
         _op(OP_WAIT_ROUTE, PLAYER),
@@ -267,8 +274,7 @@ def _engine_program() -> list[Item]:
         stop,
         Label("lobby"),
         if_flag_clear_goto(RUN_FLAG, VANILLA_MAP_ENTRY),
-        Label("fade_lobby"),
-        fade_in(FADE_TOP),
+        fade_in(),
         *run("r_lobby"),
         *aside_slot("slot_lobby"),
         _op(OP_WAIT_ROUTE, PLAYER),
@@ -401,9 +407,6 @@ def opening_patches() -> tuple[DataPatch, ...]:
     return tuple(patches)
 
 
-# The hall and lobby legs fade in only the top screen: with no aside the bottom screen would show the last
-# message box under the HUD. With the asides the bottom screen shows them, so opening-text fades in both.
-FADE_SLOTS = ("fade_hall", "fade_lobby")
 ASIDE_SLOTS = (
     ("slot_room", "t_run_room"),
     ("slot_hall", "t_run_hall"),
@@ -439,7 +442,13 @@ def opening_text_patches() -> tuple[DataPatch, ...]:
         (slot, _op(OP_MSG, MSG_BOX) + struct.pack("<I", labels[text]), "an aside")
         for slot, text in ASIDE_SLOTS
     ]
-    slots += [(fade, fade_in(), "fade in both screens") for fade in FADE_SLOTS]
+    slots.append(
+        (
+            RESTORE_SLOT,
+            _op(OP_JUMP) + struct.pack("<I", layout.labels[RESTORE_SLOT] + JUMP_SIZE),
+            "no field restore: the aside replaces the box",
+        )
+    )
     for slot, new, what in slots:
         at = layout.labels[slot] - layout.base
         patches.append(

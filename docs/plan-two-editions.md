@@ -45,12 +45,12 @@ Engine. Mixed features were split.
 | Flags 0x1, 0x1E2, 0xC (Lucia left), 0xD (Lucia at the fountain) set on the walk | opening-run | opening-run (Engine) | Jeff: "do go ahead and set the flags" |
 | Fountain Square (164) entry checks 0xC instead of 0xD (0x56E8) | opening-run | opening-run (Engine) | a flag check |
 | Asides close by themselves when the walk ends (cave_aside_autoclose; text-speed calls it) | opening-run | opening-run (Engine) | timing, no text; with no aside in the Engine walk it never fires |
-| Hall and lobby legs fade in the top screen only | (new) | opening-run (Engine) | with no aside the bottom screen would show the last box ("Right then!") under the HUD; it stays dark until the town map |
+| Field bottom screen restored at the start of the walk (op `32 0001 0001`, docs/re-opening.md) | (new) | opening-run (Engine) | closes the "Right then!" box and brings the HUD back, so the HUD shows during the whole walk as in normal play |
 | Jump at 0x63C4 (after "Right then! I'd better go looking for Lucia...") to the walk | (new) | opening-run (Engine) | the vanilla wake-up plays as written, then the walk |
 | Wake-up jump at 0x62CC to Cherenkov's call, Jian's replies, the vanilla waking pose | opening-run | opening-text (Story) | new dialogue; skips the self-introduction |
 | The three asides on the walk ("I'm Jian. I'm a courier...") | opening-run | opening-text (Story) | new text; not vanilla (they replace the self-introduction), so not in the Engine edition at all |
 | Cherenkov's three lobby lines -> "Jian, what are you doing?! Get to Fountain Square!..." | opening-run | opening-text (Story) | wording; in the Engine edition he says his vanilla line for the flags (0x0CA9, "Get over to the Fountain Square, on the double!") |
-| Hall and lobby fade both screens in | opening-run | opening-text (Story) | the asides show on the bottom screen |
+| The restore op replaced by a jump | (new) | opening-text (Story) | the room aside's box replaces "Right then!" |
 | Title seal says ENGINE | title-seal | title-seal (Engine) | which build a screenshot is from |
 | Title seal says STORY | (new) | title-seal-story (Story) | repaints title-seal's tiles |
 
@@ -82,8 +82,11 @@ recipient name tag (build/editions/engine_script_diff.txt); the Story build adds
 the asides, Cherenkov's line, and the Anyway cut (story_script_diff.txt). Emulator, New Game
 (emu/plans/editions_opening.plan) and the start save (editions_boot.plan): build/editions/engine_*.png and
 story_*.png (0 title seal, 1 narration page 1, 2 to 4 the walk through room, hall, and lobby, 5 the town map,
-6 the field from the start save). The Engine edition shows the vanilla narration, the self-introduction, and
-"Right then!", then walks out.
+6 the field from the start save, 7 and 8 Cherenkov and Jack with the walk's flags). The Engine edition shows the
+vanilla narration, the self-introduction, and "Right then!", then walks out with the HUD on the bottom screen;
+Cherenkov then says his vanilla "Get over to the Fountain Square, on the double!" and Jack his vanilla "I just
+saw Lucia in Fountain Square. I thought she was waiting for you...?" (emu/plans/editions_npcs.plan,
+editions_jack.plan).
 
 Still open: the guidebook describes the same mechanics in both editions (no edition-aware page yet); the curse
 rework (curse-no-healing) goes into ENGINE_FEATURES when it lands; party-chat into STORY_FEATURES when its

@@ -1,0 +1,31 @@
+# Two editions: Jack after the Engine walk (flags 0x1, 0xC, 0xD set as the walk sets them). From the start save,
+# pin-warp from Jian's room to Jack's house (map 159) and talk to Jack (moves from npc_gate_searis2/3.plan).
+include boot_from_save
+pinptr u32 0x020B4640 0 0x3002
+wait 2
+unpin
+pin u16 0x020B77EC 0x9F
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+unpin
+wait 120
+peek u16 0x020B6BE4 map
+poke u32 0x020B6CB4 0x104000
+poke u32 0x020B6CB8 0xCC000
+wait 10
+press Up 4
+wait 10
+press A 4
+wait 150
+shot jack_1
+press A 4
+wait 90
+shot jack_2
+press A 4
+wait 90
+shot jack_3
+press A 4
+wait 60

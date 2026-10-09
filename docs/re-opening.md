@@ -5,8 +5,25 @@ self-introduction, have Cherenkov call from downstairs, then a scripted run from
 through the inn hall (160) and lobby (155) out of the front door, with Jian's introduction shown as
 text while he runs. Dialogue in the prototype is placeholder text (tone rules: docs/style-rules.md).
 
-Prototype: feature `opening-run` in `src/dsde/feat_opening.py`, registered in `FEATURES` but not in
-`DEFAULT_FEATURES`. Test plan: `emu/plans/opening_run.plan` (New Game, no save).
+Now two features in `src/dsde/feat_opening.py` (docs/plan-two-editions.md, 2026-10-09):
+
+- `opening-run` (both editions): the vanilla wake-up and self-introduction play unchanged; a jump at 0x63C4
+  (after "Right then! I'd better go looking for Lucia...") goes to the walk, which sets the flags (0x1, 0x1E2,
+  0xC, 0xD, RUN_FLAG), restores the field bottom screen with op `32 0001 0001` (handler func_0203e5c8 case 1:
+  reload the current map with the HUD flag 0x100, func_02071518 for the field screens, ctx +0x29A = 0 so the
+  message window counts as closed; the same work an event's end does in field states 0x4D..0x4F), then walks
+  the three legs. Each leg has an aside slot (a jump to the next op).
+- `opening-text` (Story edition, after opening-run): the wake-up jump at 0x62CC to Cherenkov's call, messages
+  in the three aside slots, the restore op replaced by a jump (the aside's box replaces "Right then!"), and
+  Cherenkov's lobby lines.
+
+Why the restore: a map change from an event whose message window is open (ctx +0x29A = 1) goes through field
+state 0x2A/0x2B, which reloads the HUD background but leaves the message layers on (sub DISPCNT is only set
+back to BG2/BG3/OBJ, `& 0xFFFFE0FF | 0x1C00`, in states 3 and 0x4F), so without an aside the hall showed the
+old "Right then!" box under the HUD sprites.
+
+Test plans: `emu/plans/editions_opening.plan` (New Game, both editions), `opening_run.plan` (the old Story
+run). The sections below describe the first prototype; offsets of the appended code have moved.
 
 ## 1. Map 196 and the end of the vanilla wake-up
 
@@ -64,9 +81,9 @@ walking with the D-pad). The legs follow the owner's walked path, so collision w
 
 ## 4. Implementation (as built in the prototype)
 
-All in script 001; appended code goes at 0x7620, after the two messages `text-edits` moves to the end
+All in script 001; appended code goes at 0x7620, after the two messages `text-fixes` moves to the end
 of the file (0x7560..0x761C, the Balam renames). `opening-run` writes those same bytes too, so the
-layout is identical with or without `text-edits` and in either feature order (checked by applying both
+layout is identical with or without `text-fixes` and in either feature order (checked by applying both
 orders to the vanilla file).
 
 In place (each patch checks the vanilla bytes):
