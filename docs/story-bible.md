@@ -35,6 +35,12 @@ make Jian, not the goddess, the one who arrives there.
 
 ### The rules
 
+0. **Canon (Jeff, 2026-10-09).** Only Lunar 1 and Lunar 2 are canon, Japanese preferred over English. Every
+   other release (Silver Star Story, Eternal Blue Complete, Legend, Harmony, Walking School, Magic School
+   Lunar, and Dragon Song itself) is judged by its fidelity to the world of those two: where it contradicts
+   them, canon wins; what does not contradict them is flavor we may borrow. Working timeline: Althena brought
+   humans about 1,000 years before Lunar 1; Dragon Song is about 500 years before Lunar 1 and is the Vile
+   Tribe exile Lunar 1 remembers (docs/research-lunar-lore.md).
 1. **Keep the plot.** The route, the dungeons, the bosses, Lucia's capture, Rufus's death, the four trials,
    the airship, the Chamber of Rebirth. Nothing in this bible needs a new dungeon.
 2. **Cut the fluff.** Errand chains that send you to the innkeeper, then a random NPC, before the story
