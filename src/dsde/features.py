@@ -336,7 +336,6 @@ ENGINE_FEATURES: tuple[str, ...] = (
     WALK_SPEED.name,
     GAD_EXPRESS.name,
     MIC_SIGN.name,
-    OPENING.name,
     TEXT_SPEED.name,
     EXPERIENCE_NAME.name,
     TITLE_SEAL.name,
@@ -352,6 +351,7 @@ ENGINE_FEATURES: tuple[str, ...] = (
 )
 STORY_FEATURES: tuple[str, ...] = ENGINE_FEATURES + (
     TEXT_EDITS_FEATURE.name,
+    OPENING.name,  # the walk-out and its flags: Story only (Jeff, 2026-10-09: the Engine intro is vanilla)
     OPENING_TEXT.name,
     TITLE_SEAL_STORY.name,
 )
