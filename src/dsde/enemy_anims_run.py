@@ -1,0 +1,299 @@
+"""Runs the enemy attack recordings (dsde.enemy_anims) in parallel emulators and turns the logs into
+timing.json, frames and a GIF per action under build/enemy_anims/<row>_<name>_<action>/.
+
+Variants: `fast` (build/dsde.nds, speed setting pinned to Fast, a shot every 2nd frame of the first
+recorded turn), `normal` (build/dsde.nds pinned to Normal) and `vanilla` (build/vanilla.nds), the last two
+timing only. Rebuild build/dsde.nds from the tree first (`uv run python -m dsde.patches`): the Fast pin's
+address comes from the current feature layout.
+
+    uv run python -m dsde.enemy_anims_run run --workers 8            # everything
+    uv run python -m dsde.enemy_anims_run run --only 020_Ice_Mongrel_a0_attack --variants fast
+    uv run python -m dsde.enemy_anims_run report                     # markdown table from timing.json
+"""
+
+import argparse
+import json
+import logging
+import shutil
+import subprocess
+from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+
+from dsde.emu import START_SAVE, run_plan
+from dsde.enemy_anims import ARM9_BIN, EnemyAction, make_plan, read_actions, read_steps
+from dsde.features import DEFAULT_FEATURES, FEATURES
+from dsde.patching import layout_cave
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+OUT = PROJECT_ROOT / "build" / "enemy_anims"
+WORK = OUT / "_work"
+DSDE_ROM = PROJECT_ROOT / "build" / "dsde.nds"
+VANILLA_ROM = PROJECT_ROOT / "build" / "vanilla.nds"
+VARIANTS = ("fast", "normal", "vanilla")
+SPEED_SETTING = {
+    "fast": 1,
+    "normal": 0,
+}  # feat_battle_speed: 0 Normal, 1 Fast, 2 Faster
+TURNS = 2
+SHOT_EVERY = 2
+GIF_FPS = 30
+CUTOFF = 60  # frames on Fast, first action-script step to the last
+
+# round states (battle work +0x2E, func_0202d22c)
+RS_CAMERA = (5, 6)
+RS_SCRIPT = 7  # the action script runs its steps
+RS_INTERRUPT = (
+    8,
+    9,
+    10,
+    11,
+)  # entered from a step that returns -2 (seen once: a counter, uncertain)
+RS_DAMAGE_WAIT = 14
+
+logger = logging.getLogger(__name__)
+
+
+def speed_pin(variant: str) -> str | None:
+    if variant not in SPEED_SETTING:
+        return None
+    features = {f.name: f for f in FEATURES}
+    symbols = layout_cave([features[name] for name in DEFAULT_FEATURES])
+    return f"pin u8 {symbols['cave_speed_state']:#010x} {SPEED_SETTING[variant]}"
+
+
+def signed(value: int) -> int:
+    return value - (1 << 32) if value & 0x80000000 else value
+
+
+def parse_rec(path: Path) -> list[dict]:
+    """Turns from a .rec log: header and per-frame values."""
+    turns: list[dict] = []
+    for line in path.read_text().splitlines():
+        words = line.split()
+        if words[0] == "turn":
+            turns.append(
+                dict(actor=int(words[3]), row=int(words[5]), frames=[], ended=False)
+            )
+        elif words[0] == "end" and turns:
+            turns[-1]["ended"] = True
+        elif words[0] == "f" and turns:
+            v = dict(zip(words[0::2], words[1::2]))
+            turns[-1]["frames"].append(
+                dict(
+                    f=int(v["f"]),
+                    rs=int(v["rs"]),
+                    step=int(v["step"]),
+                    script=int(v["scr"], 16),
+                    x=signed(int(v["x"], 16)),
+                    y=signed(int(v["y"], 16)),
+                    z=signed(int(v["z"], 16)),
+                    level=int(v["lvl"]),
+                )
+            )
+    return turns
+
+
+def analyse_turn(turn: dict, data: bytes) -> dict:
+    frames = turn["frames"]
+    script_frames = [f for f in frames if f["rs"] == RS_SCRIPT]
+    script = Counter(f["script"] for f in script_frames).most_common(1)
+    script_addr = script[0][0] if script else 0
+    runs: list[list[int]] = []  # [step, frames]
+    for f in script_frames:
+        if runs and runs[-1][0] == f["step"]:
+            runs[-1][1] += 1
+        else:
+            runs.append([f["step"], 1])
+    static = {s.index: s for s in read_steps(data, script_addr)} if script_addr else {}
+    steps = []
+    for index, count in runs:
+        s = static.get(index)
+        steps.append(
+            dict(
+                step=index,
+                frames=count,
+                kind=s.kind if s else "?",
+                fixed_frames=s.frames if s and s.kind == "fixed" else None,
+                flags=f"{s.flags:#010x}" if s else None,
+            )
+        )
+    states = Counter(f["rs"] for f in frames)
+    return dict(
+        actor=turn["actor"],
+        row=turn["row"],
+        complete=turn["ended"],
+        turn_frames=len(frames),
+        camera_frames=sum(states[s] for s in RS_CAMERA),
+        script=f"{script_addr:#010x}",
+        script_frames=len(script_frames),
+        interrupt_frames=sum(states[s] for s in RS_INTERRUPT),
+        damage_wait_frames=states[RS_DAMAGE_WAIT],
+        round_states={str(k): v for k, v in sorted(states.items())},
+        steps=steps,
+        speed_level=Counter(f["level"] for f in frames).most_common(1)[0][0]
+        if frames
+        else None,
+        positions=[
+            [f["f"], f["rs"], f["step"], f["x"], f["y"], f["z"]] for f in frames
+        ],
+    )
+
+
+def make_gif(folder: Path) -> None:
+    shots = sorted(folder.glob("frame_*.png"))
+    if not shots:
+        return
+    subprocess.run(
+        [
+            "ffmpeg", "-y", "-loglevel", "error", "-framerate", str(GIF_FPS),
+            "-i", str(folder / "frame_%04d.png"),
+            "-vf", "split[a][b];[a]palettegen=stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=3",
+            str(folder / "anim.gif"),
+        ],
+        check=True,
+    )  # fmt: skip
+
+
+def run_job(action: EnemyAction, variant: str, worker: int, data: bytes) -> dict:
+    """One emulator run; returns the variant's timing and fills the action folder."""
+    work = WORK / f"w{worker}_{variant}"
+    if work.exists():
+        shutil.rmtree(work)
+    (work / "rec").mkdir(parents=True)
+    rom = work.parent / f"ea_w{worker}_{variant}.nds"
+    source = VANILLA_ROM if variant == "vanilla" else DSDE_ROM
+    if (
+        not rom.exists()
+        or rom.stat().st_size != source.stat().st_size
+        or rom.stat().st_mtime < source.stat().st_mtime
+    ):
+        shutil.copyfile(source, rom)
+    shot_turns = 1 if variant == "fast" else 0
+    plan = work / "plan.plan"
+    plan.write_text(make_plan(data, action, "r", speed_pin(variant), TURNS, shot_turns))
+    log = run_plan(plan, rom, START_SAVE, work)
+    folder = OUT / action.key
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / f"run_{variant}.log").write_text(log)
+    rec = work / "r.rec"
+    shutil.copyfile(rec, folder / f"{variant}.rec") if rec.exists() else None
+    for name in ("cmd", "end"):
+        if (work / f"{name}.png").exists():
+            shutil.copyfile(work / f"{name}.png", folder / f"{variant}_{name}.png")
+    turns = [analyse_turn(t, data) for t in parse_rec(rec)] if rec.exists() else []
+    if variant == "fast":
+        for old in folder.glob("frame_*.png"):
+            old.unlink()
+        for i, shot in enumerate(sorted((work / "rec").glob("r_t1_f*.png"))):
+            shutil.copyfile(shot, folder / f"frame_{i:04d}.png")
+        make_gif(folder)
+    result = dict(variant=variant, turns=turns)
+    (folder / f"timing_{variant}.json").write_text(json.dumps(result, indent=1))
+    logger.info("%s %s: %s", action.key, variant, [t["script_frames"] for t in turns])
+    return result
+
+
+def merge(action: EnemyAction) -> None:
+    folder = OUT / action.key
+    merged = dict(
+        key=action.key, rows=list(action.rows), name=action.name, action_index=action.index,
+        flags=f"{action.flags:#010x}", extra=f"{action.extra:#x}", skill=action.skill,
+        chance=action.chance, static_script=f"{action.script:#010x}", shot_every=SHOT_EVERY,
+    )  # fmt: skip
+    for variant in VARIANTS:
+        path = folder / f"timing_{variant}.json"
+        if path.exists():
+            merged[variant] = json.loads(path.read_text())["turns"]
+    (folder / "timing.json").write_text(json.dumps(merged, indent=1))
+
+
+def run_all(actions: list[EnemyAction], variants: list[str], workers: int) -> None:
+    data = ARM9_BIN.read_bytes()
+    jobs = [(a, v) for a in actions for v in variants]
+    free = list(range(workers))
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        pending = {}
+        queue = list(jobs)
+        while queue or pending:
+            while queue and free:
+                action, variant = queue.pop(0)
+                worker = free.pop()
+                pending[pool.submit(run_job, action, variant, worker, data)] = (
+                    worker,
+                    action,
+                )
+            done = next(as_completed(pending))
+            worker, action = pending.pop(done)
+            free.append(worker)
+            try:
+                done.result()
+            except (subprocess.TimeoutExpired, OSError, ValueError) as error:
+                logger.error("%s failed: %s", action.key, error)
+            merge(action)
+
+
+def summary(turns: list[dict] | None, row: int) -> dict | None:
+    """The first complete turn of the action's own row that ran an action script."""
+    for t in turns or []:
+        if t["row"] == row and t["complete"] and t["script_frames"] > 0:
+            return t
+    return None
+
+
+def report() -> str:
+    lines = [
+        "| Folder | Rows | Script (Fast) | Fast | Normal | Vanilla | Over 60 | Fast steps (frames) |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    for action in read_actions(ARM9_BIN.read_bytes()):
+        path = OUT / action.key / "timing.json"
+        if not path.exists():
+            lines.append(
+                f"| {action.key} | {','.join(map(str, action.rows))} | not run | | | | | |"
+            )
+            continue
+        t = json.loads(path.read_text())
+        fast, normal, vanilla = (summary(t.get(v), action.row) for v in VARIANTS)
+        cell = lambda s: str(s["script_frames"]) if s else "n/a"  # noqa: E731
+        over = (
+            "yes"
+            if fast and fast["script_frames"] > CUTOFF
+            else ("no" if fast else "?")
+        )
+        steps = (
+            " ".join(f"{s['step']}:{s['frames']}" for s in fast["steps"])
+            if fast
+            else ""
+        )
+        script = (
+            fast["script"] if fast else (normal or vanilla or {}).get("script", "?")
+        )
+        lines.append(
+            f"| {action.key} | {','.join(map(str, action.rows))} | {script} | {cell(fast)} | "
+            f"{cell(normal)} | {cell(vanilla)} | {over} | {steps} |"
+        )
+    return "\n".join(lines)
+
+
+def main() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+    parser = argparse.ArgumentParser(prog="dsde.enemy_anims_run")
+    sub = parser.add_subparsers(dest="command", required=True)
+    run = sub.add_parser("run")
+    run.add_argument("--only", nargs="*", help="folder names (row_name_action)")
+    run.add_argument("--variants", default=",".join(VARIANTS))
+    run.add_argument("--workers", type=int, default=6)
+    sub.add_parser("report")
+    args = parser.parse_args()
+    if args.command == "report":
+        print(report())
+        return
+    actions = read_actions(ARM9_BIN.read_bytes())
+    if args.only:
+        actions = [a for a in actions if a.key in args.only]
+    run_all(actions, args.variants.split(","), args.workers)
+
+
+if __name__ == "__main__":
+    main()
