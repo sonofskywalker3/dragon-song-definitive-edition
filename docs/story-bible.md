@@ -1615,7 +1615,17 @@ where they overlap.
   her retirement: Dyne is the one who finally lets her forgive herself. Her lesson to Jian ("the bravery to
   forgive") comes from someone who has never forgiven herself; Ignatius wants the power as a crown, she
   carries it as a sentence. Write the rest ("I still must rest sometimes") as weariness under that sentence,
-  never as mere fatigue. The first Dragonmaster came with
+  never as mere fatigue.
+- **What binds her (Jeff, 2026-10-09, from the Japanese Lunar 2):** her power is committed to restoring the
+  Blue Star, not to Lunar. Canon: the Goddess Tower / the magic city Althena exists "to send all of this
+  world's magic to the Blue Star... everything is for the regeneration of the frozen Blue Star; that is the
+  purpose this world was created for" (Saturn Lunar 2, 1506 @0x9E6, @0xAE0); the Blue Dragon starts to say
+  what sealing Zophar with her power means "for this world" and Lucia silences him in front of the humans
+  (1483 @0xB8E); old Luna's last-rebirth reason is realizing "Lunar does not exist only for the Blue Star"
+  (O065). So in Dragon Song she cannot release her power into Lunar because most of it is owed elsewhere,
+  and she has not yet let herself see Lunar as a home rather than a waiting room. The line to aim at: Lunar
+  is something new, its people would not go back if they could, and she is the last one to believe it. Dyne,
+  500 years later, is the one who frees her of it; Dragon Song plants the seed and leaves it. The first Dragonmaster came with
   Althena long before this story (do not use "greened the world" in our text); Ignatius is only the latest.
 - **Keepers from the vanilla climax:** Jian giving back the Dragon Rings (021 #26), "You fear yourself"
   (021 #28), the reached hand (021 #38), Althena's "the future must come from each one of you" as the thing
