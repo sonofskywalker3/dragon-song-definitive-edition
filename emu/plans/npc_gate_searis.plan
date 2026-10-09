@@ -1,0 +1,43 @@
+# Research (docs/story-npcs.md 4): the vanilla Port Searis opening gate. From the post-intro save,
+# read the story flags (word 0 holds 0xB, 0xC, 0xD), talk to Cherenkov in the lobby (expect 0xC set),
+# then walk out of the lobby door with the next map pinned to 159 (Jack's house) and dump its objects.
+include boot_from_save
+peek u32 0x020B4640 ctx
+dump 0x02204620 0x10 flags_start
+pin u16 0x020B77EC 0x9B
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+wait 30
+poke u32 0x020B6CB4 0xEC000
+poke u32 0x020B6CB8 0xE0000
+wait 10
+press Up 4
+wait 10
+press A 4
+wait 120
+shot gate_cher1
+press A 4
+wait 90
+shot gate_cher2
+press A 4
+wait 90
+press A 4
+wait 60
+dump 0x02204620 0x10 flags_after_cherenkov
+save after_cherenkov
+pin u16 0x020B77EC 0x9F
+poke u32 0x020B6CB4 0x173000
+poke u32 0x020B6CB8 0x130000
+wait 10
+press Down 90
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+shot gate_jackhouse
+dump 0x020B6FD4 0x800 objects_159
+save in_jackhouse

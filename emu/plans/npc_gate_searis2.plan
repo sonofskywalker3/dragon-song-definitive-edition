@@ -1,0 +1,18 @@
+# Research (docs/story-npcs.md 4), part 2: with flag 0xC set as Cherenkov sets it (seen in npc_gate_searis),
+# pin-warp from Jian's room to Jack's house (map 159) and list its objects to find Jack.
+include boot_from_save
+poke u32 0x02204620 0x1002
+pin u16 0x020B77EC 0x9F
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+unpin
+wait 120
+peek u16 0x020B6BE4 map
+shot gate_jack_room
+dump 0x020B6FD4 0x200 objects_159
+peek u32 0x020B6CB4 px
+peek u32 0x020B6CB8 py
+save jack_room
