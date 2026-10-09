@@ -1650,6 +1650,14 @@ where they overlap.
   "they begged me and I barely made it" at the size of one village (recommended); (2) **someone she left
   behind** to have a life of her own (her want becomes her guilt); (3) **someone hurt because she froze**,
   which is why Jian's recklessness, which she scolds all game, is what she wishes she had.
+- **The awakening beat (Jeff, 2026-10-09):** when Ignatius wakes her, the goddess can SEE, with full sight, the
+  night her mother died, and finally, truly knows that Lucia's presence would have changed nothing. That lets
+  her set down the human pain. She does not make the connection to her own guilt: the one place her sight
+  does not reach is herself. Jian says it ("then why can't you see it about you?") and she cannot. The
+  audience makes the connection the instant she does not; that is the "cannot forgive herself yet" beat with
+  a mechanism, and it is the line Lunar 1 pays off 500 years later. Writing note: what she lets go of is the
+  pain and the claim that she was "only ever Lucia" (the vanilla "my Lucia, she isn't Althena!" fight), not
+  the girl, so she can come back to the fountain knowing exactly what she is and stay anyway.
 - **Dragon Song is the exile (decided):** the Frontier is already the rebels' prison (004 #78), Ignatius leads
   the Vile Tribe out across the world, and the ending seals the Frontier; from 500 years later that is the
   Japanese Lunar 1 line "the Vile Tribe that tormented people lived in this world; Althena exiled them to the
