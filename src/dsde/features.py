@@ -12,6 +12,7 @@ from dsde.feat_battle_pace import BATTLE_PACE
 from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
 from dsde.feat_curse import NO_CURSE_PENALTY
+from dsde.feat_curse_healing import CURSE_NO_HEALING
 from dsde.feat_enemy_moves import ENEMY_QUICK_STEPS, ENEMY_SHORT_MOVES
 from dsde.feat_enemy_preload import ENEMY_PRELOAD
 from dsde.feat_enemy_speed import ENEMY_SPELL_SPEED, ENEMY_SPRITE_SPEED
@@ -277,6 +278,7 @@ FEATURES: tuple[Feature, ...] = (
     LEAVE_DROPS_GEAR,
     BATTLE_SPEED,
     NO_CURSE_PENALTY,
+    CURSE_NO_HEALING,
     BATTLE_PACE,
     KILL_ON_HIT,
     BATTLE_FLOW,
@@ -328,6 +330,7 @@ ENGINE_FEATURES: tuple[str, ...] = (
     LEAVE_DROPS_GEAR.name,
     BATTLE_SPEED.name,
     NO_CURSE_PENALTY.name,
+    CURSE_NO_HEALING.name,  # the curse rework, both editions (docs/plan-curse.md)
     BATTLE_PACE.name,
     KILL_ON_HIT.name,
     BATTLE_FLOW.name,
