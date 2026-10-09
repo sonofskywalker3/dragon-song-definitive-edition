@@ -9,15 +9,27 @@ address comes from the current feature layout.
     uv run python -m dsde.enemy_anims_run run --workers 8            # everything
     uv run python -m dsde.enemy_anims_run run --only 020_Ice_Mongrel_a0_attack --variants fast
     uv run python -m dsde.enemy_anims_run report                     # markdown table from timing.json
+
+A ROM with more features (the enemy action cuts of docs/plan-enemy-attacks.md) records into its own folder:
+
+    uv run python -m dsde.patches --with enemy-sprite-speed enemy-quick-steps --output build/enemy_cut/all.nds
+    uv run python -m dsde.enemy_anims_run run --variants fast --rom build/enemy_cut/all.nds \\
+        --out build/enemy_anims_cut --with enemy-sprite-speed enemy-quick-steps
+    uv run python -m dsde.enemy_anims_run report --out build/enemy_anims_cut --with enemy-quick-steps
+
+Cut scripts live in ITCM; the logs show their address, and the analysis maps it back to the original
+script (timing.json `script`; the cut copy's address is `cut_script`) and reads the cut copy's steps.
 """
 
 import argparse
 import json
 import logging
 import shutil
+import struct
 import subprocess
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dsde.emu import START_SAVE, run_plan
@@ -25,16 +37,17 @@ from dsde.enemy_anims import (
     SETUP_FORCED_ROWS,
     ARM9_BIN,
     EnemyAction,
+    Step,
     make_plan,
     read_actions,
     read_steps,
 )
+from dsde.feat_enemy_moves import CUT_SETS, cut_scripts, label
 from dsde.features import DEFAULT_FEATURES, FEATURES
 from dsde.patching import layout_cave
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 OUT = PROJECT_ROOT / "build" / "enemy_anims"
-WORK = OUT / "_work"
 DSDE_ROM = PROJECT_ROOT / "build" / "dsde.nds"
 VANILLA_ROM = PROJECT_ROOT / "build" / "vanilla.nds"
 VARIANTS = ("fast", "normal", "vanilla")
@@ -65,11 +78,46 @@ DRUID_SCRIPTS = {row: (0x02094F74, 0x02095174) for row in range(132, 136)}
 logger = logging.getLogger(__name__)
 
 
-def speed_pin(variant: str) -> str | None:
+@dataclass(frozen=True)
+class Setup:
+    """Where a run reads its DE ROM and writes its folders, and the features that ROM was built with."""
+
+    rom: Path = DSDE_ROM
+    out: Path = OUT
+    extra: tuple[str, ...] = ()
+    # cut script address in ITCM -> (original script, cut steps)
+    cuts: dict[int, tuple[int, list[Step]]] = field(default_factory=dict)
+
+    @property
+    def work(self) -> Path:
+        return self.out / "_work"
+
+    @property
+    def features(self) -> list[str]:
+        return [*DEFAULT_FEATURES, *self.extra]
+
+
+def make_setup(rom: Path, out: Path, extra: tuple[str, ...]) -> Setup:
+    by_name = {f.name: f for f in FEATURES}
+    symbols = layout_cave([by_name[name] for name in [*DEFAULT_FEATURES, *extra]])
+    cuts: dict[int, tuple[int, list[Step]]] = {}
+    for prefix, cut_set in CUT_SETS.items():
+        if f"cave_{prefix}_table" not in symbols:
+            continue
+        for script, raws in cut_scripts(cut_set).items():
+            steps = []
+            for i, raw in enumerate(raws):
+                flags, _, anim, sound, frames = struct.unpack("<IIhhh", raw[:14])
+                steps.append(Step(i, flags, anim, sound, frames))
+            cuts[symbols[label(prefix, script)]] = (script, steps)
+    return Setup(rom, out, extra, cuts)
+
+
+def speed_pin(variant: str, setup: Setup) -> str | None:
     if variant not in SPEED_SETTING:
         return None
     features = {f.name: f for f in FEATURES}
-    symbols = layout_cave([features[name] for name in DEFAULT_FEATURES])
+    symbols = layout_cave([features[name] for name in setup.features])
     return f"pin u8 {symbols['cave_speed_state']:#010x} {SPEED_SETTING[variant]}"
 
 
@@ -105,18 +153,24 @@ def parse_rec(path: Path) -> list[dict]:
     return turns
 
 
-def analyse_turn(turn: dict, data: bytes) -> dict:
+def analyse_turn(turn: dict, data: bytes, setup: Setup) -> dict:
     frames = turn["frames"]
     script_frames = [f for f in frames if f["rs"] == RS_SCRIPT]
     script = Counter(f["script"] for f in script_frames).most_common(1)
-    script_addr = script[0][0] if script else 0
+    logged = script[0][0] if script else 0
+    script_addr, cut_steps = setup.cuts.get(logged, (logged, None))
     runs: list[list[int]] = []  # [step, frames]
     for f in script_frames:
         if runs and runs[-1][0] == f["step"]:
             runs[-1][1] += 1
         else:
             runs.append([f["step"], 1])
-    static = {s.index: s for s in read_steps(data, script_addr)} if script_addr else {}
+    if cut_steps is not None:
+        static = {s.index: s for s in cut_steps}
+    else:
+        static = (
+            {s.index: s for s in read_steps(data, script_addr)} if script_addr else {}
+        )
     steps = []
     for index, count in runs:
         s = static.get(index)
@@ -137,6 +191,7 @@ def analyse_turn(turn: dict, data: bytes) -> dict:
         turn_frames=len(frames),
         camera_frames=sum(states[s] for s in RS_CAMERA),
         script=f"{script_addr:#010x}",
+        cut_script=f"{logged:#010x}" if cut_steps is not None else None,
         script_frames=len(script_frames),
         interrupt_frames=sum(states[s] for s in RS_INTERRUPT),
         damage_wait_frames=states[RS_DAMAGE_WAIT],
@@ -166,14 +221,16 @@ def make_gif(folder: Path) -> None:
     )  # fmt: skip
 
 
-def run_job(action: EnemyAction, variant: str, worker: int, data: bytes) -> dict:
+def run_job(
+    action: EnemyAction, variant: str, worker: int, data: bytes, setup: Setup
+) -> dict:
     """One emulator run; returns the variant's timing and fills the action folder."""
-    work = WORK / f"w{worker}_{variant}"
+    work = setup.work / f"w{worker}_{variant}"
     if work.exists():
         shutil.rmtree(work)
     (work / "rec").mkdir(parents=True)
     rom = work.parent / f"ea_w{worker}_{variant}.nds"
-    source = VANILLA_ROM if variant == "vanilla" else DSDE_ROM
+    source = VANILLA_ROM if variant == "vanilla" else setup.rom
     if (
         not rom.exists()
         or rom.stat().st_size != source.stat().st_size
@@ -185,9 +242,11 @@ def run_job(action: EnemyAction, variant: str, worker: int, data: bytes) -> dict
         (TURNS if action.row in SETUP_FORCED_ROWS else 1) if variant == "fast" else 0
     )
     plan = work / "plan.plan"
-    plan.write_text(make_plan(data, action, "r", speed_pin(variant), TURNS, shot_turns))
+    plan.write_text(
+        make_plan(data, action, "r", speed_pin(variant, setup), TURNS, shot_turns)
+    )
     log = run_plan(plan, rom, START_SAVE, work)
-    folder = OUT / action.key
+    folder = setup.out / action.key
     folder.mkdir(parents=True, exist_ok=True)
     (folder / f"run_{variant}.log").write_text(log)
     rec = work / "r.rec"
@@ -195,7 +254,9 @@ def run_job(action: EnemyAction, variant: str, worker: int, data: bytes) -> dict
     for name in ("cmd", "end"):
         if (work / f"{name}.png").exists():
             shutil.copyfile(work / f"{name}.png", folder / f"{variant}_{name}.png")
-    turns = [analyse_turn(t, data) for t in parse_rec(rec)] if rec.exists() else []
+    turns = (
+        [analyse_turn(t, data, setup) for t in parse_rec(rec)] if rec.exists() else []
+    )
     if variant == "fast":
         for old in folder.glob("frame_*.png"):
             old.unlink()
@@ -210,8 +271,8 @@ def run_job(action: EnemyAction, variant: str, worker: int, data: bytes) -> dict
     return result
 
 
-def merge(action: EnemyAction) -> None:
-    folder = OUT / action.key
+def merge(action: EnemyAction, setup: Setup) -> None:
+    folder = setup.out / action.key
     merged = dict(
         key=action.key, rows=list(action.rows), name=action.name, action_index=action.index,
         flags=f"{action.flags:#010x}", extra=f"{action.extra:#x}", skill=action.skill,
@@ -224,7 +285,9 @@ def merge(action: EnemyAction) -> None:
     (folder / "timing.json").write_text(json.dumps(merged, indent=1))
 
 
-def run_all(actions: list[EnemyAction], variants: list[str], workers: int) -> None:
+def run_all(
+    actions: list[EnemyAction], variants: list[str], workers: int, setup: Setup
+) -> None:
     data = ARM9_BIN.read_bytes()
     jobs = [(a, v) for a in actions for v in variants]
     free = list(range(workers))
@@ -235,7 +298,7 @@ def run_all(actions: list[EnemyAction], variants: list[str], workers: int) -> No
             while queue and free:
                 action, variant = queue.pop(0)
                 worker = free.pop()
-                pending[pool.submit(run_job, action, variant, worker, data)] = (
+                pending[pool.submit(run_job, action, variant, worker, data, setup)] = (
                     worker,
                     action,
                 )
@@ -246,7 +309,7 @@ def run_all(actions: list[EnemyAction], variants: list[str], workers: int) -> No
                 done.result()
             except (subprocess.TimeoutExpired, OSError, ValueError) as error:
                 logger.error("%s failed: %s", action.key, error)
-            merge(action)
+            merge(action, setup)
 
 
 def summary(turns: list[dict] | None, row: int, script: int) -> dict | None:
@@ -260,11 +323,11 @@ def summary(turns: list[dict] | None, row: int, script: int) -> dict | None:
     return None
 
 
-def summarise() -> list[dict]:
+def summarise(setup: Setup) -> list[dict]:
     """One record per action: the turn used for each variant (also written to summary.json)."""
     rows = []
     for action in read_actions(ARM9_BIN.read_bytes()):
-        path = OUT / action.key / "timing.json"
+        path = setup.out / action.key / "timing.json"
         t = json.loads(path.read_text()) if path.exists() else {}
         record = dict(
             key=action.key, rows=list(action.rows), name=action.name,
@@ -291,17 +354,17 @@ def summarise() -> list[dict]:
         fast = record["fast"]
         record["over_cutoff"] = None if fast is None else fast["script_frames"] > CUTOFF
         rows.append(record)
-    (OUT / "summary.json").write_text(json.dumps(rows, indent=1))
+    (setup.out / "summary.json").write_text(json.dumps(rows, indent=1))
     return rows
 
 
-def report() -> str:
+def report(setup: Setup) -> str:
     lines = [
         "| Folder | Rows | Script | Fast | Normal | Vanilla | > 60 | Fast turn / camera / dmg wait "
         "| Fast steps (step:frames, a = animation, f = fixed) |",
         "|---|---|---|---|---|---|---|---|---|",
     ]
-    for r in summarise():
+    for r in summarise(setup):
         fast, normal, vanilla = (r[v] for v in VARIANTS)
         cell = lambda s: str(s["script_frames"]) if s else "n/a"  # noqa: E731
         over = {True: "yes", False: "no", None: "?"}[r["over_cutoff"]]
@@ -328,15 +391,25 @@ def main() -> None:
     run.add_argument("--only", nargs="*", help="folder names (row_name_action)")
     run.add_argument("--variants", default=",".join(VARIANTS))
     run.add_argument("--workers", type=int, default=6)
-    sub.add_parser("report")
+    report_parser = sub.add_parser("report")
+    for p in (run, report_parser):
+        p.add_argument(
+            "--rom", type=Path, default=DSDE_ROM, help="DE ROM for fast/normal"
+        )
+        p.add_argument("--out", type=Path, default=OUT, help="output folder")
+        p.add_argument(
+            "--with", dest="extra", nargs="+", default=[],
+            help="features the ROM has on top of the shipping set",
+        )  # fmt: skip
     args = parser.parse_args()
+    setup = make_setup(args.rom, args.out, tuple(args.extra))
     if args.command == "report":
-        print(report())
+        print(report(setup))
         return
     actions = read_actions(ARM9_BIN.read_bytes())
     if args.only:
         actions = [a for a in actions if a.key in args.only]
-    run_all(actions, args.variants.split(","), args.workers)
+    run_all(actions, args.variants.split(","), args.workers, setup)
 
 
 if __name__ == "__main__":
