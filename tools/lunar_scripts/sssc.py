@@ -8,7 +8,8 @@ LSB_EXE      : lsb built with lsb_file_offset.patch (adds "(file-offset X)" to e
 LSB_DATA_DIR : folder holding lsb's lsss_txtcmpstr_us.bin, font_table.txt and bpe.table
                (lsb loads them from the current directory).
 --ienc       : lsb text mode. 4 = PS1 English (compressed 1-byte). For the Japanese PS1
-               disc try 0 (2-byte, font_table.txt) -- see README.
+               disc try 0 (2-byte, font_table.txt) -- see README. The Saturn discs go
+               through sss_saturn.py, which reuses decode_texts().
 """
 
 from __future__ import annotations
@@ -72,10 +73,11 @@ def speaker(side: str, pid: int) -> str:
     return f"{tag} {name}" if name else tag
 
 
-def parse_lsb(script: Path, source: str) -> list[Message]:
+def parse_lsb(script: Path, source: str, encoding: str = "latin-1") -> list[Message]:
+    """Read lsb's script output. English PS1 text is latin-1; the 2-byte (JP) modes write UTF-8."""
     msgs: list[Message] = []
     cur: Message | None = None
-    for raw in script.read_text(encoding="latin-1").splitlines():
+    for raw in script.read_text(encoding=encoding).splitlines():
         if NODE_RE.match(raw):
             cur = Message(source, 0, "")
             if raw.startswith("(options"):
@@ -110,6 +112,43 @@ def parse_lsb(script: Path, source: str) -> list[Message]:
     return msgs
 
 
+def decode_texts(
+    texts: list[Path],
+    lsb: Path,
+    lsb_data: Path,
+    run_dir: Path,
+    ienc: int,
+    extra: tuple[str, ...] = (),
+    encoding: str = "latin-1",
+) -> list[Message]:
+    """Run lsb decode on each TEXTnnn.DAT and parse its output into messages."""
+    run_dir.mkdir(parents=True, exist_ok=True)
+    for t in LSB_TABLES:
+        shutil.copy(lsb_data / t, run_dir / t)
+    messages: list[Message] = []
+    for t in texts:
+        stem = t.stem
+        res = subprocess.run(
+            [str(lsb.resolve()), "decode", str(t.resolve()), stem, str(ienc), *extra],
+            cwd=run_dir,
+            capture_output=True,
+            text=True,
+            errors="replace",
+        )
+        script = run_dir / stem
+        if res.returncode != 0 or "FAILED" in res.stdout or not script.exists():
+            LOG.warning(
+                "%s: lsb could not parse (%s)",
+                t.name,
+                res.stdout.strip().splitlines()[-1:],
+            )
+            continue
+        got = parse_lsb(script, t.name, encoding)
+        LOG.info("%s: %d messages", t.name, len(got))
+        messages.extend(got)
+    return messages
+
+
 def run(
     fil: Path,
     lsb: Path,
@@ -122,30 +161,7 @@ def run(
 ) -> int:
     files = unpack_fil(fil, work / "fil")
     texts = sorted(p for p in files if TEXT_RE.search(p.name) and p.name not in skip)
-    run_dir = work / "lsb"
-    run_dir.mkdir(parents=True, exist_ok=True)
-    for t in LSB_TABLES:
-        shutil.copy(lsb_data / t, run_dir / t)
-    messages: list[Message] = []
-    for t in texts:
-        stem = t.stem
-        res = subprocess.run(
-            [str(lsb.resolve()), "decode", str(t.resolve()), stem, str(ienc)],
-            cwd=run_dir,
-            capture_output=True,
-            text=True,
-        )
-        script = run_dir / stem
-        if res.returncode != 0 or "FAILED" in res.stdout or not script.exists():
-            LOG.warning(
-                "%s: lsb could not parse (%s)",
-                t.name,
-                res.stdout.strip().splitlines()[-1:],
-            )
-            continue
-        got = parse_lsb(script, t.name)
-        LOG.info("%s: %d messages", t.name, len(got))
-        messages.extend(got)
+    messages = decode_texts(texts, lsb, lsb_data, work / "lsb", ienc)
     write_dump(
         out,
         title,

@@ -1,0 +1,28 @@
+diff --git a/parse_binary.c b/parse_binary.c
+index 548ff49..e05398b 100644
+--- a/parse_binary.c
++++ b/parse_binary.c
+@@ -2073,17 +2073,19 @@ runParamType* getRunParam(int textMode, char* pdata){
+ 
+                 /* Create a text string run parameter element if one was previously started */
+                 if (numTextShorts > 0){
+-                    char tmp[5];
++                    char tmp[8];
+ 
+                     /* Create utf8 Text String*/
+-                    tmpText = (unsigned char*)malloc(5 * (numTextShorts + 1));
+-                    memset(tmpText, 0, 5 * (numTextShorts + 1));
++                    tmpText = (unsigned char*)malloc(8 * (numTextShorts + 1));
++                    memset(tmpText, 0, 8 * (numTextShorts + 1));
+                     for (x = 0; x < (int)numTextShorts; x++){
+-                        memset(tmp, 0, 5);
++                        memset(tmp, 0, 8);
+                         if (ptrTextStart[x] == 0xF90A)
+                             strcpy(tmp, " ");
+                         else
+                             getUTF8character(ptrTextStart[x], tmp);
++                        if (tmp[0] == 0)
++                            sprintf(tmp, "{%04X}", ptrTextStart[x]);
+                         strcat((char *)tmpText, tmp);
+                     }
+ 
