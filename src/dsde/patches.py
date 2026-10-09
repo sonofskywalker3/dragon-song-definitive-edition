@@ -68,10 +68,18 @@ def main() -> None:
     parser.add_argument(
         "features", nargs="*", help="feature names; default is the shipping set"
     )
+    parser.add_argument(
+        "--with",
+        dest="extra",
+        nargs="+",
+        default=[],
+        help="features to build on top of the shipping set (ignored with explicit features)",
+    )
     parser.add_argument("--output", type=Path, default=OUTPUT_ROM)
     parser.add_argument("--arm7-bios", type=Path, default=ARM7_BIOS)
     args = parser.parse_args()
-    build(args.features or list(DEFAULT_FEATURES), args.output, args.arm7_bios)
+    names = args.features or [*DEFAULT_FEATURES, *args.extra]
+    build(names, args.output, args.arm7_bios)
 
 
 if __name__ == "__main__":

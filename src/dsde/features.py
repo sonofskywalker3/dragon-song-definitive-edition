@@ -11,6 +11,8 @@ from dsde.feat_battle_pace import BATTLE_PACE
 from dsde.feat_battle_run import HOLD_LR_TO_RUN
 from dsde.feat_battle_speed import BATTLE_SPEED
 from dsde.feat_curse import NO_CURSE_PENALTY
+from dsde.feat_enemy_moves import ENEMY_QUICK_STEPS, ENEMY_SHORT_MOVES
+from dsde.feat_enemy_speed import ENEMY_SPELL_SPEED, ENEMY_SPRITE_SPEED
 from dsde.feat_experience_name import EXPERIENCE_NAME
 from dsde.feat_field_menu import FIELD_MENU
 from dsde.feat_gad import GAD_EXPRESS
@@ -289,6 +291,12 @@ FEATURES: tuple[Feature, ...] = (
     STILL_HUD,
     STATUE_ANY_SIDE,
     POCKETWATCH,
+    # Enemy action cuts (docs/plan-enemy-attacks.md): not shipped yet. The two script features share a
+    # hook, so build at most one of enemy-short-moves and enemy-quick-steps.
+    ENEMY_SPRITE_SPEED,
+    ENEMY_SPELL_SPEED,
+    ENEMY_SHORT_MOVES,
+    ENEMY_QUICK_STEPS,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
