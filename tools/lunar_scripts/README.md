@@ -36,6 +36,9 @@ outside the data folders, pass paths as arguments, and run Python with `-I`.
 | `harmony.py` | Silver Star Harmony (PSP): unpacks `ScriptPack.dat` (FPAC of gzip members) and reads the UTF-16 dialogue in each `LTCV` script file. Written from scratch, because no tool exists. |
 | `ips_text.py` | Lunar: Walking School (Game Gear): reads an IPS patch (records, merged regions, the font it draws) and dumps the Aeon Genesis English script from the patch alone, no ROM needed. Custom one-byte table derived from the patch's font (glyph = byte - 0x10); `09 xx` is a portrait. |
 | `gba_legend.py` | Lunar Legend (GBA): `script` decompresses the 78 per-map LZSS event-script blocks and dumps the inline dialogue, narration, and choices. `strings` dumps the uncompressed menu, item, and name strings. Format below. |
+| `sss_saturn.py` | Silver Star Story (Saturn, Japan), both the 1996 disc (plain `TEXT/` folder; `--original` passes lsb's `sss` flag) and the 1997 MPEG disc (`TEXT.DAT` bundle, unpacked here). Runs lsb in 2-byte mode through `sssc.decode_texts`. `sjis` converts `AR_BOOK.TXT` (the voiced FMV script, Shift-JIS) to UTF-8. |
+| `lsb_unmapped_glyph.patch` | A second lsb patch: a font code missing from `font_table.txt` prints as `{XXXX}` instead of vanishing. |
+| `l2eb_saturn.py` | Lunar 2: Eternal Blue (Saturn, Japan): unpacks the root files `1` and `2` (numbered like MrConan1's `l2extract`) and reads every `ES` dialogue block with a port of his `l2_txt_decode`. Corrects his v1.0 font table: 奥 was missing at 288, which put 288-333 one glyph early, and seven single entries were wrong. |
 
 ## One-time setup on Windows (what was needed)
 
@@ -57,6 +60,8 @@ outside the data folders, pass paths as arguments, and run Python with `-I`.
   `gcc -static -O2 main.c snode_list.c util.c parse_script.c parse_binary.c parse_binary_psx.c parse_binary_reEng.c psx_decode.c update_script.c write_script.c bpe_compression.c -o lsb.exe`.
   lsb reads `lsss_txtcmpstr_us.bin`, `font_table.txt`, and `bpe.table` from the current
   directory. `sssc.py` copies them into its work folder.
+- For the Saturn JP discs, also `git apply lsb_unmapped_glyph.patch` before building lsb, and
+  `git clone https://github.com/MrConan1/lunar2_eb_sat_tools` (its `font_table/lunar2_font_table.txt`).
 - Substitutions for Eternal Blue: `substitutions.txt` from
   `https://github.com/studio-lucia/lunar_eb_script`.
 
@@ -76,6 +81,14 @@ python -I $T/harmony.py $L/harmony_psp/files/PSP_GAME/USRDIR/LUNAR/DATA/PACK/Scr
 python -I $T/ips_text.py dump "$L/roms/Lunar - Sanposuru Gakuen (Japan) [T-En by Aeon Genesis v1.00].ips" $L/walking_school_gg/script_en.txt
 python -I $T/gba_legend.py script  "$L/roms/Lunar Legend (USA).gba" $L/legend_gba/script_en.txt
 python -I $T/gba_legend.py strings "$L/roms/Lunar Legend (USA).gba" $L/legend_gba/strings_en.txt
+# Saturn, Japan (track 1 of each bin is MODE1/2352 ISO9660; discfs.py reads it as is)
+python -I $T/discfs.py extract "<SSS 1996>.bin" $L/sss_saturn_jp/files "TEXT/*"
+python -I $T/sss_saturn.py $L/sss_saturn_jp/files/TEXT lsb.exe <lsb repo dir> $L/sss_saturn_jp/work $L/sss_saturn_jp/script_jp.txt --original
+python -I $T/discfs.py extract "<SSS MPEG>.bin" $L/sssc_saturn_jp/files TEXT.DAT AR_BOOK.TXT
+python -I $T/sss_saturn.py $L/sssc_saturn_jp/files/TEXT.DAT lsb.exe <lsb repo dir> $L/sssc_saturn_jp/work $L/sssc_saturn_jp/script_jp.txt
+python -I $T/sss_saturn.py sjis $L/sssc_saturn_jp/files/AR_BOOK.TXT $L/sssc_saturn_jp/ar_book_jp.txt
+python -I $T/discfs.py extract "<L2 disc 1>.bin" $L/l2eb_saturn_jp/disc1 1 2
+python -I $T/l2eb_saturn.py $L/l2eb_saturn_jp/disc1/1 $L/l2eb_saturn_jp/disc1/2 lunar2_eb_sat_tools/font_table/lunar2_font_table.txt $L/l2eb_saturn_jp/work $L/l2eb_saturn_jp/script_jp.txt
 ```
 
 Both SSSC discs and all three L2EBC discs carry the same data archive, so disc 1 is
@@ -87,8 +100,10 @@ enough.
 |---|---|---|
 | Eternal Blue (Mega CD) | `segacd.py ebjp FILES scriptrip_jp.exe OUT --table wdtools/src/scriptrip_jp_thingy.txt`. Text is kana bytes minus 0x20, and kanji are 16-bit (`index & 0x1FF` + 0xE0). The Thingy table converts them to Unicode. | Tool exists. Not run here (no JP disc). |
 | The Silver Star (Mega CD) | No JP ripper. Supper's notes (`wdtools/notes/lunartss_notes`) give the encoding: bytes >= 0x20 minus 0x20 index a 1bpp 16x16 font at 0x1D010 of `TOMISUB.BIN`. Kanji are two bytes when the first is 0x10-0x1F (subtract 0xF20). 00 ends, 01 is a line break, 02 a box break, and 04 xx a portrait. To support it, build a Thingy table from that font, then add a JP mode to a port of `scriptrip_tss` that reads two-byte kanji. | Needs work. |
-| Silver Star Story (PS1 JP / Saturn) | `sssc.py ... --ienc 0` (lsb's 2-byte mode, using its `font_table.txt`). lsb's 2-byte path is proven on Saturn; PS1 JP should be the same family (studio-lucia/lunardata covers both). | Untested. |
-| Lunar 2 (PS1 JP) | The text encoding differs (2-byte). `l2ebc.py`'s reader is English-only. Use studio-lucia/eternaldata notes and MrConan1/lunar2_eb_sat_tools (Saturn) as the reference. | Needs work. |
+| Silver Star Story (Saturn, 1996 and MPEG 1997) | `sss_saturn.py` (lsb 2-byte mode; `--original` for the 1996 disc). No unmapped glyphs on either disc. The MPEG font reuses the unused full-width Latin slots for new kanji, so the leftover JAM debug menu in its `TEXT007.DAT` reads as garbage (the 1996 disc reads it cleanly). | Done: 8,559 and 8,604 messages. |
+| Silver Star Story (PS1 JP) | `sssc.py ... --ienc 0` (lsb's 2-byte mode, using its `font_table.txt`). PS1 JP should be the same family (studio-lucia/lunardata covers both). | Untested (no disc). |
+| Lunar 2 (Saturn) | `l2eb_saturn.py`. Both discs carry byte-identical `1`, `2`, and `3` (only the 49-byte `4` differs), so disc 1 is enough. Counts include duplicates: many map variants repeat the same NPC lines. The narrated prologue is subtitle pictures in data file 1234 (MrConan1 `l2_subt_extract`, 4bpp), not text; it was transcribed by eye. | Done: 8,025 messages. |
+| Lunar 2 (PS1 JP) | The text encoding differs (2-byte). `l2ebc.py`'s reader is English-only. MrConan1's `l2_txt_decode` type 1 reads JP PSX `ES` blocks (Shift-JIS words 0x8000-0x9FFF); `l2eb_saturn.py` could add it. | Needs work (no disc). |
 | Harmony (PSP JP) | `harmony.py` should work as is, because the text is UTF-16 (kana and kanji are just more code points). | Untested. |
 | Walking School (GG JP) | `ips_text.py` reads only the English patch. The Japanese ROM's text is untouched by it; ripping it needs the ROM, its kana table, and its pointer tables. | Needs the ROM. |
 | Lunar Legend (GBA JP) | `gba_legend.py script ROM OUT --jp`. The decompressor, opcodes, and u16 units are engine code, and the pointer table is found by search. `--jp` accepts any glyph byte (kana probably 0x20-0xA1) and the two-byte units (high byte 0x10-0x1F = kanji, printed as `{Wxxxx}`). Names need a table drawn from the JP font; the on-demand glyph loader has not been traced. | Untested (no JP ROM). |
