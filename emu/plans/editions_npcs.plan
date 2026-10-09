@@ -1,0 +1,31 @@
+# Two editions: Cherenkov and Jack after the Engine walk. From the start save (flag word 0 = 0x2), set the
+# flags the walk sets (0x1, 0xC Lucia left, 0xD Lucia at the fountain: word 0 = 0x3002), talk to Cherenkov
+# in the lobby (moves from npc_gate_searis.plan). Jack: editions_jack.plan.
+include boot_from_save
+pinptr u32 0x020B4640 0 0x3002
+wait 2
+unpin
+pin u16 0x020B77EC 0x9B
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+wait 30
+poke u32 0x020B6CB4 0xEC000
+poke u32 0x020B6CB8 0xE0000
+wait 10
+press Up 4
+wait 10
+press A 4
+wait 120
+shot cherenkov_1
+press A 4
+wait 90
+shot cherenkov_2
+press A 4
+wait 90
+press A 4
+wait 60
