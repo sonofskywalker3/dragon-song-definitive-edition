@@ -108,8 +108,9 @@ the design are in [docs/design.md](docs/design.md).
 
 ### Story mechanics
 
-- **Jian's curse no longer weakens his attack** (he keeps his 3-hit combo). The story around the curse is still to
-  be rewritten.
+- **Jian's curse is a different curse.** He keeps his 3-hit combo. Instead, while cursed, healing items do
+  nothing for him (they are not used up), and Lucia's healing magic restores him at half strength. Healing
+  statues restore him fully. The curse breaks in the Zethos fight as before.
 
 ## Spells and MP
 
@@ -163,12 +164,15 @@ wake-up and Jian's self-introduction, then he walks out of the inn; Lucia waits 
 **Editions.** From v0.1.6 each release has two patches (README, "Which patch to pick"). **Engine** has every
 gameplay, interface, and pacing change and keeps the original story and dialogue word for word. **Story** is the
 Engine edition plus the rewrite: the new narration, the new wake-up, and the story work to come. Earlier
-releases were a single patch, the same as today's Story edition.
+releases were a single patch with the rewritten opening, like today's Story edition.
 
-### v0.1.6 (unreleased)
+### v0.1.6 (2026-10-09)
 
-- Two editions, Engine and Story. In the Engine edition Jian wakes up and introduces himself as in the
-  original, then walks out of the inn; the title seal says ENGINE or STORY.
+- Two editions, Engine and Story. The Engine edition's opening is the original's, word for word and scene for
+  scene; the Story edition has the retranslated narration and the new wake-up. The title seal says ENGINE or
+  STORY.
+- Jian's curse is a different curse: healing items do nothing for him while cursed (and are not used up),
+  Lucia's healing magic works on him at half strength, statues heal him fully, and he keeps his 3-hit combo.
 
 - Dark Jian's copied Special is quicker on Fast too (218 frames down to 70); the spikes, the flinch, and the
   number are unchanged.
@@ -230,4 +234,4 @@ releases were a single patch, the same as today's Story edition.
 
 ## Not changed yet
 
-- The story and dialogue past the opening, including the curse and Gad's first package (planned next).
+- The story and dialogue past the opening, including Gad's first package (planned next, Story edition).

@@ -36,7 +36,7 @@ dialogue word for word, and **Story** adds the rewrite (see [Which patch to pick
   </tr>
 </table>
 
-This is an early beta (v0.1.5). A lot of the systems work is done, and more is coming as playtesting turns up
+This is an early beta (v0.1.6). A lot of the systems work is done, and more is coming as playtesting turns up
 what still drags, such as trimming the fluff from enemy attack animations. Work on the story has started too:
 better character development, smoother rough edges, and no more retcons or contradictions with Lunar 1 and 2.
 Feedback is welcome in [Issues](../../issues).
