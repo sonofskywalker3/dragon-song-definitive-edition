@@ -291,7 +291,7 @@ FEATURES: tuple[Feature, ...] = (
     STILL_HUD,
     STATUE_ANY_SIDE,
     POCKETWATCH,
-    # Enemy action cuts (docs/plan-enemy-attacks.md): not shipped yet. The two script features share a
+    # Enemy action cuts (docs/plan-enemy-attacks.md, v0.1.5). The two script features share a
     # hook, so build at most one of enemy-short-moves and enemy-quick-steps.
     ENEMY_SPRITE_SPEED,
     ENEMY_SPELL_SPEED,
@@ -333,4 +333,7 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     STILL_HUD.name,
     STATUE_ANY_SIDE.name,
     POCKETWATCH.name,
+    ENEMY_SPRITE_SPEED.name,
+    ENEMY_SPELL_SPEED.name,
+    ENEMY_QUICK_STEPS.name,
 )

@@ -95,6 +95,11 @@ the design are in [docs/design.md](docs/design.md).
 - **The next character no longer waits for a defeated enemy's sparkles** to finish (92 frames down to 16 between
   attackers), except after the last enemy, so the end of a battle plays as before.
 - **Picking Auto switches the battle speed to Faster.** R still changes it.
+- **Monsters attack faster on Fast.** Every enemy's turn is cut: the acting monster animates at the same speed
+  as the party, its spell effects run faster, four hops become one, glides are shorter, and crouches and
+  landings are trimmed. The swing, the hit, and the charge-up of every spell are kept whole, so nothing lands
+  before you see it. A typical enemy turn went from 166 frames to 58 (the Ice Mongrel's eight-hop attack from
+  339 to 58). Normal keeps the original timing.
 
 ### Controls
 
@@ -152,8 +157,10 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Version history
 
-### v0.1.5 (unreleased)
+### v0.1.5 (2026-10-09)
 
+- Monsters attack faster on Fast: every enemy turn is cut (median 166 frames to 58) while the swing, the hit,
+  and the spell charge-up stay whole. The Ice Mongrel's eight hops are now one each way.
 - The pocketwatch is open while enemies are about, and its hand is the run gauge. It closes right after the
   battle that beats an area's last enemy.
 - Running has no time limit in towns, in rooms with no enemies, and in cleared areas.
