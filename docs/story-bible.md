@@ -1563,6 +1563,31 @@ Tribe given one image: Lind under a green sky.
 
 ---
 
+## 11a. The ending as decided (Jeff, 2026-10-09)
+
+These are decisions, not suggestions. They replace the options in chapter 11 and the ending notes in chapter 12
+where they overlap.
+
+- **Althena stays.** When Ignatius wakes her inside Lucia, she says she had hoped this rebirth could be her
+  last: that she could find happiness as a human, die, and pass her power on. This conflict has proved the
+  world is not ready for that yet, so she must stay. **She never releases her power.** (This keeps the
+  Japanese Lunar 1 and 2: she is still the goddess until Dyne, and Luna is her last rebirth; the hope she
+  voices here is the one Lunar 1 finally grants her 500 years later.)
+- **The final battle is the party's.** Jian and whoever else is in the party at that point, and the player
+  chooses who fights, against Ignatius himself. He is a real, winnable boss. (Vanilla: an unwinnable fight
+  in the Grand Hall, battle id 0x11, enemy row 155, HP refilled every hit by func_02053384; the last bosses
+  are Gideon. The engine already has his battle sprite and a boss-battle path.)
+- **The fall follows the fight.** After Ignatius is beaten, the walkway crumbles under him as a result of the
+  battle, not of any power release. Jian reaches out; Ignatius refuses the hand (keep 021 #38 as written).
+- **No power release, so no collapsing Cathedral from it.** Any escape sequence is the walkway or the battle
+  damage, not Althena's magic leaving the world.
+- **The epilogue with Titus is gone.** Lucia does not leave "with some other guy." The ending belongs to
+  Jian and Lucia (chapter 12 has the fountain reunion options; Althena staying means Lucia is Althena-aware
+  from here on, so the reunion is a goddess choosing to keep her ordinary life beside him for now).
+- **Keepers from the vanilla climax:** Jian giving back the Dragon Rings (021 #26), "You fear yourself"
+  (021 #28), the reached hand (021 #38), Althena's "the future must come from each one of you" as the thing
+  she wants and is not yet allowed to do.
+
 ## 12. Jian and Lucia
 
 **As written** (story-characters.md 1.4, 2.4, 8; docs/story-npcs.md 2.2): the bond is the plot's engine
