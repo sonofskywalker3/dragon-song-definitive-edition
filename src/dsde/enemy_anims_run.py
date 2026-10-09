@@ -33,15 +33,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from dsde.emu import START_SAVE, run_plan
-from dsde.enemy_anims import (
-    SETUP_FORCED_ROWS,
-    ARM9_BIN,
-    EnemyAction,
-    Step,
-    make_plan,
-    read_actions,
-    read_steps,
-)
+from dsde.enemy_anims import ARM9_BIN, EnemyAction, Step, read_actions, read_steps
+from dsde.enemy_anims_plans import SETUP_FORCED_ROWS, make_plan
 from dsde.feat_enemy_moves import CUT_SETS, cut_scripts, label
 from dsde.features import DEFAULT_FEATURES, FEATURES
 from dsde.patching import layout_cave
