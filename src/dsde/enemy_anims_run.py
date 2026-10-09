@@ -21,7 +21,14 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from dsde.emu import START_SAVE, run_plan
-from dsde.enemy_anims import ARM9_BIN, EnemyAction, make_plan, read_actions, read_steps
+from dsde.enemy_anims import (
+    SETUP_FORCED_ROWS,
+    ARM9_BIN,
+    EnemyAction,
+    make_plan,
+    read_actions,
+    read_steps,
+)
 from dsde.features import DEFAULT_FEATURES, FEATURES
 from dsde.patching import layout_cave
 
@@ -50,6 +57,10 @@ RS_INTERRUPT = (
     11,
 )  # entered from a step that returns -2 (seen once: a counter, uncertain)
 RS_DAMAGE_WAIT = 14
+
+# func_02068034: Druid rows (0x84..0x87) using action 1 swap the skill's script for 0x02094F74 (two
+# targets) or 0x02095174 (three)
+DRUID_SCRIPTS = {row: (0x02094F74, 0x02095174) for row in range(132, 136)}
 
 logger = logging.getLogger(__name__)
 
@@ -169,7 +180,10 @@ def run_job(action: EnemyAction, variant: str, worker: int, data: bytes) -> dict
         or rom.stat().st_mtime < source.stat().st_mtime
     ):
         shutil.copyfile(source, rom)
-    shot_turns = 1 if variant == "fast" else 0
+    # shots of every turn where the first one may be a scripted action (summary then picks the turn)
+    shot_turns = (
+        (TURNS if action.row in SETUP_FORCED_ROWS else 1) if variant == "fast" else 0
+    )
     plan = work / "plan.plan"
     plan.write_text(make_plan(data, action, "r", speed_pin(variant), TURNS, shot_turns))
     log = run_plan(plan, rom, START_SAVE, work)
@@ -185,7 +199,9 @@ def run_job(action: EnemyAction, variant: str, worker: int, data: bytes) -> dict
     if variant == "fast":
         for old in folder.glob("frame_*.png"):
             old.unlink()
-        for i, shot in enumerate(sorted((work / "rec").glob("r_t1_f*.png"))):
+        chosen = summary(turns, action.row, action.script)
+        number = turns.index(chosen) + 1 if chosen else 1
+        for i, shot in enumerate(sorted((work / "rec").glob(f"r_t{number}_f*.png"))):
             shutil.copyfile(shot, folder / f"frame_{i:04d}.png")
         make_gif(folder)
     result = dict(variant=variant, turns=turns)
@@ -233,45 +249,73 @@ def run_all(actions: list[EnemyAction], variants: list[str], workers: int) -> No
             merge(action)
 
 
-def summary(turns: list[dict] | None, row: int) -> dict | None:
-    """The first complete turn of the action's own row that ran an action script."""
+def summary(turns: list[dict] | None, row: int, script: int) -> dict | None:
+    """Turn 1 (the recorded one) if it is a complete turn of the row that ran the expected script
+    (any script when the static guess is 0), else the first later turn that is."""
     for t in turns or []:
-        if t["row"] == row and t["complete"] and t["script_frames"] > 0:
+        if t["row"] != row or not t["complete"] or t["script_frames"] == 0:
+            continue
+        if script == 0 or int(t["script"], 16) in {script, *DRUID_SCRIPTS.get(row, ())}:
             return t
     return None
 
 
-def report() -> str:
-    lines = [
-        "| Folder | Rows | Script (Fast) | Fast | Normal | Vanilla | Over 60 | Fast steps (frames) |",
-        "|---|---|---|---|---|---|---|---|",
-    ]
+def summarise() -> list[dict]:
+    """One record per action: the turn used for each variant (also written to summary.json)."""
+    rows = []
     for action in read_actions(ARM9_BIN.read_bytes()):
         path = OUT / action.key / "timing.json"
-        if not path.exists():
-            lines.append(
-                f"| {action.key} | {','.join(map(str, action.rows))} | not run | | | | | |"
+        t = json.loads(path.read_text()) if path.exists() else {}
+        record = dict(
+            key=action.key, rows=list(action.rows), name=action.name,
+            action_index=action.index, flags=f"{action.flags:#010x}", extra=f"{action.extra:#x}",
+            skill=action.skill, chance=action.chance, static_script=f"{action.script:#010x}",
+        )  # fmt: skip
+        for variant in VARIANTS:
+            turn = summary(t.get(variant), action.row, action.script)
+            turns = t.get(variant) or []
+            record[variant] = (
+                None
+                if turn is None
+                else dict(
+                    turn=turns.index(turn) + 1,
+                    script=turn["script"],
+                    script_frames=turn["script_frames"],
+                    turn_frames=turn["turn_frames"],
+                    camera_frames=turn["camera_frames"],
+                    damage_wait_frames=turn["damage_wait_frames"],
+                    interrupt_frames=turn["interrupt_frames"],
+                    steps=[[s["step"], s["frames"], s["kind"]] for s in turn["steps"]],
+                )
             )
-            continue
-        t = json.loads(path.read_text())
-        fast, normal, vanilla = (summary(t.get(v), action.row) for v in VARIANTS)
+        fast = record["fast"]
+        record["over_cutoff"] = None if fast is None else fast["script_frames"] > CUTOFF
+        rows.append(record)
+    (OUT / "summary.json").write_text(json.dumps(rows, indent=1))
+    return rows
+
+
+def report() -> str:
+    lines = [
+        "| Folder | Rows | Script | Fast | Normal | Vanilla | > 60 | Fast turn / camera / dmg wait "
+        "| Fast steps (step:frames, a = animation, f = fixed) |",
+        "|---|---|---|---|---|---|---|---|---|",
+    ]
+    for r in summarise():
+        fast, normal, vanilla = (r[v] for v in VARIANTS)
         cell = lambda s: str(s["script_frames"]) if s else "n/a"  # noqa: E731
-        over = (
-            "yes"
-            if fast and fast["script_frames"] > CUTOFF
-            else ("no" if fast else "?")
-        )
-        steps = (
-            " ".join(f"{s['step']}:{s['frames']}" for s in fast["steps"])
+        over = {True: "yes", False: "no", None: "?"}[r["over_cutoff"]]
+        any_turn = fast or normal or vanilla
+        script = any_turn["script"] if any_turn else "?"
+        steps = " ".join(f"{i}:{n}{k[0]}" for i, n, k in fast["steps"]) if fast else ""
+        extra = (
+            f"{fast['turn_frames']} / {fast['camera_frames']} / {fast['damage_wait_frames']}"
             if fast
             else ""
         )
-        script = (
-            fast["script"] if fast else (normal or vanilla or {}).get("script", "?")
-        )
         lines.append(
-            f"| {action.key} | {','.join(map(str, action.rows))} | {script} | {cell(fast)} | "
-            f"{cell(normal)} | {cell(vanilla)} | {over} | {steps} |"
+            f"| {r['key']} | {','.join(map(str, r['rows']))} | {script} | {cell(fast)} | "
+            f"{cell(normal)} | {cell(vanilla)} | {over} | {extra} | {steps} |"
         )
     return "\n".join(lines)
 

@@ -10,7 +10,8 @@ emulator yet. The last section lists the in-emulator checks that would close the
 
 Tooling: `uv run python -m dsde.enemies` prints every enemy row with names, stat ranges, EXP, actions
 (steal and break flagged) and drops; `--level N` prints the stats at enemy level N; `--out FILE` writes
-the table to a file. Code: `src/dsde/enemies.py`.
+the table to a file. Code: `src/dsde/enemies.py`. Attack animations, action scripts, and how to force any enemy
+into a battle: docs/re-enemy-attacks.md.
 
 ## Key addresses
 
