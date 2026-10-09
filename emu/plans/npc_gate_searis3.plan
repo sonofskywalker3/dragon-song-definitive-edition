@@ -1,0 +1,20 @@
+# Research (docs/story-npcs.md 4), part 3: from npc_gate_searis2's state (same --out), talk to Jack
+# (object 0x5A at 260,188) with 0xC set; expect his "I just saw Lucia in Fountain Square" line and flag 0xD.
+load jack_room
+wait 10
+poke u32 0x020B6CB4 0x104000
+poke u32 0x020B6CB8 0xCC000
+wait 10
+press Up 4
+wait 10
+press A 4
+wait 150
+shot gate_jack1
+press A 4
+wait 90
+shot gate_jack2
+press A 4
+wait 90
+press A 4
+wait 60
+dump 0x02204620 0x10 flags_after_jack
