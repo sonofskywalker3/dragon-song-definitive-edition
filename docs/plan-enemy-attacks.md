@@ -22,8 +22,10 @@ enemy-quick-steps`: **120 of 150 actions under 60 frames on Fast, median 46** (f
 
 **Revised after the frame-by-frame review (docs/review-enemy-attacks.md, 2026-10-09):** quick-steps now keeps
 every wind-up whole (capped, it cut the strike: Deuce and Gideon showed no attack) and uses short-moves' glide
-cut (capped, the glide enemies popped in and out). With sprite + spell + quick-steps the fixed build measures
-**99 of 150 under 60, median 55, longest 278** (the glides); the tables below are the proposal as first built.
+cut (capped, the glide enemies popped in and out), and keeps the whole cast pose for Druid, Gronk, Gideon 2, and
+Blue Dragon (rows 132-135, 142, 150, 153: their charge-up glow is at the end of the pose; the swap hook now
+also matches on the actor's row). With sprite + spell + quick-steps the fixed build measures **87 of 150
+under 60, median 58, longest 278** (the glides); the tables below are the proposal as first built.
 Quick-steps now needs enemy-sprite-speed to be short.
 
 ## Results in one table

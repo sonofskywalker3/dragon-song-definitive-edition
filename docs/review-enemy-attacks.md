@@ -12,11 +12,12 @@ SMOOTH on all 150 actions. Quick-steps as proposed was not: its 16-frame wind-up
 that show the attack (the claw slash, punch, swing, or spark is drawn in the last third of the wind-up), so 7
 boss actions (Deuce, Gideon) and Kuntukapu showed no attack at all before the damage, 62 more attacks lost their
 strike flash or popped in and out of a glide, and 21 casts lost their charge-up. The fix (committed) keeps every wind-up whole and uses
-short-moves' glide cut; sprite-speed already makes those steps short. Re-recorded and reviewed: **99 of 150
-actions under 60 frames on Fast, median 55** (before 0 of 150, median 166; as proposed 120, median 46). The
-cost is the five glide species (Dagon, Shaitan, Phantom, Ghoula, Morus), now 131 to 278 frames (before 281
-to 578). The remaining compromise is the cast pose of Druid, Gronk, Gideon 2, and Blue Dragon: it is cut
-before their charge-up glow. That reads as a short gesture followed by the spell, which I would ship.
+short-moves' glide cut; sprite-speed already makes those steps short. A second fix (Jeff's request after the
+highlights) keeps the whole cast pose for Druid, Gronk, Gideon 2, and Blue Dragon, whose charge-up glow comes
+at the very end of the pose. Re-recorded and reviewed: **87 of 150 actions under 60 frames on Fast, median 58**
+(before 0 of 150, median 166; as proposed 120, median 46). The costs are the five glide species (Dagon,
+Shaitan, Phantom, Ghoula, Morus), now 131 to 278 frames (before 281 to 578), and those 21 casts, now 72 to 138
+(before 144 to 296).
 
 ## Verdict per feature
 
@@ -26,7 +27,7 @@ before their charge-up glow. That reads as a short gesture followed by the spell
 | enemy-spell-speed (lever 2b) | **SMOOTH: ship** | No effect is cut off; every effect ends before round state 12. Number and flinch come with or just after the impact, never after the effect has faded (Comet skill 16 ring #19-23, number #25; Gronk tornado #14-41, number #42; Red Dragon fireball #39-44, number #49). The blizzard, tornado, and rock rain look brisk, not frantic |
 | enemy-short-moves (lever 1) | **SMOOTH**, but superseded | Lunges (8-frame dash), one-hop Blob and Ice Mongrel, and 20-frame glides: no pops (largest per-frame move 30 px on the hop arc, glide jumps happen undrawn), contact and home points identical. With sprite and spell: 44 of 150 under 60, median 86. The fixed quick-steps now contains these same cuts |
 | enemy-quick-steps as proposed (lever 3) | **FIXABLE** (8 actions JANKY as built) | Wind-up cap: strike lost on 59 lunge and hop attacks (8 of them with no visible attack at all); glide sink and emerge capped: the enemy pops out at full size and back in as a speck (11 glide actions); cast pose cap: charge-up lost on 21 casts. Details per action below |
-| enemy-quick-steps fixed (this commit) | **SMOOTH** (21 casts SIMPLIFIED, acceptable) | Re-recorded all 149 reachable actions; frame by frame on the fixed recordings of Ice Mongrel, Blob, Kuntukapu, Vitra, Deuce two-hit, Gideon, Dagon, Shaitan, Druid, and Gronk; positions checked on all |
+| enemy-quick-steps fixed (this commit) | **SMOOTH** on all 150 | Re-recorded all 149 reachable actions; frame by frame on the fixed recordings of Ice Mongrel, Blob, Kuntukapu, Vitra, Deuce two-hit, Gideon, Dagon, Shaitan, and every whole-pose cast species (Druid a0 and a2, Gronk a0 and a3, Blue Dragon skills 17 and 2, Gideon 2 skills 18 and 20); positions checked on all |
 
 **Alternative set (sprite + spell + short-moves):** SMOOTH everywhere (every strike and glide intact) but 44 of
 150 under 60, median 86, because the hop species (Shreeker 99, Deuce 123) keep their landings and crouches. The
@@ -41,13 +42,13 @@ I would turn on the fixed quick-steps, not short-moves.
 3. **enemy-quick-steps (fixed).** Only together with sprite-speed: its wind-ups and glide steps are now
    animation waits, so without sprite-speed they run at 1x (40 to 62 frames each).
 4. Not needed: enemy-short-moves (its cuts are inside the fixed quick-steps; the two cannot be built together).
-5. Optional follow-ups, if Jeff finds them slow after playing: glide sink and emerge at a 24-frame cap (would
-   bring Dagon and Phantom near 100 frames; Shaitan, Ghoula, and Morus would still snap on the emerge), and a
-   per-species cast-pose length for Druid and Gronk (needs a table keyed on species, not a script edit).
+5. Optional follow-up, if Jeff finds them slow after playing: glide sink and emerge at a 24-frame cap (would
+   bring Dagon and Phantom near 100 frames; Shaitan, Ghoula, and Morus would still snap on the emerge).
 
-Watch on hardware: Blob's wobble on Jian (now 28 frames of its 58), Chupacabra (65), and the glides.
+Watch on hardware: Blob's wobble on Jian (now 28 frames of its 58), Chupacabra (65), the glides, and Druid's
+orb hold (about 28 static frames inside its 67-frame pose; a cap can only cut the end, where the throw is).
 
-## What was fixed (src/dsde/feat_enemy_moves.py, QUICK_STEPS only; DEFAULT_FEATURES untouched)
+## What was fixed (src/dsde/feat_enemy_moves.py; DEFAULT_FEATURES untouched)
 
 | Change | Why (frames are the proposed recordings, build/enemy_cut/rec_all_v1) |
 |---|---|
@@ -55,9 +56,14 @@ Watch on hardware: Blob's wobble on Jian (now 28 frames of its 58), Chupacabra (
 | Glides 0x020955E0 and 0x02095820 use short-moves' cut (no caps; glide 60 -> 20 kept) | The vanish and reappear are the sprite's own sink, dissolve, or bubble animations (17 to 50 frames at 3x), capped to 4 Fast frames: Dagon v1 #7-8 pops out at full size, #14-15 emerges as a speck that snaps to full size |
 | Dark Jian 0x02095C70 and Blue Dragon bite 0x02094FA4 keep the cap | Their strike is in the hit step (wind-up 8 at 3x) |
 | CAST_POSE 24 -> 40 tried, then reverted to 24 | 40 showed only Druid's staff sweep (no orb, before #44-88) and Gronk's crouch (no hand sparkle, before #33-48) for 8 more frames per cast |
+| Whole cast pose for rows 132-135 (Druid), 142 (Gronk), 150 (Blue Dragon), 153 (Gideon 2) in 0x02094E84, 0x02094F44, 0x020950C4 (`WHOLE_POSE_ROWS`, `WHOLE_POSE`) | At 3x (rec_sprite) the key frame sits at the end of each pose, so no shorter cap shows it: Druid's orb appears 24 frames in and is thrown 54 to 66 frames into its 67-frame pose; Gronk's and Gideon 2's hand sparkle 24 to 40 and burst 42 to 44 of 47; Blue Dragon's sparkle 27 to 41 and burst 41 of 47; Gideon 2 skill 20's slash 18 to 22 of 25 |
 
 Re-recorded: all 149 reachable actions with the wind-up and glide fix (`--only`, 10 workers), then the 60 cast
-actions again after the CAST_POSE revert. The proposed recordings were kept in build/enemy_cut/rec_all_v1.
+actions again after the CAST_POSE revert, and the 60 again with the whole-pose rows: exactly the 21 casts of
+those rows changed, the other 39 are frame-identical (so the row test matches nothing else).
+The swap hook at 0x020688A4 now also reads the actor's row (battler +4, the field the recorder logs) and walks
+a table of (script, row or any, cut copy) entries, row-specific entries first; one cut copy is built per script
+of a row variant (`QUICK_ROW_VARIANTS`), so a new species needs only its row in `WHOLE_POSE_ROWS`. The proposed recordings were kept in build/enemy_cut/rec_all_v1.
 Every action still hits on the same contact point and ends on its home spot (positions identical to the
 original recordings at each hit step's first frame and at the last frame; the one difference is Black Dragon
 skill 24 ending at x 70, not 68, its idle sway, as before).
@@ -102,7 +108,8 @@ skill 24 ending at x 70, not 68, its idle sway, as before).
   side holds its last frame; 150 GIFs.
 - build/enemy_anims_review/as_proposed/<action>.gif: the same against the proposed (unfixed) set.
 - **build/enemy_anims_review/_highlights.gif**: the ten most-met enemies back to back (Blob, Onlooker, Shreeker,
-  Namia, Treant skill 8, Ice Mongrel, Mad Fang, Yeti, Termite, Bealzebub), 32 s.
+  Namia, Treant skill 8, Ice Mongrel, Mad Fang, Yeti, Termite, Bealzebub), then Druid skill 18 and Gideon 2
+  skill 18 with the whole cast pose, 42 s.
 - build/enemy_anims_cut: the fixed recordings; build/enemy_cut/rec_all_v1: the proposed ones.
 
 ## Every action
@@ -110,10 +117,10 @@ skill 24 ending at x 70, not 68, its idle sway, as before).
 Fast script frames (round state 7). "As proposed" = build/enemy_cut/rec_all_v1 (sprite + spell + quick-steps
 before the fix); "Fixed" = build/enemy_anims_cut. Shot numbers #i are frame_NNNN indexes of the recording named
 (v1 = as proposed, rec_sprite = sprite-speed alone, levers 1+2 = rec_speedmoves, before = build/enemy_anims).
-SIMPLIFIED = the cast is shortened past its charge-up glow; acceptable to ship, not fixable by a script edit.
 
 Counts as proposed: SMOOTH 59, FIXABLE 83, JANKY as built 8 (Kuntukapu, Deuce x4, Gideon x3). Fixed: SMOOTH
-129, SIMPLIFIED 21 (Druid x12, Gronk x4, Gideon 2 x2, Blue Dragon x3), JANKY 0.
+150 (the 21 casts that were cut past their charge-up glow, Druid x12, Gronk x4, Gideon 2 x2, Blue Dragon x3, now
+keep their whole pose), FIXABLE 0, JANKY 0.
 
 | Action | Script | Before | As proposed | Verdict as proposed | Fixed | Verdict fixed | Notes (shot #i = turn frame 2i) |
 |---|---|---|---|---|---|---|---|
@@ -199,18 +206,18 @@ Counts as proposed: SMOOTH 59, FIXABLE 83, JANKY as built 8 (Kuntukapu, Deuce x4
 | 127_Asmodee_a1_skill35 | 0x02094e84 | 151 | 37 | SMOOTH | 37 | SMOOTH | spell: hit sync, effect end, return, and camera as before |
 | 128_Duager_a0_attack | 0x02095780 | 121 | 47 | SMOOTH | 51 | SMOOTH | strike lives in the hit step (kept whole) |
 | 128_Duager_a1_break | 0x02095780 | 121 | 47 | SMOOTH | 51 | SMOOTH | strike lives in the hit step (kept whole) |
-| 132_Druid_a0_skill18 | 0x02094e84 | 296 | 82 | FIXABLE | 82 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 132_Druid_a1_skill28 | 0x02094e84 | 296 | 82 | FIXABLE | 82 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 132_Druid_a2_skill33 | 0x02094e84 | 216 | 36 | FIXABLE | 36 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 133_Druid_a0_skill16 | 0x02094e84 | 228 | 48 | FIXABLE | 48 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 133_Druid_a1_skill26 | 0x02094e84 | 228 | 48 | FIXABLE | 48 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 133_Druid_a2_skill34 | 0x02094e84 | 216 | 36 | FIXABLE | 36 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 134_Druid_a0_skill17 | 0x02094e84 | 260 | 64 | FIXABLE | 64 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 134_Druid_a1_skill27 | 0x02094e84 | 260 | 64 | FIXABLE | 64 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 134_Druid_a2_skill35 | 0x02094e84 | 216 | 36 | FIXABLE | 36 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 135_Druid_a0_skill19 | 0x02094e84 | 232 | 50 | FIXABLE | 50 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 135_Druid_a1_skill29 | 0x02094e84 | 232 | 50 | FIXABLE | 50 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
-| 135_Druid_a2_skill37_x7 | 0x02094e84 | 216 | 36 | FIXABLE | 36 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: CAST_POSE 40 tried: still no orb (fixed run #4-22 against before #44-88), reverted; needs a per-species pose length |
+| 132_Druid_a0_skill18 | 0x02094e84 | 296 | 82 | FIXABLE | 138 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 132_Druid_a1_skill28 | 0x02094e84 | 296 | 82 | FIXABLE | 138 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 132_Druid_a2_skill33 | 0x02094e84 | 216 | 36 | FIXABLE | 92 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 133_Druid_a0_skill16 | 0x02094e84 | 228 | 48 | FIXABLE | 104 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 133_Druid_a1_skill26 | 0x02094e84 | 228 | 48 | FIXABLE | 104 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 133_Druid_a2_skill34 | 0x02094e84 | 216 | 36 | FIXABLE | 92 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 134_Druid_a0_skill17 | 0x02094e84 | 260 | 64 | FIXABLE | 120 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 134_Druid_a1_skill27 | 0x02094e84 | 260 | 64 | FIXABLE | 120 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 134_Druid_a2_skill35 | 0x02094e84 | 216 | 36 | FIXABLE | 92 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 135_Druid_a0_skill19 | 0x02094e84 | 232 | 50 | FIXABLE | 106 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 135_Druid_a1_skill29 | 0x02094e84 | 232 | 50 | FIXABLE | 106 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
+| 135_Druid_a2_skill37_x7 | 0x02094e84 | 216 | 36 | FIXABLE | 92 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: the blue orb charge and throw (before #44-88) never show; the staff sweeps twice, then the spell. Fixed: whole pose for rows 132-135 (67 Fast frames at 3x): orb #17-31, throw #32-38, then the spell (132 a0); number and flinch after the effect as before |
 | 136_Sasquatch_a0_attack | 0x02095780 | 196 | 38 | FIXABLE | 56 | SMOOTH | quick-steps wind-up cap (hop step 4): rear-up and red slash lost (rec_sprite #26-32 f52-64). Fixed: wind-up kept whole: strike back |
 | 137_Armored_Boar_a0_attack | 0x02095780 | 111 | 43 | FIXABLE | 53 | SMOOTH | quick-steps wind-up cap (hop step 4): minor: big spark burst shortened to a small spark (rec_sprite #19-23 f38-46). Fixed: wind-up kept whole: strike back |
 | 137_Armored_Boar_a1_attack_x2003 | 0x02095780 | 111 | 43 | FIXABLE | 53 | SMOOTH | quick-steps wind-up cap (hop step 4): minor: big spark burst shortened to a small spark (rec_sprite #19-23 f38-46). Fixed: wind-up kept whole: strike back |
@@ -228,10 +235,10 @@ Counts as proposed: SMOOTH 59, FIXABLE 83, JANKY as built 8 (Kuntukapu, Deuce x4
 | 141_Deuce_a1_attack_x2001 | 0x02095780 | 247 | 41 | JANKY as built | 59 | SMOOTH | quick-steps wind-up cap: no visible attack on a boss; Jian flinches at v1 #15 f30 while the boss stands still (rec_sprite fire punch / sword slash #34-39 f68-78; two-hit: second punch #55-57 f110-114 also lost). Fixed: strike back (Deuce two-hit fixed: punches #21-24 and #39-42, flinches #25 and #43; Gideon: slash #18-23, flinch #24) |
 | 141_Deuce_a2_attack_x20 | 0x02095bb0 | 327 | 59 | JANKY as built | 95 | SMOOTH | quick-steps wind-up cap: no visible attack on a boss; Jian flinches at v1 #15 f30 while the boss stands still (rec_sprite fire punch / sword slash #34-39 f68-78; two-hit: second punch #55-57 f110-114 also lost). Fixed: strike back (Deuce two-hit fixed: punches #21-24 and #39-42, flinches #25 and #43; Gideon: slash #18-23, flinch #24) |
 | 141_Deuce_a3_attack_x23 | 0x02095bb0 | 327 | 59 | JANKY as built | 95 | SMOOTH | quick-steps wind-up cap: no visible attack on a boss; Jian flinches at v1 #15 f30 while the boss stands still (rec_sprite fire punch / sword slash #34-39 f68-78; two-hit: second punch #55-57 f110-114 also lost). Fixed: strike back (Deuce two-hit fixed: punches #21-24 and #39-42, flinches #25 and #43; Gideon: slash #18-23, flinch #24) |
-| 142_Gronk_a0_skill18 | 0x02094e84 | 224 | 82 | FIXABLE | 82 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: CAST_POSE 40 tried: reaches the crouch, not the hand sparkle (before #33-48); reverted |
-| 142_Gronk_a1_skill28 | 0x02094e84 | 224 | 82 | FIXABLE | 82 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: CAST_POSE 40 tried: reaches the crouch, not the hand sparkle (before #33-48); reverted |
-| 142_Gronk_a2_skill1 | 0x02094e84 | 166 | 46 | FIXABLE | 46 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: CAST_POSE 40 tried: reaches the crouch, not the hand sparkle (before #33-48); reverted |
-| 142_Gronk_a3_skill37_x7 | 0x02094e84 | 144 | 36 | FIXABLE | 36 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: CAST_POSE 40 tried: reaches the crouch, not the hand sparkle (before #33-48); reverted |
+| 142_Gronk_a0_skill18 | 0x02094e84 | 224 | 82 | FIXABLE | 118 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: whole pose for rows 142 and 153 (47 at 3x): hand sparkle #19-25 and burst #26 (Gronk a0, Gideon 2 a1), then the spell; flinch #60 |
+| 142_Gronk_a1_skill28 | 0x02094e84 | 224 | 82 | FIXABLE | 118 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: whole pose for rows 142 and 153 (47 at 3x): hand sparkle #19-25 and burst #26 (Gronk a0, Gideon 2 a1), then the spell; flinch #60 |
+| 142_Gronk_a2_skill1 | 0x02094e84 | 166 | 46 | FIXABLE | 82 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: whole pose for rows 142 and 153 (47 at 3x): hand sparkle #19-25 and burst #26 (Gronk a0, Gideon 2 a1), then the spell; flinch #60 |
+| 142_Gronk_a3_skill37_x7 | 0x02094e84 | 144 | 36 | FIXABLE | 72 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: whole pose for rows 142 and 153 (47 at 3x): hand sparkle #19-25 and burst #26 (Gronk a0, Gideon 2 a1), then the spell; flinch #60 |
 | 143_Zethos_a0_attack | 0x02095780 | 219 | 47 | FIXABLE | 71 | SMOOTH | quick-steps wind-up cap (hop step 4): blue axe swing lost (rec_sprite #37-40 f74-80); only glints at v1 f24-28. Fixed: wind-up kept whole: strike back |
 | 143_Zethos_a1_attack_x8010 | 0x02095df0 | 347 | 87 | FIXABLE | 135 | SMOOTH | quick-steps wind-up cap (hop step 4): both axe swings lost (rec_sprite f74-80, f138-142). Fixed: wind-up kept whole: strike back |
 | 143_Zethos_a3_skill21 | 0x02095d30 | 375 | 111 | SMOOTH | 111 | SMOOTH | cast pose cap 24 still reaches the raised arm; the lightning finishes before the orb shrinks (v1 #34-53) |
@@ -253,17 +260,17 @@ Counts as proposed: SMOOTH 59, FIXABLE 83, JANKY as built 8 (Kuntukapu, Deuce x4
 | 148_White_Dragon_a2_skill23 | 0x020951b4 | 195 | 99 | SMOOTH | 99 | SMOOTH | one torn frame v1 #33 (f66): the existing slot hitch; the before has it twice (#38, #58) |
 | 149_Black_Dragon_a0_skill25 | 0x02094e84 | 165 | 63 | SMOOTH | 63 | SMOOTH | spell: hit sync, effect end, return, and camera as before |
 | 149_Black_Dragon_a1_skill24_x2000 | 0x02095660 | 266 | 90 | SMOOTH | 90 | SMOOTH | ends at x 70, not 68: its idle sway, no visible snap |
-| 150_Blue_Dragon_a0_skill17 | 0x02094e84 | 202 | 64 | FIXABLE | 64 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: mouth sparkle lost (before #50-56). Fixed: the sparkle needs a pose of about 72; not worth the frames |
+| 150_Blue_Dragon_a0_skill17 | 0x02094e84 | 202 | 64 | FIXABLE | 100 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: mouth sparkle lost (before #50-56). Fixed: whole pose for row 150 (47 at 3x): mouth sparkle #20-27, burst #26 (skill 17; skill 2 #37-41), then the spell |
 | 150_Blue_Dragon_a1_attack | 0x02094fa4 | 114 | 28 | SMOOTH | 28 | SMOOTH | bubbles still on screen at the turn end, as before (#18-21 against before #61-64) |
-| 150_Blue_Dragon_a2_skill2 | 0x02094f44 | 212 | 56 | FIXABLE | 56 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: mouth sparkle lost (before #50-56). Fixed: the sparkle needs a pose of about 72; not worth the frames |
-| 150_Blue_Dragon_a3_skill1 | 0x02094e84 | 180 | 46 | FIXABLE | 46 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: mouth sparkle lost (before #50-56). Fixed: the sparkle needs a pose of about 72; not worth the frames |
+| 150_Blue_Dragon_a2_skill2 | 0x02094f44 | 212 | 56 | FIXABLE | 92 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: mouth sparkle lost (before #50-56). Fixed: whole pose for row 150 (47 at 3x): mouth sparkle #20-27, burst #26 (skill 17; skill 2 #37-41), then the spell |
+| 150_Blue_Dragon_a3_skill1 | 0x02094e84 | 180 | 46 | FIXABLE | 82 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: mouth sparkle lost (before #50-56). Fixed: whole pose for row 150 (47 at 3x): mouth sparkle #20-27, burst #26 (skill 17; skill 2 #37-41), then the spell |
 | 151_Dark_Jian_a0_attack | 0x02095c70 | 203 | 75 | SMOOTH | 75 | SMOOTH | strike lives in the hit step (kept whole) |
 | 151_Dark_Jian_a2_skill1 | 0x02094e84 | 80 | 46 | SMOOTH | 46 | SMOOTH | spell: hit sync, effect end, return, and camera as before |
 | 152_Gideon_a0_attack | 0x02095780 | 247 | 41 | JANKY as built | 59 | SMOOTH | quick-steps wind-up cap: no visible attack on a boss; Jian flinches at v1 #15 f30 while the boss stands still (rec_sprite fire punch / sword slash #34-39 f68-78; two-hit: second punch #55-57 f110-114 also lost). Fixed: strike back (Deuce two-hit fixed: punches #21-24 and #39-42, flinches #25 and #43; Gideon: slash #18-23, flinch #24) |
 | 152_Gideon_a1_attack_x2001 | 0x02095780 | 247 | 41 | JANKY as built | 59 | SMOOTH | quick-steps wind-up cap: no visible attack on a boss; Jian flinches at v1 #15 f30 while the boss stands still (rec_sprite fire punch / sword slash #34-39 f68-78; two-hit: second punch #55-57 f110-114 also lost). Fixed: strike back (Deuce two-hit fixed: punches #21-24 and #39-42, flinches #25 and #43; Gideon: slash #18-23, flinch #24) |
 | 152_Gideon_a2_attack_x20 | 0x02095bb0 | 327 | 59 | JANKY as built | 95 | SMOOTH | quick-steps wind-up cap: no visible attack on a boss; Jian flinches at v1 #15 f30 while the boss stands still (rec_sprite fire punch / sword slash #34-39 f68-78; two-hit: second punch #55-57 f110-114 also lost). Fixed: strike back (Deuce two-hit fixed: punches #21-24 and #39-42, flinches #25 and #43; Gideon: slash #18-23, flinch #24) |
-| 153_Gideon_2_a0_skill20_x8000 | 0x020950c4 | 158 | 70 | FIXABLE | 70 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: slash flash at the end of the wind-up lost (before #26-30); the projectile comes straight out. Fixed: same cap |
-| 153_Gideon_2_a1_skill18 | 0x02094e84 | 224 | 82 | FIXABLE | 82 | SIMPLIFIED (ship) | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: CAST_POSE 40 tried: reaches the crouch, not the hand sparkle (before #33-48); reverted |
+| 153_Gideon_2_a0_skill20_x8000 | 0x020950c4 | 158 | 70 | FIXABLE | 82 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: slash flash at the end of the wind-up lost (before #26-30); the projectile comes straight out. Fixed: whole pose (25 at 3x): slash #14-16, then the projectile; 37 damage in sync |
+| 153_Gideon_2_a1_skill18 | 0x02094e84 | 224 | 82 | FIXABLE | 118 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: glowing-hand charge lost (before #33-51); the boss just leans. Fixed: whole pose for rows 142 and 153 (47 at 3x): hand sparkle #19-25 and burst #26 (Gronk a0, Gideon 2 a1), then the spell; flinch #60 |
 | 154_Gideon_3_a0_skill16 | 0x02094e84 | 102 | 48 | SMOOTH | 48 | SMOOTH | spell: hit sync, effect end, return, and camera as before |
 | 154_Gideon_3_a1_skill30 | 0x02094e64 | 226 | 72 | SMOOTH | 72 | SMOOTH | spell: hit sync, effect end, return, and camera as before |
 | 155_Ignatius_a0_skill16 | 0x02094e84 | 254 | 52 | SMOOTH | 52 | SMOOTH | spell: hit sync, effect end, return, and camera as before |
