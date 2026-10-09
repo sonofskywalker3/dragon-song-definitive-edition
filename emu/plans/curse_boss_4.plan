@@ -1,0 +1,331 @@
+# Viability study: a cursed boss fight in the Cathedral (event battle 4; 4 = a Deuce, 5 = Gronk) with the
+# curse_party_l10 party (Jian 10, Lucia 10, Gabryel 4, Port Olbeage gear) from full HP, everyone on Fight (A presses). Battle
+# Logs Jian's battle HP every time it changes (battle Jian at [0x020B8620] + 0x14).
+include boot_from_save
+wait 30
+include curse_party_l10
+poke u32 0x02204624 0x80000
+pin u16 0x020B77EC 141
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+poke u16 0x020B7838 1
+poke u16 0x020B783A 4
+poke u32 0x020B0010 0x73
+wait 240
+peek u32 0x020B8620 battle_chars
+battlers
+watch u32 0x02291C34 b_jian_hp
+watch u32 0x02291CA0 b_lucia_hp
+watch u32 0x02291D0C b_gabryel_hp
+watch u16 0x020B85C2 round
+shot boss_start
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_1
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_2
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_3
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_4
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_5
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_6
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_7
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_8
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_9
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_10
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_11
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+press A 4
+wait 40
+shot boss_12
+wait 300
+shot boss_after
+peek u32 0x020B4668 field_jian_hp_after
+peek u32 0x020B46C4 field_lucia_hp_after
+peek u32 0x020B4720 field_gabryel_hp_after

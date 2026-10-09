@@ -1,0 +1,4 @@
+# curse-no-healing: where the story flag words live after loading the post-intro save
+include boot_from_save
+peek u32 0x020B4640 flags_ctx
+dump 0x02204620 0x10 flag_words_0_3

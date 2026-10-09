@@ -1,0 +1,221 @@
+# Viability study: what a Cathedral fight costs. Party Jian 10, Lucia 10, Gabryel 4 with Port Olbeage gear (curse_party_l10), curse on,
+# warped to the Cathedral hall (map 141, area group 18, enemy level 10+) and put onto the five enemy symbols in turn
+# (positions from curse_route_maps). Battles on Auto. Battle HP: 0x0228E860 + i * 0x6C + 0x14.
+include boot_from_save
+wait 30
+include curse_party_l10
+poke u32 0x02204624 0x80000
+pin u16 0x020B77EC 141
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+watch u32 0x0228E874 b_jian_hp
+watch u32 0x0228E8E0 b_lucia_hp
+watch u32 0x0228E94C b_gabryel_hp
+watch u32 0x0228E878 b_jian_mp
+watch u32 0x0228E8E4 b_lucia_mp
+watch u32 0x020B0010 main_state
+peek u32 0x020B4668 field_jian_hp_before_1
+peek u32 0x020B46C4 field_lucia_hp_before_1
+peek u32 0x020B4720 field_gabryel_hp_before_1
+poke u32 0x020B6CB4 0x1F8000
+poke u32 0x020B6CB8 0xFC000
+wait 300
+battlers
+shot f1_start
+press Right 8
+wait 20
+press A 8
+wait 20
+press A 8
+wait 600
+shot f1_mid
+wait 600
+shot f1_late
+wait 600
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+wait 200
+shot f1_after
+peek u32 0x020B4668 field_jian_hp_after_1
+peek u32 0x020B46C4 field_lucia_hp_after_1
+peek u32 0x020B4720 field_gabryel_hp_after_1
+peek u32 0x020B4664 jian_level_index_1
+peek u32 0x020B4668 field_jian_hp_before_2
+peek u32 0x020B46C4 field_lucia_hp_before_2
+peek u32 0x020B4720 field_gabryel_hp_before_2
+poke u32 0x020B6CB4 0x2CC000
+poke u32 0x020B6CB8 0x1D4000
+wait 300
+battlers
+shot f2_start
+press Right 8
+wait 20
+press A 8
+wait 20
+press A 8
+wait 600
+shot f2_mid
+wait 600
+shot f2_late
+wait 600
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+wait 200
+shot f2_after
+peek u32 0x020B4668 field_jian_hp_after_2
+peek u32 0x020B46C4 field_lucia_hp_after_2
+peek u32 0x020B4720 field_gabryel_hp_after_2
+peek u32 0x020B4664 jian_level_index_2
+peek u32 0x020B4668 field_jian_hp_before_3
+peek u32 0x020B46C4 field_lucia_hp_before_3
+peek u32 0x020B4720 field_gabryel_hp_before_3
+poke u32 0x020B6CB4 0x1FC000
+poke u32 0x020B6CB8 0x2F4000
+wait 300
+battlers
+shot f3_start
+press Right 8
+wait 20
+press A 8
+wait 20
+press A 8
+wait 600
+shot f3_mid
+wait 600
+shot f3_late
+wait 600
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+wait 200
+shot f3_after
+peek u32 0x020B4668 field_jian_hp_after_3
+peek u32 0x020B46C4 field_lucia_hp_after_3
+peek u32 0x020B4720 field_gabryel_hp_after_3
+peek u32 0x020B4664 jian_level_index_3
+peek u32 0x020B4668 field_jian_hp_before_4
+peek u32 0x020B46C4 field_lucia_hp_before_4
+peek u32 0x020B4720 field_gabryel_hp_before_4
+poke u32 0x020B6CB4 0x3F8000
+poke u32 0x020B6CB8 0x2E0000
+wait 300
+battlers
+shot f4_start
+press Right 8
+wait 20
+press A 8
+wait 20
+press A 8
+wait 600
+shot f4_mid
+wait 600
+shot f4_late
+wait 600
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+wait 200
+shot f4_after
+peek u32 0x020B4668 field_jian_hp_after_4
+peek u32 0x020B46C4 field_lucia_hp_after_4
+peek u32 0x020B4720 field_gabryel_hp_after_4
+peek u32 0x020B4664 jian_level_index_4
+peek u32 0x020B4668 field_jian_hp_before_5
+peek u32 0x020B46C4 field_lucia_hp_before_5
+peek u32 0x020B4720 field_gabryel_hp_before_5
+poke u32 0x020B6CB4 0x4EC000
+poke u32 0x020B6CB8 0x28C000
+wait 300
+battlers
+shot f5_start
+press Right 8
+wait 20
+press A 8
+wait 20
+press A 8
+wait 600
+shot f5_mid
+wait 600
+shot f5_late
+wait 600
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+press A 4
+wait 120
+wait 200
+shot f5_after
+peek u32 0x020B4668 field_jian_hp_after_5
+peek u32 0x020B46C4 field_lucia_hp_after_5
+peek u32 0x020B4720 field_gabryel_hp_after_5
+peek u32 0x020B4664 jian_level_index_5

@@ -1,0 +1,22 @@
+# curse-no-healing battle setup: Jian and Lucia (third slot empty) in the first Delrich Temple battle with
+# strong stats but real HP (100 of 999 each; HP is not pinned), Lucia 300 MP, 5 Healing Gums, curse flag
+# 0x33 poked on (the battle sets its own curse flag from it at battle start).
+include boot_from_save
+pin u16 0x020B464C 0
+pin u16 0x020B4650 1
+pin u16 0x020B4654 65535
+pin u32 0x020B466C 999
+pin u8 0x020B4678 255
+pin u8 0x020B467C 255
+pin u8 0x020B4684 255
+pin u8 0x020B468C 255
+pin u32 0x020B46C8 999
+pin u8 0x020B46D4 255
+pin u8 0x020B46D8 255
+pin u8 0x020B46E0 255
+pin u8 0x020B46E8 255
+pin u32 0x020B46D0 300
+poke u32 0x020B4668 100
+poke u32 0x020B46C4 100
+poke u32 0x020B46CC 300
+poke u8 0x0213BA43 5

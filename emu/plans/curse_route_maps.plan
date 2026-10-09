@@ -1,0 +1,775 @@
+# Viability study (docs/plan-curse.md): pin-warp to each map of the cursed stretch and dump its objects
+# (32 x 0x40 at 0x020B6FD4: +0x12 id, +0x14 kind, +0x22 blue chest), the spawn point count (0x020B77F4),
+# this map's group index (0x020B4906) and kill/total entry table (0x020B4908). Story flag 0x33 on.
+include boot_from_save
+wait 30
+poke u32 0x02204624 0x80000
+save room
+load room
+wait 5
+pin u16 0x020B77EC 140
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_140
+load room
+wait 5
+pin u16 0x020B77EC 141
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_141
+load room
+wait 5
+pin u16 0x020B77EC 142
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_142
+load room
+wait 5
+pin u16 0x020B77EC 143
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_143
+load room
+wait 5
+pin u16 0x020B77EC 144
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_144
+load room
+wait 5
+pin u16 0x020B77EC 145
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_145
+load room
+wait 5
+pin u16 0x020B77EC 146
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_146
+load room
+wait 5
+pin u16 0x020B77EC 147
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_147
+load room
+wait 5
+pin u16 0x020B77EC 148
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_148
+load room
+wait 5
+pin u16 0x020B77EC 149
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_149
+load room
+wait 5
+pin u16 0x020B77EC 150
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_150
+load room
+wait 5
+pin u16 0x020B77EC 176
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_176
+load room
+wait 5
+pin u16 0x020B77EC 177
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_177
+load room
+wait 5
+pin u16 0x020B77EC 178
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_178
+load room
+wait 5
+pin u16 0x020B77EC 179
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_179
+load room
+wait 5
+pin u16 0x020B77EC 180
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_180
+load room
+wait 5
+pin u16 0x020B77EC 181
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_181
+load room
+wait 5
+pin u16 0x020B77EC 182
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_182
+load room
+wait 5
+pin u16 0x020B77EC 183
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_183
+load room
+wait 5
+pin u16 0x020B77EC 184
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_184
+load room
+wait 5
+pin u16 0x020B77EC 185
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_185
+load room
+wait 5
+pin u16 0x020B77EC 199
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_199
+load room
+wait 5
+pin u16 0x020B77EC 200
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_200
+load room
+wait 5
+pin u16 0x020B77EC 201
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_201
+load room
+wait 5
+pin u16 0x020B77EC 202
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_202
+load room
+wait 5
+pin u16 0x020B77EC 203
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_203
+load room
+wait 5
+pin u16 0x020B77EC 204
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_204
+load room
+wait 5
+pin u16 0x020B77EC 205
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_205
+load room
+wait 5
+pin u16 0x020B77EC 206
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_206
+load room
+wait 5
+pin u16 0x020B77EC 207
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_207
+load room
+wait 5
+pin u16 0x020B77EC 208
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_208
+load room
+wait 5
+pin u16 0x020B77EC 209
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_209
+load room
+wait 5
+pin u16 0x020B77EC 210
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_210
+load room
+wait 5
+pin u16 0x020B77EC 211
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_211
+load room
+wait 5
+pin u16 0x020B77EC 212
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_212
+load room
+wait 5
+pin u16 0x020B77EC 213
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_213
+load room
+wait 5
+pin u16 0x020B77EC 214
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_214
+load room
+wait 5
+pin u16 0x020B77EC 215
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_215
+load room
+wait 5
+pin u16 0x020B77EC 216
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_216
+load room
+wait 5
+pin u16 0x020B77EC 217
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_217
+load room
+wait 5
+pin u16 0x020B77EC 218
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_218
+load room
+wait 5
+pin u16 0x020B77EC 219
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_219
+load room
+wait 5
+pin u16 0x020B77EC 220
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_220
+load room
+wait 5
+pin u16 0x020B77EC 221
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_221
+load room
+wait 5
+pin u16 0x020B77EC 222
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_222
+load room
+wait 5
+pin u16 0x020B77EC 223
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_223
+load room
+wait 5
+pin u16 0x020B77EC 224
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_224
+load room
+wait 5
+pin u16 0x020B77EC 225
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B77F4 spawn_points
+peek u16 0x020B4906 group_index
+dump 0x020B4908 0xC0 group_entries
+dump 0x020B6FD4 0x800 objects
+shot map_225

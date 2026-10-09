@@ -1,0 +1,75 @@
+# curse-no-healing control: curse_battle.plan without the curse flag (an uncursed save). Jian's Gum and
+# Lucia's Healing Water heal him in round 1 and the Gum is used up.
+include curse_battle_setup
+include warp6
+wait 270
+peek u32 0x020B8620 battle_chars
+peek u16 0x020B8614 battle_curse
+pinptr u32 0x020B8620 0x14 100
+pinptr u32 0x020B8620 0x80 100
+wait 2
+unpin
+watch u32 0x0228E874 jian_hp
+watch u32 0x0228E8E0 lucia_hp
+watch u32 0x0228E8E4 lucia_mp
+watch u8 0x0213BA43 gum_count
+watch u16 0x020B8614 battle_curse
+shot b_start
+press A 8
+wait 60
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+shot b1_gum_target_jian
+press A 8
+wait 60
+press Right 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+shot b1_spell_target_jian
+press A 8
+wait 120
+shot b1_round_a
+wait 120
+shot b1_round_b
+wait 120
+shot b1_round_c
+wait 900
+shot b2_start
+press Down 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 30
+shot b2_gum_target_lucia
+press A 8
+wait 60
+press Right 8
+wait 30
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 30
+shot b2_spell_target_lucia
+press A 8
+wait 120
+shot b2_round_a
+wait 120
+shot b2_round_b
+wait 900
+shot b2_end

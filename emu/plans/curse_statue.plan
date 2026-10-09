@@ -1,0 +1,21 @@
+# curse-no-healing: a healing statue still heals cursed Jian fully. Jian's room has no statue, so object 0
+# (just above Jian) is made one (id 0x37D, no facing check), as in test_statue_cure.plan. Flag 0x33 on;
+# Jian 5/28 HP, 1/10 MP.
+include boot_from_save
+pin u16 0x020B4650 1
+poke u32 0x02204624 0x80000
+poke u16 0x020B6FE6 0x37D
+poke u8 0x020B6FE9 0xFF
+poke u32 0x020B4668 5
+poke u32 0x020B4670 1
+wait 10
+dump 0x02204620 0x10 flag_words
+peek u32 0x020B4668 jian_hp_before
+press Up 20
+wait 10
+shot st_before
+press A 4
+wait 90
+shot st_after
+peek u32 0x020B4668 jian_hp_after
+peek u32 0x020B4670 jian_mp_after
