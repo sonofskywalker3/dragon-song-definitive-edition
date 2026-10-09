@@ -1625,7 +1625,22 @@ where they overlap.
   (O065). So in Dragon Song she cannot release her power into Lunar because most of it is owed elsewhere,
   and she has not yet let herself see Lunar as a home rather than a waiting room. The line to aim at: Lunar
   is something new, its people would not go back if they could, and she is the last one to believe it. Dyne,
-  500 years later, is the one who frees her of it; Dragon Song plants the seed and leaves it. The first Dragonmaster came with
+  500 years later, is the one who frees her of it; Dragon Song plants the seed and leaves it.
+- **Jian plants the seed (Jeff, 2026-10-09):** in the Chamber of Rebirth Jian is the first to say it to her
+  (Lunar is a home, not a waiting room; its people would not go back if they could; her work today is her
+  guilt, not what is best for them now). She almost hears it and cannot accept it, because accepting it means
+  forgiving herself; she takes the power back up. Dyne gets the second try, 500 years later.
+- **Dragon Song is the exile (decided):** the Frontier is already the rebels' prison (004 #78), Ignatius leads
+  the Vile Tribe out across the world, and the ending seals the Frontier; from 500 years later that is the
+  Japanese Lunar 1 line "the Vile Tribe that tormented people lived in this world; Althena exiled them to the
+  Frontier and sealed them" (Mega CD C021 @0x265D). No plot change needed; the seal is the thing Lunar 1
+  remembers.
+- **The Dragonmasters, named in the Story edition (decided):** Louie (ルイ), who came with Althena from the
+  Blue Star and turned the dead world green, is named in the intro. The later line (Zeon, Loka, the gold and
+  silver sisters Asti and Liza [Mega CD names; the Saturn calls them Alicia and Rina], Dyne, Alex) is future
+  history relative to Dragon Song and may be seeded as prophecy or left for Lunar 2 players to recognize.
+  Jian is not on that list because he gives the rings back and says "I don't want to be a Dragonmaster"
+  (021 #26); keep that line. Ignatius is not on it because he fell. The first Dragonmaster came with
   Althena long before this story (do not use "greened the world" in our text); Ignatius is only the latest.
 - **Keepers from the vanilla climax:** Jian giving back the Dragon Rings (021 #26), "You fear yourself"
   (021 #28), the reached hand (021 #38), Althena's "the future must come from each one of you" as the thing
