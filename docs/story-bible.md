@@ -1630,6 +1630,16 @@ where they overlap.
   (Lunar is a home, not a waiting room; its people would not go back if they could; her work today is her
   guilt, not what is best for them now). She almost hears it and cannot accept it, because accepting it means
   forgiving herself; she takes the power back up. Dyne gets the second try, 500 years later.
+- **Lucia's human mirror (Jeff, 2026-10-09, shape decided; the event is his to pick):** Lucia the human has
+  something of her own she cannot forgive herself for, and Jian's relationship with her, which never asks her
+  to earn it, pushes her toward forgiving herself as a human before the Chamber of Rebirth shows the same
+  wound at the goddess's scale. Write the human beat first (Port Searis to Sungrid Bridge, in skits and one
+  scene), so the goddess scene is a recognition, not an explanation. Candidates, cheapest rhyme first:
+  (1) **a late delivery**: before Searis something she carried arrived too late and someone paid for it;
+  hence never late, hence the courier job, hence "You're late, Jian. Again" cuts deeper than a joke; this is
+  "they begged me and I barely made it" at the size of one village (recommended); (2) **someone she left
+  behind** to have a life of her own (her want becomes her guilt); (3) **someone hurt because she froze**,
+  which is why Jian's recklessness, which she scolds all game, is what she wishes she had.
 - **Dragon Song is the exile (decided):** the Frontier is already the rebels' prison (004 #78), Ignatius leads
   the Vile Tribe out across the world, and the ending seals the Frontier; from 500 years later that is the
   Japanese Lunar 1 line "the Vile Tribe that tormented people lived in this world; Althena exiled them to the
