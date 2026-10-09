@@ -1,0 +1,25 @@
+# Research (docs/re-party-chat.md): find the menu path that starts script 018 (0x0205F350); run with --save
+include boot_from_save
+wait 250
+exec 0x0205F350 menu_018
+exec 0x02020170 field_018
+press X 3
+wait 70
+watch u8 0x02139FD5 screen
+touch 48 133 4
+wait 90
+touch 222 120 4
+wait 60
+shot i_1
+touch 222 120 4
+wait 90
+shot i_2
+press A 3
+wait 90
+shot i_3
+press A 3
+wait 90
+shot i_4
+press A 3
+wait 90
+shot i_5

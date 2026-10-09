@@ -1,0 +1,27 @@
+# Party chat save test, part 2 (docs/re-party-chat.md): a fresh boot loading the save part 1 wrote
+# (run with --save build/chat/sr_saved.SaveRAM). The example chat was read before saving, the hint was
+# not: the icon should still bounce, and Y should play the hint, not the example chat; then still.
+include boot_from_save
+wait 60
+peek u16 0x020B6BE4 map
+dump 0x02204620 0x5C flags_loaded
+peek u16 0x020B8056 figures_flags_loaded
+shot sb_icon_0
+wait 4
+shot sb_icon_4
+wait 4
+shot sb_icon_8
+press Y 3
+wait 150
+shot sb_y
+press A 3
+wait 60
+press A 3
+wait 60
+peek u16 0x020B8056 figures_flags_after
+shot sb_after_0
+wait 4
+shot sb_after_4
+press Y 3
+wait 150
+shot sb_y_again
