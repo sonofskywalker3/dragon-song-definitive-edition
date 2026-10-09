@@ -181,8 +181,8 @@ Example, generic lunge 0x02095334 (Bealzebub): Normal 8, 32, 19, 8, 32 = 99; Fas
   speeds) the plain cast 0x02094E84 (240 to 308 on Normal). Cause uncertain: func_02068034 picks it from the
   number of filled targets (+0x8C list), so DE's targeting changes probably leave one target where vanilla
   had two.
-- Small differences of 1 to 2 frames between turns and runs are lag frames (the slot-switch hitch of
-  docs/re-battle-pacing.md 2). Orcus' break (175 / 133) and Caucus' skills (2 frames) differ by outcome.
+- Small differences of 1 to 2 frames between turns and runs are lag frames (the sound-bank reload hitch of
+  docs/re-battle-pacing.md 7; it was thought to be an animation-slot load). Orcus' break (175 / 133) and Caucus' skills (2 frames) differ by outcome.
 - Everything else: DE Normal = vanilla to the frame (confirmed: 135 of 150 actions identical).
 
 ## 6. Not reached, and how Dark Jian's copied spell was reached
