@@ -1,0 +1,26 @@
+# Party chat test (docs/re-party-chat.md): the menu start site of script 018 (0x0205F350/0x0205F368, menu
+# state 0x29). No menu entry reaching it was found, so the menu state is poked to 0x29 from the top menu
+# (state 3). Run with --save on a party-chat build.
+include boot_from_save
+wait 250
+exec 0x0205F368 menu_start_018
+exec 0x02020188 field_start_018
+press X 3
+wait 70
+shot ms_top
+watch u32 0x020B0010 state
+poke u32 0x020B0010 0x29
+wait 60
+shot ms_1
+wait 90
+shot ms_2
+press A 3
+wait 60
+press A 3
+wait 60
+shot ms_3
+press A 3
+wait 60
+shot ms_4
+peek u16 0x020B6BE4 map
+dump 0x02204620 0x5C flags_after

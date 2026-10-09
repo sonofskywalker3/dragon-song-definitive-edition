@@ -1,0 +1,47 @@
+# Party chat save test, part 1 (docs/re-party-chat.md); run with --save on a party-chat build.
+# Fountain Square with flag 0xB poked on has two entries: the example chat, then the vanilla hint.
+# Read only the example chat (one Y), then save to album No.1 with Select. Part 2 reloads that save.
+include boot_from_save
+wait 60
+poke u32 0x02204620 0x802
+pin u16 0x020B77EC 164
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+press Y 3
+wait 120
+shot sa_chat
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 60
+press A 3
+wait 60
+peek u16 0x020B8056 figures_flags_before_save
+shot sa_icon_0
+wait 4
+shot sa_icon_4
+dump 0x02204620 0x5C flags_saved
+press Select 3
+wait 100
+press A 3
+wait 40
+shot sa_save_1
+press A 3
+wait 60
+shot sa_save_2
+press A 3
+wait 120
+shot sa_save_3
+press A 3
+wait 60
+shot sa_save_4
+wait 120
+shot sa_field

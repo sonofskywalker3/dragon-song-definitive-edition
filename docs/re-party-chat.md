@@ -281,14 +281,15 @@ Confirmed (code and emulator):
   Thieves' Woods at the same stage, a two-way chat shows two portraits (first speaker left) with face
   changes, and vanilla hints keep their pages (the text-edits "Anyway" fix included).
 
+- Read marks survive a save and a fresh boot, in both directions (section 8): a read chat stays read,
+  an unread one still bounces.
+
 Uncertain:
-- Read marks surviving a save and reload: the flag words are in the save file (0x850 in Jeff's save,
-  including words 12 to 16), but no save-and-reload was run.
 - That no engine code writes the read-flag ranges late in the game: scripts are scanned at build time,
   constant engine reads are known (docs/re-field-battle.md section 5), computed ones only partly
   (0x141 + n, 0x1E0 + n, table 0x0209E0B8).
-- The System menu start (0x0205F368) is hooked the same way but was not run (the field menu may not offer
-  it).
+- What reaches the menu's 018 start (menu state 0x29, 0x0205F350). No menu entry found leads there:
+  Status, Job (Assigned Job), Items, and System were tried. The hook itself works (section 8, forced).
 - Which expression each face 0 to 3 is (pick by eye); 018 never dims the speaker who is not talking.
 - Ops 0x32, 0x33, and 0x36 in some long vanilla talks were not decoded (vanilla code runs them as before).
 
@@ -309,6 +310,23 @@ perit_strip.png; the icon 4x with pixel counts against the first shot: build/cha
 | Thieves' Woods (1), Jeff's flags | bouncing | Jian: "Well, he ran off toward Perit Village ..." (0x522C) | still; 0x89 set |
 | same, 0x193 poked on | bouncing again (new stage) | Lucia: "We're looking for information, right? Let's head back to Perit Village ..." (placeholder; not "came here") | still |
 | Perit Village (166), Jeff's flags + 0x193 | bouncing | Lucia: "We're looking for information, right? / That's why we came here to Perit Village ..." (0x525C) | still |
+
+Save and reload (chat_save_a.plan, then chat_save_b.plan in a new emulator process; both on the start
+save, ROM copies chat_sr.nds and chat_sr2.nds). Part 1: Fountain Square with 0xB on; one Y plays the
+example chat (read flag 0xFC set), the hint (0x87) stays unread and the icon keeps bouncing; Select, album
+No.1, saved (build/chat/save_a_strip.png; the written save, build/chat/sr_saved.SaveRAM, has 0x00000802
+and word 7 = 0x10000000 at 0x850). Part 2, fresh boot, Load No.1: map 164, flags as saved, figures
+0xA026 and moving (build/chat/save_b_icon_crop.png: 214 px between frames 0 and 8); Y plays the hint
+"Jian, come on... We'd better get this package ...", not the example chat; then 0x8000 and still (0 px
+between frames 0 and 4 after). Both directions pass. With both read, a third Y replays the first match,
+which is the example chat (build/chat/save_b_strip.png, last panel): by the rule in section 5, put the
+hint first among chats at one place if the hint should be the one that repeats.
+
+Menu start site (chat_menu_start.plan, start save): in the top menu (state 3), the menu state 0x020B0010
+was poked to 0x29. The hook ran (exec at 0x0205F368), Jian's room hint showed in the menu's text box
+("I'd better find Lucia, quick! ...", build/chat/menu_start_strip.png), its read flag 0x84 was set, and
+the menu went back to its top screen. chat_menu_look.plan is the search for a real way in (Job and Items
+screens, build/chat/menu_look.png and menuj_look.png): none found.
 
 Harness note: BizHawk names the battery save of a ROM it knows (any unmodified vanilla copy) after its
 game database name, "Lunar - Dragon Song (USA).SaveRAM", not the file name, so `--save` on a vanilla
