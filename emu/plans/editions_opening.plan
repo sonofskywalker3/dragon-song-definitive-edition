@@ -1,0 +1,497 @@
+# Two editions (docs/plan-two-editions.md): New Game, the opening narration (one shot per page for the
+# first pages), then the wake-up and Jian walking out of the inn, a shot every 50 frames with A pressed
+# between them. Run once per edition: --rom build/editions/engine.nds / story.nds.
+watch u16 0x020B6BE4 map
+watch u32 0x020B6CEC route
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+wait 600
+shot narr_1
+press A 3
+wait 400
+shot narr_2
+press A 3
+wait 400
+press A 3
+wait 45
+shot s_001
+press A 3
+wait 45
+shot s_002
+press A 3
+wait 45
+shot s_003
+press A 3
+wait 45
+shot s_004
+press A 3
+wait 45
+shot s_005
+press A 3
+wait 45
+shot s_006
+press A 3
+wait 45
+shot s_007
+press A 3
+wait 45
+shot s_008
+press A 3
+wait 45
+shot s_009
+press A 3
+wait 45
+shot s_010
+press A 3
+wait 45
+shot s_011
+press A 3
+wait 45
+shot s_012
+press A 3
+wait 45
+shot s_013
+press A 3
+wait 45
+shot s_014
+press A 3
+wait 45
+shot s_015
+press A 3
+wait 45
+shot s_016
+press A 3
+wait 45
+shot s_017
+press A 3
+wait 45
+shot s_018
+press A 3
+wait 45
+shot s_019
+press A 3
+wait 45
+shot s_020
+press A 3
+wait 45
+shot s_021
+press A 3
+wait 45
+shot s_022
+press A 3
+wait 45
+shot s_023
+press A 3
+wait 45
+shot s_024
+press A 3
+wait 45
+shot s_025
+press A 3
+wait 45
+shot s_026
+press A 3
+wait 45
+shot s_027
+press A 3
+wait 45
+shot s_028
+press A 3
+wait 45
+shot s_029
+press A 3
+wait 45
+shot s_030
+press A 3
+wait 45
+shot s_031
+press A 3
+wait 45
+shot s_032
+press A 3
+wait 45
+shot s_033
+press A 3
+wait 45
+shot s_034
+press A 3
+wait 45
+shot s_035
+press A 3
+wait 45
+shot s_036
+press A 3
+wait 45
+shot s_037
+press A 3
+wait 45
+shot s_038
+press A 3
+wait 45
+shot s_039
+press A 3
+wait 45
+shot s_040
+press A 3
+wait 45
+shot s_041
+press A 3
+wait 45
+shot s_042
+press A 3
+wait 45
+shot s_043
+press A 3
+wait 45
+shot s_044
+press A 3
+wait 45
+shot s_045
+press A 3
+wait 45
+shot s_046
+press A 3
+wait 45
+shot s_047
+press A 3
+wait 45
+shot s_048
+press A 3
+wait 45
+shot s_049
+press A 3
+wait 45
+shot s_050
+press A 3
+wait 45
+shot s_051
+press A 3
+wait 45
+shot s_052
+press A 3
+wait 45
+shot s_053
+press A 3
+wait 45
+shot s_054
+press A 3
+wait 45
+shot s_055
+press A 3
+wait 45
+shot s_056
+press A 3
+wait 45
+shot s_057
+press A 3
+wait 45
+shot s_058
+press A 3
+wait 45
+shot s_059
+press A 3
+wait 45
+shot s_060
+press A 3
+wait 45
+shot s_061
+press A 3
+wait 45
+shot s_062
+press A 3
+wait 45
+shot s_063
+press A 3
+wait 45
+shot s_064
+press A 3
+wait 45
+shot s_065
+press A 3
+wait 45
+shot s_066
+press A 3
+wait 45
+shot s_067
+press A 3
+wait 45
+shot s_068
+press A 3
+wait 45
+shot s_069
+press A 3
+wait 45
+shot s_070
+press A 3
+wait 45
+shot s_071
+press A 3
+wait 45
+shot s_072
+press A 3
+wait 45
+shot s_073
+press A 3
+wait 45
+shot s_074
+press A 3
+wait 45
+shot s_075
+press A 3
+wait 45
+shot s_076
+press A 3
+wait 45
+shot s_077
+press A 3
+wait 45
+shot s_078
+press A 3
+wait 45
+shot s_079
+press A 3
+wait 45
+shot s_080
+press A 3
+wait 45
+shot s_081
+press A 3
+wait 45
+shot s_082
+press A 3
+wait 45
+shot s_083
+press A 3
+wait 45
+shot s_084
+press A 3
+wait 45
+shot s_085
+press A 3
+wait 45
+shot s_086
+press A 3
+wait 45
+shot s_087
+press A 3
+wait 45
+shot s_088
+press A 3
+wait 45
+shot s_089
+press A 3
+wait 45
+shot s_090
+press A 3
+wait 45
+shot s_091
+press A 3
+wait 45
+shot s_092
+press A 3
+wait 45
+shot s_093
+press A 3
+wait 45
+shot s_094
+press A 3
+wait 45
+shot s_095
+press A 3
+wait 45
+shot s_096
+press A 3
+wait 45
+shot s_097
+press A 3
+wait 45
+shot s_098
+press A 3
+wait 45
+shot s_099
+press A 3
+wait 45
+shot s_100
+press A 3
+wait 45
+shot s_101
+press A 3
+wait 45
+shot s_102
+press A 3
+wait 45
+shot s_103
+press A 3
+wait 45
+shot s_104
+press A 3
+wait 45
+shot s_105
+press A 3
+wait 45
+shot s_106
+press A 3
+wait 45
+shot s_107
+press A 3
+wait 45
+shot s_108
+press A 3
+wait 45
+shot s_109
+press A 3
+wait 45
+shot s_110
+press A 3
+wait 45
+shot s_111
+press A 3
+wait 45
+shot s_112
+press A 3
+wait 45
+shot s_113
+press A 3
+wait 45
+shot s_114
+press A 3
+wait 45
+shot s_115
+press A 3
+wait 45
+shot s_116
+press A 3
+wait 45
+shot s_117
+press A 3
+wait 45
+shot s_118
+press A 3
+wait 45
+shot s_119
+press A 3
+wait 45
+shot s_120
+press A 3
+wait 45
+shot s_121
+press A 3
+wait 45
+shot s_122
+press A 3
+wait 45
+shot s_123
+press A 3
+wait 45
+shot s_124
+press A 3
+wait 45
+shot s_125
+press A 3
+wait 45
+shot s_126
+press A 3
+wait 45
+shot s_127
+press A 3
+wait 45
+shot s_128
+press A 3
+wait 45
+shot s_129
+press A 3
+wait 45
+shot s_130
+press A 3
+wait 45
+shot s_131
+press A 3
+wait 45
+shot s_132
+press A 3
+wait 45
+shot s_133
+press A 3
+wait 45
+shot s_134
+press A 3
+wait 45
+shot s_135
+press A 3
+wait 45
+shot s_136
+press A 3
+wait 45
+shot s_137
+press A 3
+wait 45
+shot s_138
+press A 3
+wait 45
+shot s_139
+press A 3
+wait 45
+shot s_140
+press A 3
+wait 45
+shot s_141
+press A 3
+wait 45
+shot s_142
+press A 3
+wait 45
+shot s_143
+press A 3
+wait 45
+shot s_144
+press A 3
+wait 45
+shot s_145
+press A 3
+wait 45
+shot s_146
+press A 3
+wait 45
+shot s_147
+press A 3
+wait 45
+shot s_148
+press A 3
+wait 45
+shot s_149
+press A 3
+wait 45
+shot s_150
+press A 3
+wait 45
+shot s_151
+press A 3
+wait 45
+shot s_152
+press A 3
+wait 45
+shot s_153
+press A 3
+wait 45
+shot s_154
+press A 3
+wait 45
+shot s_155
+press A 3
+wait 45
+shot s_156
+press A 3
+wait 45
+shot s_157
+press A 3
+wait 45
+shot s_158
+press A 3
+wait 45
+shot s_159
+press A 3
+wait 45
+shot s_160

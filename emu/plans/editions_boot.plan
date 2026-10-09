@@ -1,0 +1,4 @@
+# Two editions: boot from the start save to the field (Jian in his room).
+include boot_from_save
+wait 120
+shot field

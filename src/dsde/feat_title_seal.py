@@ -15,7 +15,9 @@ two closest colours of the art (the pixels of one move to the other, a change of
 that cannot be seen), then take that slot.
 
 The seal is drawn at build time: an oval starburst whose straight-edged points have whole-pixel
-corners, filled blue, with two lines of cream pixel capitals.
+corners, filled blue, with three lines of cream pixel capitals: DEFINITIVE / EDITION / the edition
+(docs/plan-two-editions.md), so a screenshot or bug report says which build it is. `title-seal` (Engine
+edition) says ENGINE; `title-seal-story` (Story edition, after title-seal) repaints the tiles to say STORY.
 """
 
 import math
@@ -39,7 +41,7 @@ TILE_BYTES = TILE * TILE
 MAP_WIDTH = 32
 
 # Seal size and place (screen pixels, top screen)
-SEAL_WIDTH, SEAL_HEIGHT = 84, 40
+SEAL_WIDTH, SEAL_HEIGHT = 84, 50
 SEAL_X, SEAL_Y = 166, 80
 POINTS = 20  # star points around the rim, evenly spaced along it
 POINT_DEPTH = 5  # pixels from the tips to the notches between them
@@ -52,7 +54,10 @@ CLOSE_ENOUGH = (
     3 * 8 * 8
 )  # squared RGB distance: within about one 5-bit step per channel
 
-LINES = (("DEFINITIVE", 12), ("EDITION", 22))  # text and top row inside the seal
+TITLE_LINES = (("DEFINITIVE", 11), ("EDITION", 21))  # text and top row inside the seal
+EDITION_TOP = 32  # top row of the edition's name, under them
+ENGINE = "ENGINE"
+STORY = "STORY"
 FONT = {  # 7 rows each, "1" = ink
     "D": ("1110", "1001", "1001", "1001", "1001", "1001", "1110"),
     "E": ("1111", "1000", "1000", "1110", "1000", "1000", "1111"),
@@ -62,6 +67,10 @@ FONT = {  # 7 rows each, "1" = ink
     "T": ("11111", "00100", "00100", "00100", "00100", "00100", "00100"),
     "V": ("10001", "10001", "10001", "10001", "01010", "01010", "00100"),
     "O": ("0110", "1001", "1001", "1001", "1001", "1001", "0110"),
+    "G": ("0111", "1000", "1000", "1011", "1001", "1001", "0111"),
+    "S": ("0111", "1000", "1000", "0110", "0001", "0001", "1110"),
+    "R": ("1110", "1001", "1001", "1110", "1010", "1001", "1001"),
+    "Y": ("10001", "10001", "01010", "00100", "00100", "00100", "00100"),
 }
 
 Rgb = tuple[int, int, int]
@@ -121,7 +130,7 @@ def _inside(polygon: list[Pixel], x: float, y: float) -> bool:
     return inside
 
 
-def seal_pixels() -> dict[Pixel, Rgb]:
+def seal_pixels(edition: str) -> dict[Pixel, Rgb]:
     """The seal as {(x, y): colour}, in seal coordinates; missing pixels are transparent."""
     cx, cy = (SEAL_WIDTH - 1) / 2, (SEAL_HEIGHT - 1) / 2
     rx, ry = (SEAL_WIDTH - 1) / 2, (SEAL_HEIGHT - 1) / 2
@@ -137,7 +146,7 @@ def seal_pixels() -> dict[Pixel, Rgb]:
     }
     out: dict[Pixel, Rgb] = dict.fromkeys(shape, RIM_BLUE)
     out.update(dict.fromkeys(edge, RIM_DARK))
-    for text, top in LINES:
+    for text, top in (*TITLE_LINES, (edition, EDITION_TOP)):
         width = sum(len(FONT[c][0]) + 1 for c in text) - 1
         x = round(cx - width / 2)
         for c in text:
@@ -193,19 +202,25 @@ def _seal_palette(art: bytes) -> tuple[list[Rgb], bytearray, dict[Rgb, int]]:
     return palette, tiles, index_of
 
 
-def seal_patches() -> tuple[DataPatch, ...]:
+def _painted(edition: str) -> tuple[bytes, bytes, list[Rgb], bytearray]:
+    """The art, and its palette and tiles with the seal for edition painted in."""
     art = decompress(read_archive(VANILLA_TITLEPACK.read_bytes())[ART])
     palette, tiles, index_of = _seal_palette(art)
-    for (sx, sy), colour in seal_pixels().items():
+    for (sx, sy), colour in seal_pixels(edition).items():
         x, y = SEAL_X + sx, SEAL_Y + sy
         tile = (y // TILE) * MAP_WIDTH + x // TILE
         tiles[tile * TILE_BYTES + (y % TILE) * TILE + x % TILE] = index_of[colour]
+    return art, art[PALETTE_AT:TILES_AT], palette, tiles
+
+
+def seal_patches() -> tuple[DataPatch, ...]:
+    art, old_palette, palette, tiles = _painted(ENGINE)
     return (
         DataPatch(
             ARCHIVE,
             ART,
             PALETTE_AT,
-            art[PALETTE_AT:TILES_AT],
+            old_palette,
             b"".join(struct.pack("<H", _bgr555(c)) for c in palette),
             "title seal: seal colours in freed palette slots",
         ),
@@ -220,4 +235,21 @@ def seal_patches() -> tuple[DataPatch, ...]:
     )
 
 
+def story_seal_patches() -> tuple[DataPatch, ...]:
+    """Over title-seal's tiles: the same seal saying STORY (the palette is the same)."""
+    *_, engine_tiles = _painted(ENGINE)
+    *_, story_tiles = _painted(STORY)
+    return (
+        DataPatch(
+            ARCHIVE,
+            ART,
+            TILES_AT,
+            bytes(engine_tiles),
+            bytes(story_tiles),
+            "title seal: STORY instead of ENGINE",
+        ),
+    )
+
+
 TITLE_SEAL = Feature("title-seal", seal_patches())
+TITLE_SEAL_STORY = Feature("title-seal-story", story_seal_patches())

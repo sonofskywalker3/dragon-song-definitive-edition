@@ -1,6 +1,7 @@
 """Every design change as a named Feature. See docs/design.md for the why."""
 
 from pathlib import Path
+from types import MappingProxyType
 
 from dsde.boss_exp import boss_exp, check_tables
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
@@ -21,7 +22,7 @@ from dsde.feat_guidebook import GUIDEBOOK
 from dsde.feat_hud import STILL_HUD
 from dsde.feat_mic_sign import MIC_SIGN
 from dsde.feat_mp import MP_ECONOMY
-from dsde.feat_opening import OPENING
+from dsde.feat_opening import OPENING, OPENING_TEXT
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_party_chat import PARTY_CHAT
 from dsde.feat_results import RESULT_SCREENS
@@ -29,9 +30,9 @@ from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN
 from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
 from dsde.feat_statue import STATUE_ANY_SIDE
 from dsde.feat_targeting import MANUAL_TARGETING
-from dsde.feat_text import TEXT_FIXES
+from dsde.feat_text import TEXT_EDITS_FEATURE, TEXT_FIXES
 from dsde.feat_text_speed import TEXT_SPEED
-from dsde.feat_title_seal import TITLE_SEAL
+from dsde.feat_title_seal import TITLE_SEAL, TITLE_SEAL_STORY
 from dsde.feat_town_brackets import TOWN_BRACKET_PATCHES
 from dsde.feat_town_menu import TOWN_MENU_PATCHES
 from dsde.feat_walk import WALK_SPEED
@@ -271,6 +272,7 @@ FEATURES: tuple[Feature, ...] = (
     BATTLE_END_RULES,
     MANUAL_TARGETING,
     TEXT_FIXES,
+    TEXT_EDITS_FEATURE,
     HOLD_LR_TO_RUN,
     LEAVE_DROPS_GEAR,
     BATTLE_SPEED,
@@ -284,9 +286,11 @@ FEATURES: tuple[Feature, ...] = (
     GAD_EXPRESS,
     MIC_SIGN,
     OPENING,
+    OPENING_TEXT,
     TEXT_SPEED,
     EXPERIENCE_NAME,
     TITLE_SEAL,
+    TITLE_SEAL_STORY,
     TOWN_MENU,
     FIELD_MENU,
     GUIDEBOOK,
@@ -304,7 +308,10 @@ FEATURES: tuple[Feature, ...] = (
     # Place-aware party chat on Y (docs/re-party-chat.md). Off by default while Jeff writes the lines.
     PARTY_CHAT,
 )
-DEFAULT_FEATURES: tuple[str, ...] = (
+# Two editions (docs/plan-two-editions.md). Engine: mechanics, pacing, interface, and fixes; no line of
+# dialogue or narration says anything different (UI labels for changed mechanics are in: guidebook, mic-sign,
+# experience-name). Story: the Engine edition plus every wording change and the story features.
+ENGINE_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
     ONE_BATTLE_MODE.name,
     NO_VIRTUE_CLOCK.name,
@@ -342,4 +349,15 @@ DEFAULT_FEATURES: tuple[str, ...] = (
     ENEMY_SPRITE_SPEED.name,
     ENEMY_SPELL_SPEED.name,
     ENEMY_QUICK_STEPS.name,
+)
+STORY_FEATURES: tuple[str, ...] = ENGINE_FEATURES + (
+    TEXT_EDITS_FEATURE.name,
+    OPENING_TEXT.name,
+    TITLE_SEAL_STORY.name,
+)
+EDITIONS = MappingProxyType({"engine": ENGINE_FEATURES, "story": STORY_FEATURES})
+DEFAULT_FEATURES = ENGINE_FEATURES
+# A feature that patches another feature's bytes, and so must be built after it.
+REQUIRES = MappingProxyType(
+    {OPENING_TEXT.name: OPENING.name, TITLE_SEAL_STORY.name: TITLE_SEAL.name}
 )

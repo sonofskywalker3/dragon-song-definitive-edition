@@ -1,15 +1,23 @@
-"""Opening: Jian is woken from downstairs and runs out of the inn (playtest feedback item 2).
+"""Opening: Jian walks out of the inn (playtest feedback item 2), in two features (docs/plan-two-editions.md).
 
-Final dialogue; mechanics in docs/re-opening.md. Script 001's wake-up in Jian's room (map 163)
-jumps to new code appended to the script: an off-screen wake-up call, then a scripted run. The run
-crosses three maps, and a script cannot survive a map change (op 0x10 ends it), so each leg ends with
-a map change and the next leg starts from the new map's entry event: the script's entry dispatcher
-(event type 1, var 1 = map id) is pointed at a new block that sends the hall (160) and the lobby (155)
-to their legs while RUN_FLAG is set. The last leg clears the flag and leaves for the street (285),
-where the player gets control.
+- `opening-run` (Engine edition, no wording changed): the vanilla wake-up and Jian's self-introduction play
+  as written; after his last line ("Right then! I'd better go looking for Lucia...") the script walks him
+  out of the inn and sets the story flags that make Cherenkov and Jack optional (both can still be talked
+  to, and say their vanilla lines).
+- `opening-text` (Story edition, after opening-run): Cherenkov's wake-up call from downstairs replaces the
+  self-introduction, Jian's thoughts show as asides while he walks (one per map, closing by themselves as
+  the walk ends: feat_opening_asides.py), and Cherenkov's lobby line sends Jian to Fountain Square.
 
-Appended bytes go after the messages text-edits moves to the end of script 001. This feature writes
-those same bytes too, so the layout is the same whether or not text-edits is in the build.
+Mechanics in docs/re-opening.md. The walk crosses three maps, and a script cannot survive a map change
+(op 0x10 ends it), so each leg ends with a map change and the next leg starts from the new map's entry
+event: the script's entry dispatcher (event type 1, var 1 = map id) is pointed at a new block that sends the
+hall (160) and the lobby (155) to their legs while RUN_FLAG is set. The last leg clears the flag and leaves
+for the street (285), where the player gets control. Each leg has an aside slot, a jump to the next op that
+opening-text overwrites with a message op.
+
+Appended bytes go after the messages text-fixes moves to the end of script 001. opening-run writes those
+same bytes too, so the layout is the same whether or not text-fixes is in the build; opening-text's code
+goes after opening-run's.
 """
 
 import struct
@@ -28,6 +36,10 @@ VANILLA_MAP_ENTRY = 0x56B4
 WAKE_MESSAGE_OP = (
     0x62CC  # msg "....It's morning...?", the first op after the wake-up fade-in
 )
+# The op after the vanilla wake-up's last line ("Right then! I'd better go looking for Lucia..."): a stop,
+# then a dead goto_map nothing jumps to (docs/re-opening.md 1). The jump to the walk overwrites both halves.
+WAKE_END = 0x63C4
+JUMP_SIZE = 8
 WAKE_ANIMATION = (
     0x62D4,
     0x6304,
@@ -90,6 +102,7 @@ GOTO_MAP_WARP = 2
 CMP_VAR_EQ_IMM = 0x0002  # operand 0 from var (+0x204), operand 1 immediate, compare ==
 VAR_MAP = 1  # map entry events: var 0 = 1, var 1 = the map id
 MSG_BOX = 0x0001  # the flag the vanilla wake-up messages use
+FADE_TOP = 1
 FADE_BOTH = 3
 FADE_FULL = 0x80
 FADE_DEFAULT_FRAMES = -1  # 30 frames
@@ -196,8 +209,8 @@ def goto_map(map_id: int, entrance: int, facing: int) -> bytes:
     )
 
 
-def fade_in() -> bytes:
-    return _op(OP_FADE, FADE_BOTH) + struct.pack("<hh", FADE_FULL, FADE_DEFAULT_FRAMES)
+def fade_in(screens: int = FADE_BOTH) -> bytes:
+    return _op(OP_FADE, screens) + struct.pack("<hh", FADE_FULL, FADE_DEFAULT_FRAMES)
 
 
 def route_data(legs: tuple[tuple[int, int, int], ...]) -> bytes:
@@ -226,22 +239,16 @@ def assemble(items: list[Item], base: int) -> tuple[bytes, dict[str, int]]:
     return bytes(out), labels
 
 
-def _program(vanilla: bytes) -> list[Item]:
-    wake_pose = vanilla[WAKE_ANIMATION[0] : WAKE_ANIMATION[1]]
-    pose_reset = vanilla[POSE_RESET[0] : POSE_RESET[1]]
+def _engine_program() -> list[Item]:
+    """The walk out of the inn and the story flags; no text. Each leg has an aside slot: a jump to the
+    next op, which opening-text turns into a message op (both are 8 bytes)."""
     flags = b"".join(_op(OP_SET_FLAG, f) for f in (*STORY_FLAGS, RUN_FLAG))
     stop = _op(OP_STOP)
     return [
-        Label("wake"),
-        *msg("t_wake_call"),
-        wake_pose,
-        *msg("t_wake_reply"),
-        *msg("t_wake_push"),
-        *msg("t_wake_up"),
+        Label("walk"),
         flags,
-        pose_reset,
         *run("r_room"),
-        *msg("t_run_room"),
+        *aside_slot("slot_room"),
         _op(OP_WAIT_ROUTE, PLAYER),
         goto_map(MAP_HALL, HALL_FROM_ROOM, DOWN_RIGHT),
         stop,
@@ -251,17 +258,19 @@ def _program(vanilla: bytes) -> list[Item]:
         _op(OP_JUMP) + struct.pack("<I", VANILLA_MAP_ENTRY),
         Label("hall"),
         if_flag_clear_goto(RUN_FLAG, VANILLA_MAP_ENTRY),
-        fade_in(),
+        Label("fade_hall"),
+        fade_in(FADE_TOP),
         *run("r_hall"),
-        *msg("t_run_hall"),
+        *aside_slot("slot_hall"),
         _op(OP_WAIT_ROUTE, PLAYER),
         goto_map(MAP_LOBBY, LOBBY_FROM_HALL, DOWN_RIGHT),
         stop,
         Label("lobby"),
         if_flag_clear_goto(RUN_FLAG, VANILLA_MAP_ENTRY),
-        fade_in(),
+        Label("fade_lobby"),
+        fade_in(FADE_TOP),
         *run("r_lobby"),
-        *msg("t_run_lobby"),
+        *aside_slot("slot_lobby"),
         _op(OP_WAIT_ROUTE, PLAYER),
         _op(OP_CLEAR_FLAG, RUN_FLAG),
         goto_map(MAP_STREET, STREET_FROM_LOBBY, DOWN_RIGHT),
@@ -272,6 +281,27 @@ def _program(vanilla: bytes) -> list[Item]:
         route_data(HALL_ROUTE),
         Label("r_lobby"),
         route_data(LOBBY_ROUTE),
+    ]
+
+
+def aside_slot(name: str) -> list[Item]:
+    """A jump to the next op: does nothing, and has a message op's size for opening-text to fill."""
+    return [Label(name), *jump(name + "_end"), Label(name + "_end")]
+
+
+def _story_program(vanilla: bytes, walk: int) -> list[Item]:
+    """The new wake-up call, then on to the engine's walk; and the text of the asides."""
+    wake_pose = vanilla[WAKE_ANIMATION[0] : WAKE_ANIMATION[1]]
+    pose_reset = vanilla[POSE_RESET[0] : POSE_RESET[1]]
+    return [
+        Label("wake"),
+        *msg("t_wake_call"),
+        wake_pose,
+        *msg("t_wake_reply"),
+        *msg("t_wake_push"),
+        *msg("t_wake_up"),
+        pose_reset,
+        _op(OP_JUMP) + struct.pack("<I", walk),
         Label("t_wake_call"),
         message(WAKE_CALL),
         Label("t_wake_reply"),
@@ -291,54 +321,74 @@ def _program(vanilla: bytes) -> list[Item]:
     ]
 
 
-def opening_patches() -> tuple[DataPatch, ...]:
+def _align(offset: int) -> int:
+    return -(-offset // ALIGN) * ALIGN
+
+
+@dataclass(frozen=True)
+class Layout:
+    vanilla: bytes
+    moved: tuple[DataPatch, ...]  # text-fixes' grown messages at the end of script 001
+    end: int  # end of those messages
+    code: bytes  # the engine program, from base
+    labels: dict[str, int]
+
+    @property
+    def base(self) -> int:
+        return _align(self.end)
+
+    @property
+    def code_end(self) -> int:
+        return self.base + len(self.code)
+
+
+def _layout() -> Layout:
     vanilla = decompress(read_archive(VANILLA_SCRIPTS.read_bytes())[SCRIPT])
-    moved = [
+    moved = tuple(
         p
         for p in text_patches()
         if p.entry == SCRIPT and not p.old and p.offset >= len(vanilla)
-    ]
+    )
     end = max((p.offset + len(p.new) for p in moved), default=len(vanilla))
-    base = -(-end // ALIGN) * ALIGN
-    code, labels = assemble(_program(vanilla), base)
-    gap = b"\x00" * (base - end)
+    code, labels = assemble(_engine_program(), _align(end))
+    return Layout(vanilla, moved, end, code, labels)
+
+
+def opening_patches() -> tuple[DataPatch, ...]:
+    """Engine edition: the vanilla wake-up and self-introduction play as written, then Jian walks out."""
+    layout = _layout()
+    vanilla = layout.vanilla
     patches = [
         DataPatch(
             ARCHIVE, SCRIPT, p.offset, b"", p.new, f"opening: same bytes as {p.note}"
         )
-        for p in moved
+        for p in layout.moved
     ]
     patches += [
-        DataPatch(ARCHIVE, SCRIPT, end, b"", gap + code, "opening: new code"),
         DataPatch(
             ARCHIVE,
             SCRIPT,
-            WAKE_MESSAGE_OP,
-            vanilla[WAKE_MESSAGE_OP : WAKE_MESSAGE_OP + 8],
-            _op(OP_JUMP) + struct.pack("<I", labels["wake"]),
-            "opening: wake-up jumps to the new wake-up call and run",
+            layout.end,
+            b"",
+            b"\x00" * (layout.base - layout.end) + layout.code,
+            "opening: the walk out of the inn",
+        ),
+        DataPatch(
+            ARCHIVE,
+            SCRIPT,
+            WAKE_END,
+            vanilla[WAKE_END : WAKE_END + JUMP_SIZE],
+            _op(OP_JUMP) + struct.pack("<I", layout.labels["walk"]),
+            "opening: after 'Right then!' Jian walks out of the inn",
         ),
         DataPatch(
             ARCHIVE,
             SCRIPT,
             ENTRY_DISPATCH_TARGET,
             struct.pack("<I", VANILLA_MAP_ENTRY),
-            struct.pack("<I", labels["entry"]),
-            "opening: map entry events check the hall and lobby legs of the run first",
+            struct.pack("<I", layout.labels["entry"]),
+            "opening: map entry events check the hall and lobby legs of the walk first",
         ),
-        *(
-            DataPatch(
-                ARCHIVE,
-                SCRIPT,
-                site,
-                struct.pack("<I", vanilla),
-                struct.pack("<I", labels["t_cherenkov"]),
-                "opening: Cherenkov sends Jian to Fountain Square",
-            )
-            for site, vanilla in CHERENKOV_LINES
-        ),
-    ]
-    patches.append(
         DataPatch(
             ARCHIVE,
             SCRIPT,
@@ -346,15 +396,77 @@ def opening_patches() -> tuple[DataPatch, ...]:
             struct.pack("<H", LUCIA_AT_FOUNTAIN),
             struct.pack("<H", LUCIA_LEFT),
             "opening: Lucia waits at Fountain Square once Cherenkov has sent Jian there",
-        )
-    )
+        ),
+    ]
     return tuple(patches)
 
 
-OPENING = Feature(
-    "opening-run",
-    (
-        *opening_patches(),
-        *ASIDE_AUTOCLOSE,
-    ),
+# The hall and lobby legs fade in only the top screen: with no aside the bottom screen would show the last
+# message box under the HUD. With the asides the bottom screen shows them, so opening-text fades in both.
+FADE_SLOTS = ("fade_hall", "fade_lobby")
+ASIDE_SLOTS = (
+    ("slot_room", "t_run_room"),
+    ("slot_hall", "t_run_hall"),
+    ("slot_lobby", "t_run_lobby"),
 )
+
+
+def opening_text_patches() -> tuple[DataPatch, ...]:
+    """Story edition, on top of opening-run: the new wake-up call, the asides, and Cherenkov's line."""
+    layout = _layout()
+    vanilla = layout.vanilla
+    base = _align(layout.code_end)
+    code, labels = assemble(_story_program(vanilla, layout.labels["walk"]), base)
+    patches = [
+        DataPatch(
+            ARCHIVE,
+            SCRIPT,
+            layout.code_end,
+            b"",
+            b"\x00" * (base - layout.code_end) + code,
+            "opening text: the wake-up call and the asides",
+        ),
+        DataPatch(
+            ARCHIVE,
+            SCRIPT,
+            WAKE_MESSAGE_OP,
+            vanilla[WAKE_MESSAGE_OP : WAKE_MESSAGE_OP + JUMP_SIZE],
+            _op(OP_JUMP) + struct.pack("<I", labels["wake"]),
+            "opening text: Cherenkov's wake-up call replaces the self-introduction",
+        ),
+    ]
+    slots = [
+        (slot, _op(OP_MSG, MSG_BOX) + struct.pack("<I", labels[text]), "an aside")
+        for slot, text in ASIDE_SLOTS
+    ]
+    slots += [(fade, fade_in(), "fade in both screens") for fade in FADE_SLOTS]
+    for slot, new, what in slots:
+        at = layout.labels[slot] - layout.base
+        patches.append(
+            DataPatch(
+                ARCHIVE,
+                SCRIPT,
+                layout.labels[slot],
+                layout.code[at : at + len(new)],
+                new,
+                f"opening text: {what} ({slot})",
+            )
+        )
+    patches += [
+        DataPatch(
+            ARCHIVE,
+            SCRIPT,
+            site,
+            struct.pack("<I", line),
+            struct.pack("<I", labels["t_cherenkov"]),
+            "opening text: Cherenkov sends Jian to Fountain Square",
+        )
+        for site, line in CHERENKOV_LINES
+    ]
+    return tuple(patches)
+
+
+# Engine edition: the walk-out, the flags, and the asides' auto-close (text-speed calls it; with no aside
+# in the walk it never fires). The Story edition adds opening-text, which must come after opening-run.
+OPENING = Feature("opening-run", (*opening_patches(), *ASIDE_AUTOCLOSE))
+OPENING_TEXT = Feature("opening-text", opening_text_patches())
