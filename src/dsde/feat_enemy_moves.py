@@ -19,9 +19,10 @@ the interrupt path (-2 from a 0x80 step) stay where they were.
 Two features share the hook and so cannot be built together (the second fails its patch check):
 - enemy-short-moves (lever 1): movement only. Four hops in and out become one, the 60-frame glides 20, the
   lunge's pause and travel shorter. Every animation step is kept whole.
-- enemy-quick-steps (lever 3): lever 1 plus caps: idle, landing, wind-up and cast-pose animation waits become
-  short fixed steps (the animation starts and is cut), the landing animation between a hop and the attack is
-  dropped, and long fixed pauses are cut.
+- enemy-quick-steps (lever 3): lever 1 plus caps: crouch, landing and cast-pose animation waits become short
+  fixed steps (the animation starts and is cut), the landing animation between a hop and the attack is
+  dropped, and long fixed pauses are cut. Wind-ups and the glides' sink and emerge stay whole (capped, they
+  lost the strike or popped: docs/review-enemy-attacks.md), so this needs enemy-sprite-speed to be short.
 """
 
 import struct
@@ -164,14 +165,15 @@ SHORT_MOVES: dict[int, tuple[Cut, ...]] = {
 # ---- lever 3: lever 1 plus animation caps and shorter pauses ------------------------------------------
 PREP = 8  # crouch before a hop or glide (anim seq 0)
 LAND = 8  # landing / settle at the end
-WINDUP = 16  # attack wind-up (anim slot 0 seq 0)
-CAST_POSE = 24  # cast pose before the spell effect
+WINDUP = 16  # attack wind-up (slot 0 seq 0); only Dark Jian and the Blue Dragon bite still cap it
+# cast pose before the spell effect; 40 was tried and still missed Druid's orb and Gronk's hand charge
+CAST_POSE = 24
 PAUSE = 16  # long fixed pauses inside skill scripts
 
 HOP_QUICK = (  # 0x02095780 family: crouch, hop, (landing dropped), wind-up, hit, hop home
     cap(0, PREP),
     *keep(1, 2),
-    cap(4, WINDUP),
+    Cut(4),  # wind-up whole: the strike is in its last third
     Cut(5),
     *keep(7, 8),
     land(9),
@@ -181,7 +183,7 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         cap(0, PREP),
         Cut(1, flags=HOP_IN_FULL, frames=HOP_FRAMES),
         Cut(2),
-        cap(13, WINDUP),
+        Cut(13),  # wind-up whole: the strike is in its last third
         Cut(14),
         Cut(16, flags=HOP_OUT_FULL, frames=HOP_FRAMES),
         Cut(17),
@@ -192,9 +194,9 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
     0x02095BB0: (
         cap(0, PREP),
         *keep(1, 2),
-        cap(4, WINDUP),
+        Cut(4),  # wind-up whole: the strike is in its last third
         Cut(5),
-        cap(6, WINDUP),
+        Cut(6),  # wind-up whole: the strike is in its last third
         Cut(7),
         *keep(9, 10),
         land(11),
@@ -203,9 +205,9 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
     0x02095DF0: (
         cap(0, PREP),
         *keep(1, 2),
-        cap(4, WINDUP),
+        Cut(4),  # wind-up whole: the strike is in its last third
         *keep(5, 6),
-        cap(7, WINDUP),
+        Cut(7),  # wind-up whole: the strike is in its last third
         Cut(8),
         *keep(10, 11),
         land(12),
@@ -230,49 +232,12 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         *keep(9, 10),
         land(11),
     ),
-    0x020955E0: (
-        cap(0, PREP),
-        Cut(1, frames=GLIDE_FRAMES),
-        cap(2, PREP),
-        cap(3, WINDUP),
-        Cut(4),
-        cap(5, PREP),
-        Cut(6, frames=GLIDE_FRAMES),
-        land(7),
-    ),
-    0x02095820: (
-        cap(0, PREP),
-        Cut(1, frames=GLIDE_FRAMES),
-        cap(2, PREP),
-        cap(3, WINDUP),
-        Cut(4),
-        cap(5, WINDUP),
-        Cut(6),
-        cap(7, PREP),
-        Cut(8, frames=GLIDE_FRAMES),
-        land(9),
-    ),
-    0x020952E4: (
-        Cut(0, frames=LUNGE_PAUSE),
-        Cut(1, frames=LUNGE_TRAVEL),
-        cap(2, WINDUP),
-        Cut(3),
-        Cut(4, frames=LUNGE_TRAVEL),
-    ),
-    0x02095334: (
-        Cut(0, frames=LUNGE_PAUSE),
-        Cut(1, frames=LUNGE_TRAVEL),
-        cap(2, WINDUP),
-        Cut(3),
-        Cut(4, frames=LUNGE_TRAVEL),
-    ),
-    0x02095384: (
-        Cut(0, frames=LUNGE_PAUSE),
-        Cut(1, frames=LUNGE_TRAVEL),
-        cap(2, WINDUP),
-        Cut(3),
-        Cut(4, frames=LUNGE_TRAVEL),
-    ),
+    # glides: the sink, emerge and strike are the vanish itself (capped they popped), so lever 1's cut
+    0x020955E0: SHORT_MOVES[0x020955E0],
+    0x02095820: SHORT_MOVES[0x02095820],
+    0x020952E4: LUNGE,  # wind-up whole: the strike is in its last third
+    0x02095334: LUNGE,  # wind-up whole: the strike is in its last third
+    0x02095384: LUNGE,  # wind-up whole: the strike is in its last third
     # casts: pose capped; the release step still waits for its animation and the spell effect
     0x02094E84: (cap(0, CAST_POSE), Cut(1)),
     0x02094E64: (cap(0, CAST_POSE), Cut(1)),
