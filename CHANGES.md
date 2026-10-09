@@ -215,5 +215,3 @@ the design are in [docs/design.md](docs/design.md).
 ## Not changed yet
 
 - The story and dialogue past the opening, including the curse and Gad's first package (planned next).
-- Some enemy attack animations are slow (the Ice Mongrel hops forward and back four times). A pass over every
-  enemy is planned.
