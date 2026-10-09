@@ -22,6 +22,7 @@ from dsde.feat_mic_sign import MIC_SIGN
 from dsde.feat_mp import MP_ECONOMY
 from dsde.feat_opening import OPENING
 from dsde.feat_party import LEAVE_DROPS_GEAR
+from dsde.feat_party_chat import PARTY_CHAT
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN
 from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
@@ -297,6 +298,8 @@ FEATURES: tuple[Feature, ...] = (
     ENEMY_SPELL_SPEED,
     ENEMY_SHORT_MOVES,
     ENEMY_QUICK_STEPS,
+    # Place-aware party chat on Y (docs/re-party-chat.md). Off by default while Jeff writes the lines.
+    PARTY_CHAT,
 )
 DEFAULT_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
