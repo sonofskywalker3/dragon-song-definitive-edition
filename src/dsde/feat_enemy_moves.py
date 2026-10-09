@@ -262,13 +262,34 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
 }
 
 
+# Rows whose cast pose keeps its whole animation: their charge-up (Druid's orb and throw, the hand sparkle and
+# burst of Gronk and Gideon 2, Blue Dragon's mouth sparkle, Gideon 2's skill 20 slash) is drawn in the last
+# frames of the pose, so CAST_POSE cut it (docs/review-enemy-attacks.md). At 3x (enemy-sprite-speed) the
+# whole pose is 67 Fast frames for Druid, 47 for Gronk, Gideon 2 and Blue Dragon, 25 for Gideon 2 skill 20.
+WHOLE_POSE_ROWS = frozenset(
+    {132, 133, 134, 135, 142, 150, 153}
+)  # Druid x4, Gronk, Blue Dragon, Gideon 2
+WHOLE_POSE: dict[int, tuple[Cut, ...]] = {
+    0x02094E84: (Cut(0), Cut(1)),
+    0x02094F44: (Cut(0), Cut(1, frames=PAUSE), Cut(2)),
+    0x020950C4: (Cut(0), Cut(1, frames=2 * PAUSE), Cut(2)),
+}
+# variant name -> (rows, cuts): row-specific cut copies, tried before the any-row table entries
+QUICK_ROW_VARIANTS: dict[str, tuple[frozenset[int], dict[int, tuple[Cut, ...]]]] = {
+    "pose": (WHOLE_POSE_ROWS, WHOLE_POSE),
+}
+ANY_ROW = 0xFFFFFFFF
+ROW_FIELD = 4  # battler +4: the enemy row (the recorder reads the same field)
+TABLE_ENTRY = 12  # script, row (or ANY_ROW), cut copy
+
+
 def label(prefix: str, script: int) -> str:
     return f"cave_{prefix}_{script:08x}"
 
 
 def swap_asm(table: str) -> str:
     """Replaces `bl func_02068034` (r0 = actor). After the setup, on Fast and Faster, looks the actor's
-    script up in the (original, cut) table and swaps it in. Keeps r4..r11."""
+    script and row up in the (original, row, cut) table and swaps the first match in. Keeps r4..r11."""
     return f"""
     push  {{r4, lr}}
     mov   r4, r0
@@ -278,12 +299,17 @@ def swap_asm(table: str) -> str:
     cmp   r0, #{NORMAL}
     popeq {{r4, pc}}
     ldr   r1, [r4, #{SCRIPT_FIELD:#x}]
+    ldr   ip, [r4, #{ROW_FIELD}]
     ldr   r2, sw_table
 sw_next:
-    ldr   r3, [r2], #8
+    ldr   r3, [r2], #{TABLE_ENTRY}
     cmp   r3, #0
     popeq {{r4, pc}}
     cmp   r3, r1
+    bne   sw_next
+    ldr   r3, [r2, #-8]
+    cmn   r3, #1
+    cmpne r3, ip
     bne   sw_next
     ldr   r3, [r2, #-4]
     str   r3, [r4, #{SCRIPT_FIELD:#x}]
@@ -300,20 +326,38 @@ def cut_scripts(cuts: dict[int, tuple[Cut, ...]]) -> dict[int, list[bytes]]:
     return {script: build_steps(data, script, c) for script, c in cuts.items()}
 
 
-def swap_feature(name: str, prefix: str, cuts: dict[int, tuple[Cut, ...]]) -> Feature:
-    scripts = cut_scripts(cuts)
+def swap_feature(
+    name: str,
+    prefix: str,
+    cuts: dict[int, tuple[Cut, ...]],
+    variants: dict[str, tuple[frozenset[int], dict[int, tuple[Cut, ...]]]]
+    | None = None,
+) -> Feature:
+    copies = [(prefix, cut_scripts(cuts))]
+    entries = []
+    for variant, (rows, variant_cuts) in (variants or {}).items():
+        sub = f"{prefix}_{variant}"
+        copies.append((sub, cut_scripts(variant_cuts)))
+        entries += [
+            f"    .word {s:#010x}, {row}, ${{{label(sub, s)}}}"
+            for s in variant_cuts
+            for row in sorted(rows)
+        ]
+    entries += [
+        f"    .word {s:#010x}, {ANY_ROW:#x}, ${{{label(prefix, s)}}}" for s in cuts
+    ]
     table = f"cave_{prefix}_table"
-    table_asm = "\n".join(
-        f"    .word {script:#010x}, ${{{label(prefix, script)}}}" for script in scripts
-    )
     return Feature(
         name,
         (
             *(
-                CaveCode(label(prefix, s), steps_asm(steps), f"cut script {s:#010x}")
+                CaveCode(label(sub, s), steps_asm(steps), f"cut script {s:#010x}")
+                for sub, scripts in copies
                 for s, steps in scripts.items()
             ),
-            CaveCode(table, table_asm + "\n    .word 0, 0", "cut script table"),
+            CaveCode(
+                table, "\n".join([*entries, "    .word 0, 0, 0"]), "cut script table"
+            ),
             CaveCode(f"cave_{prefix}_swap", swap_asm(table), "swap in cut scripts"),
             AsmPatch(
                 SETUP_CALL,
@@ -328,6 +372,12 @@ def swap_feature(name: str, prefix: str, cuts: dict[int, tuple[Cut, ...]]) -> Fe
 
 
 ENEMY_SHORT_MOVES = swap_feature("enemy-short-moves", "esm", SHORT_MOVES)
-ENEMY_QUICK_STEPS = swap_feature("enemy-quick-steps", "eqs", QUICK_STEPS)
+ENEMY_QUICK_STEPS = swap_feature(
+    "enemy-quick-steps", "eqs", QUICK_STEPS, QUICK_ROW_VARIANTS
+)
 # label prefix -> cuts, for the recorder (dsde.enemy_anims_run) to decode cut scripts in ITCM
-CUT_SETS = {"esm": SHORT_MOVES, "eqs": QUICK_STEPS}
+CUT_SETS = {
+    "esm": SHORT_MOVES,
+    "eqs": QUICK_STEPS,
+    **{f"eqs_{v}": cuts for v, (_, cuts) in QUICK_ROW_VARIANTS.items()},
+}
