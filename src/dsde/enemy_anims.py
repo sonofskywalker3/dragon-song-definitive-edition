@@ -106,6 +106,18 @@ SETUP_FORCED_ROWS = frozenset({142, 143, 147, 148, 149, 150, 151})
 SETUP_FORCE_SKIP = frozenset({(149, 0), (150, 1)})
 AI_PHYSICAL = 1
 AI_SKILL = 2
+# Dark Jian copies Jian's command of the same round (func_0202efdc returns the first living party battler with
+# character id 0's AI command +0x84): Fight (1) -> action 0, Special (2) -> action 1 (skill 13, script
+# 0x02095EC0), command 4 -> action 2. Action 1 is recorded by having Jian cast Inferno every round: the Blazing
+# Ring (item 0xCB) owned and worn in the accessory slot (Jian's gear, 5 x u16 at 0x020B4698, slot 4), and the
+# battle MP (stat record + 0x18) kept at 99. Menu: Manual, then Special (Right, A), Inferno (A), OK (A, A).
+DARK_JIAN_SPELL = (151, 1)
+BLAZING_RING = 0xCB
+JIAN_ACCESSORY = 0x020B46A0
+STAT_MP = 0x18
+JIAN_MP = 99
+CAST_SPECIAL = ("press A 3", "wait 40", "press Right 3", "wait 30", "press A 3", "wait 40",
+                "press A 3", "wait 40", "press A 3", "wait 40", "press A 3", "wait 40")  # fmt: skip
 
 # Boss row -> event battle id (func_0202b948; docs/re-enemies.md)
 BOSS_BATTLES = {
@@ -335,6 +347,7 @@ def make_plan(
     if (
         action.row in SETUP_FORCED_ROWS
         and (action.row, action.index) not in SETUP_FORCE_SKIP
+        and (action.row, action.index) != DARK_JIAN_SPELL
     ):
         skill = bool(action.flags & ACTION_USES_SKILL)
         lines += [
@@ -348,18 +361,38 @@ def make_plan(
             f"poke u8 {INVENTORY + item - 1:#010x} {STEAL_STOCK}"
             for item in STEAL_ITEMS
         ]
+    if (action.row, action.index) == DARK_JIAN_SPELL:
+        lines += [
+            f"poke u8 {INVENTORY + BLAZING_RING - 1:#010x} 1",
+            f"poke u16 {JIAN_ACCESSORY:#010x} {BLAZING_RING:#x}",
+            f"pinptr u32 {STAT_RECORDS:#010x} {STAT_MP:#x} {JIAN_MP}",
+        ]
     lines += battle_lines(data, action)
-    lines += [
-        f"rec {name} 2 {turns} {shot_turns} {action.row}",
+    wait_command = [
         f"waituntil u32 {MAIN_STATE:#010x} {MAIN_STATE_COMMAND} 3000",
         "wait 110",  # the Manual/Auto window slides in after state 7 starts
+    ]
+    lines += [
+        f"rec {name} 2 {turns} {shot_turns} {action.row}",
+        *wait_command,
         "shot cmd",
-        "# Auto battle: Right, A, then A on the confirmation",
-        "press Right 3",
-        "wait 10",
-        "press A 3",
-        "wait 20",
-        "press A 3",
+    ]
+    if (action.row, action.index) == DARK_JIAN_SPELL:
+        lines.append(
+            "# Manual: Jian casts Inferno each round, Dark Jian copies the Special"
+        )
+        for round_index in range(turns + 1):
+            lines += [*(wait_command if round_index else []), *CAST_SPECIAL]
+    else:
+        lines += [
+            "# Auto battle: Right, A, then A on the confirmation",
+            "press Right 3",
+            "wait 10",
+            "press A 3",
+            "wait 20",
+            "press A 3",
+        ]
+    lines += [
         "waitrec 9000",
         "shot end",
         "battlers",
