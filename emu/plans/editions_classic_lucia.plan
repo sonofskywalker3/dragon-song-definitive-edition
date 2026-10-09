@@ -1,0 +1,288 @@
+# Classic edition (opening-flags): New Game, the vanilla intro to "Right then!", then control in Jian's room
+# with 0xC and 0xD set. Saves the state classic_control (same --out for editions_classic_npcs.plan), then
+# pin-warps to Fountain Square (map 164) through the room's door and lists the field objects: Lucia (object
+# 0xC8 = 200, id at +0x12 of each 0x40-byte object) should be there. The camera does not follow the warp.
+watch u16 0x020B6BE4 map
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+wait 600
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+press A 3
+wait 45
+wait 120
+shot classic_control
+save classic_control
+pin u16 0x020B77EC 0xA4
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+unpin
+wait 200
+peek u16 0x020B6BE4 map
+dump 0x020B6FD4 0x800 objects_164
+shot fountain_1
+poke u32 0x020B6CB4 0xDC000
+poke u32 0x020B6CB8 0xF4000
+wait 10
+press Up 4
+wait 10
+press A 4
+wait 120
+shot fountain_talk_1
+press A 4
+wait 120
+shot fountain_talk_2
+press A 4
+wait 120
+shot fountain_talk_3
+press A 4
+wait 120
+shot fountain_talk_4

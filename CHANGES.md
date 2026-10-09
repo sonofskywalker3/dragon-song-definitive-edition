@@ -28,8 +28,9 @@ the design are in [docs/design.md](docs/design.md).
   and no longer pan the camera over to the statue and back.
 - **Healing statues work from any side.** Press A facing the statue from the front, either side, or behind it.
   The original only answered from in front of it.
-- **Lucia is at Fountain Square** once Cherenkov tells you she left. The original only put her there after you
-  had found Jack in his house, and nothing in the game points you to him.
+- **Lucia is at Fountain Square** as soon as Jian is up (both editions). The original only put her there after
+  you had talked to Cherenkov and then found Jack in his house, and nothing in the game points you to him.
+  Both can still be talked to.
 - **The Underground Tunnel save glitch is fixed.** Talking to Flora twice there no longer locks out saving.
 - **Town and world map menus work with the D-pad.** In a "Select place to go" menu, Up and Down pick a place,
   Left and Right switch tabs, and A goes there. Touch works as before, and the D-pad no longer drags the map
@@ -138,8 +139,8 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Story and text
 
-Story edition only, except the recipient names (both editions). The Engine edition plays the original
-wake-up and Jian's self-introduction, then he walks out of the inn; Lucia waits at Fountain Square there too.
+Retold edition only, except the recipient names (both editions). The Classic edition's opening is the
+original's, scene for scene.
 
 - **A new opening narration**, retranslated from the Japanese release and checked against Lunar 1 and 2: the
   Dragonmaster is Althena's champion (not her servant), Althena is the source of the world's magic, and the
@@ -153,7 +154,7 @@ wake-up and Jian's self-introduction, then he walks out of the inn; Lucia waits 
 
 ## Presentation
 
-- **A "Definitive Edition" seal** on the title screen.
+- **A "Definitive Edition" seal** on the title screen, red with CLASSIC or blue with RETOLD.
 
 ## Fixes
 
@@ -161,16 +162,18 @@ wake-up and Jian's self-introduction, then he walks out of the inn; Lucia waits 
 
 ## Version history
 
-**Editions.** From v0.1.6 each release has two patches (README, "Which patch to pick"). **Engine** has every
-gameplay, interface, and pacing change and keeps the original story and dialogue word for word. **Story** is the
-Engine edition plus the rewrite: the new narration, the new wake-up, and the story work to come. Earlier
-releases were a single patch with the rewritten opening, like today's Story edition.
+**Editions.** From v0.1.6 each release has two patches (README, "Which patch to pick"). **Classic** has every
+gameplay, interface, and pacing change and keeps the original story and dialogue word for word. **Retold** is
+the Classic edition plus the rewrite: the new narration, the new wake-up, and the story work to come. Earlier
+releases were a single patch with the rewritten opening, like today's Retold edition. (The editions were first
+published as Engine and Story; the names changed the same day.)
 
 ### v0.1.6 (2026-10-09)
 
-- Two editions, Engine and Story. The Engine edition's opening is the original's, word for word and scene for
-  scene; the Story edition has the retranslated narration and the new wake-up. The title seal says ENGINE or
-  STORY.
+- Two editions, Classic and Retold. The Classic edition's opening is the original's, word for word and scene
+  for scene; the Retold edition has the retranslated narration and the new wake-up. The title seal says CLASSIC
+  on a red seal or RETOLD on a blue one.
+- In both editions Lucia waits at Fountain Square as soon as Jian is up, with no detour to Cherenkov and Jack.
 - Jian's curse is a different curse: healing items do nothing for him while cursed (and are not used up),
   Lucia's healing magic works on him at half strength, statues heal him fully, and he keeps his 3-hit combo.
 

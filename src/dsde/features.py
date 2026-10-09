@@ -23,7 +23,7 @@ from dsde.feat_guidebook import GUIDEBOOK
 from dsde.feat_hud import STILL_HUD
 from dsde.feat_mic_sign import MIC_SIGN
 from dsde.feat_mp import MP_ECONOMY
-from dsde.feat_opening import OPENING, OPENING_TEXT
+from dsde.feat_opening import OPENING, OPENING_FLAGS, OPENING_TEXT
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_party_chat import PARTY_CHAT
 from dsde.feat_results import RESULT_SCREENS
@@ -33,7 +33,7 @@ from dsde.feat_statue import STATUE_ANY_SIDE
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_EDITS_FEATURE, TEXT_FIXES
 from dsde.feat_text_speed import TEXT_SPEED
-from dsde.feat_title_seal import TITLE_SEAL, TITLE_SEAL_STORY
+from dsde.feat_title_seal import TITLE_SEAL, TITLE_SEAL_RETOLD
 from dsde.feat_town_brackets import TOWN_BRACKET_PATCHES
 from dsde.feat_town_menu import TOWN_MENU_PATCHES
 from dsde.feat_walk import WALK_SPEED
@@ -287,12 +287,13 @@ FEATURES: tuple[Feature, ...] = (
     WALK_SPEED,
     GAD_EXPRESS,
     MIC_SIGN,
+    OPENING_FLAGS,
     OPENING,
     OPENING_TEXT,
     TEXT_SPEED,
     EXPERIENCE_NAME,
     TITLE_SEAL,
-    TITLE_SEAL_STORY,
+    TITLE_SEAL_RETOLD,
     TOWN_MENU,
     FIELD_MENU,
     GUIDEBOOK,
@@ -310,10 +311,10 @@ FEATURES: tuple[Feature, ...] = (
     # Place-aware party chat on Y (docs/re-party-chat.md). Off by default while Jeff writes the lines.
     PARTY_CHAT,
 )
-# Two editions (docs/plan-two-editions.md). Engine: mechanics, pacing, interface, and fixes; no line of
+# Two editions (docs/plan-two-editions.md). Classic: mechanics, pacing, interface, and fixes; no line of
 # dialogue or narration says anything different (UI labels for changed mechanics are in: guidebook, mic-sign,
-# experience-name). Story: the Engine edition plus every wording change and the story features.
-ENGINE_FEATURES: tuple[str, ...] = (
+# experience-name). Retold: the Classic edition plus every wording change and the story features.
+CLASSIC_FEATURES: tuple[str, ...] = (
     TIMED_RUN.name,
     ONE_BATTLE_MODE.name,
     NO_VIRTUE_CLOCK.name,
@@ -340,6 +341,7 @@ ENGINE_FEATURES: tuple[str, ...] = (
     GAD_EXPRESS.name,
     MIC_SIGN.name,
     TEXT_SPEED.name,
+    OPENING_FLAGS.name,  # the vanilla intro, then the flags that send Jian straight to Lucia
     EXPERIENCE_NAME.name,
     TITLE_SEAL.name,
     TOWN_MENU.name,
@@ -352,22 +354,26 @@ ENGINE_FEATURES: tuple[str, ...] = (
     ENEMY_SPELL_SPEED.name,
     ENEMY_QUICK_STEPS.name,
 )
-STORY_FEATURES: tuple[str, ...] = (
-    ENGINE_FEATURES
+RETOLD_FEATURES: tuple[str, ...] = (
+    CLASSIC_FEATURES
     + (
         TEXT_EDITS_FEATURE.name,
-        OPENING.name,  # the walk-out and its flags: Story only (Jeff, 2026-10-09: the Engine intro is vanilla)
+        OPENING.name,  # the walk-out and its flags: Retold only (Jeff, 2026-10-09: the Classic intro is vanilla)
         OPENING_TEXT.name,
-        TITLE_SEAL_STORY.name,
+        TITLE_SEAL_RETOLD.name,
     )
 )
-EDITIONS = MappingProxyType({"engine": ENGINE_FEATURES, "story": STORY_FEATURES})
-DEFAULT_FEATURES = ENGINE_FEATURES
-# A feature that patches another feature's bytes, and so must be built after it.
+EDITIONS = MappingProxyType({"classic": CLASSIC_FEATURES, "retold": RETOLD_FEATURES})
+# The editions were called Engine and Story until v0.1.6; the old names stay for one release.
+EDITION_ALIASES = MappingProxyType({"engine": "classic", "story": "retold"})
+ENGINE_FEATURES = CLASSIC_FEATURES
+STORY_FEATURES = RETOLD_FEATURES
+DEFAULT_FEATURES = CLASSIC_FEATURES
+# Features that patch (or call) another feature's bytes, and so must be built after them.
 REQUIRES = MappingProxyType(
     {
-        OPENING.name: TEXT_SPEED.name,
-        OPENING_TEXT.name: OPENING.name,
-        TITLE_SEAL_STORY.name: TITLE_SEAL.name,
+        OPENING.name: (TEXT_SPEED.name, OPENING_FLAGS.name),
+        OPENING_TEXT.name: (OPENING.name,),
+        TITLE_SEAL_RETOLD.name: (TITLE_SEAL.name,),
     }
 )

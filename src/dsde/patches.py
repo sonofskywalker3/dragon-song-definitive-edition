@@ -1,9 +1,9 @@
 """Builds a patched ROM: copy extract/, apply the chosen features, run dsd.
 
-    uv run python -m dsde.patches                      # Engine edition -> build/dsde.nds
-    uv run python -m dsde.patches --edition story      # Story edition -> build/dsde-story.nds
-    uv run python -m dsde.patches --with party-chat    # an edition plus extra features
-    uv run python -m dsde.patches timed-run walk-speed # exactly these features
+uv run python -m dsde.patches                      # Classic edition -> build/dsde.nds
+uv run python -m dsde.patches --edition retold     # Retold edition -> build/dsde-retold.nds
+uv run python -m dsde.patches --with party-chat    # an edition plus extra features
+uv run python -m dsde.patches timed-run walk-speed # exactly these features
 """
 
 import argparse
@@ -14,18 +14,18 @@ import subprocess
 from pathlib import Path
 from types import MappingProxyType
 
-from dsde.features import EDITIONS, FEATURES, REQUIRES
+from dsde.features import EDITION_ALIASES, EDITIONS, FEATURES, REQUIRES
 from dsde.patching import PatchError, apply_arm9, apply_data, build_itcm, layout_cave
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXTRACT = PROJECT_ROOT / "extract"
 DSD = PROJECT_ROOT / "tools" / "dsd.exe"
 OUTPUT_ROM = PROJECT_ROOT / "build" / "dsde.nds"
-DEFAULT_EDITION = "engine"
+DEFAULT_EDITION = "classic"
 EDITION_OUTPUTS = MappingProxyType(
     {
-        "engine": OUTPUT_ROM,
-        "story": PROJECT_ROOT / "build" / "dsde-story.nds",
+        "classic": OUTPUT_ROM,
+        "retold": PROJECT_ROOT / "build" / "dsde-retold.nds",
     }
 )
 # Your own DS ARM7 BIOS dump (16 KB). With it dsd encrypts the secure area and writes its checksum
@@ -43,12 +43,13 @@ def build(
     unknown = set(feature_names) - wanted.keys()
     if unknown:
         raise PatchError(f"unknown features: {sorted(unknown)}")
-    for name, needed in REQUIRES.items():
-        if name in feature_names and (
-            needed not in feature_names
-            or feature_names.index(needed) > feature_names.index(name)
-        ):
-            raise PatchError(f"{name} needs {needed} built before it")
+    for name, needs in REQUIRES.items():
+        for needed in needs:
+            if name in feature_names and (
+                needed not in feature_names
+                or feature_names.index(needed) > feature_names.index(name)
+            ):
+                raise PatchError(f"{name} needs {needed} built before it")
     chosen = [wanted[name] for name in feature_names]
     mod_extract = output.parent / f"{output.stem}_extract"
     if mod_extract.exists():
@@ -90,9 +91,10 @@ def main() -> None:
     )
     parser.add_argument(
         "--edition",
-        choices=sorted(EDITIONS),
+        choices=[*sorted(EDITIONS), *sorted(EDITION_ALIASES)],
         default=DEFAULT_EDITION,
-        help="engine (mechanics only, vanilla wording) or story (engine plus the rewrite)",
+        help="classic (mechanics only, vanilla wording) or retold (classic plus the rewrite);"
+        " engine and story are the old names",
     )
     parser.add_argument(
         "--with",
@@ -102,12 +104,16 @@ def main() -> None:
         help="features to build on top of the edition's set (ignored with explicit features)",
     )
     parser.add_argument(
-        "--output", type=Path, help="default build/dsde.nds, or build/dsde-story.nds"
+        "--output", type=Path, help="default build/dsde.nds, or build/dsde-retold.nds"
     )
     parser.add_argument("--arm7-bios", type=Path, default=ARM7_BIOS)
     args = parser.parse_args()
-    names = args.features or [*EDITIONS[args.edition], *args.extra]
-    build(names, args.output or EDITION_OUTPUTS[args.edition], args.arm7_bios)
+    edition = args.edition
+    if edition in EDITION_ALIASES:
+        edition = EDITION_ALIASES[edition]
+        logger.warning("--edition %s is now %s", args.edition, edition)
+    names = args.features or [*EDITIONS[edition], *args.extra]
+    build(names, args.output or EDITION_OUTPUTS[edition], args.arm7_bios)
 
 
 if __name__ == "__main__":

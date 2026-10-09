@@ -1,10 +1,12 @@
 """Opening: Jian walks out of the inn (playtest feedback item 2), in two features (docs/plan-two-editions.md).
 
-- `opening-run` (Engine edition, no wording changed): the vanilla wake-up and Jian's self-introduction play
+Both are in the Retold edition only; the Classic edition's opening is the original's (Jeff, 2026-10-09).
+
+- `opening-run` (no wording changed): the vanilla wake-up and Jian's self-introduction play
   as written; after his last line ("Right then! I'd better go looking for Lucia...") the script walks him
   out of the inn and sets the story flags that make Cherenkov and Jack optional (both can still be talked
   to, and say their vanilla lines).
-- `opening-text` (Story edition, after opening-run): Cherenkov's wake-up call from downstairs replaces the
+- `opening-text` (after opening-run): Cherenkov's wake-up call from downstairs replaces the
   self-introduction, Jian's thoughts show as asides while he walks (one per map, closing by themselves as
   the walk ends: feat_opening_asides.py), and Cherenkov's lobby line sends Jian to Fountain Square.
 
@@ -39,6 +41,9 @@ WAKE_MESSAGE_OP = (
 # then a dead goto_map nothing jumps to (docs/re-opening.md 1). The jump to the walk overwrites both halves.
 WAKE_END = 0x63C4
 JUMP_SIZE = 8
+# opening-flags (Classic edition) writes three ops over those 12 bytes (0x63C4..0x63CF; 0x63D0 is a stop):
+# set 0xC, set 0xD, stop. The vanilla intro has already set 0x1 and 0x1E2 (0x6304).
+FLAGS_END = WAKE_END + 12
 WAKE_ANIMATION = (
     0x62D4,
     0x6304,
@@ -244,7 +249,7 @@ def assemble(items: list[Item], base: int) -> tuple[bytes, dict[str, int]]:
     return bytes(out), labels
 
 
-def _engine_program() -> list[Item]:
+def _walk_program() -> list[Item]:
     """The walk out of the inn and the story flags; no text. Each leg has an aside slot: a jump to the
     next op, which opening-text turns into a message op (both are 8 bytes)."""
     flags = b"".join(_op(OP_SET_FLAG, f) for f in (*STORY_FLAGS, RUN_FLAG))
@@ -294,8 +299,8 @@ def aside_slot(name: str) -> list[Item]:
     return [Label(name), *jump(name + "_end"), Label(name + "_end")]
 
 
-def _story_program(vanilla: bytes, walk: int) -> list[Item]:
-    """The new wake-up call, then on to the engine's walk; and the text of the asides."""
+def _text_program(vanilla: bytes, walk: int) -> list[Item]:
+    """The new wake-up call, then on to opening-run's walk; and the text of the asides."""
     wake_pose = vanilla[WAKE_ANIMATION[0] : WAKE_ANIMATION[1]]
     pose_reset = vanilla[POSE_RESET[0] : POSE_RESET[1]]
     return [
@@ -335,7 +340,7 @@ class Layout:
     vanilla: bytes
     moved: tuple[DataPatch, ...]  # text-fixes' grown messages at the end of script 001
     end: int  # end of those messages
-    code: bytes  # the engine program, from base
+    code: bytes  # opening-run's program, from base
     labels: dict[str, int]
 
     @property
@@ -355,14 +360,13 @@ def _layout() -> Layout:
         if p.entry == SCRIPT and not p.old and p.offset >= len(vanilla)
     )
     end = max((p.offset + len(p.new) for p in moved), default=len(vanilla))
-    code, labels = assemble(_engine_program(), _align(end))
+    code, labels = assemble(_walk_program(), _align(end))
     return Layout(vanilla, moved, end, code, labels)
 
 
 def opening_patches() -> tuple[DataPatch, ...]:
-    """Engine edition: the vanilla wake-up and self-introduction play as written, then Jian walks out."""
+    """The vanilla wake-up and self-introduction play as written, then Jian walks out."""
     layout = _layout()
-    vanilla = layout.vanilla
     patches = [
         DataPatch(
             ARCHIVE, SCRIPT, p.offset, b"", p.new, f"opening: same bytes as {p.note}"
@@ -382,7 +386,7 @@ def opening_patches() -> tuple[DataPatch, ...]:
             ARCHIVE,
             SCRIPT,
             WAKE_END,
-            vanilla[WAKE_END : WAKE_END + JUMP_SIZE],
+            FLAG_OPS[:JUMP_SIZE],
             _op(OP_JUMP) + struct.pack("<I", layout.labels["walk"]),
             "opening: after 'Right then!' Jian walks out of the inn",
         ),
@@ -414,11 +418,11 @@ ASIDE_SLOTS = (
 
 
 def opening_text_patches() -> tuple[DataPatch, ...]:
-    """Story edition, on top of opening-run: the new wake-up call, the asides, and Cherenkov's line."""
+    """On top of opening-run: the new wake-up call, the asides, and Cherenkov's line."""
     layout = _layout()
     vanilla = layout.vanilla
     base = _align(layout.code_end)
-    code, labels = assemble(_story_program(vanilla, layout.labels["walk"]), base)
+    code, labels = assemble(_text_program(vanilla, layout.labels["walk"]), base)
     patches = [
         DataPatch(
             ARCHIVE,
@@ -474,8 +478,31 @@ def opening_text_patches() -> tuple[DataPatch, ...]:
     return tuple(patches)
 
 
-# Engine edition: the walk-out, the flags, and the asides' auto-close (text-speed calls it; with no aside
-# in the walk it never fires). The Story edition adds opening-text, which must come after opening-run.
+# Classic edition: the vanilla intro, then the flags that send Jian straight to Lucia (Jeff, 2026-10-09: "keep
+# the flags that let me go straight to Lucia even on Classic"). Cherenkov and Jack keep their vanilla lines for
+# that flag state, and Fountain Square's vanilla check (0xD) keeps Lucia there.
+FLAG_OPS = (
+    _op(OP_SET_FLAG, LUCIA_LEFT) + _op(OP_SET_FLAG, LUCIA_AT_FOUNTAIN) + _op(OP_STOP)
+)
+
+
+def opening_flags_patches() -> tuple[DataPatch, ...]:
+    vanilla = decompress(read_archive(VANILLA_SCRIPTS.read_bytes())[SCRIPT])
+    return (
+        DataPatch(
+            ARCHIVE,
+            SCRIPT,
+            WAKE_END,
+            vanilla[WAKE_END:FLAGS_END],
+            FLAG_OPS,
+            "opening flags: after 'Right then!' Lucia has left and waits at Fountain Square",
+        ),
+    )
+
+
+OPENING_FLAGS = Feature("opening-flags", opening_flags_patches())
+# Retold edition: the walk-out and the flags (opening-run, after opening-flags and text-speed, the asides'
+# auto-close cave), then opening-text, which must come after opening-run.
 OPENING = Feature(
     "opening-run", tuple(opening_patches())
 )  # needs text-speed (the auto-close cave)

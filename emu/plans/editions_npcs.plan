@@ -1,4 +1,4 @@
-# Two editions: Cherenkov and Jack after the Engine walk. From the start save (flag word 0 = 0x2), set the
+# Two editions: Cherenkov and Jack after the Retold walk. From the start save (flag word 0 = 0x2), set the
 # flags the walk sets (0x1, 0xC Lucia left, 0xD Lucia at the fountain: word 0 = 0x3002), talk to Cherenkov
 # in the lobby (moves from npc_gate_searis.plan). Jack: editions_jack.plan.
 include boot_from_save

@@ -1,4 +1,4 @@
-# Two editions: Jack after the Engine walk (flags 0x1, 0xC, 0xD set as the walk sets them). From the start save,
+# Two editions: Jack after the Retold walk (flags 0x1, 0xC, 0xD set as the walk sets them). From the start save,
 # pin-warp from Jian's room to Jack's house (map 159) and talk to Jack (moves from npc_gate_searis2/3.plan).
 include boot_from_save
 pinptr u32 0x020B4640 0 0x3002

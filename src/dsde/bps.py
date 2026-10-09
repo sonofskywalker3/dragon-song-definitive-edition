@@ -10,7 +10,7 @@ Usage:
     uv run python -m dsde.bps release <original.nds> X.Y.Z [--out-dir build/release]
 
 `release` builds both editions (docs/plan-two-editions.md) and writes
-"Dragon Song Definitive Edition vX.Y.Z (Engine).bps" and "(Story).bps", each round-trip checked, with the
+"Dragon Song Definitive Edition vX.Y.Z (Classic).bps" and "(Retold).bps", each round-trip checked, with the
 SHA-1s for the release notes.
 """
 

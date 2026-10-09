@@ -15,9 +15,10 @@ two closest colours of the art (the pixels of one move to the other, a change of
 that cannot be seen), then take that slot.
 
 The seal is drawn at build time: an oval starburst whose straight-edged points have whole-pixel
-corners, filled blue, with three lines of cream pixel capitals: DEFINITIVE / EDITION / the edition
-(docs/plan-two-editions.md), so a screenshot or bug report says which build it is. `title-seal` (Engine
-edition) says ENGINE; `title-seal-story` (Story edition, after title-seal) repaints the tiles to say STORY.
+corners, with three lines of cream pixel capitals: DEFINITIVE / EDITION / the edition
+(docs/plan-two-editions.md), so a screenshot or bug report says which build it is. `title-seal` (Classic
+edition) is a red seal saying CLASSIC; `title-seal-retold` (Retold edition, after title-seal) repaints the
+palette and tiles as a blue seal saying RETOLD.
 """
 
 import math
@@ -49,6 +50,8 @@ ARC_SAMPLES = 3600  # steps used to measure the rim's length
 
 RIM_BLUE = (48, 96, 208)
 RIM_DARK = (16, 32, 96)
+RIM_RED = (200, 40, 40)
+RIM_DARK_RED = (96, 16, 16)
 CREAM = (255, 244, 206)  # the lettering
 CLOSE_ENOUGH = (
     3 * 8 * 8
@@ -56,8 +59,9 @@ CLOSE_ENOUGH = (
 
 TITLE_LINES = (("DEFINITIVE", 11), ("EDITION", 21))  # text and top row inside the seal
 EDITION_TOP = 32  # top row of the edition's name, under them
-ENGINE = "ENGINE"
-STORY = "STORY"
+CLASSIC = "CLASSIC"
+RETOLD = "RETOLD"
+RIMS = {CLASSIC: (RIM_RED, RIM_DARK_RED), RETOLD: (RIM_BLUE, RIM_DARK)}  # fill, edge
 FONT = {  # 7 rows each, "1" = ink
     "D": ("1110", "1001", "1001", "1001", "1001", "1001", "1110"),
     "E": ("1111", "1000", "1000", "1110", "1000", "1000", "1111"),
@@ -70,6 +74,9 @@ FONT = {  # 7 rows each, "1" = ink
     "G": ("0111", "1000", "1000", "1011", "1001", "1001", "0111"),
     "S": ("0111", "1000", "1000", "0110", "0001", "0001", "1110"),
     "R": ("1110", "1001", "1001", "1110", "1010", "1001", "1001"),
+    "C": ("0111", "1000", "1000", "1000", "1000", "1000", "0111"),
+    "L": ("1000", "1000", "1000", "1000", "1000", "1000", "1111"),
+    "A": ("0110", "1001", "1001", "1111", "1001", "1001", "1001"),
     "Y": ("10001", "10001", "01010", "00100", "00100", "00100", "00100"),
 }
 
@@ -144,8 +151,9 @@ def seal_pixels(edition: str) -> dict[Pixel, Rgb]:
         for x in range(SEAL_WIDTH)
         if _inside(star, x, y)
     }
-    out: dict[Pixel, Rgb] = dict.fromkeys(shape, RIM_BLUE)
-    out.update(dict.fromkeys(edge, RIM_DARK))
+    fill, rim = RIMS[edition]
+    out: dict[Pixel, Rgb] = dict.fromkeys(shape, fill)
+    out.update(dict.fromkeys(edge, rim))
     for text, top in (*TITLE_LINES, (edition, EDITION_TOP)):
         width = sum(len(FONT[c][0]) + 1 for c in text) - 1
         x = round(cx - width / 2)
@@ -182,7 +190,9 @@ def _closest_pair(palette: list[Rgb], taken: set[int]) -> tuple[int, int]:
     return kept, freed
 
 
-def _seal_palette(art: bytes) -> tuple[list[Rgb], bytearray, dict[Rgb, int]]:
+def _seal_palette(
+    art: bytes, edition: str
+) -> tuple[list[Rgb], bytearray, dict[Rgb, int]]:
     """The art's palette and tiles with slots freed for the seal, and each seal colour's index."""
     palette = [
         _rgb(struct.unpack_from("<H", art, PALETTE_AT + i * 2)[0])
@@ -190,7 +200,7 @@ def _seal_palette(art: bytes) -> tuple[list[Rgb], bytearray, dict[Rgb, int]]:
     ]
     tiles = bytearray(art[TILES_AT:])
     index_of: dict[Rgb, int] = {}
-    for colour in (RIM_BLUE, RIM_DARK, CREAM):
+    for colour in (*RIMS[edition], CREAM):
         near = min(range(COLOURS), key=lambda i: _distance(palette[i], colour))
         if _distance(palette[near], colour) <= CLOSE_ENOUGH:
             index_of[colour] = near
@@ -205,7 +215,7 @@ def _seal_palette(art: bytes) -> tuple[list[Rgb], bytearray, dict[Rgb, int]]:
 def _painted(edition: str) -> tuple[bytes, bytes, list[Rgb], bytearray]:
     """The art, and its palette and tiles with the seal for edition painted in."""
     art = decompress(read_archive(VANILLA_TITLEPACK.read_bytes())[ART])
-    palette, tiles, index_of = _seal_palette(art)
+    palette, tiles, index_of = _seal_palette(art, edition)
     for (sx, sy), colour in seal_pixels(edition).items():
         x, y = SEAL_X + sx, SEAL_Y + sy
         tile = (y // TILE) * MAP_WIDTH + x // TILE
@@ -213,15 +223,19 @@ def _painted(edition: str) -> tuple[bytes, bytes, list[Rgb], bytearray]:
     return art, art[PALETTE_AT:TILES_AT], palette, tiles
 
 
+def _palette_bytes(palette: list[Rgb]) -> bytes:
+    return b"".join(struct.pack("<H", _bgr555(c)) for c in palette)
+
+
 def seal_patches() -> tuple[DataPatch, ...]:
-    art, old_palette, palette, tiles = _painted(ENGINE)
+    art, old_palette, palette, tiles = _painted(CLASSIC)
     return (
         DataPatch(
             ARCHIVE,
             ART,
             PALETTE_AT,
             old_palette,
-            b"".join(struct.pack("<H", _bgr555(c)) for c in palette),
+            _palette_bytes(palette),
             "title seal: seal colours in freed palette slots",
         ),
         DataPatch(
@@ -235,21 +249,29 @@ def seal_patches() -> tuple[DataPatch, ...]:
     )
 
 
-def story_seal_patches() -> tuple[DataPatch, ...]:
-    """Over title-seal's tiles: the same seal saying STORY (the palette is the same)."""
-    *_, engine_tiles = _painted(ENGINE)
-    *_, story_tiles = _painted(STORY)
+def retold_seal_patches() -> tuple[DataPatch, ...]:
+    """Over title-seal's palette and tiles: the blue seal saying RETOLD."""
+    *_, classic_palette, classic_tiles = _painted(CLASSIC)
+    *_, retold_palette, retold_tiles = _painted(RETOLD)
     return (
         DataPatch(
             ARCHIVE,
             ART,
+            PALETTE_AT,
+            _palette_bytes(classic_palette),
+            _palette_bytes(retold_palette),
+            "title seal: blue instead of red",
+        ),
+        DataPatch(
+            ARCHIVE,
+            ART,
             TILES_AT,
-            bytes(engine_tiles),
-            bytes(story_tiles),
-            "title seal: STORY instead of ENGINE",
+            bytes(classic_tiles),
+            bytes(retold_tiles),
+            "title seal: RETOLD instead of CLASSIC",
         ),
     )
 
 
 TITLE_SEAL = Feature("title-seal", seal_patches())
-TITLE_SEAL_STORY = Feature("title-seal-story", story_seal_patches())
+TITLE_SEAL_RETOLD = Feature("title-seal-retold", retold_seal_patches())
