@@ -28,7 +28,11 @@ outside the data folders, pass paths as arguments, and run Python with `-I`.
 | File | What it does |
 |---|---|
 | `discfs.py` | Lists or extracts ISO9660 files from a raw `.bin` (MODE1/2352 or MODE2/2352), a plain `.iso`, or a PSP `.cso`. No chdman or maxcso is needed for the CSO. |
-| `segacd.py` | Sega CD: runs Supper's wdtools `scriptrip_tss` (The Silver Star, `C*.MAP`) or `scriptrip` (Eternal Blue, `M*.GRP`), applies a proper-noun substitution file on word boundaries, and writes the dump. `ebjp` runs `scriptrip_jp` with its Thingy table for the Japanese Eternal Blue. |
+| `segacd.py` | Sega CD: runs Supper's wdtools `scriptrip_tss` (The Silver Star, `C*.MAP`) or `scriptrip` (Eternal Blue, `M*.GRP`), applies a proper-noun substitution file on word boundaries, and writes the dump. `ebjp` runs `scriptrip_jp` for the Japanese Eternal Blue with `eb_jp_table.txt`. |
+| `eb_jp_table.txt` | Thingy table for the Japanese Eternal Blue: wdtools' `scriptrip_jp_thingy.txt` with 16 entries fixed after reading all 1,348 glyphs of the `IDATA.BIN` font (0x167 is 友, not 歹; 239 申, 2B5 師, 2BE 遠, 382 和, 3AE 許, 3C9 価, 4D0 宮, 4F1 室, and others). |
+| `tss_jp.py` | The Silver Star (Mega CD, Japan), written from scratch: decodes the one-byte kana and `1x yy` kanji (glyph = word - 0xF20), finds strings from the `LEA d16(PC),An` that load them (plus strings after an `RTS` and a fallback scan), and keeps only strings that score as dialogue under a unigram model trained on the anchored text, because 68000 code also decodes as kana. |
+| `tss_jp_table.txt` | Glyph table for `tss_jp.py`, read off the 16x16 font at 0x1D010 of `TOMI.DAT`: kana as in Eternal Blue, kanji 0xD9-0x3C4 in JIS X 0208 order, a hand-ordered tail to 0x3DD. |
+| `jpfont.py` | Draws both Japanese Mega CD fonts (`sheet`, glyph over table character) for checking a table by eye, and drafts the Silver Star table (`align`: monotonic match of the glyphs against MS Gothic JIS kanji). Needs Pillow and numpy (`uv run --with pillow --with numpy`). |
 | `subs_tss.txt` | Proper-noun list for The Silver Star. The Sega CD text is upper case only, so the ripper guesses sentence case and this file restores names. |
 | `sssc.py` | Silver Star Story Complete (PS1): unpacks `LUNADATA.FIL` and runs MrConan1/lsb on every `TEXTnnn.DAT`, then turns lsb's script output into the dump. |
 | `lsb_file_offset.patch` | A two-line patch to lsb's `write_script.c` that adds `(file-offset X)` to each run-commands/options node, so the dump can cite offsets. |
@@ -74,6 +78,10 @@ T=tools/lunar_scripts; L=lunar_scripts
 python -I $T/discfs.py extract "<disc>.bin" $L/<game>/files            # Sega CD
 python -I $T/segacd.py tss $L/tss_segacd/files scriptrip_tss.exe $L/tss_segacd/script_en.txt --subs $T/subs_tss.txt
 python -I $T/segacd.py eb  $L/eb_segacd/files  scriptrip.exe     $L/eb_segacd/script_en.txt  --subs lunar_eb_script/substitutions.txt
+# Mega CD, Japan
+python -I $T/segacd.py ebjp $L/eb_segacd_jp/files scriptrip_jp.exe $L/eb_segacd_jp/script_jp.txt --table $T/eb_jp_table.txt
+python -I $T/tss_jp.py $L/tss_segacd_jp/files $L/tss_segacd_jp/script_jp.txt
+uv run --with pillow --with numpy python -I $T/jpfont.py sheet tss $L/tss_segacd_jp/files/TOMI.DAT sheet.png --table $T/tss_jp_table.txt
 python -I $T/discfs.py extract "<SSSC disc 1>.bin" $L/sssc_ps1/disc1 "*.FIL"
 python -I $T/sssc.py $L/sssc_ps1/disc1/LUNADATA.FIL lsb.exe <lsb repo dir> $L/sssc_ps1/work $L/sssc_ps1/script_en.txt
 python -I $T/discfs.py extract "<L2EBC disc 1>.bin" $L/l2ebc_ps1/disc1 "DATA.*"
@@ -105,8 +113,8 @@ enough.
 
 | Game | What to do | Status |
 |---|---|---|
-| Eternal Blue (Mega CD) | `segacd.py ebjp FILES scriptrip_jp.exe OUT --table wdtools/src/scriptrip_jp_thingy.txt`. Text is kana bytes minus 0x20, and kanji are 16-bit (`index & 0x1FF` + 0xE0). The Thingy table converts them to Unicode. | Tool exists. Not run here (no JP disc). |
-| The Silver Star (Mega CD) | No JP ripper. Supper's notes (`wdtools/notes/lunartss_notes`) give the encoding: bytes >= 0x20 minus 0x20 index a 1bpp 16x16 font at 0x1D010 of `TOMISUB.BIN`. Kanji are two bytes when the first is 0x10-0x1F (subtract 0xF20). 00 ends, 01 is a line break, 02 a box break, and 04 xx a portrait. To support it, build a Thingy table from that font, then add a JP mode to a port of `scriptrip_tss` that reads two-byte kanji. | Needs work. |
+| Eternal Blue (Mega CD) | `segacd.py ebjp FILES scriptrip_jp.exe OUT --table eb_jp_table.txt`. Text is kana bytes minus 0x20, and kanji are 16-bit (`index & 0xFFF` + 0xE0). Use the corrected table, not wdtools' (16 wrong kanji). | Done: 5,855 messages (Rev A disc). Zophar's taunts and the Goddess Tower recording are voiced scenes with no text on the disc. |
+| The Silver Star (Mega CD) | `tss_jp.py FILES OUT`. Encoding per Supper's `lunartss_notes`: bytes >= 0x20 minus 0x20 index a 1bpp 16x16 font (at 0x1D010 of `TOMI.DAT` on the JP disc, which has no `TOMISUB.BIN`); kanji are two bytes when the first is 0x10-0x1F (subtract 0xF20); 00 ends, 01 line, 02 box, 04 xx portrait, 09 xx item icon. | Done: 4,160 messages; every glyph used is identified. |
 | Silver Star Story (Saturn, 1996 and MPEG 1997) | `sss_saturn.py` (lsb 2-byte mode; `--original` for the 1996 disc). No unmapped glyphs on either disc. The MPEG font reuses the unused full-width Latin slots for new kanji, so the leftover JAM debug menu in its `TEXT007.DAT` reads as garbage (the 1996 disc reads it cleanly). | Done: 8,559 and 8,604 messages. |
 | Silver Star Story (PS1 JP) | `sssc.py ... --ienc 0` (lsb's 2-byte mode, using its `font_table.txt`). PS1 JP should be the same family (studio-lucia/lunardata covers both). | Untested (no disc). |
 | Lunar 2 (Saturn) | `l2eb_saturn.py`. Both discs carry byte-identical `1`, `2`, and `3` (only the 49-byte `4` differs), so disc 1 is enough. Counts include duplicates: many map variants repeat the same NPC lines. The narrated prologue is subtitle pictures in data file 1234 (MrConan1 `l2_subt_extract`, 4bpp), not text; it was transcribed by eye. The Goddess Tower recording (old Luna's hologram) and Lucia's Blue Star history are voiced Cinepak movies on disc 2 (`O065`, `O064`) with no subtitles or burned-in text, and no script file holds their lines, so their Japanese exists only as audio. Transcribe them by demuxing the ADX with `ffmpeg -i O065 -vn -ac 1 -ar 16000 O065.wav` and running faster-whisper (large-v3, `language="ja"`, cross-checked with medium and large-v2; pass the audio as a numpy array, because faster-whisper's PyAV loader failed here). Whisper fills music-only stretches with the stock hallucination 「ご視聴ありがとうございました」. | Done: 8,025 messages. |

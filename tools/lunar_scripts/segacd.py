@@ -2,8 +2,12 @@
 
     python -I segacd.py tss FILES_DIR SCRIPTRIP_TSS_EXE OUT.txt [--subs SUBS.txt]
     python -I segacd.py eb  FILES_DIR SCRIPTRIP_EXE     OUT.txt [--subs SUBS.txt]
-    python -I segacd.py ebjp FILES_DIR SCRIPTRIP_JP_EXE OUT.txt --table scriptrip_jp_thingy.txt
-                                                    (Japanese Eternal Blue, untested here)
+    python -I segacd.py ebjp FILES_DIR SCRIPTRIP_JP_EXE OUT.txt --table eb_jp_table.txt
+
+ebjp is the Japanese Eternal Blue. Use eb_jp_table.txt (next to this file), not wdtools'
+scriptrip_jp_thingy.txt: it is the same Thingy table with 16 kanji fixed after checking
+every glyph of the IDATA.BIN font (e.g. 0x167 is 友, not 歹). The Japanese Silver Star has
+no wdtools ripper; see tss_jp.py.
 
 FILES_DIR is the disc's root as extracted by discfs.py. The Silver Star keeps its
 dialogue in C*.MAP, Eternal Blue in M*.GRP. The text on disc is upper case only; the
@@ -36,7 +40,13 @@ END = "[END]"
 BRK = "[BRK]\n\n"
 SIDE = {"POR": "L", "ROR": "R"}
 RAW_CODE_RE = re.compile(r"\[0x[0-9a-f]+\]|\[[0-9a-f]{1,2}\]")
-SILENCE_RE = re.compile(r"[.!?\s]+")
+# Silence also covers the Japanese ideographic space, ellipses, and full-width ! and ?.
+SILENCE_RE = re.compile(r"[.!?\s　‥…！？]+")
+# Latin letters, kana, kanji, and full-width alphanumerics all count as text.
+LETTER_RE = re.compile(r"[A-Za-zぁ-ヿ一-鿿０-ｚ]")
+# scriptrip_jp misreads bytes 40 41 as a pointed string "ＶＷ"; real text never is
+# one to three full-width capitals alone.
+WIDE_LETTERS_RE = re.compile(r"[Ａ-Ｚ]{1,3}")
 
 
 def parse(output: str, source: str) -> list[Message]:
@@ -69,11 +79,13 @@ def junk(text: str) -> bool:
 
     A message of only dots/!/? (a silent "...." box) is kept."""
     bare = RAW_CODE_RE.sub("", text).strip()
-    letters = len(re.findall(r"[A-Za-z]", bare))
+    letters = len(LETTER_RE.findall(bare))
     if not bare:
         return True
     if letters == 0:
         return not SILENCE_RE.fullmatch(bare)
+    if WIDE_LETTERS_RE.fullmatch(bare):
+        return True
     return len(RAW_CODE_RE.findall(text)) > letters
 
 
@@ -102,6 +114,8 @@ def run(
         LOG.info("%s: %d messages", f.name, len(got))
         messages.extend(got)
     tool = f"wdtools {exe.stem}" + (f" with substitutions {subs.name}" if subs else "")
+    if table:
+        tool += f" with table {table.name}"
     write_dump(out, title, tool, messages)
     LOG.info("wrote %d messages to %s", len(messages), out)
     return len(messages)
@@ -118,7 +132,7 @@ def main() -> int:
     ap.add_argument("--table", type=Path, help="Thingy table (scriptrip_jp needs it)")
     a = ap.parse_args()
     if a.game == "ebjp" and not a.table:
-        ap.error("ebjp needs --table (wdtools src/scriptrip_jp_thingy.txt)")
+        ap.error("ebjp needs --table (eb_jp_table.txt)")
     run(a.game, a.files, a.exe, a.out, a.subs, a.table)
     return 0
 
