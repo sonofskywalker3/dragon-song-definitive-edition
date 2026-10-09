@@ -1590,6 +1590,16 @@ where they overlap.
 - **The epilogue with Titus is gone.** Lucia does not leave "with some other guy." The ending belongs to
   Jian and Lucia (chapter 12 has the fountain reunion options; Althena staying means Lucia is Althena-aware
   from here on, so the reunion is a goddess choosing to keep her ordinary life beside him for now).
+- **Althena's nature, decided (Jeff, 2026-10-09):** her vessel wears out, so she must be reborn, grow up, and be
+  strong enough to take the power up again; she has no memory of being Althena until she is awakened, then
+  remembers everything (including the human life), and keeps that memory even after releasing the power
+  (this is Lunar 1's Luna and Lunar 2's Goddess Tower recording). The villain's control can suppress her
+  awakened self for a while (Ghaleon in Lunar 1, Ignatius here). She confesses to Jian's party, privately,
+  that the Blue Star was destroyed by her hand (or because of her choice, whichever the Japanese Lunar 2
+  wording supports) as the price of sealing Zophar, and that she has spent the centuries since making a
+  home for its people; "but even with all my power, I still must rest sometimes." Lucia's rebirth was meant
+  to be the last; the world is not ready, so Luna's, 500 years on, will be. The first Dragonmaster came with
+  Althena long before this story (do not use "greened the world" in our text); Ignatius is only the latest.
 - **Keepers from the vanilla climax:** Jian giving back the Dragon Rings (021 #26), "You fear yourself"
   (021 #28), the reached hand (021 #38), Althena's "the future must come from each one of you" as the thing
   she wants and is not yet allowed to do.
