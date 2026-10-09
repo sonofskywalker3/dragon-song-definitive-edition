@@ -221,6 +221,22 @@ QUICK_STEPS: dict[int, tuple[Cut, ...]] = {
         *keep(9, 10),
         land(11),
     ),
+    # Dark Jian's copied Special (skill 13): hop in, flip pose (6, 7), the spell effect starts with step 8
+    # (0x800000), recovery 9..11, hop home. No hit step: the effect scripts hit, and round state 7 waits
+    # for them (func_02031238) after the last step. Landing (3) dropped, idles 4 and 12 capped, pose
+    # hold 7 30 -> 16, effect step 8 15 -> 8; wind-up 5, 6 and the recovery kept whole.
+    0x02095EC0: (
+        cap(0, PREP),
+        *keep(1, 2),
+        cap(4, LAND),
+        *keep(5, 6),
+        Cut(7, frames=PAUSE),
+        Cut(8, frames=PAUSE // 2),
+        *keep(9, 10, 11),
+        cap(12, LAND),
+        *keep(13, 14),
+        land(15),
+    ),
     # Zethos skill 21: hop in, two 30-frame effect pauses, hop home
     0x02095D30: (
         cap(0, PREP),
