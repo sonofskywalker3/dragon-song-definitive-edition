@@ -1,0 +1,52 @@
+# Party chat choice test, part 1 (docs/re-party-chat.md section 9); run with --save on a party-chat
+# build. Fountain Square with flag 0xB poked on: the example chat asks "Should I tell her I overslept?"
+# with vanilla's YES/NO buttons; this plan answers the no side (B): Jian dodges, flag 0x245 set (word 0x48 bit 0x20).
+# Then Select, album No.1, save. chat_choice_reload.plan boots that save.
+include boot_from_save
+wait 60
+poke u32 0x02204620 0x802
+pin u16 0x020B77EC 164
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+dump 0x02204668 0x4 choice_word_before
+press Y 3
+wait 120
+shot no_1_talk
+press A 3
+wait 90
+shot no_2_ask
+press A 3
+wait 60
+shot no_3_prompt
+press B 3
+wait 90
+shot no_4_side
+dump 0x02204668 0x4 choice_word_after_pick
+press A 3
+wait 90
+shot no_5_side
+press A 3
+wait 90
+shot no_6_hint
+press A 3
+wait 90
+shot no_7_field
+dump 0x02204620 0x5C flags_saved
+press Select 3
+wait 100
+press A 3
+wait 40
+press A 3
+wait 60
+press A 3
+wait 120
+press A 3
+wait 60
+wait 120
+shot no_8_saved

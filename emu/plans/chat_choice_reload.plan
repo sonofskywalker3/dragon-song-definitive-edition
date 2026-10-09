@@ -1,0 +1,24 @@
+# Party chat choice test, part 2 (docs/re-party-chat.md section 9): a fresh boot loading the save part 1
+# wrote (chat_choice_yes.plan or chat_choice_no.plan; run with --save <that save>). The pick should be in
+# the loaded flags (word 0x48: 0x10 = 0x244 told the truth, 0x20 = 0x245 dodged). Then flag 0x1C (Lucia
+# has explained the delivery) is poked on: after "yes" Y plays the chat that remembers the truth, after
+# "no" it plays the vanilla hint for that stage.
+include boot_from_save
+wait 60
+peek u16 0x020B6BE4 map
+dump 0x02204620 0x5C flags_loaded
+dump 0x02204668 0x4 choice_word_loaded
+poke u32 0x02204620 0x10000802
+wait 30
+press Y 3
+wait 120
+shot r_1
+press A 3
+wait 90
+shot r_2
+press A 3
+wait 90
+shot r_3
+press A 3
+wait 90
+shot r_4

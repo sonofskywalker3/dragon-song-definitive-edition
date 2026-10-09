@@ -26,15 +26,21 @@ from dsde.party_chat import (
     CHAIN_IDS,
     FACE_BASE,
     KIND_SHIFT,
+    OP_CLEAR_FLAG,
+    OP_JUMP,
     OP_MSG,
     OP_PORTRAIT,
+    OP_SET_FLAG,
     OP_STOP,
+    OP_YES_NO,
     SCRIPT,
     SLOTS_BY_COUNT,
     Chat,
+    Choice,
     Entry,
     Hint,
     Say,
+    check_ask,
     say_bytes,
     tree_paths,
 )
@@ -66,8 +72,10 @@ READ_FLAGS = (
     *range(0xDE, 0x12D),
     *range(0x14B, 0x18E),
     *range(0x221, 0x243),
-    *range(0x244, 0x260),
 )
+# Choice flags (Answer.flag): the rest of the free pool, kept apart so a new choice never shifts the
+# read marks. Each answer sets its own flag and clears the other side's; scripts may test them.
+CHOICE_FLAGS = range(0x244, 0x260)
 
 
 @dataclass(frozen=True)
@@ -84,38 +92,104 @@ def _op(code: int, arg: int = 0, word: int = 0) -> bytes:
     return struct.pack("<HHI", code, arg, word)
 
 
-def _speakers(chat: Chat) -> list[str]:
-    says = list(chat.talk) + ([chat.hint] if chat.hint else [])
-    order = list(dict.fromkeys(s.who for s in says))
-    if len(order) not in SLOTS_BY_COUNT:
-        raise ValueError(f"{chat.note or chat}: 1 to 3 speakers, not {order}")
-    return order
-
-
 def _says(chat: Chat) -> list[Say]:
-    says = list(chat.talk) + ([chat.hint] if chat.hint else [])
+    """Every box of the chat, for the speaker list (talk, the choice's sides, the hint)."""
+    says = list(chat.talk)
+    if chat.choice:
+        says += [chat.choice.ask, *chat.choice.yes.talk, *chat.choice.no.talk]
+    says += [chat.hint] if chat.hint else []
     if not says:
         raise ValueError(f"{chat.note or chat}: nothing to say")
     return says
 
 
-def _chat_program(chat: Chat, text_at: int) -> tuple[bytes, bytes]:
-    """Code (portraits, one message per Say, stop) and its text, the text placed at text_at."""
-    order = _speakers(chat)
-    slot = dict(zip(order, SLOTS_BY_COUNT[len(order)], strict=True))
-    face: dict[str, int] = {}
-    says = _says(chat)
-    for say in says:
-        face.setdefault(say.who, say.face)
-    code = b"".join(_op(OP_PORTRAIT, FACE_BASE[w] + face[w], slot[w]) for w in order)
-    text = b""
-    for say in says:
-        if face[say.who] != say.face:
-            face[say.who] = say.face
-            code += _op(OP_PORTRAIT, FACE_BASE[say.who] + say.face, slot[say.who])
-        code += _op(OP_MSG, 0, text_at + len(text))
-        text += say_bytes(say)
-    return code + struct.pack("<I", OP_STOP), text
+def _speakers(chat: Chat) -> list[str]:
+    order = list(dict.fromkeys(s.who for s in _says(chat)))
+    if len(order) not in SLOTS_BY_COUNT:
+        raise ValueError(f"{chat.note or chat}: 1 to 3 speakers, not {order}")
+    return order
+
+
+def _check_choice(chat: Chat, choice: Choice) -> None:
+    check_ask(choice.ask)
+    flags = (choice.yes.flag, choice.no.flag)
+    if flags[0] == flags[1] or any(f not in CHOICE_FLAGS for f in flags):
+        raise ValueError(
+            f"{chat.note or chat}: choice flags must differ and be in "
+            f"{CHOICE_FLAGS.start:#x}..{CHOICE_FLAGS.stop - 1:#x}, not {[hex(f) for f in flags]}"
+        )
+
+
+class _Program:
+    """Script 018 code for one chat: ops at code_at, message text at text_at."""
+
+    def __init__(self, chat: Chat, code_at: int, text_at: int) -> None:
+        order = _speakers(chat)
+        self.slot = dict(zip(order, SLOTS_BY_COUNT[len(order)], strict=True))
+        self.face: dict[str, int] = {}
+        for say in _says(chat):
+            self.face.setdefault(say.who, say.face)
+        self.code_at, self.text_at = code_at, text_at
+        self.code = b"".join(
+            _op(OP_PORTRAIT, FACE_BASE[w] + self.face[w], self.slot[w]) for w in order
+        )
+        self.text = b""
+
+    def here(self) -> int:
+        return self.code_at + len(self.code)
+
+    def say(self, say: Say) -> None:
+        self.faces({say.who: say.face})
+        self.code += _op(OP_MSG, 0, self.text_at + len(self.text))
+        self.text += say_bytes(say)
+
+    def faces(self, wanted: dict[str, int]) -> None:
+        for who, face in wanted.items():
+            if self.face[who] != face:
+                self.face[who] = face
+                self.code += _op(OP_PORTRAIT, FACE_BASE[who] + face, self.slot[who])
+
+
+def _chat_program(chat: Chat, code_at: int, text_at: int) -> tuple[bytes, bytes]:
+    """Code (portraits, one message per Say, the choice, stop) and its text.
+
+    With a choice: ask, `31 yes no`; each side sets its flag, clears the other's, says its lines,
+    puts the faces back as they were at the question, and both meet at the hint. Branch targets are
+    file offsets (the handler sets pc = file base + target), so code_at must be the real offset.
+    """
+    prog = _Program(chat, code_at, text_at)
+    for say in chat.talk:
+        prog.say(say)
+    if chat.choice:
+        _check_choice(chat, chat.choice)
+        prog.say(chat.choice.ask)
+        at_ask = dict(prog.face)
+        yes_no_at = len(prog.code)
+        prog.code += struct.pack("<HHII", OP_YES_NO, 0, 0, 0)
+        sides = (
+            (chat.choice.yes, chat.choice.no.flag),
+            (chat.choice.no, chat.choice.yes.flag),
+        )
+        targets, jumps = [], []
+        for answer, other in sides:
+            targets.append(prog.here())
+            prog.code += struct.pack(
+                "<HhHh", OP_SET_FLAG, answer.flag, OP_CLEAR_FLAG, other
+            )
+            for say in answer.talk:
+                prog.say(say)
+            prog.faces(at_ask)
+            jumps.append(len(prog.code))
+            prog.code += _op(OP_JUMP)
+        join = prog.here()
+        code = bytearray(prog.code)
+        struct.pack_into("<II", code, yes_no_at + 4, *targets)
+        for at in jumps:
+            struct.pack_into("<I", code, at + 4, join)
+        prog.code = bytes(code)
+    if chat.hint:
+        prog.say(chat.hint)
+    return prog.code + struct.pack("<I", OP_STOP), prog.text
 
 
 def _all_chats() -> list[Chat]:
@@ -132,14 +206,14 @@ def layout(vanilla: bytes) -> Layout:
     base = -(-end // ALIGN) * ALIGN
     chats = _all_chats()
     # Code first (4-byte ops), then all text. Code size does not depend on text offsets.
-    sizes = [len(_chat_program(c, 0)[0]) for c in chats]
+    sizes = [len(_chat_program(c, 0, 0)[0]) for c in chats]
     text_at = base + sum(sizes)
     code = b""
     text = b""
     chat_code = {}
     for chat in chats:
         chat_code[id(chat)] = base + len(code)
-        c, t = _chat_program(chat, text_at + len(text))
+        c, t = _chat_program(chat, base + len(code), text_at + len(text))
         code += c
         text += t
     return Layout(base, moved, b"\x00" * (base - end) + code + text, chat_code)
@@ -195,7 +269,10 @@ def entries(vanilla: bytes, code_of: dict[int, int]) -> list[Entry]:
     read |= {
         id(c): f for c, f in zip(chats, READ_FLAGS[len(hint_leaves) :], strict=False)
     }
-    _check_free(list(read.values()))
+    picks = [
+        f for c in chats if c.choice for f in (c.choice.yes.flag, c.choice.no.flag)
+    ]
+    _check_free(list(read.values()) + picks)
     rows = []
     for item in (*CHATS, *HINTS):
         key = item.leaf if isinstance(item, Hint) else id(item)
