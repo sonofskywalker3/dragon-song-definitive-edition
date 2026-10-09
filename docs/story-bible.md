@@ -1597,8 +1597,14 @@ where they overlap.
   awakened self for a while (Ghaleon in Lunar 1, Ignatius here). She confesses to Jian's party, privately,
   that the Blue Star was destroyed by her hand (or because of her choice, whichever the Japanese Lunar 2
   wording supports) as the price of sealing Zophar, and that she has spent the centuries since making a
-  home for its people; "but even with all my power, I still must rest sometimes." Lucia's rebirth was meant
-  to be the last; the world is not ready, so Luna's, 500 years on, will be. The first Dragonmaster came with
+  home for its people. **Being the goddess is her self-inflicted penance** for the Blue Star: each rebirth is
+  another term served, the power is the weight she chose to carry, and "the world is not ready" is also "I
+  have not finished paying." Lucia's rebirth was meant to be the one where the debt was paid and she could
+  set it down; Ignatius proves it is not, and she takes it up again. Lunar 1 then becomes her release, not
+  her retirement: Dyne is the one who finally lets her forgive herself. Her lesson to Jian ("the bravery to
+  forgive") comes from someone who has never forgiven herself; Ignatius wants the power as a crown, she
+  carries it as a sentence. Write the rest ("I still must rest sometimes") as weariness under that sentence,
+  never as mere fatigue. The first Dragonmaster came with
   Althena long before this story (do not use "greened the world" in our text); Ignatius is only the latest.
 - **Keepers from the vanilla climax:** Jian giving back the Dragon Rings (021 #26), "You fear yourself"
   (021 #28), the reached hand (021 #38), Althena's "the future must come from each one of you" as the thing
