@@ -1,0 +1,34 @@
+# Party chat test (docs/re-party-chat.md), run with --save on a party-chat build: Jeff's story flags plus
+# 0x193 (been to Perit Village) poked in Jian's room, then a warp into Perit Village (map 166). The
+# Perit-only vanilla line ("That's why we came here to Perit Village") plays there.
+include boot_from_save
+wait 30
+poke u32 0x02204620 0x10103806
+poke u32 0x02204650 0x000E0000
+pin u16 0x020B77EC 166
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B8056 figures_flags
+shot perit_icon_0
+wait 4
+shot perit_icon_4
+press Y 3
+wait 150
+shot perit_y1
+press A 3
+wait 120
+shot perit_y2
+press A 3
+wait 60
+press A 3
+wait 60
+peek u16 0x020B8056 figures_flags_after
+shot perit_after_0
+wait 4
+shot perit_after_4

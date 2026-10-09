@@ -1,0 +1,68 @@
+# Party chat test (docs/re-party-chat.md), run with --save on a party-chat build.
+# Jian's room: the icon bounces for the unread hint, Y plays it, the icon stops. Then Fountain Square
+# with flag 0xB poked on (Jian has met Lucia): the example two-way chat, then the hint, then still.
+include boot_from_save
+wait 60
+peek u16 0x020B6BE4 map
+peek u32 0x020B4640 main_ctx
+peek u16 0x020B8056 figures_flags
+shot room_icon_0
+wait 4
+shot room_icon_4
+wait 4
+shot room_icon_8
+press Y 3
+wait 150
+shot room_y
+press A 3
+wait 60
+press A 3
+wait 60
+peek u16 0x020B8056 figures_flags_after
+shot room_after_0
+wait 4
+shot room_after_4
+dump 0x02204620 0x5C flags_after_room
+poke u32 0x02204620 0x802
+pin u16 0x020B77EC 164
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B8056 figures_flags_square
+shot square_icon_0
+wait 4
+shot square_icon_4
+press Y 3
+wait 120
+shot square_y1_p1
+press A 3
+wait 90
+shot square_y1_p2
+press A 3
+wait 90
+shot square_y1_p3
+press A 3
+wait 60
+press A 3
+wait 60
+peek u16 0x020B8056 figures_flags_after_chat
+shot square_mid_0
+wait 4
+shot square_mid_4
+press Y 3
+wait 150
+shot square_y2
+press A 3
+wait 60
+press A 3
+wait 60
+peek u16 0x020B8056 figures_flags_after_hint
+shot square_after_0
+wait 4
+shot square_after_4
+dump 0x02204620 0x5C flags_after_square
