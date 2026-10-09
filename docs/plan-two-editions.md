@@ -26,6 +26,7 @@ patch file. Two lists, two `.bps` files per release:
 | text-fixes: recipient name tags matched to the job menu (Balam, Gobbi, Tartaglia, Laban, Devida) | Classic | fixes, not story: only the speaker tag over a line changes |
 | **curse rework** (below) | **Both** | Jeff, 2026-10-09: "both versions will say he's cursed going forward." It replaces no-curse-penalty in both editions. Only the Retold edition changes any curse wording |
 | **opening-run**: the vanilla wake-up and self-introduction, then Jian walks out of the inn, the story flags set so Cherenkov and Jack are optional | Retold | Jeff, 2026-10-09 (final): "the engine shouldn't walk out on the engine brand, it should be a fully vanilla intro, no code changes other than the faster text when you hold the button." The Classic intro is vanilla, BUT the story flags are still set (feature opening-flags) so Lucia waits at the fountain without the Cherenkov -> Jack chain (Jeff: "keep the flags that let me go straight to Lucia even on Classic"); text-speed is the only other change |
+| **opening-flags**: the vanilla intro unchanged; after "Right then!" closes, flags 0xC (Lucia left) and 0xD (Lucia at the fountain) are set, so Lucia waits at Fountain Square without the Cherenkov -> Jack chain; Cherenkov and Jack say their vanilla lines for that state | Classic | Jeff, 2026-10-09: "keep the flags that let me go straight to Lucia even on Classic." opening-run builds on it in Retold |
 | **opening-text**: Cherenkov's wake-up call, Jian's asides on the walk, Cherenkov's lobby line; **text-edits**: the rewritten opening narration and the "Anyway..." cut; **title-seal-retold** | Retold | the Classic edition changes no wording in dialogue or narration |
 | UI labels that describe changed mechanics: guidebook, mic-sign ("L+R"), experience-name | Classic | the engine makes no sense without them; Jeff may veto |
 | party-chat and every line in party_chat_lines.py | Retold | not in RETOLD_FEATURES yet: off by default while Jeff writes the lines (`--with party-chat`) |
@@ -45,10 +46,11 @@ Classic. Mixed features were split.
 | The messages text-fixes moves to the end of 001, written again so the layout holds | opening-run | opening-run (Retold) | same bytes as text-fixes (Balam) |
 | Walk out of the inn: room, hall, and lobby legs, the map-entry block for 160 and 155, RUN_FLAG 0x1DF | opening-run | opening-run (Retold) | movement; each leg has an empty aside slot |
 | Flags 0x1, 0x1E2, 0xC (Lucia left), 0xD (Lucia at the fountain) set on the walk | opening-run | opening-run (Retold) | Jeff: "do go ahead and set the flags" |
+| Flags 0xC and 0xD set over the vanilla stop and the dead goto_map at 0x63C4..0x63CF (set, set, stop) | (new) | opening-flags (Classic) | flags only, no map reload, no walk |
 | Fountain Square (164) entry checks 0xC instead of 0xD (0x56E8) | opening-run | opening-run (Retold) | a flag check |
-| Asides close by themselves when the walk ends (cave_aside_autoclose; text-speed calls it) | opening-run | opening-run (Retold) | timing, no text; with no aside in the Engine walk it never fires |
+| Asides close by themselves when the walk ends (cave_aside_autoclose; text-speed calls it) | opening-run | text-speed (both) | timing, no text; with no aside up it never fires |
 | Field bottom screen restored at the start of the walk (op `32 0001 0001`, docs/re-opening.md) | (new) | opening-run (Retold) | closes the "Right then!" box and brings the HUD back, so the HUD shows during the whole walk as in normal play |
-| Jump at 0x63C4 (after "Right then! I'd better go looking for Lucia...") to the walk | (new) | opening-run (Retold) | the vanilla wake-up plays as written, then the walk |
+| Jump at 0x63C4 (after "Right then! I'd better go looking for Lucia...") to the walk, over opening-flags' first two ops | (new) | opening-run (Retold) | the vanilla wake-up plays as written, then the walk |
 | Wake-up jump at 0x62CC to Cherenkov's call, Jian's replies, the vanilla waking pose | opening-run | opening-text (Retold) | new dialogue; skips the self-introduction |
 | The three asides on the walk ("I'm Jian. I'm a courier...") | opening-run | opening-text (Retold) | new text; not vanilla (they replace the self-introduction), so not in the Classic edition at all |
 | Cherenkov's three lobby lines -> "Jian, what are you doing?! Get to Fountain Square!..." | opening-run | opening-text (Retold) | wording; in the Classic edition he says his vanilla line for the flags (0x0CA9, "Get over to the Fountain Square, on the double!") |
@@ -57,7 +59,10 @@ Classic. Mixed features were split.
 | Title seal: blue, RETOLD | (new) | title-seal-retold (Retold) | repaints title-seal's palette and tiles |
 
 Jeff, 2026-10-09 (final): the Classic opening is fully vanilla, so opening-run moved to the Retold edition with
-opening-text; the rows above say where each patch now lives. opening-text and title-seal-retold patch bytes that opening-run and title-seal write, so `dsde.patches` refuses a
+opening-text; the rows above say where each patch now lives. Then (same day) Jeff: "I told you to keep the flags
+that let me go straight to Lucia even on Classic", so opening-flags sets them in Classic. opening-run (after
+opening-flags and text-speed), opening-text, and title-seal-retold patch bytes that opening-flags, opening-run, and
+title-seal write, so `dsde.patches` refuses a
 list that has them without, or before, those (`REQUIRES` in features.py).
 
 ## Feature lists and commands
@@ -66,7 +71,7 @@ list that has them without, or before, those (`REQUIRES` in features.py).
   timed-run, one-battle-mode, no-virtue-clock, restock-on-entry, no-clear-refill, fix-save-glitch, silver-drops,
   boss-exp, result-screens, battle-end-rules, manual-targeting, text-fixes, hold-lr-to-run, leave-drops-gear,
   battle-speed, no-curse-penalty, curse-no-healing, battle-pace, kill-on-hit, battle-flow, mp-economy,
-  spell-levels, walk-speed, gad-express, mic-sign, text-speed, experience-name, title-seal, town-menu-dpad,
+  spell-levels, walk-speed, gad-express, mic-sign, text-speed, opening-flags, experience-name, title-seal, town-menu-dpad,
   field-menu, guidebook, still-hud, statue-any-side, pocketwatch, enemy-sprite-speed, enemy-spell-speed,
   enemy-quick-steps.
 - `RETOLD_FEATURES = CLASSIC_FEATURES +` text-edits, opening-run, opening-text, title-seal-retold (old name
@@ -95,6 +100,16 @@ rename: New Game (editions_opening.plan) shows the vanilla narration, self-intro
 the walk with the HUD on the bottom screen when opening-run is built without opening-text; with the walk's flags
 Cherenkov says his vanilla "Get over to the Fountain Square, on the double!" and Jack his vanilla "I just saw
 Lucia in Fountain Square. I thought she was waiting for you...?" (editions_npcs.plan, editions_jack.plan).
+
+Classic opening-flags, checked 2026-10-09 (emu/plans/editions_classic_lucia.plan, then editions_classic_npcs.plan
+with the same --out): New Game, the vanilla intro to "Right then!" and control in Jian's room
+(build/editions/classic_1_control_after_intro.png); pin-warped to Fountain Square, Lucia's object 0xC8 is active
+(+0x14 = 1; 0xFF on the vanilla ROM at the same point) and talking at her spot plays the vanilla parasol scene
+("Hey... This is Lucia's parasol...", classic_2_fountain_lucia_scene.png; vanilla: nothing,
+vanilla_2_fountain_no_scene.png). Cherenkov says his vanilla "Get over to the Fountain Square, on the double!"
+(classic_3_cherenkov.png) and Jack his vanilla "I just saw Lucia in Fountain Square. I thought she was waiting for
+you...?" (classic_4_jack.png). The camera does not follow the plan's warps (black or blue patches on the top
+screen).
 
 Still open: the guidebook describes the same mechanics in both editions (no edition-aware page yet);
 party-chat goes into RETOLD_FEATURES when its lines are written.

@@ -1,6 +1,6 @@
 # Two editions (docs/plan-two-editions.md): New Game, the opening narration (one shot per page for the
 # first pages), then the wake-up and Jian walking out of the inn, a shot every 50 frames with A pressed
-# between them. Run once per edition: --rom build/editions/engine.nds / story.nds.
+# between them. Run once per edition: --rom build/editions/classic.nds / retold.nds.
 watch u16 0x020B6BE4 map
 watch u32 0x020B6CEC route
 wait 1800

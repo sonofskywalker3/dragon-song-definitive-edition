@@ -1,0 +1,48 @@
+# Classic edition: from editions_classic_lucia.plan's state classic_control (same --out), talk to Cherenkov in
+# the lobby (moves from npc_gate_searis.plan), then to Jack in his house from a second load.
+load classic_control
+pin u16 0x020B77EC 0x9B
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+wait 30
+poke u32 0x020B6CB4 0xEC000
+poke u32 0x020B6CB8 0xE0000
+wait 10
+press Up 4
+wait 10
+press A 4
+wait 120
+shot cherenkov_1
+press A 4
+wait 90
+shot cherenkov_2
+press A 4
+wait 90
+press A 4
+wait 60
+load classic_control
+pin u16 0x020B77EC 0x9F
+press Right 32
+press Down,Right 32
+press Right 32
+press Down 70
+wait 200
+unpin
+wait 120
+peek u16 0x020B6BE4 map
+poke u32 0x020B6CB4 0x104000
+poke u32 0x020B6CB8 0xCC000
+wait 10
+press Up 4
+wait 10
+press A 4
+wait 150
+shot jack_1
+press A 4
+wait 90
+shot jack_2

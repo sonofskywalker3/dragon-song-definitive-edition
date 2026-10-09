@@ -5,15 +5,20 @@ self-introduction, have Cherenkov call from downstairs, then a scripted run from
 through the inn hall (160) and lobby (155) out of the front door, with Jian's introduction shown as
 text while he runs. Dialogue in the prototype is placeholder text (tone rules: docs/style-rules.md).
 
-Now two features in `src/dsde/feat_opening.py` (docs/plan-two-editions.md, 2026-10-09):
+Now three features in `src/dsde/feat_opening.py` (docs/plan-two-editions.md, 2026-10-09; the editions are
+Classic and Retold, first named Engine and Story):
 
-- `opening-run` (both editions): the vanilla wake-up and self-introduction play unchanged; a jump at 0x63C4
-  (after "Right then! I'd better go looking for Lucia...") goes to the walk, which sets the flags (0x1, 0x1E2,
+- `opening-flags` (Classic edition): the vanilla intro unchanged; the 12 bytes at 0x63C4..0x63CF (the stop after
+  "Right then!" and the dead goto_map) become `set_flag 0xC`, `set_flag 0xD`, `stop`, so Lucia waits at Fountain
+  Square (map 164's vanilla 0xD check) and Cherenkov and Jack say their vanilla lines for that state.
+
+- `opening-run` (Retold edition, after opening-flags): the vanilla wake-up and self-introduction play unchanged; a jump at 0x63C4
+  (over opening-flags' first two ops, after "Right then! I'd better go looking for Lucia...") goes to the walk, which sets the flags (0x1, 0x1E2,
   0xC, 0xD, RUN_FLAG), restores the field bottom screen with op `32 0001 0001` (handler func_0203e5c8 case 1:
   reload the current map with the HUD flag 0x100, func_02071518 for the field screens, ctx +0x29A = 0 so the
   message window counts as closed; the same work an event's end does in field states 0x4D..0x4F), then walks
   the three legs. Each leg has an aside slot (a jump to the next op).
-- `opening-text` (Story edition, after opening-run): the wake-up jump at 0x62CC to Cherenkov's call, messages
+- `opening-text` (Retold edition, after opening-run): the wake-up jump at 0x62CC to Cherenkov's call, messages
   in the three aside slots, the restore op replaced by a jump (the aside's box replaces "Right then!"), and
   Cherenkov's lobby lines.
 
@@ -22,8 +27,8 @@ state 0x2A/0x2B, which reloads the HUD background but leaves the message layers 
 back to BG2/BG3/OBJ, `& 0xFFFFE0FF | 0x1C00`, in states 3 and 0x4F), so without an aside the hall showed the
 old "Right then!" box under the HUD sprites.
 
-Test plans: `emu/plans/editions_opening.plan` (New Game, both editions), `opening_run.plan` (the old Story
-run). The sections below describe the first prototype; offsets of the appended code have moved.
+Test plans: `emu/plans/editions_classic_lucia.plan` and `editions_classic_npcs.plan` (Classic),
+`editions_opening.plan` (New Game, the walk), `opening_run.plan` (the first Retold run). The sections below describe the first prototype; offsets of the appended code have moved.
 
 ## 1. Map 196 and the end of the vanilla wake-up
 

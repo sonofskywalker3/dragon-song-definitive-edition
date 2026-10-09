@@ -1,13 +1,13 @@
-"""Lists every script message a build changes, and checks the Engine edition changes only fixes.
+"""Lists every script message a build changes, and checks the Classic edition changes only fixes.
 
 Compares a built script.dat with the original's, message op by message op: for each message op (0x0F) of
 an original script, the text it shows in the original and in the build (or that the op is gone), plus
-every message op the build adds. With --engine, each change must be one of the text-fixes renames
+every message op the build adds. With --classic, each change must be one of the text-fixes renames
 (feat_text.TEXT_FIX_EDITS) and the build must add no message op; anything else fails the check.
 
 Usage:
-    uv run python -m dsde.edition_check build/editions/engine_extract/files/script.dat --engine
-    uv run python -m dsde.edition_check build/editions/story_extract/files/script.dat
+    uv run python -m dsde.edition_check build/editions/classic_extract/files/script.dat --classic
+    uv run python -m dsde.edition_check build/editions/retold_extract/files/script.dat
 """
 
 import argparse
@@ -102,9 +102,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(prog="dsde.edition_check")
     parser.add_argument("script_dat", type=Path, help="script.dat of a build")
     parser.add_argument(
+        "--classic",
         "--engine",
+        dest="classic",
         action="store_true",
-        help="fail unless every change is a text-fixes rename",
+        help="fail unless every change is a text-fixes rename (--engine: the old name)",
     )
     args = parser.parse_args()
     found = changes(VANILLA_SCRIPTS.read_bytes(), args.script_dat.read_bytes())
@@ -122,7 +124,7 @@ def main() -> None:
             _show(change.new),
         )
     logger.info("%d changed messages, %d not text-fixes renames", len(found), bad)
-    if args.engine and bad:
+    if args.classic and bad:
         sys.exit(CHECK_FAILED)
 
 

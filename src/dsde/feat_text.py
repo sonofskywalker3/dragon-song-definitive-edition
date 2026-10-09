@@ -1,8 +1,8 @@
 """Text edits in the event scripts (script.dat), in two features (docs/plan-two-editions.md):
 
-- `text-fixes` (Engine edition): speaker tags matched to the names the job menu uses. No line changes what it
+- `text-fixes` (both editions): speaker tags matched to the names the job menu uses. No line changes what it
   says; only the name tag over it is respelled.
-- `text-edits` (Story edition): every change to what a line says: the rewritten opening narration and the
+- `text-edits` (Retold edition): every change to what a line says: the rewritten opening narration and the
   Y-button hint's stray "Anyway..." cut.
 
 A script file starts with a jump over its text block to its code; each message op (0x0F) holds the
@@ -88,7 +88,7 @@ TEXT_FIX_EDITS = (
     speaker_rename(7, "Raiban", "Laban", 6, "Gad's Express recipient Laban"),
     speaker_rename(11, "Davida", "Devida", 2, "Gad's Express recipient Devida"),
 )
-STORY_EDITS = (
+RETOLD_EDITS = (
     # The field Y-button hint (Jian thinking aloud) opened with an "Anyway..." that follows nothing
     # (Jeff, 2026-10-07; the hints are to become party chat, docs/playtest-feedback.md item 9)
     TextEdit(
@@ -204,7 +204,7 @@ PROLOGUE = MessageRewrite(
     "opening narration rewritten (Japanese, Lunar canon; docs/intro-analysis.md)",
 )
 MESSAGE_REWRITES = (PROLOGUE,)
-TEXT_EDITS = TEXT_FIX_EDITS + STORY_EDITS
+TEXT_EDITS = TEXT_FIX_EDITS + RETOLD_EDITS
 
 
 def _page_bytes(lines: tuple[str, ...]) -> bytes:
@@ -339,8 +339,8 @@ def _scripts(
 
 
 # Each feature moves grown messages to the end of its scripts, so the two must not share a script.
-if _scripts(TEXT_FIX_EDITS, ()) & _scripts(STORY_EDITS, MESSAGE_REWRITES):
+if _scripts(TEXT_FIX_EDITS, ()) & _scripts(RETOLD_EDITS, MESSAGE_REWRITES):
     raise ValueError("text-fixes and text-edits must edit different scripts")
 
 TEXT_FIXES = Feature("text-fixes", text_patches(TEXT_FIX_EDITS, ()))
-TEXT_EDITS_FEATURE = Feature("text-edits", text_patches(STORY_EDITS, MESSAGE_REWRITES))
+TEXT_EDITS_FEATURE = Feature("text-edits", text_patches(RETOLD_EDITS, MESSAGE_REWRITES))
