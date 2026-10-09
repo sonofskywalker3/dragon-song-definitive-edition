@@ -213,7 +213,7 @@ two paths (same leaf twice). The DSDE note marks lines the `party-chat` seed res
   therefore play one per press, then the first repeats.
 - **Read flags** are story flags (saved with the game: the flag words are at 0x850 in a save file), taken
   from ranges no script op tests or sets and engine code does not read: 0x84..0xC8, 0xDE..0x12C,
-  0x14B..0x18D, 0x221..0x242, 0x244..0x25F (279 in all). Vanilla lines get them by leaf offset (stable),
+  0x14B..0x18D, 0x221..0x242, 0x244..0x25F (277 in all). Vanilla lines get them by leaf offset (stable),
   new chats in table order. The build fails if a script ever uses one. 0x1E0..0x220 is avoided (the engine
   sets 0x1E0 + n per place visited).
 - **Start hook** (`cave_chat_start`, at 0x02020188 and 0x0205F368 instead of `bl func_02041988`): start the
@@ -230,3 +230,87 @@ two paths (same leaf twice). The DSDE note marks lines the `party-chat` seed res
 - **Cost:** ITCM 3.2 KB (code 0.7 KB, table 2.5 KB), of the about 17 KB free; script 018 grows by the
   new chats' code and text.
 
+## 6. How to add a chat
+
+Build with `uv run python -m dsde.patches --with party-chat` (add `--output ...` for a test ROM). Add a
+`Chat` to `CHATS` in src/dsde/party_chat_lines.py:
+
+```python
+Chat(
+    where=PERIT_VILLAGE,                 # a Place from dsde.party_chat_places, places joined with +, or ANYWHERE
+    when=Flags(on=(0x193,), off=(0x1D,)),  # on: all set; off: none set; also any_on, not_all_on
+    talk=(
+        Say("Lucia", "So this is {Perit Village}.\nSmaller than I thought.", face=1),
+        Say("Jian", "Small villages hear big\nnews. Let's ask around.", face=0),
+    ),
+    hint=Say("Lucia", "The village chief should know\nsomething. Let's find him.", face=1),
+)
+```
+
+- `Say(who, text, face)`: who is Jian, Lucia, Gabryel, Flora, or Rufus; up to 5 lines of up to 30
+  characters, split with `\n` (a line of exactly 30 wraps by itself); `{Place}` shows blue and `[item]` in
+  the item color (neither counts toward the 30); face is the expression, 0 to 3 (vanilla's faces 1 to 4 of
+  that character). Letters, digits, space, and `, . ! ? : '` only (feat_text's encoding). The build fails on
+  a long line, a sixth line, an unknown speaker, or a missing character.
+- Up to 3 speakers per chat: one sits in the center; two sit left and right in order of first line; three
+  left, center, right. A speaker's portrait changes when the face changes.
+- `hint` is shown last (required; pass `None` for none, but Jeff's rule is a hint in every chat).
+- Places: towns (PORT_SEARIS, PERIT_VILLAGE, HEALRIZ, ...), dungeons (THIEVES_WOODS, DELRICH_TEMPLE, ...),
+  single rooms (JIANS_ROOM, FOUNTAIN_SQUARE, ...); `maps("name", first, last)` or `one_map("name", id)` for
+  others. `peek u16 0x020B6BE4` in an emulator plan gives the current map id.
+- Story flags: section 4 lists the ones vanilla's lines use; docs/re-field-battle.md has the opening's.
+- Order: new chats are checked first, top to bottom. While one is unread the icon bounces; Y plays it and
+  marks it read; the next unread one (or the vanilla hint) is next. Add `chain=HINT` to make a chat replace
+  the vanilla hint wherever it matches (put it in CHATS, or in party_chat_hints.py at the stage it
+  replaces). To make a vanilla line place-only, give its Hint a `where` and add a Chat with the same flags
+  and `chain=HINT` after it for everywhere else (as done for Perit Village and Delrich Temple; those two
+  "elsewhere" lines are placeholders for Jeff to rewrite).
+- Read marks: appending keeps the marks in existing saves; inserting a chat in the middle shifts the marks
+  of the chats after it (they bounce again once; harmless).
+- Limits: 277 read flags, 99 taken by the vanilla lines, so 178 new chats (3 used now: the example and
+  the two placeholders). Each table row costs 12 bytes plus 2 per flag (plus 2 per flag kind) of ITCM;
+  about 14 KB is left. One row per map range of a place.
+
+## 7. Confirmed and uncertain
+
+Confirmed (code and emulator):
+- The Y path and its two start sites, the flag copy in and out, the op formats above, no map test in
+  the language, the tree.
+- Place-aware picking, the read marks, and the icon: the icon bounces while the chosen chat is unread and
+  holds still after Y (section 8), the Perit-only line plays in Perit Village, the placeholder plays in
+  Thieves' Woods at the same stage, a two-way chat shows two portraits (first speaker left) with face
+  changes, and vanilla hints keep their pages (the text-edits "Anyway" fix included).
+
+Uncertain:
+- Read marks surviving a save and reload: the flag words are in the save file (0x850 in Jeff's save,
+  including words 12 to 16), but no save-and-reload was run.
+- That no engine code writes the read-flag ranges late in the game: scripts are scanned at build time,
+  constant engine reads are known (docs/re-field-battle.md section 5), computed ones only partly
+  (0x141 + n, 0x1E0 + n, table 0x0209E0B8).
+- The System menu start (0x0205F368) is hooked the same way but was not run (the field menu may not offer
+  it).
+- Which expression each face 0 to 3 is (pick by eye); 018 never dims the speaker who is not talking.
+- Ops 0x32, 0x33, and 0x36 in some long vanilla talks were not decoded (vanilla code runs them as before).
+
+## 8. Test evidence (party-chat build, build/chat/dsde.nds)
+
+Plans: emu/plans/chat_room_searis.plan (start save), chat_woods.plan (copy of Jeff's save,
+build/chat/jeff_copy.SaveRAM; the original is never written), chat_perit.plan (start save, flags poked).
+Each run used its own ROM copy (build/chat/chat_room.nds, chat_woods.nds, chat_perit.nds) so the battery
+saves do not collide. Strips: build/chat/room_strip.png, square_strip.png, woods_strip.png,
+perit_strip.png; the icon 4x with pixel counts against the first shot: build/chat/*_icon_crop.png
+(`build/chat/crop.py`).
+
+| Place (map) | Before Y | Y shows | After |
+|---|---|---|---|
+| Jian's room (163), flag 0x1 | figures 0xA026, icon differs 201 px in 4 frames | Jian: "I'd better find Lucia, quick! ..." (vanilla 0x51C8, no "Anyway") | 0x8000, still (0 px between frames); read flag 0x84 set |
+| Fountain Square (164), 0xB poked on | bouncing | 1st Y: the example chat, Lucia left and Jian right, 3 boxes, faces change | still bouncing (the hint is unread) |
+| same | bouncing | 2nd Y: Lucia: "Jian, come on... We'd better get this package to Gad's Express ..." (0x5204) | still; read flags 0x87 and 0xFC set |
+| Thieves' Woods (1), Jeff's flags | bouncing | Jian: "Well, he ran off toward Perit Village ..." (0x522C) | still; 0x89 set |
+| same, 0x193 poked on | bouncing again (new stage) | Lucia: "We're looking for information, right? Let's head back to Perit Village ..." (placeholder; not "came here") | still |
+| Perit Village (166), Jeff's flags + 0x193 | bouncing | Lucia: "We're looking for information, right? / That's why we came here to Perit Village ..." (0x525C) | still |
+
+Harness note: BizHawk names the battery save of a ROM it knows (any unmodified vanilla copy) after its
+game database name, "Lunar - Dragon Song (USA).SaveRAM", not the file name, so `--save` on a vanilla
+copy loads whatever that file holds. For vanilla runs use a copy with one padding byte changed (the
+last byte of the 32 MB image): build/chat/vroom.nds, vwoods.nds.

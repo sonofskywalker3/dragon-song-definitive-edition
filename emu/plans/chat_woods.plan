@@ -1,0 +1,39 @@
+# Party chat test (docs/re-party-chat.md) in Thieves' Woods; run with --save on a copy of Jeff's save.
+# The current hint (flag 0x14, "he ran off toward Perit Village") bounces, plays, stops. Then flag 0x193
+# is poked on (been to Perit): the Perit-only line is out here, the "head back to Perit" line plays.
+include boot_from_save
+wait 60
+peek u16 0x020B6BE4 map
+peek u16 0x020B8056 figures_flags
+shot woods_icon_0
+wait 4
+shot woods_icon_4
+wait 4
+shot woods_icon_8
+press Y 3
+wait 150
+shot woods_y
+press A 3
+wait 60
+press A 3
+wait 60
+peek u16 0x020B8056 figures_flags_after
+shot woods_after_0
+wait 4
+shot woods_after_4
+dump 0x02204620 0x5C flags_after_woods
+poke u32 0x02204650 0x000E0000
+wait 10
+peek u16 0x020B8056 figures_flags_perit_stage
+shot woods_p_icon_0
+wait 4
+shot woods_p_icon_4
+press Y 3
+wait 150
+shot woods_p_y
+press A 3
+wait 60
+press A 3
+wait 60
+peek u16 0x020B8056 figures_flags_perit_after
+shot woods_p_after

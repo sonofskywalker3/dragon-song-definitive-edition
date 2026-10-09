@@ -96,7 +96,7 @@ Proposed:
 - Still frame for the figures only (cheapest, one word): 0x0206F3FC `cmp sl, #6` -> `cmp sl, #0xFF`. Button 6
   then gets plain 0x8000 flags (no affine) and stays at scale 1; its rect is set separately, so the tap still works.
 - Stop all three pulses: 0x0206F7E0 `add ip, ip, #0x800` -> `mov ip, #0` (sine of 0 = 0, scale 1.0).
-- Pulse only for a new hint: hook the call at 0x02022108 with a cave that writes button 6's flags halfword
+- Pulse only for a new hint (built 2026-10-09 as `party-chat`, differently: an unread mark per chat and the figures on their own matrix 6; docs/re-party-chat.md): hook the call at 0x02022108 with a cave that writes button 6's flags halfword
   (0x020B8056 = 0x020B7F28 + 0xC + 6*0x30 + 2) as 0xA025 when a "hint new" bit is set and 0x8000 otherwise, then
   tail-calls func_0206f7c4. Set the bit from a hook on the script op 0x19 set-flag handler (0x020405D8, flag id at
   op+2) when the flag is in a build-time bitmap of every flag script 018 tests (parse it with dsde.script);
