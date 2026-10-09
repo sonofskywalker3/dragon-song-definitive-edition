@@ -45,6 +45,7 @@ outside the data folders, pass paths as arguments, and run Python with `-I`.
 | `sss_saturn.py` | Silver Star Story (Saturn, Japan), both the 1996 disc (plain `TEXT/` folder; `--original` passes lsb's `sss` flag) and the 1997 MPEG disc (`TEXT.DAT` bundle, unpacked here). Runs lsb in 2-byte mode through `sssc.decode_texts`. `sjis` converts `AR_BOOK.TXT` (the voiced FMV script, Shift-JIS) to UTF-8. |
 | `lsb_unmapped_glyph.patch` | A second lsb patch: a font code missing from `font_table.txt` prints as `{XXXX}` instead of vanishing. |
 | `l2eb_saturn.py` | Lunar 2: Eternal Blue (Saturn, Japan): unpacks the root files `1` and `2` (numbered like MrConan1's `l2extract`) and reads every `ES` dialogue block with a port of his `l2_txt_decode`. Corrects his v1.0 font table: 奥 was missing at 288, which put 288-333 one glyph early, and seven single entries were wrong. |
+| `books.py` | Printed Lunar material (manuals, guides, the 1995 setting book): `fetch` downloads the items listed in the file (Internet Archive, one gamesdatabase.org PDF) into `lunar_scripts/books/<item>/download/` with a `SOURCE.txt`; `pages` renders PDF pages and archive images to PNG; `ocr` runs Tesseract (`jpn+eng` or `eng`, local tessdata in `lunar_scripts/bin/tessdata`) and writes `text.txt` with page markers, using a PDF's own text layer when it has one; `tidy` drops the spaces Tesseract puts between Japanese characters. Needs `uv run --with pymupdf --with pillow`. Findings: `docs/research-lunar-books.md`. |
 
 ## One-time setup on Windows (what was needed)
 
