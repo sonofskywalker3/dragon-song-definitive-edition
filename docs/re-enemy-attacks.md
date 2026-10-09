@@ -10,8 +10,8 @@ step to the last (frames in round state 7).
 
 ## Result in one paragraph
 
-151 distinct actions (34 normal species x their distinct actions, 20 bosses); 150 recorded, 1 not reachable.
-**All 150 run longer than 60 frames on Fast** (confirmed): the shortest is the Bealzebub lunge (66 frames,
+151 distinct actions (34 normal species x their distinct actions, 20 bosses); all 151 recorded (Dark Jian's
+copied Special needed a manual battle, section 6). **All 151 run longer than 60 frames on Fast** (confirmed): the shortest is the Bealzebub lunge (66 frames,
 script 0x02095334); the median is 166; the longest is Morus' steal (578). Fast only halves the
 *fixed* steps (type 2); enemy sprites still animate at 1x on Fast (sprite level 0, `lvl 0` in every Fast log),
 so the animation-driven steps (type 1) are untouched and dominate: Shaitan's 469 Fast frames are 409
