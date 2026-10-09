@@ -6,6 +6,12 @@
     python -I ips_text.py stats PATCH.ips              # bytes the table does not cover, in text
     python -I ips_text.py dump PATCH.ips OUT.txt       # Walking School script in the shared format
 
+The dump is in the game's message-id order (see gg.py for the engine): the word list that
+03 xx inserts, then every message as "msg F23D" (block 2, message 0x3D), then the enemy
+name list at 0x76B0, then "leftover" strings: text in the patch's script area that no
+message id reaches (drafts and duplicate lines left past the ends of blocks, and partial
+copies of the item descriptions).
+
 Built for the Aeon Genesis v1.00 patch (2009) of "Lunar - Sanposuru Gakuen (Japan)". The
 patch expands the ROM to 1 MB and writes the whole English script into the new half
 (0x80000-0xAE9F3), plus a new 8x8 font at 0x48200 and a name list at 0x76B0.
@@ -16,6 +22,7 @@ Text table (from the patch's own font: glyph tile = byte - 0x10, tile 0 at 0x482
     11 !  12 ?  14 note  15 :  16 .  17 ,  18 ..  1A open quote  1B close quote
     07 line break in item and menu windows   19 heart   1E '  1F sweat drop   20-29 0-9   2A-43 A-Z   44-5D a-z
     5E -  5F il  60 li  62 ll  63 close quote  6C ,  6D '
+    70-72 Ellie  73-75 Lena  76-78 Senia  80-82 Winn  83-85 Glen (proportional name tiles)
 Bytes outside the table print as {XX}. 07, 14, 17, 19, 1A, 1B, 1E and 5E have no tile in the
 patch (it keeps the Japanese ROM's glyph there), so they are read from context.
 """
@@ -33,6 +40,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import Message, looks_like_text, write_dump  # noqa: E402
+import gg  # noqa: E402
 
 LOG = logging.getLogger("ips_text")
 
@@ -48,7 +56,9 @@ TILES_PER_ROW = 8
 
 SCRIPT_START = 0x80000
 NAMES_START = 0x76B0
-SOURCES = ((NAMES_START, "names 0x76B0"), (SCRIPT_START, "script 0x80000"))
+SCRIPT_END = 0x100000
+NAMES_LABEL = "names 0x76B0"
+LEFTOVER_LABEL = "leftover 0x80000"
 
 END = 0x00
 NEWLINE = 0x01
@@ -84,6 +94,15 @@ TABLE: dict[int, str] = {
 TABLE.update({0x20 + i: str(i) for i in range(10)})
 TABLE.update({0x2A + i: chr(ord("A") + i) for i in range(26)})
 TABLE.update({0x44 + i: chr(ord("a") + i) for i in range(26)})
+NAME_TILES = (
+    (0x70, ("El", "li", "e")),
+    (0x73, ("L", "en", "a")),
+    (0x76, ("Se", "ni", "a")),
+    (0x80, ("W", "in", "n")),
+    (0x83, ("G", "le", "n")),
+)
+for _start, _parts in NAME_TILES:
+    TABLE.update({_start + i: p for i, p in enumerate(_parts)})
 
 MIN_LETTERS = 2
 UNKNOWN_PER_LETTER = 4
@@ -187,15 +206,56 @@ def is_text(text: str) -> bool:
     return looks_like_text(SYMBOL_RE.sub("", UNKNOWN_RE.sub("", text)))
 
 
+def patched_memory(regions: list[tuple[int, bytes]]) -> bytes:
+    """The patched ROM as far as the patch alone knows it (unpatched bytes read as 00)."""
+    mem = bytearray(SCRIPT_END)
+    for o, b in regions:
+        mem[o : o + len(b)] = b
+    return bytes(mem)
+
+
 def collect(regions: list[tuple[int, bytes]]) -> list[Message]:
+    mem = patched_memory(regions)
+    raws = gg.messages(mem)
+    n_words = max(gg.max_name_index(raws) + 1, gg.WORD_COUNT)
+    words = gg.en_names(mem, n_words)
     msgs = []
-    for start, label in SOURCES:
-        for s in split_strings(region_at(regions, start), start):
-            if is_text(s.text):
-                msgs.append(
-                    Message(label, s.offset, s.text.strip("\n"), list(s.portraits))
-                )
+    covered: list[tuple[int, int]] = []
+    for i, (off, w) in enumerate(gg.split(mem, gg.EN_NAMES, n_words)):
+        msgs.append(Message(f"word 03:{i:02X}", off, gg.en_render(w, []).text))
+        covered.append((off, off + len(w)))
+    for r in raws:
+        rr = gg.en_render(r.data, words)
+        msgs.append(
+            Message(gg.msg_label(r.msg_id), r.offset, rr.text, list(rr.portraits))
+        )
+        covered.append((r.offset, r.offset + len(r.data)))
+    for s in split_strings(region_at(regions, NAMES_START), NAMES_START):
+        if is_text(s.text):
+            msgs.append(Message(NAMES_LABEL, s.offset, s.text.strip("\n")))
+    spans = sorted(covered)
+    leftovers = 0
+    for s in split_strings(region_at(regions, SCRIPT_START), SCRIPT_START):
+        if not is_text(s.text) or inside(spans, s.offset):
+            continue
+        msgs.append(
+            Message(LEFTOVER_LABEL, s.offset, s.text.strip("\n"), list(s.portraits))
+        )
+        leftovers += 1
+    LOG.info("%d messages by id, %d leftover strings", len(raws), leftovers)
     return msgs
+
+
+def inside(spans: list[tuple[int, int]], offset: int) -> bool:
+    """True if offset falls in one of the sorted [start, end] spans."""
+    lo, hi = 0, len(spans)
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if spans[mid][0] <= offset:
+            lo = mid + 1
+        else:
+            hi = mid
+    return lo > 0 and offset <= spans[lo - 1][1]
 
 
 def cmd_records(recs: list[Record]) -> None:
@@ -266,7 +326,7 @@ def main() -> int:
         msgs = collect(regions)
         write_dump(
             Path(a.rest[0]),
-            "Lunar: Walking School (Game Gear), Aeon Genesis v1.00 English, from the IPS patch alone",
+            "Lunar: Walking School (Game Gear), Aeon Genesis v1.00 English, from the IPS patch alone, by message id",
             "ips_text.py",
             msgs,
         )
