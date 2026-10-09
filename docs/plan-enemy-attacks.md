@@ -20,6 +20,12 @@ fails loudly in the patch check). The recommended set is `enemy-sprite-speed ene
 enemy-quick-steps`: **120 of 150 actions under 60 frames on Fast, median 46** (from 166), longest 114 (from
 578).
 
+**Revised after the frame-by-frame review (docs/review-enemy-attacks.md, 2026-10-09):** quick-steps now keeps
+every wind-up whole (capped, it cut the strike: Deuce and Gideon showed no attack) and uses short-moves' glide
+cut (capped, the glide enemies popped in and out). With sprite + spell + quick-steps the fixed build measures
+**99 of 150 under 60, median 55, longest 278** (the glides); the tables below are the proposal as first built.
+Quick-steps now needs enemy-sprite-speed to be short.
+
 ## Results in one table
 
 Fast script frames (round state 7, first step to last), measured by a full Fast sweep of each build:
