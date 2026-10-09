@@ -1,6 +1,8 @@
 # curse-no-healing control: the same as curse_field_spell.plan with no curse flag (an uncursed save): Jian heals.
 # herself (heals, 4 MP). Jian and Lucia at 5 HP; story flag 0x33 poked on (word 1 of the flags at 0x02204620).
 include boot_from_save
+# Jian max HP 999 so the heal amount shows uncapped
+pin u32 0x020B466C 999
 poke u32 0x020B4668 5
 poke u32 0x020B46C4 5
 include mp_open_special

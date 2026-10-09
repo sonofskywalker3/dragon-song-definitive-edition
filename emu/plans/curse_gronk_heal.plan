@@ -1,0 +1,259 @@
+# Viability study, Gronk (event battle 5) with healing: curse_party_l10 party from full HP, forced from the
+# Cathedral hall. Gronk is alone, so Fight takes one A; Lucia: Right (Special), A, A (Healing Water), A (Jian).
+# Every round Jian and Gabryel Fight and Lucia casts Healing Water on Jian (healing magic on
+# cursed Jian works at CURSE_HEAL_PERCENT; run on ROMs built at 50 and 25). Battle records at 0x02291C20
+# (+0x14 HP, 0x6C each; Gronk is record 9, +0x0C level). Main state 0x020B0010: 7 command input, 8 round.
+include boot_from_save
+wait 30
+include curse_party_l10
+poke u32 0x02204624 0x80000
+pin u16 0x020B77EC 141
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+poke u16 0x020B7838 1
+poke u16 0x020B783A 5
+poke u32 0x020B0010 0x73
+wait 240
+peek u32 0x02291FF8 gronk_level_index
+peek u32 0x02292000 gronk_hp
+watch u32 0x02291C34 b_jian_hp
+watch u32 0x02291CA0 b_lucia_hp
+watch u32 0x02291D0C b_gabryel_hp
+watch u32 0x02291CA4 b_lucia_mp
+watch u32 0x02292000 b_gronk_hp
+watch u16 0x020B85C2 round
+shot g_start
+waituntil u32 0x020B0010 7 3000
+wait 120
+# the first A picks Manual
+press A 4
+wait 60
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r1_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r2_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r3_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r4_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r5_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r6_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r7_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r8_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r9_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r10_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r11_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r12_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r13_input
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 120
+press A 4
+wait 40
+press Right 4
+wait 30
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 50
+press A 4
+wait 40
+shot g_r14_input
+waituntil u32 0x020B0010 8 600
+wait 600
+shot g_after

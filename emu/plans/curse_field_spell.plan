@@ -1,6 +1,8 @@
-# curse-no-healing, field menu: Lucia casts Healing Water on cursed Jian (refused, no MP spent), then on
-# herself (heals, 4 MP). Jian and Lucia at 5 HP; story flag 0x33 poked on (word 1 of the flags at 0x02204620).
+# curse-no-healing, field menu: Lucia casts Healing Water on cursed Jian (heals him at CURSE_HEAL_PERCENT, spends
+# 4 MP), then on herself (full amount). Jian 5 of 999 HP, Lucia 5 HP; story flag 0x33 poked on (word 1 at 0x02204620).
 include boot_from_save
+# Jian max HP 999 so the heal amount shows uncapped
+pin u32 0x020B466C 999
 poke u32 0x02204624 0x80000
 poke u32 0x020B4668 5
 poke u32 0x020B46C4 5
