@@ -207,7 +207,9 @@ Example, generic lunge 0x02095334 (Bealzebub): Normal 8, 32, 19, 8, 32 = 99; Fas
   table, so only sprite and spell speed apply (0:9a 1:3f 2:3f 3:6a 4:10a 5:5f 6:5a 7:15f 8:11f 9:1a 10:5f 11:7a
   12:10a 13:4f 14:4f 15:6a). The fixed steps left (1, 2, 5, 7, 8, 10, 13, 14: 6, 6, 10, 30, 15, 10, 8, 8
   frames on Normal; 3+3+5+15+11+5+4+4 = 50 on Fast) are what a cut entry would have to shorten, mainly step 7
-  (30) and step 8 (15). Side by side: build/enemy_anims_review/151_Dark_Jian_a1_skill13.gif.
+  (30) and step 8 (15). Since 2026-10-09 it has a quick-steps entry (docs/plan-enemy-attacks.md, lever 3):
+  104 -> 70 Fast frames (0:4f 1:3f 2:3f 3:4f 4:5f 5:6a 6:8f 7:7f 8:2a 9:5f 10:7a 11:4f 12:4f 13:4f 14:4f, cut
+  step numbers). Side by side (shipping Fast against the cut): build/enemy_anims_review/151_Dark_Jian_a1_skill13.gif.
 - **0% actions** (cumulative chance does not grow, never picked by the roll): Zethos 1 and 3, Red Dragon 2,
   White Dragon 2, Black Dragon 1, and Blue Dragon 2 happen through the round rules of 1.2 (real in play,
   recorded). Blue Dragon action 3 (skill 1) and Comet's second slot (same as its first) are never chosen by

@@ -97,8 +97,8 @@ skill 24 ending at x 70, not 68, its idle sway, as before).
   4..11) by design, but I did not see a party spell on the patched ROM.
 - **Steal and break messages.** Every recorded steal and break missed except the two breaks (Orcus, Phantom),
   whose "Bandana broke!" hold is unchanged from vanilla.
-- **Dark Jian action 1** (copied spell, script 0x02095EC0): unreachable by forcing (re-enemy-attacks.md 6) and
-  not in the cut table, so it runs uncut and unmeasured. Known gap.
+- **Dark Jian action 1** (copied spell, script 0x02095EC0): no longer a gap. Recorded by a Manual battle where
+  Jian casts Inferno (re-enemy-attacks.md 6) and cut since 2026-10-09 (row below).
 - **Faster.** Quick-steps also runs on Faster (global sprite level 2 there); not recorded.
 - **Hardware.** Emulator only; nothing was played on the 3DS.
 
@@ -265,6 +265,7 @@ keep their whole pose), FIXABLE 0, JANKY 0.
 | 150_Blue_Dragon_a2_skill2 | 0x02094f44 | 212 | 56 | FIXABLE | 92 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: mouth sparkle lost (before #50-56). Fixed: whole pose for row 150 (47 at 3x): mouth sparkle #20-27, burst #26 (skill 17; skill 2 #37-41), then the spell |
 | 150_Blue_Dragon_a3_skill1 | 0x02094e84 | 180 | 46 | FIXABLE | 82 | SMOOTH | quick-steps CAST_POSE 24 (12 Fast) ends the pose before its key frame: mouth sparkle lost (before #50-56). Fixed: whole pose for row 150 (47 at 3x): mouth sparkle #20-27, burst #26 (skill 17; skill 2 #37-41), then the spell |
 | 151_Dark_Jian_a0_attack | 0x02095c70 | 203 | 75 | SMOOTH | 75 | SMOOTH | strike lives in the hit step (kept whole) |
+| 151_Dark_Jian_a1_skill13 | 0x02095ec0 | 218 | 104 | SMOOTH | 70 | SMOOTH | copied Special, recorded later (sprite + spell speed only: 104, build/dj/rec_base; cut entry: 70, build/dj/rec). No hit step: the spell starts with step 8 (0x800000) and its effect scripts hit; round state 7 waits for them after the last step (func_02031238). Cut: crouch 0 and idles 4, 12 capped at 8, landing 3 dropped, pose hold 7 30 -> 16, spell step 8 15 -> 8, flip wind-up 5, 6 and recovery 9..11 whole. Hop in #31-33, flip pose #39-47 (before #47-58), spell spikes #48-56 (before #59-68), Jian's red flinch and the number #56-61 (before #67-72), hop home #59-62 as the flinch ends, home at #62 (0x6E, 0x93, same as the start) |
 | 151_Dark_Jian_a2_skill1 | 0x02094e84 | 80 | 46 | SMOOTH | 46 | SMOOTH | spell: hit sync, effect end, return, and camera as before |
 | 152_Gideon_a0_attack | 0x02095780 | 247 | 41 | JANKY as built | 59 | SMOOTH | quick-steps wind-up cap: no visible attack on a boss; Jian flinches at v1 #15 f30 while the boss stands still (rec_sprite fire punch / sword slash #34-39 f68-78; two-hit: second punch #55-57 f110-114 also lost). Fixed: strike back (Deuce two-hit fixed: punches #21-24 and #39-42, flinches #25 and #43; Gideon: slash #18-23, flinch #24) |
 | 152_Gideon_a1_attack_x2001 | 0x02095780 | 247 | 41 | JANKY as built | 59 | SMOOTH | quick-steps wind-up cap: no visible attack on a boss; Jian flinches at v1 #15 f30 while the boss stands still (rec_sprite fire punch / sword slash #34-39 f68-78; two-hit: second punch #55-57 f110-114 also lost). Fixed: strike back (Deuce two-hit fixed: punches #21-24 and #39-42, flinches #25 and #43; Gideon: slash #18-23, flinch #24) |

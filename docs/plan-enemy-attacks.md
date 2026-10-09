@@ -89,7 +89,8 @@ uv run python -m dsde.enemy_cuts_report --steps build/enemy_anims_cut
   the all-levers sweep (frames, anim.gif, timing.json per action, summary.json) in build/enemy_anims_cut,
   same folder names as build/enemy_anims. Not committed (build/).
 - Each per-lever ROM is in build/enemy_cut/<name>.nds. A full Fast sweep takes 12 to 20 minutes with 10
-  workers (Dark Jian action 1, unreachable, always runs into the 600 s plan timeout).
+  workers (Dark Jian action 1 ran into the 600 s plan timeout until the plan learned to play the Manual
+  battle that makes him copy Jian's Special, docs/re-enemy-attacks.md 6).
 
 ## Lever 2: enemy-sprite-speed (src/dsde/feat_enemy_speed.py)
 
@@ -209,6 +210,7 @@ animation between a hop in and the wind-up, and the crouch before the hop home.
 | 0x02095294 (Treant, Evil Earth skills) | 2 | 0c(24), three effect pauses 30 -> 16, 4 |
 | 0x02094F44 (Caucus, Blue Dragon skill 2) | 2 | 0c(24), 1 (60 -> 16), 2 |
 | one-action scripts | 10 | 0x02095DF0, 0x02095C70, 0x02095D30, 0x02095820, 0x020951F4, 0x020951B4, 0x02095660, 0x020950C4, 0x02094E64, 0x02094FA4: pose / wind-up capped, fixed pauses 16 |
+| 0x02095EC0 (Dark Jian's copied Special, skill 13) | 1 | 0c(8), 1, 2, landing 3 dropped, 4c(8), 5, 6, 7 (pose hold 30 -> 16), 8 (spell start 0x800000, 15 -> 8), 9, 10, 11, 12c(8), 13, 14, 15 land(8) |
 
 The last landing step keeps the moving bit 0x10 (`land()`): the mover only advances while the current step
 has it, and in Sasquatch's interrupted turn (94 interrupt frames) the hop home started a frame late and froze
@@ -270,6 +272,7 @@ timing.json):
 |  149_Black_Dragon_a1_skill24_x2000  |  266  |  90  |
 |  150_Blue_Dragon_a0_skill17  |  202  |  64  |
 |  151_Dark_Jian_a0_attack  |  203  |  75  |
+|  151_Dark_Jian_a1_skill13  |  218  |  70  |
 |  153_Gideon_2_a0_skill20_x8000  |  158  |  70  |
 |  153_Gideon_2_a1_skill18  |  224  |  82  |
 |  154_Gideon_3_a1_skill30  |  226  |  72  |
@@ -436,6 +439,7 @@ short-moves), then all levers (sprite + spell + quick-steps); "< 60" and the ste
 | 150_Blue_Dragon_a2_skill2 | 0x02094f44 | 212 | 148 | 178 | 212 | 94 | 114 | 56 | yes | 0:12f 1:10f 2:34a |
 | 150_Blue_Dragon_a3_skill1 | 0x02094e84 | 180 | 116 | 146 | 180 | 80 | 82 | 46 | yes | 0:12f 1:34a |
 | 151_Dark_Jian_a0_attack | 0x02095c70 | 203 | 99 | 203 | 203 | 113 | 99 | 75 | no | 0:4f 1:3f 2:3f 3:8f 4:13a 5:22a 6:10a 7:4f 8:4f 9:4f |
+| 151_Dark_Jian_a1_skill13 | 0x02095ec0 | 218 | | | | | | 70 (104 before its cut entry) | no | 0:4f 1:3f 2:3f 3:4f 4:5f 5:6a 6:8f 7:7f 8:2a 9:5f 10:7a 11:4f 12:4f 13:4f 14:4f |
 | 151_Dark_Jian_a2_skill1 | 0x02094e84 | 80 | 72 | 53 | 80 | 80 | 38 | 46 | yes | 0:12f 1:34a |
 | 152_Gideon_a0_attack | 0x02095780 | 247 | 123 | 247 | 247 | 51 | 123 | 41 | yes | 0:4f 1:3f 2:3f 3:10f 4:9a 5:4f 6:4f 7:4f |
 | 152_Gideon_a1_attack_x2001 | 0x02095780 | 247 | 123 | 247 | 247 | 51 | 123 | 41 | yes | 0:4f 1:3f 2:3f 3:10f 4:9a 5:4f 6:4f 7:4f |
