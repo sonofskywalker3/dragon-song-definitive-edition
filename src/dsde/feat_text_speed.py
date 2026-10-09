@@ -14,6 +14,7 @@ Here, in the message op only (shops and the hub menus call MSG_UPDATE themselves
 The opening's asides check (feat_opening_asides.py) runs first, as before.
 """
 
+from dsde.feat_opening_asides import ASIDE_AUTOCLOSE
 from dsde.patching import AsmPatch, CaveCode, Feature
 from dsde.targeting_consts import PAD
 
@@ -71,6 +72,8 @@ ts_pad:
 TEXT_SPEED = Feature(
     "text-speed",
     (
+        # The asides' auto-close cave lives here so both editions carry it; it is a no-op with no aside up.
+        *ASIDE_AUTOCLOSE,
         CaveCode(
             "cave_text_speed", TEXT_SPEED_ASM, "held A/B types fast, held B turns pages"
         ),

@@ -25,7 +25,6 @@ from dataclasses import dataclass
 
 from dsde.archive import decompress, read_archive
 from dsde.feat_text import ARCHIVE, VANILLA_SCRIPTS, encode_text, text_patches
-from dsde.feat_opening_asides import ASIDE_AUTOCLOSE
 from dsde.patching import DataPatch, Feature
 
 SCRIPT = 1
@@ -477,5 +476,7 @@ def opening_text_patches() -> tuple[DataPatch, ...]:
 
 # Engine edition: the walk-out, the flags, and the asides' auto-close (text-speed calls it; with no aside
 # in the walk it never fires). The Story edition adds opening-text, which must come after opening-run.
-OPENING = Feature("opening-run", (*opening_patches(), *ASIDE_AUTOCLOSE))
+OPENING = Feature(
+    "opening-run", tuple(opening_patches())
+)  # needs text-speed (the auto-close cave)
 OPENING_TEXT = Feature("opening-text", opening_text_patches())
