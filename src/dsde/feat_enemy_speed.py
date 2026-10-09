@@ -26,7 +26,9 @@ EFFECT_LEVEL_LOAD = 0x0207D1EC  # func_0207d1b8: ldr r2, [r2] (speed level)
 EFFECT_LEVEL_LOAD_WORD = 0xE5922000
 EFFECT_SPRITE_ADD = 0x02031FE4  # func_02031e08: add r2, r2, r4 (1x sprite step)
 EFFECT_SPRITE_ADD_WORD = 0xE0822004
-EFFECT_COUNT_ADD = 0x020314A0  # func_02031408: ldrsh ip, [r4, #0xc] (effect step frames)
+EFFECT_COUNT_ADD = (
+    0x020314A0  # func_02031408: ldrsh ip, [r4, #0xc] (effect step frames)
+)
 EFFECT_COUNT_ADD_WORD = 0xE1D4C0FC
 FIRST_EFFECT = (
     0xE  # effect battlers 14..21: one per target (work +0x78 script, +0x98 busy)
