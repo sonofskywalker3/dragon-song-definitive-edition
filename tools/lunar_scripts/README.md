@@ -34,6 +34,7 @@ outside the data folders, pass paths as arguments, and run Python with `-I`.
 | `lsb_file_offset.patch` | A two-line patch to lsb's `write_script.c` that adds `(file-offset X)` to each run-commands/options node, so the dump can cite offsets. |
 | `l2ebc.py` | Lunar 2: Eternal Blue Complete (PS1): unpacks `DATA.IDX/PAK/UPD` (a port of wdtools `l2eb_data`) and scans `SCN/` with Supper's string reader from `l2eb_txt.cpp`. That reader is commented out upstream, so it is ported here. |
 | `harmony.py` | Silver Star Harmony (PSP): unpacks `ScriptPack.dat` (FPAC of gzip members) and reads the UTF-16 dialogue in each `LTCV` script file. Written from scratch, because no tool exists. |
+| `ips_text.py` | Lunar: Walking School (Game Gear): reads an IPS patch (records, merged regions, the font it draws) and dumps the Aeon Genesis English script from the patch alone, no ROM needed. Custom one-byte table derived from the patch's font (glyph = byte - 0x10); `09 xx` is a portrait. |
 | `gba_legend.py` | Lunar Legend (GBA): **partial**. It dumps only the uncompressed strings (item descriptions, names, and menus). The dialogue is compressed with a scheme that has not been found. |
 
 ## One-time setup on Windows (what was needed)
@@ -72,6 +73,7 @@ python -I $T/discfs.py extract "<L2EBC disc 1>.bin" $L/l2ebc_ps1/disc1 "DATA.*"
 python -I $T/l2ebc.py $L/l2ebc_ps1/disc1/DATA.IDX $L/l2ebc_ps1/disc1/DATA.PAK $L/l2ebc_ps1/disc1/DATA.UPD $L/l2ebc_ps1/work $L/l2ebc_ps1/script_en.txt
 python -I $T/discfs.py extract "<Harmony>.cso" $L/harmony_psp/files "*ScriptPack.dat"
 python -I $T/harmony.py $L/harmony_psp/files/PSP_GAME/USRDIR/LUNAR/DATA/PACK/ScriptPack.dat $L/harmony_psp/work $L/harmony_psp/script_en.txt
+python -I $T/ips_text.py dump "$L/roms/Lunar - Sanposuru Gakuen (Japan) [T-En by Aeon Genesis v1.00].ips" $L/walking_school_gg/script_en.txt
 python -I $T/gba_legend.py "Lunar Legend (USA).gba" $L/legend_gba/strings_en.txt
 ```
 
@@ -87,4 +89,5 @@ enough.
 | Silver Star Story (PS1 JP / Saturn) | `sssc.py ... --ienc 0` (lsb's 2-byte mode, using its `font_table.txt`). lsb's 2-byte path is proven on Saturn; PS1 JP should be the same family (studio-lucia/lunardata covers both). | Untested. |
 | Lunar 2 (PS1 JP) | The text encoding differs (2-byte). `l2ebc.py`'s reader is English-only. Use studio-lucia/eternaldata notes and MrConan1/lunar2_eb_sat_tools (Saturn) as the reference. | Needs work. |
 | Harmony (PSP JP) | `harmony.py` should work as is, because the text is UTF-16 (kana and kanji are just more code points). | Untested. |
+| Walking School (GG JP) | `ips_text.py` reads only the English patch. The Japanese ROM's text is untouched by it; ripping it needs the ROM, its kana table, and its pointer tables. | Needs the ROM. |
 | Lunar Legend (GBA JP) | Same block as the English: the dialogue compression is unknown. | Blocked. |
