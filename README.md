@@ -5,7 +5,8 @@ items, and silver, you pick your own targets, battles are faster, spells cost le
 is gone.
 
 **[Download the latest patch](../../releases/latest)** (a `.bps` file; you need your own USA ROM, see
-[How to play it](#how-to-play-it)).
+[How to play it](#how-to-play-it)). It comes in two editions: **Engine** keeps the original story and
+dialogue word for word, and **Story** adds the rewrite (see [Which patch to pick](#which-patch-to-pick)).
 
 <p align="center">
   <img src="docs/screenshots/battle-speeds.gif" alt="The same battle side by side on Normal, Fast, and Faster" width="776"><br>
@@ -88,11 +89,27 @@ how each one was built and tested is in [docs/status.md](docs/status.md).
 
 - Delivery jobs grow with your journey, with a better-paying "future" job.
 
-**Story**
+**Story** (Story edition only)
 
 - Under way: better character development, smoothing off the rough edges, and removing the retcons and
   contradictions with Lunar 1 and 2. So far: a new opening narration, retranslated from the Japanese release,
   and a new wake-up scene.
+
+## Which patch to pick
+
+Each release has two patches. Both have every change to the systems, battles, menus, and pacing above; they
+differ only in what the characters say.
+
+- **Engine** (`Dragon Song Definitive Edition vX.Y.Z (Engine).bps`): the original story and dialogue, word for
+  word. The only text changes are name tags fixed to match the job menu, and the labels of changed controls
+  and menus. Jian still wakes up and introduces himself as in the original, then walks out of the inn, and you
+  no longer have to find Jack before Lucia waits at Fountain Square (Cherenkov and Jack can still be talked to).
+  Pick this if you liked the original's story or want to judge the gameplay fixes on their own.
+- **Story** (`... (Story).bps`): the Engine edition plus the rewrite: a new opening narration retranslated from
+  the Japanese, a new wake-up scene, and, as it lands, better character work and fixes to the contradictions
+  with Lunar 1 and 2.
+
+The title screen seal says which edition you are playing. Saves work across both editions and the original.
 
 ## How to play it
 
@@ -100,7 +117,7 @@ You need your own copy of Lunar: Dragon Song (USA). Releases contain a patch, ne
 
 1. Check your ROM: SHA-1 `e5ac472b2a5de04215e54ab098c94247a88e1c08`. Other dumps or other regions will not
    work.
-2. Download the `.bps` patch from the [releases](../../releases) page.
+2. Download the Engine or Story `.bps` patch from the [releases](../../releases) page.
 3. Apply it with any BPS patcher, for example [Floating IPS](https://www.smwcentral.net/?p=section&a=details&id=11474)
    or the [ROM Patcher JS](https://www.marcrobledo.com/RomPatcher.js/) website, to get the patched `.nds`.
 4. Play it in a DS emulator, or on a DSi or 3DS with TWiLight Menu++ (tested on a 3DS).
@@ -133,17 +150,30 @@ You need your own copy of the game. This repo never contains the ROM or anything
    tools/dsd.exe rom extract -r "rom/Lunar - Dragon Song (USA).nds" -o extract
    ```
 
-4. Build the patched ROM (written to `build/dsde.nds`):
+4. Build the patched ROM: the Engine edition is written to `build/dsde.nds`, the Story edition to
+   `build/dsde-story.nds`:
 
    ```
    uv run python -m dsde.patches
+   uv run python -m dsde.patches --edition story
    ```
 
-5. Make a release patch from it (checks that the patch rebuilds the same ROM):
+5. Make a release patch. One command builds both editions and writes
+   `build/release/Dragon Song Definitive Edition vX.Y.Z (Engine).bps` and `(Story).bps`, checks that each
+   patch rebuilds its ROM, and logs the SHA-1s for the release notes:
 
    ```
-   uv run python -m dsde.bps create "rom/Lunar - Dragon Song (USA).nds" build/dsde.nds build/dsde.bps
+   uv run python -m dsde.bps release "rom/Lunar - Dragon Song (USA).nds" 0.1.6
    ```
+
+   To check that the Engine edition changes no dialogue (it lists every changed script message and fails
+   unless each is a name-tag fix):
+
+   ```
+   uv run python -m dsde.edition_check build/release/dsde-engine_extract/files/script.dat --engine
+   ```
+
+   A patch for a single ROM: `uv run python -m dsde.bps create <original.nds> <patched.nds> <out.bps>`.
 
 An unmodified rebuild (`tools/dsd.exe rom build -c extract/config.yaml -o build/rebuild.nds`) matches the
 original byte for byte except the secure area checksum at header offset 0x6C and the header CRC at 0x15E,

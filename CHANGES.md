@@ -137,6 +137,9 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Story and text
 
+Story edition only, except the recipient names (both editions). The Engine edition plays the original
+wake-up and Jian's self-introduction, then he walks out of the inn; Lucia waits at Fountain Square there too.
+
 - **A new opening narration**, retranslated from the Japanese release and checked against Lunar 1 and 2: the
   Dragonmaster is Althena's champion (not her servant), Althena is the source of the world's magic, and the
   Beastmen and Humans are set up as the Japanese has them, with the Beastmen in power and a peace that only holds
@@ -157,7 +160,15 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Version history
 
+**Editions.** From v0.1.6 each release has two patches (README, "Which patch to pick"). **Engine** has every
+gameplay, interface, and pacing change and keeps the original story and dialogue word for word. **Story** is the
+Engine edition plus the rewrite: the new narration, the new wake-up, and the story work to come. Earlier
+releases were a single patch, the same as today's Story edition.
+
 ### v0.1.6 (unreleased)
+
+- Two editions, Engine and Story. In the Engine edition Jian wakes up and introduces himself as in the
+  original, then walks out of the inn; the title seal says ENGINE or STORY.
 
 - Dark Jian's copied Special is quicker on Fast too (218 frames down to 70); the spikes, the flinch, and the
   number are unchanged.
