@@ -1,0 +1,31 @@
+# curse-no-healing control (no curse flag), field menu: Lucia (level 10, curse_party_l10) casts Tender Rain on everyone with all three
+# at 20 HP and the curse on: Lucia and Gabryel heal the full amount, Jian the reduced one.
+include boot_from_save
+wait 30
+include curse_party_l10
+# Jian max HP 999 so his heal shows uncapped
+pin u32 0x020B466C 999
+poke u32 0x020B4668 20
+poke u32 0x020B46C4 20
+poke u32 0x020B4720 20
+wait 10
+press X 3
+wait 120
+press Down 8
+wait 30
+press A 8
+wait 60
+shot ft_list0
+press Down 8
+wait 30
+shot ft_list1
+press A 8
+wait 60
+shot ft_target
+press A 8
+wait 150
+shot ft_after
+peek u32 0x020B4668 jian_hp_after
+peek u32 0x020B46C4 lucia_hp_after
+peek u32 0x020B4720 gabryel_hp_after
+peek u32 0x020B46CC lucia_mp_after
