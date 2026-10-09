@@ -1,0 +1,8 @@
+# Research (docs/re-party-chat.md section 9): where the Y context's copy of script 018 sits in RAM
+# (vanilla, start save, Jian's room). chat_choice_vanilla.plan pokes a yes/no op there.
+include boot_from_save
+wait 60
+press Y 3
+wait 2
+peek u32 0x020B4644 hint_ctx
+find 4f000400000000000f00000008000000 leaf_51c8

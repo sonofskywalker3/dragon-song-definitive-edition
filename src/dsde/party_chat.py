@@ -42,6 +42,10 @@ OP_IF_ALL = 0x13
 OP_IF_ANY = 0x14
 OP_IF_NONE = 0x15
 OP_PORTRAIT = 0x4F  # u16 face, u32 slot (0 center, 1 left, 2 right)
+OP_YES_NO = 0x31  # u16 0, u32 yes target, u32 no target (A or YES = yes; B or NO = no)
+OP_SET_FLAG = 0x19  # s16 flag
+OP_CLEAR_FLAG = 0x1A  # s16 flag
+ASK_LINES = 4  # the YES/NO buttons cover both ends of a box's 5th line
 FLAG_OPS = (OP_IF_ALL, OP_IF_ANY, OP_IF_NONE)
 TREE_START = 0x5124  # where the vanilla 018 code starts (its first op jumps here)
 
@@ -108,8 +112,26 @@ class Say:
 
 
 @dataclass(frozen=True)
+class Answer:
+    """One side of a Choice: the story flag it sets (it clears the other side's) and what is said."""
+
+    flag: int
+    talk: tuple[Say, ...]
+
+
+@dataclass(frozen=True)
+class Choice:
+    """A YES/NO question after the talk (vanilla op 0x31; the buttons only say YES and NO, so ask
+    names the choice). A or YES takes yes, B or NO takes no. Both sides go on to the chat's hint."""
+
+    ask: Say
+    yes: Answer
+    no: Answer
+
+
+@dataclass(frozen=True)
 class Chat:
-    """A new party chat: where, when, the talk, and the hint (shown last)."""
+    """A new party chat: where, when, the talk, an optional choice, and the hint (shown last)."""
 
     where: Place | None
     when: Flags
@@ -117,6 +139,7 @@ class Chat:
     hint: Say | None
     chain: str = ""
     note: str = ""
+    choice: Choice | None = None
 
 
 @dataclass(frozen=True)
@@ -181,6 +204,11 @@ def encode_line_text(text: str) -> bytes:
         if i < len(lines) - 1 and shown_width(line) < LINE_WIDTH:
             out += encode_text(NEWLINE)
     return out
+
+
+def check_ask(say: Say) -> None:
+    if len(say.text.split(NEWLINE)) > ASK_LINES:
+        raise ValueError(f"a question has up to {ASK_LINES} lines: {say.text!r}")
 
 
 def say_bytes(say: Say) -> bytes:

@@ -4,7 +4,7 @@ The field Y button (or a tap on the two figures of the bottom-screen party chat 
 out loud" hint: USA script 018. Jeff wants it to become party chat (docs/playtest-feedback.md item 9 and
 section 21): lines that know where you are and what has happened, two-way talks with a hint in each, and
 an icon that bounces only when there is something new. This file is the research (sections 1 to 4) and
-the engine built from it, the `party-chat` feature (sections 5 to 8).
+the engine built from it, the `party-chat` feature (sections 5 to 8), and choices (section 9).
 
 Static analysis: USA ARM9 (build/arm9_decomp_annot.c), script 018 via `dsde.script` and
 `dsde.party_chat`. Emulator: vanilla runs `emu/plans/chat_vanilla_y.plan` (Jian's room from
@@ -213,7 +213,8 @@ two paths (same leaf twice). The DSDE note marks lines the `party-chat` seed res
   therefore play one per press, then the first repeats.
 - **Read flags** are story flags (saved with the game: the flag words are at 0x850 in a save file), taken
   from ranges no script op tests or sets and engine code does not read: 0x84..0xC8, 0xDE..0x12C,
-  0x14B..0x18D, 0x221..0x242, 0x244..0x25F (277 in all). Vanilla lines get them by leaf offset (stable),
+  0x14B..0x18D, 0x221..0x242 (249). The rest of that pool, 0x244..0x25F (28), is kept for choices
+  (section 9). Vanilla lines get them by leaf offset (stable),
   new chats in table order. The build fails if a script ever uses one. 0x1E0..0x220 is avoided (the engine
   sets 0x1E0 + n per place visited).
 - **Start hook** (`cave_chat_start`, at 0x02020188 and 0x0205F368 instead of `bl func_02041988`): start the
@@ -267,8 +268,8 @@ Chat(
   "elsewhere" lines are placeholders for Jeff to rewrite).
 - Read marks: appending keeps the marks in existing saves; inserting a chat in the middle shifts the marks
   of the chats after it (they bounce again once; harmless).
-- Limits: 277 read flags, 99 taken by the vanilla lines, so 178 new chats (3 used now: the example and
-  the two placeholders). Each table row costs 12 bytes plus 2 per flag (plus 2 per flag kind) of ITCM;
+- Limits: 249 read flags, 99 taken by the vanilla lines, so 150 new chats (4 used now: the two
+  examples and the two placeholders). Choices have their own 28 flags (section 9). Each table row costs 12 bytes plus 2 per flag (plus 2 per flag kind) of ITCM;
   about 14 KB is left. One row per map range of a place.
 
 ## 7. Confirmed and uncertain
@@ -292,6 +293,7 @@ Uncertain:
   Status, Job (Assigned Job), Items, and System were tried. The hook itself works (section 8, forced).
 - Which expression each face 0 to 3 is (pick by eye); 018 never dims the speaker who is not talking.
 - Ops 0x32, 0x33, and 0x36 in some long vanilla talks were not decoded (vanilla code runs them as before).
+- Choices: see section 9.
 
 ## 8. Test evidence (party-chat build, build/chat/dsde.nds)
 
@@ -332,3 +334,98 @@ Harness note: BizHawk names the battery save of a ROM it knows (any unmodified v
 game database name, "Lunar - Dragon Song (USA).SaveRAM", not the file name, so `--save` on a vanilla
 copy loads whatever that file holds. For vanilla runs use a copy with one padding byte changed (the
 last byte of the 32 MB image): build/chat/vroom.nds, vwoods.nds.
+
+## 9. Choices: a YES/NO question in a chat (research and build 2026-10-09)
+
+### The op (confirmed in code and in vanilla)
+
+The script language has one prompt op, **0x31** (handler func_0203F370, yields; `dsde.script` names it
+`yes_no`): `u16 0x31, u16 0, u32 yes, u32 no`, 12 bytes. Both targets are offsets in the script file
+(the handler sets pc = file base + target), so the answer is not stored anywhere: the script just
+continues at one target or the other. No context variable, flag, or 0x0D compare is involved.
+
+- The question is the message just before it (op 0x0F, ending FE FF as usual). The box stays on screen
+  with its text; after the player presses A on it, two buttons appear on the bottom screen over the
+  box's lower corners: **NO** bottom left, **YES** bottom right, each with a small Jian icon.
+- Input: **A = YES**, **B = NO**, or touch either button (handler state 2: keys & 0xC03 == A gives
+  index 0, == B gives index 2; a touched button gives its own index; index < 2 is yes). The D-pad does
+  nothing: there is no cursor and nothing is highlighted (Right, Left, and Down tried; the prompt
+  stayed). So B is not a separate cancel: it is NO.
+- Exactly two options, and the labels are graphics (YES/NO, loaded by func_02041c88(0x020B8B64, sub OAM,
+  0, 0x65, 100, 10) into HUD button objects 0..3 at 0x020B7F28), shared by every yes/no in the game. No
+  option text, no third option.
+- The buttons cover both ends of a box's 5th text line, so a question has up to 4 lines.
+- Vanilla uses it 5 times, all NPC talks: Leoncavallo's honey (004 0x6C58), the Vile Tribe fortune
+  teller (010 0x3894), Tovia twice (012 0x1B10, 0x1BB8), and Kirlis (025 0x1604). The inn, save, and Gad's
+  Express prompts are not op 0x31 (no other script uses it); they are engine menus (not traced).
+- **It works inside the Y chat context.** Vanilla runs: emu/plans/chat_choice_vfind.plan finds the Y
+  context's 018 copy at 0x02288480; chat_choice_vanilla_{yes,no,touchno,right}.plan poke `31 0000 51F0
+  51E4` over the stop after the room hint, on the vanilla copy build/chat/vroom.nds from the start save.
+  The room hint shows, then the YES/NO buttons; A plays "Hold on... Fountain Square" (0x51F0), B and a
+  touch on NO play "Oh, Lucia! Where have you been?" (0x51E4), then the chat closes and the field HUD
+  comes back normally. All four runs: build/chat/cv_all.png (rows: A, B, touch NO, then Right / Left /
+  Down / B).
+
+### Building a choice into a chat (`party-chat`, confirmed in the emulator)
+
+```python
+choice=Choice(ask=Say("Jian", "Should I tell her I\noverslept?", face=0),
+              yes=Answer(0x244, (Say("Jian", "Okay, okay. I overslept. ..."), ...)),
+              no=Answer(0x245, (Say("Jian", "I was barely late! ..."), ...))),
+```
+
+- A `Chat` takes an optional `choice` (src/dsde/party_chat.py `Choice`, `Answer`). Order in the chat:
+  `talk`, then `ask` and the buttons, then the chosen side's lines, then `hint`. Both sides meet at the
+  hint, so the one hint is reachable on every path.
+- Each side sets its own flag and clears the other side's (ops 0x19 / 0x1A), so the latest answer wins
+  if the chat replays and is asked again. Later chats test it with `when=Flags(on=(0x244,))`, map scripts
+  with op 0x13/0x15 like any story flag. The Y context sets it and state 0x21 copies it back to the
+  story flags, so it is saved.
+- Compiled code (feat_party_chat `_chat_program`): `0F ask; 31 yes no; yes: 19 flag, 1A other, its
+  lines, portraits back to the faces at the question, 02 join; no: the same; join: the hint; 00`.
+- Limits: two options with YES/NO labels (write the question so that yes and no read naturally); A/YES
+  is the first side and B/NO the second; a question of up to 4 lines; speakers across the whole chat
+  (both sides included) still up to 3. The build fails on a 5th question line, equal flags, or a flag
+  outside the choice range.
+- **Choice flags: 0x244..0x25F, 28 flags** (`CHOICE_FLAGS`), checked free of every script at build time
+  like the read flags: 14 two-sided choices. If more are needed, take them from the top of the read
+  flag pool (the read marks fill it from the bottom: 249 read flags, 103 in use). A choice could also
+  use one flag for both sides (set = yes, clear = no), at the cost of not knowing whether it was ever
+  asked. There is no other free saved range: the rest are used by scripts, 0x1E0..0x220 by the engine,
+  and 0x260..0x2DF are per-map temporaries that `func_020419fc` clears.
+
+Example (replacing the old Fountain Square EXAMPLE in src/dsde/party_chat_lines.py): Lucia "You're
+late, Jian. Again." / Jian "Should I tell her I overslept?" YES -> 0x244, Jian owns up, Lucia "At least
+you're honest."; NO -> 0x245, Jian "I was barely late!", Lucia "Sure, Jian. Sure."; then the delivery
+hint. A second EXAMPLE chat (anywhere, flags 0x1C and 0x244 on, 0x14 off) has Lucia remember the truth
+at the next stage.
+
+Test (build/chat/choice.nds = default features + party-chat; start save, flag 0xB poked, Fountain
+Square; each run on its own ROM copy):
+
+| Plan | Result | Shots |
+|---|---|---|
+| chat_choice_yes.plan | talk, question, YES/NO; A: "Okay, okay. I overslept...", "At least you're honest...", the hint; flag word 0x48 = 0x10 (0x244); saved to album No.1 | build/chat/choice_yes_strip.png |
+| chat_choice_no.plan | the same up to the buttons; B: "I was barely late!...", "Sure, Jian. Sure.", the hint; word 0x48 = 0x20 (0x245); saved | build/chat/choice_no_strip.png |
+| chat_choice_reload.plan, yes save | fresh boot, Load No.1: word 0x48 = 0x10 loaded; 0x1C poked on; Y plays "Next time, set two alarms..." (the chat that remembers) | build/chat/choice_reload_both.png, top |
+| chat_choice_reload.plan, no save | word 0x48 = 0x20 loaded; same poke; Y plays vanilla's "Right, so all we need to do is take this package..." | build/chat/choice_reload_both.png, bottom |
+
+The saves part 1 wrote: build/chat/choice_yes_saved.SaveRAM and choice_no_saved.SaveRAM.
+
+### Confirmed and uncertain
+
+Confirmed: the op format and input above (code and vanilla), that it works in the Y context (vanilla and
+the build), both sides, the flag set and cleared, and the pick surviving a save and a fresh boot.
+
+Uncertain or not tested:
+- Custom option labels or more than two options would need new button graphics shared with every
+  vanilla yes/no (file 0x65 of what func_02041c88 loads; not traced), or a new ARM menu drawn in the
+  message box (a new op, or a hook on 0x31 that prints the option lines and moves a cursor). Neither is
+  a small cave, so neither was built. The two-button prompt covers the "say it or not" choices most
+  skits need.
+- A choice from the System menu start site (0x0205F368): the hook is the same, but no real way into it
+  is known (section 7), so it was not tried there.
+- A replayed choice chat (once it and everything after it at that place are read, section 5) asks again
+  and can flip the flags; true by construction, not run.
+- The vanilla plans poke fixed RAM addresses found for the start save and these inputs; another save
+  can put the Y context elsewhere (rerun chat_choice_vfind.plan).

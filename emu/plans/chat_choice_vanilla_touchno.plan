@@ -1,0 +1,28 @@
+# Research (docs/re-party-chat.md section 9): does vanilla's yes/no op 0x31 work inside the Y chat?
+# Vanilla ROM copy (build/chat/vroom.nds), start save, Jian's room. After Y, the stop after the room hint
+# (018 0x51D8; the script copy sits at 0x02288480, found by chat_choice_vfind.plan) becomes
+# `31 0000, yes -> 0x51F0 ("Hold on... Fountain Square"), no -> 0x51E4 ("Oh, Lucia!")`.
+# This copy answers with: touch 14 176 5
+include boot_from_save
+wait 60
+press Y 3
+wait 2
+peek u32 0x020B4644 hint_ctx
+poke u32 0x0228D658 0x31
+poke u32 0x0228D65C 0x51F0
+poke u32 0x0228D660 0x51E4
+dump 0x0228D648 0x20 leaf_after
+wait 150
+shot c_msg
+press A 3
+wait 60
+shot c_prompt
+peek u32 0x0228825C pc_ctx
+touch 14 176 5
+wait 60
+shot c_branch
+peek u32 0x0228825C pc_ctx
+press A 3
+wait 60
+shot c_end
+peek u32 0x020B4644 hint_ctx_after
