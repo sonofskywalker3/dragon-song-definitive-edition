@@ -38,15 +38,17 @@ make Jian, not the goddess, the one who arrives there.
 0. **Canon (Jeff, 2026-10-09).** Only Lunar 1 and Lunar 2 are canon, Japanese preferred over English. Every
    other release (Silver Star Story, Eternal Blue Complete, Legend, Harmony, Walking School, Magic School
    Lunar, and Dragon Song itself) is judged by its fidelity to the world of those two: where it contradicts
-   them, canon wins; what does not contradict them is flavor we may borrow. Working timeline: Althena brought
-   humans about 1,000 years before Lunar 1; Dragon Song is about 500 years before Lunar 1 and is the Vile
-   Tribe exile Lunar 1 remembers (docs/research-lunar-lore.md).
+   them, canon wins; what does not contradict them is flavor we may borrow. Working timeline: Dragon Song is about 500 years before Lunar 1 and is the Vile
+   Tribe exile Lunar 1 remembers (docs/research-lunar-lore.md). "Althena brought humans about 1,000 years
+   before Lunar 1" is a working assumption only (Famitsu's 1000年以上 read as a point); the Japanese games
+   date the crossing to はるかな昔 and nothing else, so no Retold line states a figure for it (corrected
+   2026-10-10, reports/Lunar canon timeline and Dragon Song fixes.md).
 1. **Keep the plot.** The route, the dungeons, the bosses, Lucia's capture, Rufus's death, the four trials,
    the airship, the Chamber of Rebirth. Nothing in this bible needs a new dungeon.
 2. **Cut the fluff.** Errand chains that send you to the innkeeper, then a random NPC, before the story
    moves are shortened; a skit's hint should send the player straight to the next real step.
-3. **Cut the curse** (docs/design.md section 11). The chapter "The curse" below lists what it carried and
-   what can carry it instead.
+3. **Keep the curse, redefined** (superseded "Cut the curse"; docs/plan-curse.md, chapter 10 below). The
+   chapter "The curse" lists the scenes it touches.
 4. **One hint per skit**, concrete, naming the place or person. A skit is character first and errand last:
    the hint is the closing line, never the subject. A skit that has nothing to hint still ends on the
    current goal.
@@ -1328,15 +1330,15 @@ That might be you." (docs/intro-analysis.md section 4).
 
 ## 10. The curse: what removing it leaves, and what can carry it
 
-**Decided (Jeff, 2026-10-09): the curse stays in the Story edition.** It is redefined: Jian cannot be healed
+**Decided (Jeff, 2026-10-09): the curse stays in both editions (Retold, formerly Story, and Classic).** It is redefined: Jian cannot be healed
 except by the Goddess's power at statues (no items, no healing spells on him) while cursed; he keeps his
 attack. It still keeps any beastman army from recruiting him, which is why Zethos cursed him. It breaks on
 round 3 of the Zethos fight: Zethos, "I may have been wrong about you. Let's make this a fair fight," then the
 flash; Jian can use items again from that turn. The options below about removing the curse are superseded;
 what remains useful here is the list of scenes the curse touches. See docs/plan-two-editions.md.
 
-Decided: the curse goes, and so does Zethos's blast at the end of the San Coliseum (docs/design.md section
-11). Design 11 also gives Gabryel's new reason to bring Jian: she plays the impressed fan of the human
+Superseded (the curse stays; see the decided note above and docs/plan-curse.md): the curse goes, and so does
+Zethos's blast at the end of the San Coliseum (docs/design.md section 11). Design 11 also gives Gabryel's new reason to bring Jian: she plays the impressed fan of the human
 champion and points him at a bigger fight, the Beast King's open challenge, which turns out to be a ploy to
 find fighters for the Frontier. What follows takes each piece the curse carried (story-characters.md
 section 9) and offers ways to carry it without the curse. **Everything in this chapter is suggested.**
@@ -1448,8 +1450,10 @@ Dragonmaster, right? The guardian of the Goddess? So why's he causing all this t
 
 What any version must fit: he took the White Dragon's trial and became a Dragonmaster (006 #5); he is "the
 Dragonmaster of the Goddess" now (009 #18); he turned when Althena "began to have doubts in her position"
-(004 #78); he used "Black Magic", which in this game is the Dragonmaster's own power (Jian's ring spells;
-006 #5, "received by Black Magic"), to make the Frontier's exiles into an army (004 #78); he has a score to
+(004 #78); the Frontier's outlaws, under him, "became 魔族" (004 #78 JP 魔族となって; Ubisoft's "molded them
+into a Vile Tribe" is the translation, not the text), and Ubisoft's "received by Black Magic" (006 #5) is JP
+けいしょうし, "inherited" the White Dragon's black magic, so he passed the trial honestly, which favors option B
+(corrected 2026-10-10); he has a score to
 settle with Zethos and calls him "that mewling pup" (016 #7), so he is older; and he keeps a promise to
 Althena (021 #12). The shipped prologue also has "her champion the Dragonmaster" swearing her eternal
 loyalty at the dawn of the world.
@@ -1607,7 +1611,8 @@ where they overlap.
   was entrusted with went into its long sleep, and she brought the few survivors to a dead moon and has
   spent every life since managing its magic to wake it. The wound is a world she could not save and a seal
   that barely held, not a destruction by her hand (the "destroyed it as the price of the seal" line is a
-  Wikipedia claim the game does not contain). The cost she admits only in private is the one Lunar 2's Blue
+  Wikipedia claim the game does not contain). **Caution:** the confession never names the Blue Star's
+  guardian; Dragon Song's ルシア and Lunar 2's ルーシア are different names and the echo is still undecided. The cost she admits only in private is the one Lunar 2's Blue
   Dragon starts to say and Lucia silences: what using her power to seal Zophar means for this world. **Being the goddess is her self-inflicted penance** for the Blue Star she could not save: each rebirth is
   another term served, the power is the weight she chose to carry, and "the world is not ready" is also "I
   have not finished paying." Lucia's rebirth was meant to be the one where the debt was paid and she could
@@ -1663,7 +1668,7 @@ where they overlap.
   Japanese Lunar 1 line "the Vile Tribe that tormented people lived in this world; Althena exiled them to the
   Frontier and sealed them" (Mega CD C021 @0x265D). No plot change needed; the seal is the thing Lunar 1
   remembers.
-- **The Dragonmasters, named in the Story edition (decided):** Louie (ルイ), who came with Althena from the
+- **The Dragonmasters, named in the Retold edition (decided):** Louie (ルイ), who came with Althena from the
   Blue Star and turned the dead world green, is named in the intro. The later line (Zeon, Loka, the gold and
   silver sisters Asti and Liza [Mega CD names; the Saturn calls them Alicia and Rina], Dyne, Alex) is future
   history relative to Dragon Song and may be seeded as prophecy or left for Lunar 2 players to recognize.
@@ -1672,7 +1677,9 @@ where they overlap.
   sisters, so they are not named inside Dragon Song's present (Jeff, 2026-10-09).** They may appear only in a
   future-facing frame: a short **epilogue in the Lunar 1 era**, Dyne and Althena before her final rebirth
   (canon: 15 years before Alex she "shared her heart with Dyne" and chose a human life at the cost of his
-  power; he is "Dyne of the Four Heroes of the Black Dragon War," 黒竜戦役, in the Lunar 2 list). Dyne says
+  power; he is "Dyne of the Four Heroes of the Black Dragon War," 黒竜戦役, in the Lunar 2 list, M0A.GRP @0x1BB20,
+  which is in both versions; name the war and nothing of its shape, because the 1992 Lunar 1 tells it as Dyne
+  against the mad Black Dragon, the 1996 remake dropped that, and Harmony retells it as the Eiphel battle). Dyne says
   to her what Jian said; she answers, "You know, someone I once knew told me the same thing. I wish I'd
   listened to him." The Dragonmasters between can be names on her lips there. The first Dragonmaster came with
   Althena long before this story (do not use "greened the world" in our text); Ignatius is only the latest.
