@@ -339,6 +339,7 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     BATTLE_FLOW.name,
     MP_ECONOMY.name,
     SPELL_LEVELS_FEATURE.name,
+    SKILLS_FEATURE.name,
     WALK_SPEED.name,
     GAD_EXPRESS.name,
     MIC_SIGN.name,

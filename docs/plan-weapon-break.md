@@ -358,13 +358,27 @@ plan above, and what the emulator showed (docs/status.md has the test list):
   from 0x0202D6FC), and a countering battler keeps its queued command and spell, so the wrapper skips the
   override in counter mode; otherwise Jian countering with Weapon Break queued would lose his counter script
   and write his file into the attacking enemy's slot 0. Not reproduced in the emulator.
-- **Known limit:** the pick is a battler slot. When a front-row enemy dies the back-row enemy of that column
-  moves into its slot (0x02053DE8), and a pending pick of the old slot is then treated as dead, so the cast
-  goes to the next enemy. Fight on a back-row enemy has the same limit; the fix is to remap pending targets
-  in the refill.
+- **A pick follows the enemy.** The pick is a battler slot. When a front-row enemy dies the back-row enemy of
+  that column is copied into its slot (func_02053918), and a pending pick of the old slot used to be treated
+  as dead, so the cast went to the next enemy. cave_tgt_moved (feat_targeting_drop.py, hook 0x02053E4C, reached
+  once per copied column) now moves the first target slot of party battlers 0 to 2 from 4 + column to
+  8 + column. Reproduced and fixed in `test_skill_moved_target`; it covers Fight's pick as well.
+- **In both editions** since 2026-11-12 (engine changes go in Classic and Retold; only story changes stay out
+  of Classic).
 - **Page 2 to page 4 works** as designed: the Special rows slide out the way they do for the ally picker and
   the grid slides in, with no stray frames (build/skills_t/t6.png). Cancel goes to the command page.
-- **The capped cast** still plays the banner and costs MP; the stage stays at -1 and nothing else shows.
+- **The capped cast says "No effect!"** (Jeff, 2026-11-12; design in docs/plan-skill-feedback.md A). The stage
+  stays at -1 and the MP is spent. A third message bit (4) in battle work +0xDA makes the message line draw
+  battle string 99, "No effect!" (cave_skill_msg, hook 0x020449C0 in func_02044990). cave_skill_anim knows at
+  setup that the target is already lowered: it uses a copy of the cast script with no effect step, writes 0
+  to work +0x74 so no effect helpers are set up (as for Fight), sets the bit, and opens the window for 90
+  frames (func_0204582c(0xD, 1, 0x5A)). So the line shows as the cast starts, not on the kick; cave_skill_fx
+  keeps the same message as a fallback. Tried and dropped: a one-step effect script still showed the banner,
+  and a -1 effect sprite entry hid it but left helper battler 14 with stale animation pointers.
+- **One enemy alive:** cave_skill_open no longer fills the grid in that case. Filling it changed the menu's
+  list under the open Special page and left the description window on screen, empty, for the rest of the
+  battle (in the first commit of the feature). It now asks cave_tgt_after for the first and second living
+  enemy instead.
 - **Result words:** word 2 = -1 gives no number and no MISS, as the debuff cards do.
 - **Records pointer:** in the first temple battle from the post-intro save the stat records are at 0x0228E860
   (the plans watch absolute addresses from it; `peek u32 0x020B8620` prints it).

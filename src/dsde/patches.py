@@ -112,7 +112,8 @@ def main() -> None:
     if edition in EDITION_ALIASES:
         edition = EDITION_ALIASES[edition]
         logger.warning("--edition %s is now %s", args.edition, edition)
-    names = args.features or [*EDITIONS[edition], *args.extra]
+    extra = [name for name in args.extra if name not in EDITIONS[edition]]
+    names = args.features or [*EDITIONS[edition], *extra]
     build(names, args.output or EDITION_OUTPUTS[edition], args.arm7_bios)
 
 

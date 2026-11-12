@@ -1,0 +1,42 @@
+# skills + manual-targeting: a picked back-row enemy that moves to the front row before the caster acts
+# keeps the pick. Jian (level index 8) and Lucia, first temple battle: back row 4, 5, 6, front row 9, 10.
+# Jian casts Weapon Break on back-row battler 5 (grid: Right, A); Lucia Fights front-row battler 9, the
+# enemy in front of it, and kills it first; battler 5 drops into slot 9 (battler and stat record are
+# copied). Expect the ATK stage of record 9 (the moved enemy) to go 0 -> -1 (0xFFFF) and no other stage to
+# change. Battle records at 0x0228E860 (peeked below), 0x6C each, ATK stage +0x40. Run with --save.
+include party2_strong
+pin u32 0x020B4664 8
+wait 270
+peek u32 0x020B8620 records
+watch u16 0x0228EA50 stage4
+watch u16 0x0228EABC stage5
+watch u16 0x0228EB28 stage6
+watch u16 0x0228EC00 stage8
+watch u16 0x0228EC6C stage9
+watch u16 0x0228ECD8 stage10
+watch u32 0x0228EC40 hp9
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 70
+press Right 8
+wait 20
+shot mt_jian_pick
+press A 8
+wait 60
+shot mt_lucia_cmd
+press A 8
+wait 60
+shot mt_lucia_pick
+press A 8
+wait 60
+shot mt_after_pick
+wait 240
+shot mt_round_a
+wait 240
+shot mt_round_b
+battlers

@@ -3,7 +3,7 @@
 # enemy (battler 5), A casts on it. Expect: Jian's battle MP 10 -> 2, battler 5's ATK stage 0 -> -1 (0xFFFF)
 # and its ATK 20 -> 16, no other stage changes. Jian leaps up to it, kicks without damage, and the ATK DOWN
 # banner shows on it. The repeat cast is test_skill_cap. Battle records are at 0x0228E860 in this battle (0x6C each:
-# MP +0x18, effective ATK +0x24, ATK stage +0x40). Build with `--with skills`; run with --save.
+# MP +0x18, effective ATK +0x24, ATK stage +0x40). Run with --save.
 include boot_from_save
 include cheats_strong
 include warp6

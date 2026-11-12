@@ -1,5 +1,5 @@
 # skills: Jian at level 8 (level index 7 pinned) has no Weapon Break yet: Special on the command page is
-# refused ("Cannot use!") as in the original. Build with `--with skills`; run with --save.
+# refused ("Cannot use!") as in the original. Run with --save.
 include boot_from_save
 include cheats_strong
 include warp6

@@ -22,8 +22,8 @@ The tick is called from the sprite render hook (feat_targeting_brackets.py), whi
 """
 
 from dsde.feat_battle_kill import BATTLER_SIZE, DYING, GONE
-from dsde.patching import CaveCode
-from dsde.targeting_consts import BATTLE_WORK_PTR, BATTLERS_PTR
+from dsde.patching import AsmPatch, CaveCode
+from dsde.targeting_consts import BATTLE_WORK_PTR, BATTLERS_PTR, FIRST_ENEMY, TARGETS
 
 REFILL_COLUMNS = (
     0x02053ED4  # () -> mask of columns to refill now, by the battle's own rule
@@ -178,9 +178,51 @@ start_work:
     .word {BATTLE_WORK_PTR:#x}
 """
 
+# REFILL_STEP's copy of a column, right after the back enemy became the front one: `ldr r3, [sp, #0x1c]`
+# (r6 = column), reached only when a column was copied. Vanilla fixes the turn order from here on but not
+# the party's waiting commands.
+REFILL_COPIED = 0x02053E4C
+REFILL_COPIED_WORD = 0xE59D301C
+PARTY_SLOTS = 3  # battlers 0..2
+
+# A party member's chosen enemy (first target slot, set by the enemy grid for Fight or a single-enemy
+# spell) follows the enemy when it moves from the back row to the front: before, the choice pointed at
+# the emptied back slot and was treated as a dead target. Replaces the instruction above (bl).
+MOVED_ASM = f"""
+    push  {{r0-r2, lr}}
+    ldr   r0, moved_battlers
+    ldr   r0, [r0]
+    add   r1, r6, #{FIRST_ENEMY}
+    mov   r2, #{PARTY_SLOTS}
+moved_loop:
+    ldrsh r3, [r0, #{TARGETS:#x}]
+    cmp   r3, r1
+    addeq r3, r3, #{FIRST_FRONT_SLOT - FIRST_ENEMY}
+    strheq r3, [r0, #{TARGETS:#x}]
+    add   r0, r0, #{BATTLER_SIZE:#x}
+    subs  r2, r2, #1
+    bne   moved_loop
+    pop   {{r0-r2, lr}}
+    ldr   r3, [sp, #0x1c]
+    bx    lr
+moved_battlers:
+    .word {BATTLERS_PTR:#x}
+"""
+
 DROP_PATCHES = (
     CaveCode("cave_tgt_drop_state", DROP_STATE_ASM, "back row dropping mid-action"),
     CaveCode("cave_tgt_drop_finish", DROP_FINISH_ASM, "drop ends now"),
     CaveCode("cave_tgt_drop_start", DROP_START_ASM, "drop starts now"),
     CaveCode("cave_tgt_drop_tick", DROP_TICK_ASM, "back row drops as slots empty"),
+    CaveCode(
+        "cave_tgt_moved", MOVED_ASM, "a chosen enemy keeps the choice when it moves up"
+    ),
+    AsmPatch(
+        REFILL_COPIED,
+        REFILL_COPIED + 4,
+        REFILL_COPIED_WORD,
+        REFILL_COPIED_WORD,
+        "bl ${cave_tgt_moved}",
+        "a chosen enemy keeps the choice when it moves up",
+    ),
 )

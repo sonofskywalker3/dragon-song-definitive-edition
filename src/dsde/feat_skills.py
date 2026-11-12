@@ -59,6 +59,12 @@ BLANK_OFFSET = (
 NAME_OFFSET = 0x0309
 NAME_SLOTS_USED = range(92, 99)
 WEAPON_BREAK_NAME = "Weapon Break"
+# "No effect!" for the message line: entry 99 already points at the first blank after the name; the string
+# covers the blanks of 100 to 104
+NO_EFFECT_ENTRY = 99
+NO_EFFECT_OFFSET = 0x0317
+NO_EFFECT_SLOTS_USED = range(100, 105)
+NO_EFFECT_TEXT = "No effect!"
 
 # Spell descriptions: sysmenupack entry 61, 61-byte records from file + 0x24, one per spell id
 DESCRIPTIONS_ARCHIVE = "sysmenupack"
@@ -177,6 +183,23 @@ WEAPON_BREAK_SCRIPT_BACK = (
 )
 FIRST_FRONT_ENEMY = 8  # battlers 4..7 are the back row
 
+# The message line (window 0xD: "Lost Abadon card!", "Escape failed!"): func_02044990 picks its text from
+# battle work +0xDA (bit 0, bit 1), +0xDC, +0xDE, +0xE0; the window clears them when it closes.
+WORK_MESSAGE = 0xDA
+MESSAGE_NO_EFFECT = 4  # our bit
+MESSAGE_SITE = 0x020449C0  # func_02044990: `ands r1, r2, #1` (r2 = +0xDA, r5 = text handle, r7 = x, r6 = y)
+MESSAGE_SITE_WORD = 0xE2121001
+MESSAGE_NEXT = 0x020449C4
+MESSAGE_DONE = 0x020449EC  # the function's epilogue
+DRAW_TEXT = 0x02045114  # (handle, x, y, string, [sp] = 0)
+OPEN_WINDOW = 0x0204582C  # (window, 1, frames)
+MESSAGE_WINDOW = 0xD
+MESSAGE_FRAMES = 0x3C
+WORK_EFFECT_MODE = 0x74  # 0 = no effect helpers this action (as for Fight); the effect row's value otherwise
+MESSAGE_FRAMES_CAST = (
+    0x5A  # the line is opened as the cast starts and has to last through the kicks
+)
+
 _CODES = {char: code for code, char in USA_TABLE.items()}
 
 
@@ -196,10 +219,12 @@ def _name_patches() -> tuple[Patch, ...]:
     edits = dict(enumerate(_encode(WEAPON_BREAK_NAME), STRING_BASE + NAME_OFFSET))
     offsets = {SPELL_NAME_FIRST + WEAPON_BREAK: NAME_OFFSET}
     offsets |= dict.fromkeys(NAME_SLOTS_USED, BLANK_OFFSET)
+    edits |= dict(enumerate(_encode(NO_EFFECT_TEXT), STRING_BASE + NO_EFFECT_OFFSET))
+    offsets |= dict.fromkeys(NO_EFFECT_SLOTS_USED, BLANK_OFFSET)
     for entry, offset in offsets.items():
         addr = STRING_OFFSETS + 2 * entry
         edits |= dict(enumerate(struct.pack("<H", offset), addr))
-    return byte_patches(arm9, edits, f"spell name {WEAPON_BREAK_NAME}")
+    return byte_patches(arm9, edits, "skill strings")
 
 
 def _descriptions() -> bytes:
@@ -249,8 +274,8 @@ cast_table:
 """
 
 # Replaces `ands r0, r5, #0x1000000` in func_020500dc (bl). r6 = spell, r7 = target battler, r5 = flags.
-# Weapon Break lowers the target's ATK one stage unless it is already below 0. Leaves the flags of the
-# replaced instruction.
+# Weapon Break lowers the target's ATK one stage; if it is already below 0 nothing changes and the message
+# line says "No effect!". Leaves the flags of the replaced instruction.
 FX_ASM = f"""
     push  {{r4, r8, lr}}
     cmp   r6, #{WEAPON_BREAK}
@@ -266,7 +291,7 @@ FX_ASM = f"""
     mla   r8, r0, r2, r1
     ldrsh r1, [r8, #{RECORD_ATK_STAGE:#x}]
     cmp   r1, #0
-    blt   fx_out
+    blt   fx_none
     mov   r0, r8
     mov   r1, #{STAT_ATK}
     mvn   r2, #0
@@ -284,6 +309,16 @@ fx_result:
     ldr   r0, fx_results
     mvn   r1, #0
     str   r1, [r0, #{RESULT_FLAG}]
+    b     fx_out
+fx_none:
+    ldr   r0, fx_work
+    ldr   r0, [r0]
+    mov   r1, #{MESSAGE_NO_EFFECT}
+    strh  r1, [r0, #{WORK_MESSAGE:#x}]
+    mov   r0, #{MESSAGE_WINDOW:#x}
+    mov   r1, #1
+    mov   r2, #{MESSAGE_FRAMES:#x}
+    bl    {OPEN_WINDOW:#x}
 fx_out:
     ands  r0, r5, #0x1000000
     pop   {{r4, r8, pc}}
@@ -293,6 +328,8 @@ fx_records:
     .word {RECORDS_PTR:#x}
 fx_results:
     .word {RESULT_WORDS:#x}
+fx_work:
+    .word {BATTLE_WORK_PTR:#x}
 """
 
 
@@ -310,7 +347,8 @@ def _slide_out(button: str) -> str:
 
 # Entered by `beq` from the Special list's OK handler for a spell that targets one enemy. The handler's
 # r4, r5, and r7 go on to its epilogue; r6, r8, sb, and sl are free (its one-ally branch uses them).
-# One enemy alive: it is the target and the command ends as in vanilla. Several: the Special list's
+# One enemy alive: it is the target and the command ends as in vanilla, with the menu's list left alone
+# (filling the grid here left the description window open and empty). Several: the Special list's
 # rows slide out as they do for the ally picker and the enemy grid opens in spell mode.
 OPEN_ASM = f"""
     ldr   r6, open_menu
@@ -319,20 +357,18 @@ OPEN_ASM = f"""
     ldr   r1, [r1]
     mov   r2, #{T.BATTLER_SIZE:#x}
     mla   r8, r0, r2, r1
-    mov   r0, #0
-    bl    {CLOSE_DESCRIPTION:#x}
     mvn   r0, #0
     strh  r0, [r8, #{T.TARGETS:#x}]
-    mov   r0, #{T.ROWS_ANY}
-    bl    ${{cave_tgt_fill}}
-    cmp   r0, #1
-    bgt   open_grid
-    bne   open_end
-    ldr   r1, open_state
-    ldrb  r0, [r1, #{T.STATE_FIRST}]
-    add   r1, r1, #{T.STATE_MAP}
-    ldrb  r0, [r1, r0]
-    strh  r0, [r8, #{T.TARGETS:#x}]
+    mov   r1, #{T.ROWS_ANY}
+    bl    ${{cave_tgt_after}}
+    cmp   r0, #0
+    blt   open_end
+    mov   sb, r0
+    mov   r1, #{T.ROWS_ANY}
+    bl    ${{cave_tgt_after}}
+    cmp   r0, #0
+    bge   open_grid
+    strh  sb, [r8, #{T.TARGETS:#x}]
 open_end:
     ldrh  r0, [r6, #{T.MENU_SPELL:#x}]
     strh  r0, [r8, #{T.BATTLER_SPELL:#x}]
@@ -345,8 +381,14 @@ open_end:
     str   r0, [r6]
     mov   r0, #{T.PAGE_COMMANDS}
     strh  r0, [r6, #{T.MENU_NEXT_PAGE:#x}]
+    mov   r0, #0
+    bl    {CLOSE_DESCRIPTION:#x}
     b     {LIST_OK_DONE:#x}
 open_grid:
+    mov   r0, #0
+    bl    {CLOSE_DESCRIPTION:#x}
+    mov   r0, #{T.ROWS_ANY}
+    bl    ${{cave_tgt_fill}}
     mov   sb, #{SPELL_BUTTON}
 {_slide_out("sb")}
     mov   r0, #0
@@ -416,6 +458,18 @@ pick_auto:
 """
 
 
+def _plain(
+    steps: tuple[tuple[int, int, int, int, int], ...],
+) -> tuple[tuple[int, int, int, int, int], ...]:
+    """The cast with no effect: the last kick is an ordinary step (as the kicks before it)."""
+    return tuple(
+        (flags & ~STEP_WAIT_EFFECTS, steps[index - 1][1], slot, anim, frames)
+        if word == STEP_START_EFFECTS
+        else (flags, word, slot, anim, frames)
+        for index, (flags, word, slot, anim, frames) in enumerate(steps)
+    )
+
+
 def _script(steps: tuple[tuple[int, int, int, int, int], ...]) -> str:
     """Action script steps as asm data: two words, then slot, animation, frames, and a pad halfword."""
     return "\n".join(
@@ -426,7 +480,9 @@ def _script(steps: tuple[tuple[int, int, int, int, int], ...]) -> str:
 
 # Replaces `bl func_02068308`. r0 = the acting party battler, r1 = mode. After the game's own setup of an
 # action (not of a counter, which keeps the queued command and spell), a Weapon Break cast gets Jian's attack file in slot 0 and its own script: run in (or leap up to a
-# back-row enemy), the combo without hits, the banner on the target, back.
+# back-row enemy), the combo without hits, the banner on the target, back. On a target whose ATK is already lowered the
+# cast has no effect step at all (no effect helpers are set up, so no banner) and the message line says
+# "No effect!" from the start of the cast.
 ANIM_ASM = f"""
     push  {{r4-r6, lr}}
     mov   r4, r0
@@ -450,7 +506,40 @@ ANIM_ASM = f"""
     cmp   r1, #{FIRST_FRONT_ENEMY}
     adrlt r0, anim_script_back
     str   r0, [r4, #{BATTLER_SCRIPT:#x}]
+    cmp   r1, #{FIRST_ENEMY}
+    poplt {{r4-r6, pc}}
+    ldr   r0, anim_battlers
+    ldr   r0, [r0]
+    mov   r2, #{BATTLER_SIZE:#x}
+    mla   r0, r1, r2, r0
+    ldr   r0, [r0, #{BATTLER_RECORD:#x}]
+    ldr   r1, anim_records
+    ldr   r1, [r1]
+    mov   r2, #{RECORD_SIZE:#x}
+    mla   r0, r2, r0, r1
+    ldrsh r0, [r0, #{RECORD_ATK_STAGE:#x}]
+    cmp   r0, #0
+    popge {{r4-r6, pc}}
+    adr   r0, anim_plain
+    ldrsh r1, [r4, #{T.TARGETS:#x}]
+    cmp   r1, #{FIRST_FRONT_ENEMY}
+    adrlt r0, anim_plain_back
+    str   r0, [r4, #{BATTLER_SCRIPT:#x}]
+    ldr   r1, anim_work
+    ldr   r1, [r1]
+    mov   r0, #0
+    strh  r0, [r1, #{WORK_EFFECT_MODE:#x}]
+    mov   r0, #{MESSAGE_NO_EFFECT}
+    strh  r0, [r1, #{WORK_MESSAGE:#x}]
+    mov   r0, #{MESSAGE_WINDOW:#x}
+    mov   r1, #1
+    mov   r2, #{MESSAGE_FRAMES_CAST:#x}
+    bl    {OPEN_WINDOW:#x}
     pop   {{r4-r6, pc}}
+anim_battlers:
+    .word {BATTLERS_PTR:#x}
+anim_records:
+    .word {RECORDS_PTR:#x}
 anim_file:
     .word {JIAN_ATTACK_FILE:#x}
 anim_work:
@@ -459,6 +548,36 @@ anim_script:
 {_script(WEAPON_BREAK_SCRIPT)}
 anim_script_back:
 {_script(WEAPON_BREAK_SCRIPT_BACK)}
+anim_plain:
+{_script(_plain(WEAPON_BREAK_SCRIPT))}
+anim_plain_back:
+{_script(_plain(WEAPON_BREAK_SCRIPT_BACK))}
+"""
+
+
+# Replaces `ands r1, r2, #1` in func_02044990 (b). A third message bit draws "No effect!" the way the
+# first draws "Escape failed!".
+MESSAGE_ASM = f"""
+    tst   r2, #{MESSAGE_NO_EFFECT}
+    beq   message_vanilla
+    mov   r2, #0
+    str   r2, [sp]
+    ldr   r1, message_offsets
+    ldrh  r3, [r1, #{2 * NO_EFFECT_ENTRY}]
+    ldr   r4, message_base
+    add   r3, r4, r3
+    mov   r0, r5
+    mov   r1, r7
+    add   r2, r6, #1
+    bl    {DRAW_TEXT:#x}
+    b     {MESSAGE_DONE:#x}
+message_vanilla:
+    ands  r1, r2, #1
+    b     {MESSAGE_NEXT:#x}
+message_offsets:
+    .word {STRING_OFFSETS:#x}
+message_base:
+    .word {STRING_BASE:#x}
 """
 
 
@@ -523,6 +642,13 @@ SKILLS_FEATURE = Feature(
         ),
         CaveCode(
             "cave_skill_open", OPEN_ASM, "a single-enemy spell opens the enemy grid"
+        ),
+        CaveCode("cave_skill_msg", MESSAGE_ASM, "the message line can say No effect!"),
+        _hook(
+            MESSAGE_SITE,
+            MESSAGE_SITE_WORD,
+            "b ${cave_skill_msg}",
+            "the message line can say No effect!",
         ),
         CaveCode("cave_skill_anim", ANIM_ASM, "Weapon Break plays Jian's attack"),
         _hook(
