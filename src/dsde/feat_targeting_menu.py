@@ -4,12 +4,15 @@ Fight on the command page fills the picker grid (see feat_targeting_picker) and 
 the list page (page 4) with the ITCM mode byte set. With one reachable enemy it is chosen at once.
 On the list page OK / A, or a second tap on the same cell, stores the enemy in the member's first
 target slot and ends the member's command like vanilla Fight; back / B returns to the command page.
+A single-enemy spell opens the same picker in spell mode (feat_skills.py): confirming then ends the
+command as a Special with that spell.
 """
 
 from dsde.targeting_consts import (
     ATTACK_BLOCK,
     BACK_BUTTON,
     BATTLER_SIZE,
+    BATTLER_SPELL,
     BATTLERS_PTR,
     BUTTON_BACK,
     BUTTON_EPILOGUE,
@@ -20,6 +23,7 @@ from dsde.targeting_consts import (
     BUTTONS_PTR,
     CLEAR_GROUP_HIGHLIGHT,
     COMMAND_ATTACK,
+    COMMAND_SPECIAL,
     FIRST_DOT_BUTTON,
     FIRST_ROW_BUTTON,
     GROUP_LIST,
@@ -38,6 +42,8 @@ from dsde.targeting_consts import (
     MENU_PAGE,
     MENU_REBUILD,
     MENU_ROW_STYLE,
+    MENU_SPELL,
+    MODE_SPELL,
     NO_DESCRIPTION,
     OK_BACK_SLIDE,
     PAGE_COMMANDS,
@@ -198,6 +204,11 @@ disp_confirm:
     mla   r1, r3, r1, r2
     strh  r0, [r1, #{TARGETS:#x}]
     mov   r0, #{COMMAND_ATTACK}
+    ldrb  r2, [r5, #{STATE_MODE}]
+    cmp   r2, #{MODE_SPELL}
+    moveq r0, #{COMMAND_SPECIAL}
+    ldrheq r2, [r6, #{MENU_SPELL:#x}]
+    strheq r2, [r1, #{BATTLER_SPELL:#x}]
     str   r0, [r6, #{MENU_COMMAND:#x}]
     bl    {SLIDE_ALL_OUT:#x}
     mov   r0, #{PAGE_COMMANDS}

@@ -1,0 +1,39 @@
+# skills: Jian at level 9 (level index 8 pinned) casts Weapon Break in the first temple battle (five enemies).
+# Special opens the spell list (Weapon Break, 8), A opens the enemy grid, Right moves to the second back-row
+# enemy (battler 5), A casts on it. Expect: Jian's battle MP 10 -> 2, battler 5's ATK stage 0 -> -1 (0xFFFF)
+# and its ATK 20 -> 16, no other stage changes. Jian leaps up to it, kicks without damage, and the ATK DOWN
+# banner shows on it. The repeat cast is test_skill_cap. Battle records are at 0x0228E860 in this battle (0x6C each:
+# MP +0x18, effective ATK +0x24, ATK stage +0x40). Build with `--with skills`; run with --save.
+include boot_from_save
+include cheats_strong
+include warp6
+include cheats_strong
+pin u32 0x020B4664 8
+wait 270
+peek u32 0x020B8620 records
+watch u32 0x0228E878 jian_mp
+watch u16 0x0228EA50 stage4
+watch u16 0x0228EABC stage5
+watch u32 0x0228EAA0 atk5
+watch u16 0x0228EB28 stage6
+watch u16 0x0228EC00 stage8
+watch u16 0x0228EC6C stage9
+watch u16 0x0228ECD8 stage10
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 50
+shot wb_list
+press A 8
+wait 70
+shot wb_grid
+press Right 8
+wait 20
+shot wb_grid_right
+press A 8
+wait 120
+shot wb_cast
+wait 200
+shot wb_after

@@ -59,6 +59,10 @@ PAGE_COMMANDS = 1
 PAGE_LIST = 4
 NO_DESCRIPTION = 2
 COMMAND_ATTACK = 3
+COMMAND_SPECIAL = 4
+MENU_SPELL = 0x80  # spell chosen on the Special list
+BATTLER_SPELL = 0x86  # the battler's spell for a Special
+MODE_SPELL = 2  # STATE_MODE: the picker was opened for a single-enemy spell (1 = Fight)
 RESULT_STAY = 0
 RESULT_MEMBER_DONE = 2
 SOUND_MENU = 1

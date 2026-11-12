@@ -28,6 +28,7 @@ from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_party_chat import PARTY_CHAT
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN
+from dsde.feat_skills import SKILLS_FEATURE
 from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
 from dsde.feat_statue import STATUE_ANY_SIDE
 from dsde.feat_targeting import MANUAL_TARGETING
@@ -284,6 +285,7 @@ FEATURES: tuple[Feature, ...] = (
     BATTLE_FLOW,
     MP_ECONOMY,
     SPELL_LEVELS_FEATURE,
+    SKILLS_FEATURE,
     WALK_SPEED,
     GAD_EXPRESS,
     MIC_SIGN,
@@ -375,5 +377,6 @@ REQUIRES = MappingProxyType(
         OPENING.name: (TEXT_SPEED.name, OPENING_FLAGS.name),
         OPENING_TEXT.name: (OPENING.name,),
         TITLE_SEAL_RETOLD.name: (TITLE_SEAL.name,),
+        SKILLS_FEATURE.name: (MANUAL_TARGETING.name,),
     }
 )
