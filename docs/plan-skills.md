@@ -62,19 +62,21 @@ Red, White, Black Dragons 23 to 28; Blue Dragon 36; final fights 40 to 42. Late 
 | Blinding Gale | 35 | tbd | all enemies | Blinding Swipe on all | |
 | Dread Roar | 39 | tbd | all enemies | Howl on all | |
 
-### Rufus (knight commander; joins at 15, leaves, returns late in the Retold story)
+### Rufus (leader of the beastmen's strike force; joins at 15, leaves, returns late in the Retold story)
+
+His skills are a commander's orders to the troops.
 
 | Skill | When | MP | Target | Effect |
 |---|---|---|---|---|
 | Thunder Sword | joins with | 10 | all enemies | unchanged |
 | Rally | joins with | 6 | one ally | ATK up one stage |
-| Guard Order | joins with | 6 | one ally | DEF up one stage |
-| Quick | 17 | 5 | one ally | AGI up one stage |
-| Insight | 19 | 6 | one ally | INT up one stage |
+| Stand Fast | joins with | 6 | one ally | DEF up one stage |
+| Quick March | 17 | 5 | one ally | AGI up one stage |
+| Stratagem | 19 | 6 | one ally | INT up one stage |
 | Battle Cry | return | tbd | all allies | Rally on all (the old Grand Weapon) |
-| Shield Wall | return | tbd | all allies | Guard Order on all (the old Grand Shell) |
-| Tailwind | return | tbd | all allies | Quick on all (the old Quick) |
-| Inspire | return | tbd | all allies | Insight on all |
+| Shield Wall | return | tbd | all allies | Stand Fast on all (the old Grand Shell) |
+| Forced March | return | tbd | all allies | Quick March on all (the old Quick) |
+| War Council | return | tbd | all allies | Stratagem on all |
 
 ### Lucia (levels 1 to about 13)
 
