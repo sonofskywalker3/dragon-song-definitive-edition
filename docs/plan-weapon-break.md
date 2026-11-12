@@ -371,8 +371,9 @@ plan above, and what the emulator showed (docs/status.md has the test list):
   stays at -1 and the MP is spent. A third message bit (4) in battle work +0xDA makes the message line draw
   battle string 99, "No effect!" (cave_skill_msg, hook 0x020449C0 in func_02044990). cave_skill_anim knows at
   setup that the target is already lowered: it uses a copy of the cast script with no effect step, writes 0
-  to work +0x74 so no effect helpers are set up (as for Fight), sets the bit, and opens the window for 90
-  frames (func_0204582c(0xD, 1, 0x5A)). So the line shows as the cast starts, not on the kick; cave_skill_fx
+  to work +0x74 so no effect helpers are set up (as for Fight), sets the bit, and opens the window for the usual
+  60 frames (func_0204582c(0xD, 1, 0x3C)). So the line shows as the cast starts, not on the kick, and the
+  round waits for it to close before the script's next step (0x0202D8A4), as with the game's own lines; cave_skill_fx
   keeps the same message as a fallback. Tried and dropped: a one-step effect script still showed the banner,
   and a -1 effect sprite entry hid it but left helper battler 14 with stale animation pointers.
 - **One enemy alive:** cave_skill_open no longer fills the grid in that case. Filling it changed the menu's

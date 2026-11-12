@@ -196,9 +196,6 @@ OPEN_WINDOW = 0x0204582C  # (window, 1, frames)
 MESSAGE_WINDOW = 0xD
 MESSAGE_FRAMES = 0x3C
 WORK_EFFECT_MODE = 0x74  # 0 = no effect helpers this action (as for Fight); the effect row's value otherwise
-MESSAGE_FRAMES_CAST = (
-    0x5A  # the line is opened as the cast starts and has to last through the kicks
-)
 
 _CODES = {char: code for code, char in USA_TABLE.items()}
 
@@ -482,7 +479,8 @@ def _script(steps: tuple[tuple[int, int, int, int, int], ...]) -> str:
 # action (not of a counter, which keeps the queued command and spell), a Weapon Break cast gets Jian's attack file in slot 0 and its own script: run in (or leap up to a
 # back-row enemy), the combo without hits, the banner on the target, back. On a target whose ATK is already lowered the
 # cast has no effect step at all (no effect helpers are set up, so no banner) and the message line says
-# "No effect!" from the start of the cast.
+# "No effect!" as the cast starts (the round waits for the line to close before the next step, as it
+# does for the game's own lines).
 ANIM_ASM = f"""
     push  {{r4-r6, lr}}
     mov   r4, r0
@@ -533,7 +531,7 @@ ANIM_ASM = f"""
     strh  r0, [r1, #{WORK_MESSAGE:#x}]
     mov   r0, #{MESSAGE_WINDOW:#x}
     mov   r1, #1
-    mov   r2, #{MESSAGE_FRAMES_CAST:#x}
+    mov   r2, #{MESSAGE_FRAMES:#x}
     bl    {OPEN_WINDOW:#x}
     pop   {{r4-r6, pc}}
 anim_battlers:
