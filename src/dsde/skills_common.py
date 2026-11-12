@@ -25,6 +25,8 @@ BATTLERS_PTR = 0x020B8640
 BATTLER_SIZE = 0x12C
 BATTLER_RECORD = 0x10  # stat record index
 BATTLER_ENEMY = 8  # flag bit in battler + 0
+BATTLER_ROW = 0x04  # an enemy's row in the enemy table (a party member's character id)
+BATTLER_POSITION = 0xD4  # x, y, z words: where popups over the battler go
 BATTLER_COMMAND = 0x84
 ACTION_SPECIAL = 2  # battler command (the menu's command number for it is 4)
 BATTLER_SCRIPT = 0xC8
@@ -39,7 +41,7 @@ RECORD_STAGES = 0x38  # the s16 stage of stat n (4..9) is at RECORD_STAGES + 2 *
 RECORD_ATK_STAGE = 0x40
 RECORD_DEF_STAGE = 0x42
 
-BATTLE_WORK_PTR = 0x020B8550
+BATTLE_WORK_PTR = 0x020B8550  # its first word: battle-wide flags (skills_data.FLAG_*)
 WORK_SLOT0 = 0x50  # btldata entry of animation slot 0 (slot 1 is the move file, slot 2 the effect sprite)
 WORK_EFFECT_MODE = 0x74  # 0 = no effect helpers this action (as for Fight); the effect row's value otherwise
 WORK_MESSAGE = 0xDA  # message line bits: 1 "Escape failed!", 2 "Pray unsuccessful!"
@@ -47,12 +49,14 @@ MESSAGE_NO_EFFECT = 4  # our bit: "No effect!"
 MESSAGE_WINDOW = 0xD
 MESSAGE_FRAMES = 0x3C
 OPEN_WINDOW = 0x0204582C  # (window, 1, frames)
+TARGET_BITS = 0xC0000000  # spell flags: who it is cast on (skills_data.Target)
+ALL_TARGETS = 0x40000000  # set for both all-enemy and all-ally spells
 DRAW_TEXT = 0x02045114  # (handle, x, y, string, [sp] = style)
 
 # Per-spell effect record in cave_skill_fx: 4 bytes per spell id
 FX_SIZE_SHIFT = 2
 FX_KIND = 0  # skills_data.Kind
-FX_STAT = 1
+FX_ARG = 1  # a stat id, a status, or a battle flag mask, by kind
 FX_DELTA = 2  # s8
 FX_LOOK = 3  # skills_data.Look
 

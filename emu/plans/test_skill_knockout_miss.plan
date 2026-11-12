@@ -1,0 +1,65 @@
+# skills: Knockout Kick failing its success roll. As test_skill_knockout, but the random state is set to
+# 15, which gives roll 98: the cast plays, the game's MISS popup shows over the enemy (shot km_miss, with
+# its miss sound), MP 50 -> 41 is spent, and no status changes. Run with --save.
+include boot_from_save
+include cheats_strong
+include warp6
+include cheats_strong
+pin u32 0x020B4664 24
+pinptr u32 0x020B8620 0x18 50
+execpoke 0x020503A0 u32 0x020A0238 15
+wait 270
+peek u32 0x020B8620 records
+peek u32 0x020B8550 work
+watch u32 0x0228e878 jian_mp
+watch u8 0x0228ea18 status4
+watch u8 0x0228ea84 status5
+watch u8 0x0228eaf0 status6
+watch u8 0x0228ebc8 status8
+watch u8 0x0228ec34 status9
+watch u8 0x0228eca0 status10
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 50
+press Right 8
+wait 50
+press Down 8
+wait 50
+press A 8
+wait 50
+wait 30
+press Right 8
+wait 50
+press A 8
+wait 50
+wait 12
+shot km_00
+wait 12
+shot km_01
+wait 12
+shot km_02
+wait 12
+shot km_03
+wait 12
+shot km_04
+wait 12
+shot km_05
+wait 12
+shot km_06
+wait 12
+shot km_07
+wait 12
+shot km_08
+wait 12
+shot km_09
+wait 12
+shot km_10
+wait 12
+shot km_11
+wait 12
+shot km_12
+wait 12
+shot km_13

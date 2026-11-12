@@ -39,16 +39,16 @@ Red, White, Black Dragons 23 to 28; Blue Dragon 36; final fights 40 to 42. Late 
 
 ### Jian (street fighter)
 
-| Skill | Lv | MP | Target | Effect | Animation |
-|---|---|---|---|---|---|
-| Stone Throw | 4 | 3 | one enemy, any row | physical damage at range | unused pitch (btldata 15); needs a stone projectile, Flora's arrow path is the model |
-| Weapon Break | 9 | 8 | one enemy | ATK down one stage | kick + sword-down icon |
-| Armor Break | 14 | 6 | one enemy | DEF down one stage | kick + armor-down icon |
-| Focus | 19 | 6 | self | attacks never miss this battle | Dragon Magic pose |
-| Knockout Kick | 25 | 9 | one enemy | sleep 2 to 4 turns, damage wakes | flip kick + ring |
-| War Breaker | 30 | tbd | all enemies | Weapon Break on all | |
-| Wall Breaker | 36 | tbd | all enemies | Armor Break on all | |
-| Dragon Magic x4 | ring | 10 | all enemies | unchanged | unchanged |
+| Skill | Id / built | Lv | MP | Target | Effect | Animation |
+|---|---|---|---|---|---|---|
+| Stone Throw | not built | 4 | 3 | one enemy, any row | physical damage at range | unused pitch (btldata 15); needs a stone projectile, Flora's arrow path is the model |
+| Weapon Break | 38, built | 9 | 8 | one enemy | ATK down one stage | his attack with no hits, then the ATK DOWN banner |
+| Armor Break | 39, built | 14 | 6 | one enemy | DEF down one stage | his attack with no hits, then the DEF DOWN banner |
+| Focus | 40, built | 19 | 6 | all allies (the engine's flag is party-wide) | physical attacks never miss this battle | fist raise, HIT banner on each ally |
+| Knockout Kick | 41, built | 25 | 9 | one enemy | sleep 2 to 4 turns, damage wakes; 70 percent; bosses immune | his attack with no hits, then the green ring |
+| War Breaker | 42, built | 30 | 12 | all enemies | Weapon Break on all, skipping those already lowered | fist raise, ATK DOWN banner on each |
+| Wall Breaker | 43, built | 36 | 9 | all enemies | Armor Break on all, skipping those already lowered | fist raise, DEF DOWN banner on each |
+| Dragon Magic x4 | game's own | ring | 10 | all enemies | unchanged | unchanged |
 
 ### Gabryel (beast)
 

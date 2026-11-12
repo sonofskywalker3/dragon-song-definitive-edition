@@ -6,8 +6,8 @@
   level from cave_skill_levels in place of a ring. MP is charged by the game's own Special path.
 - A spell on one enemy opens the Fight grid (feat_targeting_*.py) in spell mode and is cast on the enemy
   picked there; the original lets the game pick at random. A pick that would do nothing is refused with "No
-  effect!" on the name bar: the grid asks the veto routine this module leaves in the picker's state, so the
-  targeting feature knows nothing about spells.
+  effect!" on the name bar: the grid asks the veto routine this module leaves in the picker's state
+  (feat_skills_idle.py), so the targeting feature knows nothing about spells.
 
 The name bar's ailment tags for the grid are in feat_skills_tags.py.
 """
@@ -16,26 +16,14 @@ from dsde import targeting_consts as T
 from dsde.feat_skills_table import level_row_offset
 from dsde.patching import AsmPatch, CaveCode
 from dsde.skills_common import (
-    BATTLER_RECORD,
-    BATTLER_SIZE,
-    BATTLERS_PTR,
     FIRST_ENEMY,
-    FX_DELTA,
-    FX_KIND,
-    FX_SIZE_SHIFT,
-    FX_STAT,
     LAST_ENEMY,
     NEVER,
-    OPEN_WINDOW,
-    RECORD_SIZE,
-    RECORD_STAGES,
-    RECORDS_PTR,
     RING_FLAGS,
     SPELL_TABLE,
-    STRING_NO_EFFECT,
     hook,
 )
-from dsde.skills_data import JIAN, SPELL_COUNT, Kind
+from dsde.skills_data import JIAN
 
 JIAN_LEVEL = 0x020B4664  # u32 level index (0 = level 1) in Jian's field record
 LIST_JIAN = 0x02050D24  # func_02050c50, Jian branch: `mov r0, #0xc`
@@ -114,47 +102,6 @@ cast_table:
     .word {SPELL_TABLE:#x}
 """
 
-# r0 = battler index, r1 = spell -> r0 = 0 if the spell would change something on that battler, else the
-# battle string to show ("No effect!"). A stage skill does nothing when the stat is already a stage past 0
-# in its direction. Clobbers r1 to r3 and ip only.
-IDLE_ASM = f"""
-    cmp   r1, #{SPELL_COUNT}
-    bhs   idle_fine
-    ldr   r2, idle_fx
-    add   r2, r2, r1, lsl #{FX_SIZE_SHIFT}
-    ldrb  r3, [r2, #{FX_KIND}]
-    cmp   r3, #{Kind.STAGE}
-    bne   idle_fine
-    ldr   r3, idle_battlers
-    ldr   r3, [r3]
-    mov   ip, #{BATTLER_SIZE:#x}
-    mla   r0, ip, r0, r3
-    ldr   r0, [r0, #{BATTLER_RECORD:#x}]
-    ldr   r3, idle_records
-    ldr   r3, [r3]
-    mov   ip, #{RECORD_SIZE:#x}
-    mla   r0, ip, r0, r3
-    ldrb  r3, [r2, #{FX_STAT}]
-    add   r0, r0, r3, lsl #1
-    ldrsh r0, [r0, #{RECORD_STAGES:#x}]
-    ldrsb r3, [r2, #{FX_DELTA}]
-    cmp   r3, #0
-    rsblt r0, r0, #0
-    cmp   r0, #0
-    movgt r0, #{STRING_NO_EFFECT}
-    movle r0, #0
-    bx    lr
-idle_fine:
-    mov   r0, #0
-    bx    lr
-idle_fx:
-    .word ${{cave_skill_fx}}
-idle_battlers:
-    .word {BATTLERS_PTR:#x}
-idle_records:
-    .word {RECORDS_PTR:#x}
-"""
-
 
 def _slide_out(button: str) -> str:
     """Asm that slides the menu button whose index is in the register `button` out; clobbers r0..r3, ip."""
@@ -171,8 +118,7 @@ def _slide_out(button: str) -> str:
 # Entered by `beq` from the Special list's OK handler for a spell that targets one enemy. The handler's
 # r4, r5, and r7 go on to its epilogue; r6, r8, sb, and sl are free (its one-ally branch uses them).
 # One enemy alive: it is the target and the command ends as in vanilla, or, if the spell would do nothing
-# to it, the name bar says so and the list stays up (r5 = 0 keeps the cursor corners, as the game's own
-# refusal does). The menu's list is left alone in that case: filling the grid here left the description
+# to it, it is refused (cave_skill_refuse) and the list stays up. The menu's list is left alone in that case: filling the grid here left the description
 # window open and empty. Several enemies: the Special list's rows slide out as they do for the ally picker
 # and the enemy grid opens in spell mode, with our veto routine in the picker's state.
 OPEN_ASM = f"""
@@ -197,7 +143,7 @@ OPEN_ASM = f"""
     ldrh  r1, [r6, #{T.MENU_SPELL:#x}]
     bl    ${{cave_skill_idle}}
     cmp   r0, #0
-    bne   open_refuse
+    bne   ${{cave_skill_refuse}}
     strh  sb, [r8, #{T.TARGETS:#x}]
 open_end:
     ldrh  r0, [r6, #{T.MENU_SPELL:#x}]
@@ -214,19 +160,6 @@ open_end:
     mov   r0, #0
     bl    {CLOSE_DESCRIPTION:#x}
     b     {LIST_OK_DONE:#x}
-open_refuse:
-    str   r0, [r6, #{T.MENU_BAR_STRING:#x}]
-    mov   r0, #{T.BAR_FRAMES:#x}
-    str   r0, [r6, #{T.MENU_BAR_FRAMES:#x}]
-    mov   r0, #0
-    str   r0, [r6, #{T.MENU_BAR_TIMER_RESET:#x}]
-    mov   r1, #1
-    mvn   r2, #0
-    bl    {OPEN_WINDOW:#x}
-    mov   r0, #{T.SOUND_REFUSE}
-    bl    {T.PLAY_SOUND:#x}
-    mov   r5, #0
-    b     {T.BUTTON_EPILOGUE:#x}
 open_grid:
     mov   r0, #0
     bl    {CLOSE_DESCRIPTION:#x}
@@ -317,9 +250,6 @@ MENU_PATCHES: tuple[CaveCode | AsmPatch, ...] = (
     hook(LIST_JIAN, MOV_R0_12, "b ${cave_skill_list}", "Jian's skills listed by level"),
     CaveCode("cave_skill_cast", CAST_ASM, "level skills need no ring"),
     hook(CAST_JIAN, MOV_R0_12, "b ${cave_skill_cast}", "level skills need no ring"),
-    CaveCode(
-        "cave_skill_idle", IDLE_ASM, "would this spell do nothing to this battler"
-    ),
     CaveCode("cave_skill_open", OPEN_ASM, "a single-enemy spell opens the enemy grid"),
     hook(
         LIST_OK_ENEMY,

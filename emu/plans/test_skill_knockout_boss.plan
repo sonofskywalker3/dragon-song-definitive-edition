@@ -1,0 +1,60 @@
+# skills: a boss cannot be put to sleep, and the pick is refused up front. Jian at level 25 (level index 24
+# pinned, battle MP pinned to 50) in the Sasquatch fight (event battle 1, forced from Delrich Temple as
+# boss_sasquatch.plan does): Sasquatch (enemy row 136, a boss row: row flags bit 31) is battler 9 between two
+# Yetis (battlers 8 and 10). Special, Knockout Kick, and the grid opens on the left Yeti; Right moves to
+# Sasquatch and A is refused with "No effect!" (shot kb_refused), no MP taken; Right moves to the other Yeti
+# and A casts on it (MP 50 -> 41; with the random state set to 24 the roll succeeds and battler 10's status
+# goes 0 -> 1). Battle records at 0x0228E860 (0x6C each; status in the low nibble of +0x08). Run with --save.
+include boot_from_save
+include cheats_strong
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+include cheats_strong
+pin u32 0x020B4664 24
+pinptr u32 0x020B8620 0x18 50
+execpoke 0x020503A0 u32 0x020A0238 24
+wait 30
+poke u16 0x020B7838 1
+poke u16 0x020B783A 1
+poke u32 0x020B0010 0x73
+waituntil u32 0x020B0010 7 3000
+wait 120
+battlers
+peek u32 0x020B8620 records
+watch u32 0x0228E878 jian_mp
+watch u8 0x0228EBC8 status8
+watch u8 0x0228EC34 status9
+watch u8 0x0228ECA0 status10
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 50
+press Right 8
+wait 50
+press Down 8
+wait 50
+press A 8
+wait 60
+shot kb_grid
+press Right 8
+wait 30
+shot kb_boss
+press A 8
+wait 20
+shot kb_refused
+wait 80
+press Right 8
+wait 30
+shot kb_yeti
+press A 8
+wait 200
+shot kb_cast
+wait 200
+shot kb_after

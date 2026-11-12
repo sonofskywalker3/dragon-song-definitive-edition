@@ -307,7 +307,11 @@ for line in io.lines(path) do
 			step(nil)
 			n = n + 1
 		end
-		say(string.format("waituntil %s = %s after %d frames", words[3], words[4], n))
+		if readers[kind](addr) == value then
+			say(string.format("waituntil %s = %s after %d frames", words[3], words[4], n))
+		else
+			say(string.format("waituntil %s = %s TIMED OUT after %d frames", words[3], words[4], n))
+		end
 	elseif cmd == "waitrec" then
 		local limit = tonumber(words[2])
 		local n = 0

@@ -196,12 +196,12 @@ def _levels_asm() -> str:
 
 
 def _fx_asm() -> str:
-    """Effect record per spell id: kind, stat, delta (s8), look; zeros for the game's own spells."""
+    """Effect record per spell id: kind, argument, delta (s8), look; zeros for the game's own spells."""
     lines = []
     for spell in range(SPELL_COUNT):
         skill = BY_SPELL.get(spell)
         record = (
-            (skill.kind, skill.stat, skill.delta & 0xFF, skill.look)
+            (skill.kind, skill.arg, skill.delta & 0xFF, skill.look)
             if skill
             else (0, 0, 0, 0)
         )

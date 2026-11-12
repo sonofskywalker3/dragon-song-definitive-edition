@@ -461,3 +461,44 @@ for the name bar; the pick is refused. cave_skill_open stores cave_skill_idle th
 **Checks.** Besides the assembler trap of section 10, every cave of the feature was assembled at its real
 address and each branch target inspected (no branch to itself, no branch into the middle of another cave).
 Cave space after this step: 14,516 bytes free.
+
+## 12. Focus, Knockout Kick, War Breaker, Wall Breaker (2026-11-12)
+
+Spell ids 40 to 43, all Jian's, as data in skills_data.py. Two new effect kinds and the all-target cases;
+the "would do nothing" test and the refusal moved to feat_skills_idle.py, the cast look to
+feat_skills_look.py.
+
+- **Kind FLAG (Focus).** The Bealzebub card's effect flag 0x20000 makes func_0206a744 set bit 2 (value 4) of
+  the first word of the battle work area and leave result word 2 = 4. The hit roll func_0205265c reads it at
+  the party-attacker branch (`param_3 & 4`): every party member's physical attack hits. The word is zeroed
+  with the battle context at battle start. The flag is party-wide, so Focus is cast on all allies (spell
+  flags 0xC0000000): no picker, and the card's own row 37 plays ("HIT 100%" banner, sprite 319) on each. The
+  effect hook ORs the flag in and writes the same result word. No self-target path was needed; a skill
+  that affects only its caster (Feral) still needs one.
+- **Kind STATUS (Knockout Kick).** The game's own status skills (func_020500dc, spells 31 to 37) decide
+  immunity, then call func_0202d1d4(target battler, status), which queues the status in the battle work
+  area (+0xE8, eight {status, battler} pairs) for the round to apply after the action, and leave result word
+  3 = -2. The hook does the same after a success roll: func_02011424 (the game's random, state at 0x020A0238),
+  modulo 100 through func_02015f80, against skills_data.STATUS_CHANCE (70). A failed roll shows the hit
+  resolver's miss: func_0202bf9c(battler +0xD4, +0xD8, +0xDC + 0x20, 2) and sound 0x16. Sleep's length and the
+  waking on damage are the engine's.
+- **Immunity.** In func_020500dc an enemy whose row flags (enemy table 0x02097CE4, 0x54 per row, first word)
+  have bit 31 never takes status 1, 3, 4, 5, or 7; rows 136 to 156 have the bit, all the boss rows. That is
+  known before the cast, so cave_skill_idle counts it as "would do nothing" and the pick is refused, as it
+  is on an enemy that already has any status.
+- **All enemies (War Breaker, Wall Breaker).** Spell flags 0x40000000: no picker, the resolver fills the
+  target list with every living enemy, and the effect hook runs per target. Before the game's action setup,
+  cave_skill_anim takes the enemies the skill would do nothing to out of the caster's target list (packing
+  the rest to the front), so no banner shows on them; if nobody is left the list stays and the message line
+  says "No effect!". In the effect hook an idle target of an all-target spell is passed over silently.
+- **Refusal with no picker.** The Special list's OK handler ends the command for all-enemy and all-ally
+  spells at 0x02036D20. cave_skill_group sits there: cave_skill_idle_all (every living enemy idle for an
+  all-enemy spell; the caster for anything else) and, if so, cave_skill_refuse, the shared "No effect!"
+  refusal.
+- **List paging.** The Special list shows six cells a page, filled by column (top, bottom). With seven
+  entries (level 36 and the Blazing Ring worn: Inferno first, then the six skills) a "PAGE" tab appears and
+  Right from the last column turns to a second page with the seventh entry; Left turns back. Eight entries
+  cannot happen for Jian while only one ring can be worn.
+- **Forcing the roll in a plan.** `execpoke 0x020503A0 u32 0x020A0238 N` sets the random state each time the
+  effect hook site runs, so the next random number is fixed: N = 24 gives roll 3 (success), N = 15 gives 98
+  (miss).

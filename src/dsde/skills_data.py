@@ -14,6 +14,18 @@ JIAN, LUCIA, GABRYEL, FLORA, RUFUS = range(5)
 # Stat ids as func_02054dec takes them; the stage of stat n is the s16 at stat record + 0x38 + 2 * n
 STAT_ATK, STAT_DEF, STAT_AGI, STAT_INT, STAT_DEX, STAT_LUK = range(4, 10)
 
+# Statuses (the low nibble of stat record + 0x08; docs/re-cards.md)
+STATUS_SLEEP = 1
+# Statuses a boss row (enemy row flags bit 31) never takes; blind (2) and poison (6) land on bosses too
+BOSS_IMMUNE = frozenset({1, 3, 4, 5, 7})
+STATUS_CHANCE = (
+    70  # percent: a status skill's success roll (the cards never miss a regular enemy)
+)
+
+# Battle-wide flags in the first word of the battle work area, set by the cards and cleared with it at the
+# start of each battle
+FLAG_SURE_HIT = 4  # the party's physical attacks always hit (the Bealzebub card)
+
 FIRST_SKILL = 38  # the blank row after the game's own 38 spell entries
 
 
@@ -30,7 +42,9 @@ class Kind(IntEnum):
     """What a skill does to its target (byte 0 of its effect record)."""
 
     NONE = 0  # the game's own spells
-    STAGE = 1  # moves one stat one stage, and never past one stage from 0
+    STAGE = 1  # moves stat `arg` one stage (`delta`), and never past one stage from 0
+    STATUS = 2  # gives status `arg`, with a success roll; never over another status or to an immune boss
+    FLAG = 3  # sets battle-wide flag `arg` for the rest of the battle
 
 
 class Look(IntEnum):
@@ -52,14 +66,16 @@ class Skill:
     level: int  # learned at this level (1-based)
     target: Target
     kind: Kind
-    stat: int
-    delta: int  # stages: -1 lowers, +1 raises
+    arg: int  # a stat id (STAGE), a status (STATUS), or a battle flag mask (FLAG)
+    delta: int  # STAGE: -1 lowers, +1 raises; 0 for the other kinds
     row: int
     look: Look
 
 
 ROW_ATK_DOWN = 27  # "ATK DOWN" banner (sprite 304), the Quetzalcoatl card's row
 ROW_DEF_DOWN = 28  # "DEF DOWN" banner (sprite 305), the Abadon card's row
+ROW_STATUS = 34  # green rings on the target (sprite 314), the status cards' row
+ROW_SURE_HIT = 37  # "HIT" banner on each ally (sprite 319), the Bealzebub card's row
 
 SKILLS: tuple[Skill, ...] = (
     Skill(
@@ -89,6 +105,64 @@ SKILLS: tuple[Skill, ...] = (
         -1,
         ROW_DEF_DOWN,
         Look.ATTACK,
+    ),
+    # The engine's flag covers the whole party, so the skill is cast on all allies: the banner shows on each
+    Skill(
+        40,
+        "Focus",
+        "Attacks will not miss",
+        6,
+        JIAN,
+        19,
+        Target.ALLY_ALL,
+        Kind.FLAG,
+        FLAG_SURE_HIT,
+        0,
+        ROW_SURE_HIT,
+        Look.ROW,
+    ),
+    Skill(
+        41,
+        "Knockout Kick",
+        "Put one monster to sleep",
+        9,
+        JIAN,
+        25,
+        Target.ENEMY_ONE,
+        Kind.STATUS,
+        STATUS_SLEEP,
+        0,
+        ROW_STATUS,
+        Look.ATTACK,
+    ),
+    # Jian cannot run to every enemy: the all-enemy versions play the row's own cast, as the cards do
+    Skill(
+        42,
+        "War Breaker",
+        "Lower all monsters' attack",
+        12,
+        JIAN,
+        30,
+        Target.ENEMY_ALL,
+        Kind.STAGE,
+        STAT_ATK,
+        -1,
+        ROW_ATK_DOWN,
+        Look.ROW,
+    ),
+    Skill(
+        43,
+        "Wall Breaker",
+        "Lower all monsters' defense",
+        9,
+        JIAN,
+        36,
+        Target.ENEMY_ALL,
+        Kind.STAGE,
+        STAT_DEF,
+        -1,
+        ROW_DEF_DOWN,
+        Look.ROW,
     ),
 )
 
