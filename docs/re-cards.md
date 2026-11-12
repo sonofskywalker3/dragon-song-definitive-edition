@@ -163,3 +163,15 @@ Set by `func_0206a744`; the word is zeroed at battle start, so each lasts one ba
 | AGI down, DEX down, DEX up, LUCK up / down, silence | Onlooker, Chupacabra, Evil Earth, Sturge, Thanatos, Phantom | near useless (two or three points of hit chance, a 4% critical) |
 | Field cards | Blob, Ohainkaru, Mad Fang, Ghoula, Treant, Gloomwing | convenience at best; two not understood |
 | Boss cards | 20 cards | no effect at all |
+
+## In-game description text
+
+Item and card descriptions are in sysmenupack entry 058 ("CMTX"): after the header and a 417-entry u16 table,
+the strings start at 0x346, one per item id in id order (string index = item id; 0 is "Dammy"), in the same
+character encoding as the scripts. Cards 216 to 249 each have a one-line description; all 20 boss cards
+(250 to 269) and the six ids after them read "A collection card, it cannot be used", so the empty boss cards
+are deliberate collectibles. The descriptions settle the field cards the code trace left open: Blob "Symbols
+become slower", Mad Fang "Draw symbols toward you", Ghoula "Symbols flee for a brief period", Ohainkaru "Stop
+symbols moving for a brief period", Treant "Recover HP on the map for a brief period", Gloomwing "Recover MP
+on the map for a brief period". Tick's reads "Paralyze some monsters that are on the ground", which matches
+its front-row condition.
