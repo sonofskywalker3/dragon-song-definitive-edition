@@ -69,14 +69,6 @@ MENU_BAR_STRING = 0xA0
 MENU_BAR_FRAMES = 0xA4
 BAR_FRAMES = 0x3C
 OPEN_WINDOW = 0x0204582C  # (window, 1, frames); the name bar is window 0, frames -1
-# Stat records: [RECORDS_PTR] + RECORD_SIZE * (u32 at battler + BATTLER_RECORD); s16 ATK stage at +0x40
-RECORDS_PTR = 0x020B8620
-RECORD_SIZE = 0x6C
-BATTLER_RECORD = 0x10
-RECORD_ATK_STAGE = 0x40
-# Spells whose single-enemy pick is refused when it would do nothing (feat_skills.py)
-SPELL_WEAPON_BREAK = 38
-STRING_NO_EFFECT = 99  # battle string list entry
 RESULT_STAY = 0
 RESULT_MEMBER_DONE = 2
 SOUND_MENU = 1
@@ -122,6 +114,8 @@ STATE_MANUAL = 1
 STATE_LAST_TAP = 2
 STATE_FIRST = 3  # first real list entry (0 top row, 1 bottom row)
 STATE_MAP = 4
+STATE_VETO = 0xC  # u32: in spell mode, a routine (battler index, spell) -> 0 or the battle string that
+# refuses the pick; left by whoever opened the picker in that mode (feat_skills_menu.py)
 HOLE = 0xFF  # map value of an empty grid cell
 
 # Picker grid and keys

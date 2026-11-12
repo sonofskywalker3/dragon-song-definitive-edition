@@ -60,6 +60,7 @@ STATE_ASM = """
     .word 0
     .word 0
     .word 0
+    .word 0
 """
 
 # r0 = battler -> r0 = rows it reaches (ROWS_ANY or ROWS_FRONT). Same rule as 0x02051BD8.

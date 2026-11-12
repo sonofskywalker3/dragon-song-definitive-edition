@@ -405,3 +405,59 @@ plan above, and what the emulator showed (docs/status.md has the test list):
 - **Assembler trap:** keystone turns a conditional `bl` to a local label (`bllt tag_append`) into a branch to
   itself. Use a conditional branch around a plain `bl`. A conditional `bl` to a numeric address or a
   `${cave}` symbol assembles correctly.
+
+## 11. The skills framework and Armor Break (2026-11-12)
+
+The feature is now data-driven, so the rest of docs/plan-skills.md can be added as data where the kind of
+effect already exists. Armor Break (Jian, level 14, 6 MP, one enemy, DEF down one stage, spell id 39, banner
+row 28 = sprite 305 "DEF DOWN") is the second skill and the first to use it.
+
+**Modules** (feature `skills`, put together in feat_skills.py):
+
+| File | Role |
+|---|---|
+| skills_data.py | one frozen `Skill` per skill: spell id, name, description, MP, owner, learn level, target, kind, stat, delta, effect row, look |
+| skills_common.py | shared addresses and record layouts, the text encoder, the one-instruction `hook` helper |
+| feat_skills_table.py | spell table entries, the growth table move, names, descriptions, `cave_skill_levels`, `cave_skill_fx` |
+| feat_skills_menu.py | list gate, listing by level, castable, the grid opener, the resolver, `cave_skill_idle` |
+| feat_skills_tags.py | the name bar's ailment tags |
+| feat_skills_fx.py | the stage effect, the cast's look, the "No effect!" message line |
+
+**Room for spell ids 39 and up without moving the spell table.** The stat growth table starts right after
+entry 38 (0x02094B4C). It has six 0x60-byte blocks, not five (0x240 bytes; the sixth, all "1, 999, 0", ends
+at 0x02094D8C, where the next table with pool words of its own starts), and is read only as base + character
+* 0x60 + field through the two pool words 0x020554F0 and 0x020555E4 (code at 0x0205541C and 0x02055514). A
+copy of the 0x240 bytes is cave data (`cave_skill_growth`), the two pool words point at it, and the old bytes
+are spell entries 39 to 86 (room for ids below 87). Only the entries of defined skills are written; the four
+loop bounds are the spell count (40 now). mp-economy and spell-levels still edit the vanilla table in
+place. The battle list's 30 entries and the field Magic list's stack buffer bound the spells one character
+has, not the table; the largest planned list is under ten.
+
+**Names.** Weapon Break keeps entry 91 of the battle string list. From id 39 the name comes from a pointer
+table in the cave (`cave_skill_name`, called in place of `add r3, ip, r3` at 0x02044E7C in the name bar's
+case 3; the spell id is read back from menu +0x94). That is the only place in battle that draws a spell
+name: the only `add #0x35` in arm9 is at 0x02044E60, and the Special list's rows are icons. The field
+Magic page reads the list through pool 0x0205C108 (entry 53 + spell) and is not hooked, because the
+fighters' skills are not listed in the field (cave_skill_list answers only in battle); a healer skill that
+should show there will need that reader hooked too.
+
+**Per-spell cave tables.** `cave_skill_levels`: one row of learn level indices per fighter (Jian, Gabryel,
+Rufus), 255 = not his or hers; only Jian's branch of func_02050c50 reads it so far (Gabryel's and Rufus's
+branches are at 0x02050DA8 and 0x02050DC4). `cave_skill_fx`: four bytes per spell (kind, stat, delta as s8,
+look), zeros for the game's own spells.
+
+**One test for "would do nothing".** `cave_skill_idle(battler index, spell)` returns 0, or the battle string
+to show ("No effect!", 99) when a stage skill's stat is already a stage past 0 in its direction (any stat 4
+to 9, either direction: the stage is the s16 at record + 0x38 + 2 * stat). The effect hook, the cast-look
+hook, the one-enemy refusal in the grid opener, and the grid's confirm all ask it; nothing tests for a
+spell id any more.
+
+**The grid's veto.** The targeting feature must build without skills, and a cave label can have only one
+definition, so the grid does not call the skills code by name. The picker's state block got a fourth word,
+STATE_VETO (+0xC): whoever opens the picker in spell mode leaves a routine there, and the grid's confirm
+calls it (`blx`) with the highlighted battler and the menu's spell. A nonzero answer is the battle string
+for the name bar; the pick is refused. cave_skill_open stores cave_skill_idle there.
+
+**Checks.** Besides the assembler trap of section 10, every cave of the feature was assembled at its real
+address and each branch target inspected (no branch to itself, no branch into the middle of another cave).
+Cave space after this step: 14,516 bytes free.
