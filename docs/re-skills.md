@@ -107,3 +107,17 @@ The Cutting Room Floor page for the game is a stub that lists unused areas only.
    - effect 313 needs a row and an effect script; the heal script 0x02094EA4 (two steps) is the model.
 5. **Damage.** What the enemy skill flags (0x1000 to 0x8000 elements, 0x20000) do when a party member is
    the caster is not traced.
+
+## 5. Forced in a battle (2026-11-12)
+
+Both main candidates load and play in the emulator, by memory pokes only (no patch code yet):
+
+- **btldata 15 (Jian):** vanilla ROM, Jian's attack-file columns (0x020953D8, 0x020953DA) pinned to 15 and
+  his attack scripts (0x02095AF0, 0x020958C0) overwritten with a ten-step copy of the single attack: run in,
+  slot 0 animation 0 (the toss), slot 0 animation 1 with the hit flags 0xC1 (the flip kick with the arc), run
+  back. Against a forced Ice Mongrel the kick lands and the damage number shows on the kick frame.
+- **btldata 313 (water ribbon):** effect row 0's sprite (0x02096184) poked from 158 to 313 and the heal effect
+  script's second step (0x02094EBE) set to animation 0, since the file has only one. Lucia's Healing Water
+  then coils the ribbon around the target and the heal applies as usual.
+
+GIFs: build/force_anims/jian_unused_attack.gif and water_unused_effect.gif (build/ is not committed).
