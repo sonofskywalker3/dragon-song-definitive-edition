@@ -14,8 +14,10 @@ does, with numbers), docs/boss-exp.md (expected level at each boss).
 - **The healers lose their buffs; Rufus gets them.** Grand Weapon, Grand Shell, and Quick leave Lucia and Flora.
 - **No MP recovery spell, no MP gift.** HP Walk and MP Walk become accessories (the Treant and Gloomwing
   field effects, always on while equipped).
-- **Stat changes show an icon** (sword or armor with an arrow), not the "ATK DOWN!" banners. btldata 157 has
-  unused sword, armor, ring, and hat icons; the arrows need drawing.
+- **Stat changes keep the game's banners** ("ATK DOWN!"). Jeff first wanted an icon, then was fine with the
+  banner once he saw it in place (2026-11-12). What an enemy is suffering from is shown on the name bar when
+  it is highlighted in the enemy grid ("Thanatos ATKvDEFvPsn"); with that, no always-on icon beside the
+  monster is needed.
 - **Flora learns Miracle Tears** (vanilla: never), late.
 - Possible later: a card slot (or the planned ring slot) that grants a skill or passive while a card is
   equipped. Not scoped.
@@ -118,8 +120,8 @@ map-enemy cards; the steal and break blockers.
   through func_02054dec.
 - Success rolls and the one-stage cap.
 - How damage is computed for a party-cast physical skill (Stone Throw, Savage Rush).
-- Stone projectile sprite; icon effect with arrows; whether Rufus's return exists in the story scripts.
+- Stone projectile sprite; whether Rufus's return exists in the story scripts.
 - Removing the Tools / Cards choice from the battle Item command.
 
-First prototype: Jian's Weapon Break end to end (table space, level check, single-enemy pick, one-stage ATK
-down, icon effect, MP cost).
+First prototype: Jian's Weapon Break end to end. Built 2026-11-12 (docs/plan-weapon-break.md): in both
+editions, with the pick on the enemy grid, the refusal of a wasted cast, and the name bar tags.
