@@ -1,8 +1,8 @@
-# skills: the one-stage cap. Jian (level index 8, battle MP pinned to 50) casts Weapon Break three rounds
-# running on one forced Ice Mongrel with 30000 HP (setup as enemy_force.plan; with one enemy the cast needs
-# no grid). Expect each cast to take 8 MP (50 -> 42), the enemy's ATK stage 0 -> -1 (0xFFFF) and ATK 20 -> 16
-# on the first, and no further change on the second and third, which show "No effect!" on the message line
-# as the cast starts (shot cap_cast2) and no banner on the kick (cap_cast2_late). Run with --save.
+# skills: a second Weapon Break on the same enemy is refused. Jian (level index 8, battle MP pinned to 50)
+# casts Weapon Break on one forced Ice Mongrel with 30000 HP (setup as enemy_force.plan; with one enemy the
+# cast needs no grid): MP 50 -> 42, the enemy's ATK stage 0 -> -1 (0xFFFF), ATK 20 -> 16. Next round he tries
+# again: A on Weapon Break in the Special list is refused, the name bar says "No effect!" (shot cap_refused),
+# the list stays up, and no MP is taken (only one drop to 42 in the log). Run with --save.
 include boot_from_save
 include cheats_strong
 # Delrich Temple (map 6), standing off the enemy spawn points (as boss_gronk.plan)
@@ -63,21 +63,9 @@ press Right 8
 wait 50
 press A 8
 wait 50
+shot cap_list
 press A 8
-wait 50
-shot cap_cast2
-wait 150
-shot cap_cast2_late
-waituntil u32 0x020B0010 8 600
-waituntil u32 0x020B0010 7 3000
-wait 110
-press Right 8
-wait 50
-press A 8
-wait 50
-press A 8
-wait 50
-waituntil u32 0x020B0010 8 600
-waituntil u32 0x020B0010 7 3000
-wait 110
-shot cap_end
+wait 20
+shot cap_refused
+wait 120
+shot cap_after

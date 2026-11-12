@@ -5,10 +5,22 @@ the list page (page 4) with the ITCM mode byte set. With one reachable enemy it 
 On the list page OK / A, or a second tap on the same cell, stores the enemy in the member's first
 target slot and ends the member's command like vanilla Fight; back / B returns to the command page.
 A single-enemy spell opens the same picker in spell mode (feat_skills.py): confirming then ends the
-command as a Special with that spell.
+command as a Special with that spell, unless the spell would do nothing to that enemy (Weapon Break on
+an enemy whose attack is already lowered): then the name bar says "No effect!" and the grid stays up.
 """
 
 from dsde.targeting_consts import (
+    BAR_FRAMES,
+    BATTLER_RECORD,
+    MENU_BAR_FRAMES,
+    MENU_BAR_STRING,
+    MENU_BAR_TIMER_RESET,
+    OPEN_WINDOW,
+    RECORD_ATK_STAGE,
+    RECORD_SIZE,
+    RECORDS_PTR,
+    SPELL_WEAPON_BREAK,
+    STRING_NO_EFFECT,
     ATTACK_BLOCK,
     BACK_BUTTON,
     BATTLER_SIZE,
@@ -197,6 +209,25 @@ disp_confirm:
     add   r0, r0, r1
     add   r1, r5, #{STATE_MAP}
     ldrb  r0, [r1, r0]
+    ldrb  r2, [r5, #{STATE_MODE}]
+    cmp   r2, #{MODE_SPELL}
+    bne   disp_take
+    ldrh  r2, [r6, #{MENU_SPELL:#x}]
+    cmp   r2, #{SPELL_WEAPON_BREAK}
+    bne   disp_take
+    ldr   r2, disp_battlers
+    ldr   r2, [r2]
+    mov   r3, #{BATTLER_SIZE:#x}
+    mla   r2, r3, r0, r2
+    ldr   r2, [r2, #{BATTLER_RECORD:#x}]
+    ldr   r3, disp_records
+    ldr   r3, [r3]
+    mov   r1, #{RECORD_SIZE:#x}
+    mla   r2, r1, r2, r3
+    ldrsh r2, [r2, #{RECORD_ATK_STAGE:#x}]
+    cmp   r2, #0
+    blt   disp_no_effect
+disp_take:
     ldrh  r1, [r6, #{MENU_MEMBER:#x}]
     ldr   r2, disp_battlers
     ldr   r2, [r2]
@@ -264,6 +295,16 @@ disp_cancel_loop:
     mov   r0, #{RESULT_STAY}
     pop   {{r4-r6, pc}}
 
+disp_no_effect:
+    mov   r0, #{STRING_NO_EFFECT}
+    str   r0, [r6, #{MENU_BAR_STRING:#x}]
+    mov   r0, #{BAR_FRAMES:#x}
+    str   r0, [r6, #{MENU_BAR_FRAMES:#x}]
+    mov   r0, #0
+    str   r0, [r6, #{MENU_BAR_TIMER_RESET:#x}]
+    mov   r1, #1
+    mvn   r2, #0
+    bl    {OPEN_WINDOW:#x}
 disp_refuse:
     mov   r0, #{SOUND_REFUSE}
     bl    {PLAY_SOUND:#x}
@@ -277,4 +318,6 @@ disp_buttons:
     .word {BUTTONS_PTR:#x}
 disp_battlers:
     .word {BATTLERS_PTR:#x}
+disp_records:
+    .word {RECORDS_PTR:#x}
 """

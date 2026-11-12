@@ -197,11 +197,33 @@ MESSAGE_WINDOW = 0xD
 MESSAGE_FRAMES = 0x3C
 WORK_EFFECT_MODE = 0x74  # 0 = no effect helpers this action (as for Fight); the effect row's value otherwise
 
+NAME_BAR_CARD_RETURN = (
+    0x02044CF0  # func_02044c00: `addlt sp, sp, #8` after a card name was drawn
+)
+NAME_BAR_CARD_RETURN_WORD = 0xB28DD008
+GLYPH_DOWN = 1  # the font's solid down triangle
+RECORD_DEF_STAGE = 0x42  # s16 stage of stat 5
+RECORD_STATUS = 0x08  # low nibble: the battler's status, 0 none
+STATUS_MASK = 0xF
+# Name bar tags for statuses 1 to 7 (docs/re-cards.md), three letters each so an entry is 4 bytes
+STATUS_TAGS = ("Slp", "Bld", "Cnf", "Par", "Sil", "Psn", "Stn")
+TAG_RIGHT = 0x1B  # last text cell that shows on the name bar (cells are 8 pixels; text starts at cell 4)
+TAG_BUFFER = 12  # "ATKvDEFvPsn" and the end byte: fits beside a 12-letter name
+
 _CODES = {char: code for code, char in USA_TABLE.items()}
 
 
 def _encode(text: str) -> bytes:
     return bytes(_CODES[char] for char in text) + bytes([END])
+
+
+def _stat_tag(stat: str) -> bytes:
+    """A lowered stat on the name bar: its three letters and the down triangle."""
+    return bytes([*(_CODES[char] for char in stat), GLYPH_DOWN, END])
+
+
+def _bytes(data: bytes) -> str:
+    return ", ".join(str(byte) for byte in data)
 
 
 def _levels() -> str:
@@ -344,7 +366,9 @@ def _slide_out(button: str) -> str:
 
 # Entered by `beq` from the Special list's OK handler for a spell that targets one enemy. The handler's
 # r4, r5, and r7 go on to its epilogue; r6, r8, sb, and sl are free (its one-ally branch uses them).
-# One enemy alive: it is the target and the command ends as in vanilla, with the menu's list left alone
+# One enemy alive: it is the target and the command ends as in vanilla (or, if the spell would do nothing
+# to it, the name bar says "No effect!" and the list stays up, r5 = 0 keeping the cursor corners as the
+# game's own refusal does), with the menu's list left alone
 # (filling the grid here left the description window open and empty). Several: the Special list's
 # rows slide out as they do for the ally picker and the enemy grid opens in spell mode.
 OPEN_ASM = f"""
@@ -365,6 +389,22 @@ OPEN_ASM = f"""
     bl    ${{cave_tgt_after}}
     cmp   r0, #0
     bge   open_grid
+    ldrh  r0, [r6, #{T.MENU_SPELL:#x}]
+    cmp   r0, #{WEAPON_BREAK}
+    bne   open_one
+    ldr   r0, open_battlers
+    ldr   r0, [r0]
+    mov   r2, #{T.BATTLER_SIZE:#x}
+    mla   r0, r2, sb, r0
+    ldr   r0, [r0, #{BATTLER_RECORD:#x}]
+    ldr   r1, open_records
+    ldr   r1, [r1]
+    mov   r2, #{RECORD_SIZE:#x}
+    mla   r0, r2, r0, r1
+    ldrsh r0, [r0, #{RECORD_ATK_STAGE:#x}]
+    cmp   r0, #0
+    blt   open_no_effect
+open_one:
     strh  sb, [r8, #{T.TARGETS:#x}]
 open_end:
     ldrh  r0, [r6, #{T.MENU_SPELL:#x}]
@@ -381,6 +421,20 @@ open_end:
     mov   r0, #0
     bl    {CLOSE_DESCRIPTION:#x}
     b     {LIST_OK_DONE:#x}
+open_no_effect:
+    mov   r0, #{T.STRING_NO_EFFECT}
+    str   r0, [r6, #{T.MENU_BAR_STRING:#x}]
+    mov   r0, #{T.BAR_FRAMES:#x}
+    str   r0, [r6, #{T.MENU_BAR_FRAMES:#x}]
+    mov   r0, #0
+    str   r0, [r6, #{T.MENU_BAR_TIMER_RESET:#x}]
+    mov   r1, #1
+    mvn   r2, #0
+    bl    {OPEN_WINDOW:#x}
+    mov   r0, #{T.SOUND_REFUSE}
+    bl    {T.PLAY_SOUND:#x}
+    mov   r5, #0
+    b     {T.BUTTON_EPILOGUE:#x}
 open_grid:
     mov   r0, #0
     bl    {CLOSE_DESCRIPTION:#x}
@@ -431,6 +485,113 @@ open_buttons:
     .word {T.BUTTONS_PTR:#x}
 open_state:
     .word ${{cave_tgt_state}}
+open_records:
+    .word {RECORDS_PTR:#x}
+"""
+
+# Replaces `addlt sp, sp, #8` (bllt) in the name bar's drawing, func_02044c00, on the path that has just
+# drawn a card name and returns: the enemy grid labels its cells with card names. r6 = text handle,
+# r8 = x, r7 = y. While the grid is up, everything that ails the highlighted enemy follows its name,
+# right-aligned: "ATK" and "DEF" with a down triangle for a lowered stat, and three letters for its status
+# (an enemy has one status at a time), with no spaces so that all three fit beside the longest names, for
+# example "ATKvDEFvPsn". Ends with the replaced instruction and
+# the lt flags its two successors need.
+TAG_ASM = f"""
+    push  {{r4, r5, r6, lr}}
+    ldr   r4, tag_state
+    ldrb  r0, [r4, #{T.STATE_MODE}]
+    cmp   r0, #0
+    beq   tag_out
+    ldr   r0, tag_menu
+    ldrsh r0, [r0, #{T.MENU_PAGE:#x}]
+    cmp   r0, #{T.PAGE_LIST}
+    bne   tag_out
+    bl    {T.HIGHLIGHTED_ROW:#x}
+    cmp   r0, #0
+    blt   tag_out
+    ldr   r1, tag_menu
+    ldr   r1, [r1, #{T.MENU_FIRST_SHOWN:#x}]
+    add   r0, r0, r1
+    add   r1, r4, #{T.STATE_MAP}
+    ldrb  r0, [r1, r0]
+    cmp   r0, #{LAST_ENEMY}
+    bhi   tag_out
+    ldr   r1, tag_battlers
+    ldr   r1, [r1]
+    mov   r2, #{T.BATTLER_SIZE:#x}
+    mla   r0, r2, r0, r1
+    ldr   r0, [r0, #{BATTLER_RECORD:#x}]
+    ldr   r1, tag_records
+    ldr   r1, [r1]
+    mov   r2, #{RECORD_SIZE:#x}
+    mla   r4, r2, r0, r1
+    adr   r5, tag_buffer
+    ldrsh r0, [r4, #{RECORD_ATK_STAGE:#x}]
+    cmp   r0, #0
+    bge   tag_no_atk
+    adr   r1, tag_atk
+    bl    tag_append
+tag_no_atk:
+    ldrsh r0, [r4, #{RECORD_DEF_STAGE:#x}]
+    cmp   r0, #0
+    bge   tag_no_def
+    adr   r1, tag_def
+    bl    tag_append
+tag_no_def:
+    ldr   r0, [r4, #{RECORD_STATUS:#x}]
+    and   r0, r0, #{STATUS_MASK:#x}
+    sub   r0, r0, #1
+    cmp   r0, #{len(STATUS_TAGS)}
+    bhs   tag_built
+    adr   r1, tag_status
+    add   r1, r1, r0, lsl #2
+    bl    tag_append
+tag_built:
+    adr   r1, tag_buffer
+    subs  r4, r5, r1
+    beq   tag_out
+    mov   r0, #{END:#x}
+    strb  r0, [r5]
+    sub   sp, sp, #8
+    mov   r0, #1
+    str   r0, [sp]
+    mov   r0, r6
+    add   r1, r8, #{TAG_RIGHT + 1:#x}
+    sub   r1, r1, r4
+    add   r2, r7, #1
+    adr   r3, tag_buffer
+    bl    {DRAW_TEXT:#x}
+    add   sp, sp, #8
+tag_out:
+    pop   {{r4, r5, r6, lr}}
+    add   sp, sp, #8
+    mov   r0, #0
+    cmp   r0, #1
+    bx    lr
+tag_append:
+    ldrb  r0, [r1], #1
+    cmp   r0, #{END:#x}
+    strbne r0, [r5], #1
+    bne   tag_append
+    bx    lr
+tag_state:
+    .word ${{cave_tgt_state}}
+tag_menu:
+    .word {T.MENU:#x}
+tag_battlers:
+    .word {BATTLERS_PTR:#x}
+tag_records:
+    .word {RECORDS_PTR:#x}
+tag_atk:
+    .byte {_bytes(_stat_tag("ATK"))}
+    .align 2
+tag_def:
+    .byte {_bytes(_stat_tag("DEF"))}
+    .align 2
+tag_status:
+{chr(10).join(f"    .byte {_bytes(_encode(tag))}" for tag in STATUS_TAGS)}
+tag_buffer:
+    .space {TAG_BUFFER}
 """
 
 # Replaces `bl func_02050f78` (r0 = 3, r1 = 0) where a party Special picks its one enemy. r4 = actor.
@@ -640,6 +801,15 @@ SKILLS_FEATURE = Feature(
         ),
         CaveCode(
             "cave_skill_open", OPEN_ASM, "a single-enemy spell opens the enemy grid"
+        ),
+        CaveCode(
+            "cave_skill_tag", TAG_ASM, "the name bar marks an enemy with lowered ATK"
+        ),
+        _hook(
+            NAME_BAR_CARD_RETURN,
+            NAME_BAR_CARD_RETURN_WORD,
+            "bllt ${cave_skill_tag}",
+            "the name bar marks an enemy with lowered ATK",
         ),
         CaveCode("cave_skill_msg", MESSAGE_ASM, "the message line can say No effect!"),
         _hook(

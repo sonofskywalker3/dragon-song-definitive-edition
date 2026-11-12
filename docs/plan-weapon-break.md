@@ -385,3 +385,23 @@ plan above, and what the emulator showed (docs/status.md has the test list):
   (the plans watch absolute addresses from it; `peek u32 0x020B8620` prints it).
 - For the full kit: the field Magic list's stack buffer and the battle list's 30 entries are separate limits
   from the four loop bounds, and only string entries 74 to 76 duplicate 70 to 72 (73 is a distinct string).
+
+## 10. Refused picks and the name bar (2026-11-12)
+
+- **A pick that would do nothing is refused** (Jeff: "No effect" should block the attempt). In the grid's
+  confirm path (feat_targeting_menu.py, disp_confirm) a Weapon Break on an enemy whose ATK stage is below 0
+  sets the name bar's timed message the way func_02035128 does (menu +0xA0 = battle string 99, +0xA4 = 0x3C
+  frames, +0x98 = 0, func_0204582c(0, 1, -1)), plays the refuse sound, and stays on the grid. With one enemy
+  alive there is no grid, so cave_skill_open does the same from the Special list (r5 = 0 keeps the cursor
+  corners, as the game's refusal at 0x02036B18 does). No MP is taken in either case. The message-line "No
+  effect!" of section 9 remains for a target that changes after the pick.
+- **The name bar lists the highlighted enemy's ailments** (Jeff: several must show at once). cave_skill_tag is
+  called from func_02044c00 where a card name has been drawn (0x02044CF0; the grid labels its cells with card
+  names). While the grid is up it builds "ATK" + glyph 1 (the font's down triangle) for an ATK stage below 0,
+  "DEF" + glyph 1 for a DEF stage (+0x42) below 0, and three letters for status 1 to 7 (Slp, Bld, Cnf, Par,
+  Sil, Psn, Stn; an enemy has one status at a time), with no spaces, and draws it so that it ends at text
+  cell 0x1B, the last that shows (cells are 8 pixels, the name starts at cell 4). The longest case,
+  "ATKvDEFvPsn", fits beside a 12-letter name. Other lowered stats are not listed; no skill lowers them.
+- **Assembler trap:** keystone turns a conditional `bl` to a local label (`bllt tag_append`) into a branch to
+  itself. Use a conditional branch around a plain `bl`. A conditional `bl` to a numeric address or a
+  `${cave}` symbol assembles correctly.

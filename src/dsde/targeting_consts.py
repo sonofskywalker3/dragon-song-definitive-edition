@@ -63,6 +63,20 @@ COMMAND_SPECIAL = 4
 MENU_SPELL = 0x80  # spell chosen on the Special list
 BATTLER_SPELL = 0x86  # the battler's spell for a Special
 MODE_SPELL = 2  # STATE_MODE: the picker was opened for a single-enemy spell (1 = Fight)
+# The name bar's timed message: battle string index, frames left (func_02035128 cases 2 to 4)
+MENU_BAR_TIMER_RESET = 0x98
+MENU_BAR_STRING = 0xA0
+MENU_BAR_FRAMES = 0xA4
+BAR_FRAMES = 0x3C
+OPEN_WINDOW = 0x0204582C  # (window, 1, frames); the name bar is window 0, frames -1
+# Stat records: [RECORDS_PTR] + RECORD_SIZE * (u32 at battler + BATTLER_RECORD); s16 ATK stage at +0x40
+RECORDS_PTR = 0x020B8620
+RECORD_SIZE = 0x6C
+BATTLER_RECORD = 0x10
+RECORD_ATK_STAGE = 0x40
+# Spells whose single-enemy pick is refused when it would do nothing (feat_skills.py)
+SPELL_WEAPON_BREAK = 38
+STRING_NO_EFFECT = 99  # battle string list entry
 RESULT_STAY = 0
 RESULT_MEMBER_DONE = 2
 SOUND_MENU = 1

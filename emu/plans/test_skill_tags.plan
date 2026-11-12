@@ -1,0 +1,43 @@
+# skills + manual-targeting: the name bar lists everything that ails the highlighted enemy. Jian alone
+# (level index 8), first temple battle, with ailments poked into the stat records (0x0228E860 + 0x6C * n:
+# status low nibble +0x08, ATK stage +0x40, DEF stage +0x42): the skeleton (9) ATK and DEF lowered and
+# poisoned, the spider (10) DEF lowered, back-row 4 ATK lowered and asleep, back-row 5 paralyzed.
+# Fight's grid: "Thanatos ATKvDEFvPsn" (shot tg_all, v = the down triangle), "Tick DEFv" (tg_def).
+# Weapon Break's grid: "Bealzebub ATKvSlp" (tg_sleep), "Bealzebub Par" (tg_par), and no tag on the third
+# (tg_none). Run with --save.
+include boot_from_save
+include cheats_strong
+include warp6
+include cheats_strong
+pin u32 0x020B4664 8
+wait 270
+poke u16 0x0228EC6C 0xFFFF
+poke u16 0x0228EC6E 0xFFFF
+poke u8 0x0228EC34 6
+poke u16 0x0228ECDA 0xFFFF
+poke u16 0x0228EA50 0xFFFF
+poke u8 0x0228EA18 1
+poke u8 0x0228EA84 4
+press A 8
+wait 50
+press A 8
+wait 60
+shot tg_all
+press Right 8
+wait 30
+shot tg_def
+press B 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 80
+shot tg_sleep
+press Right 8
+wait 20
+shot tg_par
+press Right 8
+wait 20
+shot tg_none
