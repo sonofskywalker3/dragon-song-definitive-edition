@@ -1,0 +1,129 @@
+# skills: a scared enemy loses its turns and recovers. Gabryel alone at level 39 (level index 38 pinned,
+# battle MP pinned to 50, HP 999 at the start and not pinned in battle) against one forced Ice Mongrel
+# with 30000 HP that attacks every turn; the random state is set to 24 whenever the effect hook runs, so
+# Howl lands. Round 1 Howl (Right, Right on the list): status9 0 -> 4. Round 2 Feral, rounds 3 to 6 Gale
+# Cut (damage does not end it): expect no drop of gabryel_hp while it is scared, then status9 back to 0
+# after its 2 to 4 turns and gabryel_hp dropping again. One shot at each command prompt (ft_r1 to ft_r7).
+# Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK +0x24, ATK stage +0x40). Run with --save.
+include boot_from_save
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u16 0x020B464C 2
+pin u16 0x020B4650 65535
+pin u16 0x020B4654 65535
+# Delrich Temple (map 6), standing off the enemy spawn points (as boss_gronk.plan)
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u16 0x020B464C 2
+pin u16 0x020B4650 65535
+pin u16 0x020B4654 65535
+# Row 20 (0x02097CE4 + 20 * 0x54 = 0x02098374): HP 30000 at level 0 and 98, AI class 3, action 0 always
+poke u16 0x02098378 30000
+poke u16 0x0209838C 30000
+poke u32 0x02098374 0x3
+poke u16 0x020983A0 100
+poke u16 0x020983A2 100
+poke u16 0x020983A4 100
+poke u16 0x020983A6 100
+# Formation: at func_0202bc28's entry (right after func_0202b948 filled ctx 0x020B85B8), lead row +0x32 and
+# the eight slots +0x34..+0x42 (slot i = battler 4 + i) are overwritten: only slot 5 (front, a ground
+# species' lead slot) holds row 20
+execpoke 0x0202BC28 u16 0x020B85EA 20
+execpoke 0x0202BC28 u16 0x020B85EC 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85EE 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F0 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F2 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F4 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F6 20
+execpoke 0x0202BC28 u16 0x020B85F8 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85FA 0xFFFF
+# Start a regular (non-event) battle, formation 0, through the field's own battle state
+poke u16 0x020B7838 0
+poke u16 0x020B783A 0
+pin u32 0x020B471C 38
+pinptr u32 0x020B8620 0x18 50
+poke u32 0x020B0010 0x73
+waituntil u32 0x020B0010 7 3000
+wait 110
+execpoke 0x020503A0 u32 0x020A0238 24
+watch u32 0x0228e878 gabryel_mp
+watch u32 0x0228e874 gabryel_hp
+watch u8 0x0228ec34 status9
+shot ft_r1
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 30
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+shot ft_r2
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 30
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+shot ft_r3
+press Right 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 30
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+shot ft_r4
+press Right 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 30
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+shot ft_r5
+press Right 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 30
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+shot ft_r6
+press Right 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 30
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+shot ft_r7

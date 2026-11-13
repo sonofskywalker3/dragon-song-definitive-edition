@@ -6,6 +6,7 @@ The skills are data (skills_data.py). This feature is put together from these pa
   names and descriptions, and the per-spell cave tables the hooks read;
 - feat_skills_menu.py: Special opens a spell list for everyone, skills are listed by level and cast for MP,
   and a single-enemy skill is aimed on the Fight grid;
+- feat_skills_allies.py: skills cast on the caster alone or on one ally from the game's ally picker;
 - feat_skills_idle.py: the one test for "this cast would do nothing", and the menu's refusal of such a cast;
 - feat_skills_tags.py: the grid's name bar lists the highlighted enemy's ailments;
 - feat_skills_fx.py: the effect itself and the "No effect!" line;
@@ -14,6 +15,7 @@ The skills are data (skills_data.py). This feature is put together from these pa
 Needs manual-targeting (the enemy grid and its helpers).
 """
 
+from dsde.feat_skills_allies import ALLY_PATCHES
 from dsde.feat_skills_fx import FX_PATCHES
 from dsde.feat_skills_idle import IDLE_PATCHES
 from dsde.feat_skills_look import LOOK_PATCHES
@@ -27,6 +29,7 @@ SKILLS_FEATURE = Feature(
     (
         *table_patches(),
         *MENU_PATCHES,
+        *ALLY_PATCHES,
         *IDLE_PATCHES,
         *TAG_PATCHES,
         *FX_PATCHES,

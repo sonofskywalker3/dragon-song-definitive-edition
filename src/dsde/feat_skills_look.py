@@ -9,9 +9,10 @@
 - A skill with the ROW look plays its effect row's own cast, which is written for the pose a character
   takes to use an item or a card; a spell gets the character's Special file instead, so the pose file is put
   back in its place.
-- A skill on all enemies plays its effect row's own cast, as a card does. Before the setup, the enemies it
-  would do nothing to are taken out of the caster's target list, so no banner shows on them and the effect
-  never runs for them; if that leaves nobody, the list stays as it is and the line says "No effect!".
+- A skill on all enemies or all allies plays its effect row's own cast, as a card does. Before the setup,
+  the targets it would do nothing to are taken out of the caster's target list, so no banner shows on them
+  and the effect never runs for them; if that leaves nobody, the list stays as it is and the line says
+  "No effect!".
 """
 
 from dsde import targeting_consts as T
@@ -38,7 +39,6 @@ from dsde.skills_common import (
     OPEN_WINDOW,
     SPELL_ENTRY_SIZE,
     SPELL_TABLE,
-    TARGET_BITS,
     WORK_EFFECT_MODE,
     WORK_MESSAGE,
     WORK_SLOT0,
@@ -150,7 +150,7 @@ _NO_EFFECT_LINE = f"""
     bl    {OPEN_WINDOW:#x}"""
 
 # Replaces `bl func_02068308`. r0 = the acting party battler, r1 = mode. A counter (which keeps the queued
-# command and spell) is set up untouched. Before the game's setup an all-enemy skill's target list is
+# command and spell) is set up untouched. Before the game's setup an all-target skill's target list is
 # pruned (anim_prune). After it, a skill with the ROW look gets its caster's item pose file in slot 0, and
 # a skill with the ATTACK look its caster's attack file and its own script: run in (or leap up to a
 # back-row enemy), the attack without hits, the effect on the target, back, or the same with no effect step
@@ -179,9 +179,8 @@ ANIM_ASM = f"""
     mov   r1, #{SPELL_ENTRY_SIZE:#x}
     mul   r2, r6, r1
     ldr   r0, [r0, r2]
-    and   r0, r0, #{TARGET_BITS:#x}
-    cmp   r0, #{ALL_TARGETS:#x}
-    bne   anim_setup
+    tst   r0, #{ALL_TARGETS:#x}
+    beq   anim_setup
     bl    anim_prune
 anim_setup:
     mov   r0, r4

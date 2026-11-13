@@ -9,9 +9,10 @@ bar and no MP taken. What "nothing" means depends on the skill's kind (skills_da
   5, or 7);
 - FLAG: the battle-wide flag is already set.
 
-`cave_skill_idle` answers for one battler; the enemy grid calls it as its veto, the one-enemy path and the
-effect hooks call it directly. `cave_skill_idle_all` answers for a spell with no picker: an all-enemy spell
-is idle when every living enemy is, anything else when the caster is. `cave_skill_refuse` is the shared
+`cave_skill_idle` answers for one battler; the enemy grid calls it as its veto, the one-enemy path, the
+ally picker, and the effect hooks call it directly. `cave_skill_idle_all` answers for a spell with no
+picker: an all-enemy spell is idle when every living enemy is, an all-ally spell when every living ally
+is, anything else when the caster is. `cave_skill_refuse` is the shared
 refusal the Special list's handlers end in.
 """
 
@@ -46,6 +47,7 @@ from dsde.skills_data import BOSS_IMMUNE, SPELL_COUNT, Kind
 ENEMY_ROWS = 0x02097CE4  # enemy table, 0x54 per row; the first word is the row's flags
 ENEMY_ROW_SIZE = 0x54
 ROW_BOSS = 0x80000000  # row flag: a boss (rows 136 to 156)
+PARTY_SLOTS = 3  # party battlers are 0..2
 IMMUNE_MASK = sum(1 << status for status in BOSS_IMMUNE)  # bit n: status n
 
 # The Special list's OK handler, where a spell with no picker (all enemies, all allies) ends the member's
@@ -136,8 +138,8 @@ idle_work:
 """
 
 # r0 = the caster's battler index, r1 = spell -> r0 as cave_skill_idle, for a spell cast with no picker.
-# An all-enemy spell is idle when every living enemy is (with nobody alive it is let through); any other
-# spell is judged on the caster.
+# An all-enemy spell is idle when every living enemy is, an all-ally spell when every living ally is
+# (with nobody alive it is let through); any other spell is judged on the caster.
 IDLE_ALL_ASM = f"""
     push  {{r4-r6, lr}}
     mov   r4, r0
@@ -151,6 +153,8 @@ IDLE_ALL_ASM = f"""
     and   r0, r0, #{TARGET_BITS:#x}
     cmp   r0, #{ALL_TARGETS:#x}
     beq   all_enemies
+    cmp   r0, #{TARGET_BITS:#x}
+    beq   all_allies
     mov   r0, r4
     mov   r1, r5
     bl    ${{cave_skill_idle}}
@@ -176,8 +180,35 @@ all_done:
     moveq r0, #0
     movne r0, #{STRING_NO_EFFECT}
     pop   {{r4-r6, pc}}
+all_allies:
+    mov   r6, #0
+    mov   r4, #0
+allies_loop:
+    ldr   r0, all_battlers
+    ldr   r0, [r0]
+    mov   r1, #{BATTLER_SIZE:#x}
+    mla   r0, r1, r6, r0
+    bl    {T.BATTLER_ALIVE:#x}
+    cmp   r0, #0
+    ble   allies_next
+    add   r4, r4, #1
+    mov   r0, r6
+    mov   r1, r5
+    bl    ${{cave_skill_idle}}
+    cmp   r0, #0
+    beq   all_fine
+allies_next:
+    add   r6, r6, #1
+    cmp   r6, #{PARTY_SLOTS}
+    blt   allies_loop
+    cmp   r4, #0
+    moveq r0, #0
+    movne r0, #{STRING_NO_EFFECT}
+    pop   {{r4-r6, pc}}
 all_spells:
     .word {SPELL_TABLE:#x}
+all_battlers:
+    .word {BATTLERS_PTR:#x}
 """
 
 # Entered by `b` from a Special list handler with r0 = the battle string to show and r6 = the menu. The

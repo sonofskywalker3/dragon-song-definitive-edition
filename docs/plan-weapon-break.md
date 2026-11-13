@@ -553,3 +553,48 @@ byte and a self byte joined kind, argument, delta, and look.
   and her HP), as party2_strong does for two members; her graphics load and the battle runs. Records are at
   0x0228E860 there too (battler 0 and record 0 are hers).
 
+## 14. Rufus's orders, and the coverage plans (2026-11-12)
+
+Spell ids 51 to 58 (skills_data.py): Rally, Stand Fast, Quick March, Stratagem (ATK, DEF, AGI, INT up one
+stage on one ally) and Battle Cry, Shield Wall, Forced March, War Council (the same on every ally). All are
+the STAGE kind with delta +1 and the ROW look; nothing new in the effect.
+
+- **Listing.** Rufus's branch of func_02050c50 is at 0x02050DC4 (`mov r0, #0xc`, then his own test of spell
+  flag 0x400 for Thunder Sword). It takes the shared cave_skill_list like Jian's and Gabryel's; his row of
+  cave_skill_levels was already there. Castable needs nothing (any listed spell of a non-Jian character is).
+  Rally and Stand Fast have level 1, so he has them when he joins at 15; the party versions have levels 36
+  to 42, which he only reaches on his return (Retold). In Classic he is gone before then.
+- **The ally picker's confirm path and the refusal** (feat_skills_allies.py). On page 6 a portrait pressed
+  (button 8 + party slot, in r8) reaches 0x02037340, which reads the page it came from (menu + 0xC): 2 = a
+  spell, `beq 0x02037398` at 0x02037348 (word 0x0A000012). The block at 0x02037398 stores the spell in the
+  member's battler + 0x86, sets menu + 0x10 = 4, stores r8 - 8 as the target (+0x8C: the party slot is the
+  battler index), and ends the command at 0x020373D0. cave_skill_ally sits on that `beq`: for a learned
+  skill it refuses the pick when the ally is knocked out (BATTLER_ALIVE <= 0) or cave_skill_idle says the
+  skill would do nothing, through the shared cave_skill_refuse ("No effect!" on the name bar, refuse sound,
+  r5 = 0, the picker stays, no MP). r7 is 0 there, as the handler needs for "stay". The game's own spells go
+  straight on. After the refusal's second is over the name bar shows the highlighted ally's name until the
+  cursor moves, where it showed "Who to use it for?" before; left as it is.
+- **Rufus can pick himself**: the picker lists every member, and a self pick works like any other.
+- **All-ally skills.** cave_skill_idle_all now answers for an all-ally spell (target bits 0xC0000000) by
+  asking about every living ally (battlers 0 to 2), so the list refuses Battle Cry when everyone is raised;
+  the target-list pruning in the look hook runs for both all-target kinds, so an ally already raised gets no
+  banner and no effect. Focus (all allies, FLAG kind) goes through the same code and behaves as before.
+- **Look.** Rows 21 to 24 are the ATK, DEF, AGI, and INT UP banners (sprites 298 to 301, caster script
+  0x02095294, effect script 0x02094E14). Rufus's item pose file is btldata 45 (character table row 4, +0x0E;
+  2 animations, as the caster script needs).
+- **Stat offsets.** func_02054ebc (party recompute) shows the effective stats in a stat record: ATK +0x24,
+  DEF +0x28, +0x2C always 0, AGI +0x30, INT +0x34, DEX +0x38, LUK +0x3C; each is the base times the stage's
+  multiplier (stage 1 = 125 percent: ATK 12 -> 15, DEF 13 -> 16, AGI 10 -> 12, INT 4 -> 5 for Jian at level
+  1; Rufus ATK 99 -> 123).
+- **Lifetime.** The stage stays to the end of the battle and the records are rebuilt for the next one:
+  `test_skill_rally_next_battle` shows stage 1 through the won battle and stage 0, ATK 99, at the first
+  prompt of a second battle.
+- **Test party.** `party_rufus.plan`: Jian in slot 0 and Rufus (character 4) in slot 1, HP pinned, records
+  at 0x0228E860 (battlers and records 0 and 1). Rufus acts before the enemies in these battles, so the
+  banners show right after the pick. `party_jian_gabryel.plan` is the same with Gabryel in slot 1.
+- **Coverage plans for the earlier steps** (no code change came out of them): Feral with Gabryel in slot 1
+  (her first target slot, battler 1 + 0x8C at 0x0228EDA0 + 300 + 0x8C, holds 1); Dread Roar with unforced
+  rolls (three of five scared, MISS on the others); Gabryel's leap at a back-row enemy that stays in the
+  back row, and the no-effect variant of it; poison and blind on Sasquatch with Howl refused; Focus against
+  an enemy whose AGI (record + 0x30) is pinned to 30000 (every blow misses before, lands after); a sleeping
+  and a scared Ice Mongrel doing no damage for two of its turns and then attacking again.

@@ -1,0 +1,121 @@
+# skills: Focus makes attacks that would miss hit. Jian at level 19 (level index 18 pinned, battle MP
+# pinned to 50) against one forced Ice Mongrel with 30000 HP (setup as test_skill_cap.plan) whose AGI
+# (stat record 9 + 0x30) is pinned to 30000, so his hit chance is next to nothing. Round 1 Fight: MISS on
+# every blow, hp9 unchanged (shots fh_miss_*). Round 2 Focus (Right on the list): MP 50 -> 44. Round 3
+# Fight: the blows land and hp9 drops (fh_hit_*).
+# Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK +0x24, ATK stage +0x40). Run with --save.
+include boot_from_save
+include cheats_strong
+# Delrich Temple (map 6), standing off the enemy spawn points (as boss_gronk.plan)
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+include cheats_strong
+# Jian's battle HP (stat record 0 + 0x14) stays 999
+pinptr u32 0x020B8620 0x14 999
+# Row 20 (0x02097CE4 + 20 * 0x54 = 0x02098374): HP 30000 at level 0 and 98, AI class 3, action 0 always
+poke u16 0x02098378 30000
+poke u16 0x0209838C 30000
+poke u32 0x02098374 0x3
+poke u16 0x020983A0 100
+poke u16 0x020983A2 100
+poke u16 0x020983A4 100
+poke u16 0x020983A6 100
+# Formation: at func_0202bc28's entry (right after func_0202b948 filled ctx 0x020B85B8), lead row +0x32 and
+# the eight slots +0x34..+0x42 (slot i = battler 4 + i) are overwritten: only slot 5 (front, a ground
+# species' lead slot) holds row 20
+execpoke 0x0202BC28 u16 0x020B85EA 20
+execpoke 0x0202BC28 u16 0x020B85EC 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85EE 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F0 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F2 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F4 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85F6 20
+execpoke 0x0202BC28 u16 0x020B85F8 0xFFFF
+execpoke 0x0202BC28 u16 0x020B85FA 0xFFFF
+# Start a regular (non-event) battle, formation 0, through the field's own battle state
+poke u16 0x020B7838 0
+poke u16 0x020B783A 0
+pin u32 0x020B4664 18
+pinptr u32 0x020B8620 0x18 50
+poke u32 0x020B0010 0x73
+waituntil u32 0x020B0010 7 3000
+wait 110
+pin u32 0x0228ec5c 30000
+watch u32 0x0228e878 jian_mp
+watch u32 0x0228ec40 hp9
+press A 8
+wait 50
+press A 8
+wait 30
+wait 0
+wait 20
+shot fh_miss_00
+wait 20
+shot fh_miss_01
+wait 20
+shot fh_miss_02
+wait 20
+shot fh_miss_03
+wait 20
+shot fh_miss_04
+wait 20
+shot fh_miss_05
+wait 20
+shot fh_miss_06
+wait 20
+shot fh_miss_07
+wait 20
+shot fh_miss_08
+wait 20
+shot fh_miss_09
+wait 20
+shot fh_miss_10
+wait 20
+shot fh_miss_11
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+shot fh_focus
+press A 8
+wait 30
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 30
+wait 0
+wait 20
+shot fh_hit_00
+wait 20
+shot fh_hit_01
+wait 20
+shot fh_hit_02
+wait 20
+shot fh_hit_03
+wait 20
+shot fh_hit_04
+wait 20
+shot fh_hit_05
+wait 20
+shot fh_hit_06
+wait 20
+shot fh_hit_07
+wait 20
+shot fh_hit_08
+wait 20
+shot fh_hit_09
+wait 20
+shot fh_hit_10
+wait 20
+shot fh_hit_11

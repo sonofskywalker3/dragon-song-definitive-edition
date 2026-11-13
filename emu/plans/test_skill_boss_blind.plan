@@ -1,0 +1,100 @@
+# skills: a boss takes blind. Gabryel alone at level 26 (level index 25 pinned, battle MP pinned to 50)
+# in the Sasquatch fight (as test_skill_boss_venom.plan). Blinding Swipe (Right on the list), grid Right
+# to Sasquatch (battler 9), A: cast (bb_00 to bb_23), MP 50 -> 43, status9 0 -> 2.
+# Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK +0x24, ATK stage +0x40). Run with --save.
+include boot_from_save
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u16 0x020B464C 2
+pin u16 0x020B4650 65535
+pin u16 0x020B4654 65535
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u16 0x020B464C 2
+pin u16 0x020B4650 65535
+pin u16 0x020B4654 65535
+pin u32 0x020B471C 25
+pinptr u32 0x020B8620 0x18 50
+wait 30
+poke u16 0x020B7838 1
+poke u16 0x020B783A 1
+poke u32 0x020B0010 0x73
+waituntil u32 0x020B0010 7 3000
+wait 120
+battlers
+peek u32 0x020B8620 records
+watch u32 0x0228e878 gabryel_mp
+watch u8 0x0228ebc8 status8
+watch u8 0x0228ec34 status9
+watch u8 0x0228eca0 status10
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 70
+press Right 8
+wait 20
+shot bb_pick
+press A 8
+wait 30
+wait 60
+wait 20
+shot bb_00
+wait 20
+shot bb_01
+wait 20
+shot bb_02
+wait 20
+shot bb_03
+wait 20
+shot bb_04
+wait 20
+shot bb_05
+wait 20
+shot bb_06
+wait 20
+shot bb_07
+wait 20
+shot bb_08
+wait 20
+shot bb_09
+wait 20
+shot bb_10
+wait 20
+shot bb_11
+wait 20
+shot bb_12
+wait 20
+shot bb_13
+wait 20
+shot bb_14
+wait 20
+shot bb_15
+wait 20
+shot bb_16
+wait 20
+shot bb_17
+wait 20
+shot bb_18
+wait 20
+shot bb_19
+wait 20
+shot bb_20
+wait 20
+shot bb_21
+wait 20
+shot bb_22
+wait 20
+shot bb_23

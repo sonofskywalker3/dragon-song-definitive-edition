@@ -1,0 +1,162 @@
+# skills: Rufus's other one-ally orders. Jian and Rufus (party_rufus), Rufus at level 19 (level index 18
+# pinned, battle MP pinned to 50), first temple battle. His list holds Thunder Sword, Rally, Stand Fast,
+# Quick March, and Stratagem (shot ro_list). Round 1 Stand Fast on Jian (Right on the list): DEF UP
+# banner, MP 50 -> 44, Jian's DEF stage 0 -> 1 and DEF up. Round 2 Quick March (Down, Right): AGI UP,
+# MP 50 -> 45, AGI stage and AGI. Round 3 Stratagem (Right, Right): INT UP, MP 50 -> 44, INT stage and
+# INT. Rufus's own stages stay 0.
+# Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK DEF AGI INT +0x24 +0x28 +0x30 +0x34, their stages +0x40 +0x42 +0x44 +0x46). Run with --save.
+include party_rufus
+pin u32 0x020B47D4 18
+pinptr u32 0x020B8620 0x84 50
+wait 270
+peek u32 0x020B8620 records
+watch u32 0x0228e8e4 rufus_mp
+watch u16 0x0228e8a0 jian_atk_stage
+watch u32 0x0228e884 jian_atk
+watch u16 0x0228e8a2 jian_def_stage
+watch u32 0x0228e888 jian_def
+watch u16 0x0228e8a4 jian_agi_stage
+watch u32 0x0228e890 jian_agi
+watch u16 0x0228e8a6 jian_int_stage
+watch u32 0x0228e894 jian_int
+watch u16 0x0228e90c rufus_atk_stage
+watch u32 0x0228e8f0 rufus_atk
+watch u16 0x0228e90e rufus_def_stage
+watch u32 0x0228e8f4 rufus_def
+watch u16 0x0228e910 rufus_agi_stage
+watch u32 0x0228e8fc rufus_agi
+watch u16 0x0228e912 rufus_int_stage
+watch u32 0x0228e900 rufus_int
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+shot ro_list
+press Right 8
+wait 50
+shot ro_stand_fast
+press A 8
+wait 60
+press A 8
+wait 30
+wait 0
+wait 14
+shot ro_def_a
+wait 14
+shot ro_def_b
+wait 14
+shot ro_def_c
+wait 14
+shot ro_def_d
+wait 14
+shot ro_def_e
+wait 14
+shot ro_def_f
+wait 14
+shot ro_def_g
+wait 14
+shot ro_def_h
+wait 14
+shot ro_def_i
+wait 14
+shot ro_def_j
+wait 14
+shot ro_def_k
+wait 14
+shot ro_def_l
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 50
+press Right 8
+wait 50
+shot ro_quick_march
+press A 8
+wait 60
+press A 8
+wait 30
+wait 0
+wait 14
+shot ro_agi_a
+wait 14
+shot ro_agi_b
+wait 14
+shot ro_agi_c
+wait 14
+shot ro_agi_d
+wait 14
+shot ro_agi_e
+wait 14
+shot ro_agi_f
+wait 14
+shot ro_agi_g
+wait 14
+shot ro_agi_h
+wait 14
+shot ro_agi_i
+wait 14
+shot ro_agi_j
+wait 14
+shot ro_agi_k
+wait 14
+shot ro_agi_l
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press Right 8
+wait 50
+shot ro_stratagem
+press A 8
+wait 60
+press A 8
+wait 30
+wait 0
+wait 14
+shot ro_int_a
+wait 14
+shot ro_int_b
+wait 14
+shot ro_int_c
+wait 14
+shot ro_int_d
+wait 14
+shot ro_int_e
+wait 14
+shot ro_int_f
+wait 14
+shot ro_int_g
+wait 14
+shot ro_int_h
+wait 14
+shot ro_int_i
+wait 14
+shot ro_int_j
+wait 14
+shot ro_int_k
+wait 14
+shot ro_int_l

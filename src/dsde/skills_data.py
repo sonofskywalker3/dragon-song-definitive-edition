@@ -76,7 +76,12 @@ class Skill:
     self_only: bool = False  # an ALLY_ONE skill cast on its caster, with no ally picker
 
 
-ROW_ATK_UP = 21  # "ATK UP" banner (sprite 298)
+ROW_ATK_UP = (
+    21  # "ATK UP" banner (sprite 298); 22 to 24 are the same for the next stats
+)
+ROW_DEF_UP = 22  # "DEF UP" (sprite 299)
+ROW_AGI_UP = 23  # "AGI UP" (sprite 300)
+ROW_INT_UP = 24  # "INT UP" (sprite 301)
 ROW_ATK_DOWN = 27  # "ATK DOWN" banner (sprite 304), the Quetzalcoatl card's row
 ROW_DEF_DOWN = 28  # "DEF DOWN" banner (sprite 305), the Abadon card's row
 ROW_STATUS = 34  # green rings on the target (sprite 314), the status cards' row
@@ -271,6 +276,120 @@ SKILLS: tuple[Skill, ...] = (
         ROW_STATUS,
         Look.ROW,
         STATUS_CHANCE,
+    ),
+    # Rufus's orders: a stat up on one ally (the game's ally picker), and from his return on the
+    # whole party. He joins at level 15 and in Classic is gone before the party versions' levels
+    Skill(
+        51,
+        "Rally",
+        "Raise one ally's attack",
+        6,
+        RUFUS,
+        1,
+        Target.ALLY_ONE,
+        Kind.STAGE,
+        STAT_ATK,
+        1,
+        ROW_ATK_UP,
+        Look.ROW,
+    ),
+    Skill(
+        52,
+        "Stand Fast",
+        "Raise one ally's defense",
+        6,
+        RUFUS,
+        1,
+        Target.ALLY_ONE,
+        Kind.STAGE,
+        STAT_DEF,
+        1,
+        ROW_DEF_UP,
+        Look.ROW,
+    ),
+    Skill(
+        53,
+        "Quick March",
+        "Raise one ally's speed",
+        5,
+        RUFUS,
+        17,
+        Target.ALLY_ONE,
+        Kind.STAGE,
+        STAT_AGI,
+        1,
+        ROW_AGI_UP,
+        Look.ROW,
+    ),
+    Skill(
+        54,
+        "Stratagem",
+        "Raise one ally's intelligence",
+        6,
+        RUFUS,
+        19,
+        Target.ALLY_ONE,
+        Kind.STAGE,
+        STAT_INT,
+        1,
+        ROW_INT_UP,
+        Look.ROW,
+    ),
+    Skill(
+        55,
+        "Battle Cry",
+        "Raise the party's attack",
+        12,
+        RUFUS,
+        36,
+        Target.ALLY_ALL,
+        Kind.STAGE,
+        STAT_ATK,
+        1,
+        ROW_ATK_UP,
+        Look.ROW,
+    ),
+    Skill(
+        56,
+        "Shield Wall",
+        "Raise the party's defense",
+        12,
+        RUFUS,
+        38,
+        Target.ALLY_ALL,
+        Kind.STAGE,
+        STAT_DEF,
+        1,
+        ROW_DEF_UP,
+        Look.ROW,
+    ),
+    Skill(
+        57,
+        "Forced March",
+        "Raise the party's speed",
+        10,
+        RUFUS,
+        40,
+        Target.ALLY_ALL,
+        Kind.STAGE,
+        STAT_AGI,
+        1,
+        ROW_AGI_UP,
+        Look.ROW,
+    ),
+    Skill(
+        58,
+        "War Council",
+        "Raise the party's intelligence",
+        12,
+        RUFUS,
+        42,
+        Target.ALLY_ALL,
+        Kind.STAGE,
+        STAT_INT,
+        1,
+        ROW_INT_UP,
+        Look.ROW,
     ),
 )
 

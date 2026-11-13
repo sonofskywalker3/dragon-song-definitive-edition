@@ -66,19 +66,21 @@ Red, White, Black Dragons 23 to 28; Blue Dragon 36; final fights 40 to 42. Late 
 
 ### Rufus (leader of the beastmen's strike force; joins at 15, leaves, returns late in the Retold story)
 
-His skills are a commander's orders to the troops.
+His skills are a commander's orders to the troops. All built 2026-11-12 (docs/plan-weapon-break.md 14). The
+party versions are learned at levels 36 to 42, so they only exist once he returns; in Classic he is gone
+before then. The healers still have Quick, Grand Weapon, and Grand Shell until their step.
 
-| Skill | When | MP | Target | Effect |
-|---|---|---|---|---|
-| Thunder Sword | joins with | 10 | all enemies | unchanged |
-| Rally | joins with | 6 | one ally | ATK up one stage |
-| Stand Fast | joins with | 6 | one ally | DEF up one stage |
-| Quick March | 17 | 5 | one ally | AGI up one stage |
-| Stratagem | 19 | 6 | one ally | INT up one stage |
-| Battle Cry | return | tbd | all allies | Rally on all (the old Grand Weapon) |
-| Shield Wall | return | tbd | all allies | Stand Fast on all (the old Grand Shell) |
-| Forced March | return | tbd | all allies | Quick March on all (the old Quick) |
-| War Council | return | tbd | all allies | Stratagem on all |
+| Skill | Id / built | Lv | MP | Target | Effect |
+|---|---|---|---|---|---|
+| Thunder Sword | game's own | joins with | 10 | all enemies | unchanged |
+| Rally | 51, built | 1 | 6 | one ally (the game's ally picker) | ATK up one stage |
+| Stand Fast | 52, built | 1 | 6 | one ally | DEF up one stage |
+| Quick March | 53, built | 17 | 5 | one ally | AGI up one stage |
+| Stratagem | 54, built | 19 | 6 | one ally | INT up one stage |
+| Battle Cry | 55, built | 36 | 12 | all allies | Rally on everyone not yet raised |
+| Shield Wall | 56, built | 38 | 12 | all allies | Stand Fast on everyone not yet raised |
+| Forced March | 57, built | 40 | 10 | all allies | Quick March on everyone not yet raised |
+| War Council | 58, built | 42 | 12 | all allies | Stratagem on everyone not yet raised |
 
 ### Lucia (levels 1 to about 13)
 

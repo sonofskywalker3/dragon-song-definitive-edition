@@ -1,0 +1,21 @@
+# Jian (slot 0) and Gabryel (slot 1) in the party, in the first Delrich Temple battle, for the skill
+# plans. Both have their HP pinned to 999; their other stats are as the save has them (level 1). Field
+# records are 0x5C each from 0x020B4658: Jian's HP at 0x020B4668 / 0x020B466C; Gabryel's record is at
+# 0x020B4710 (level index 0x020B471C, HP 0x020B4720 / 0x020B4724). Battlers and stat records 0 and 1 are
+# theirs. Built like party_rufus.plan.
+include boot_from_save
+pin u16 0x020B466C 999
+pin u16 0x020B4668 999
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u16 0x020B464C 0
+pin u16 0x020B4650 2
+pin u16 0x020B4654 65535
+include warp6
+pin u16 0x020B466C 999
+pin u16 0x020B4668 999
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u16 0x020B464C 0
+pin u16 0x020B4650 2
+pin u16 0x020B4654 65535

@@ -3,16 +3,17 @@
 - Special opens the spell list for every character (in the original only Lucia and Flora get it; the others
   get a one-spell panel and are refused with two spells or more), unless the list would be empty.
 - The fighters' branches of "is this spell listed" (func_02050c50) take a learn level from
-  cave_skill_levels: Jian's in place of a ring, Gabryel's beside her Gale Cut. Jian's branch of "can it be
+  cave_skill_levels: Jian's in place of a ring, Gabryel's beside her Gale Cut, Rufus's beside his
+  Thunder Sword. Jian's branch of "can it be
   cast" (func_02050a74) lets a spell with no ring bit through; the others' already cast whatever is listed.
   MP is charged by the game's own Special path.
-- A skill cast on its caster alone (skills_data.Skill.self_only) skips the ally picker.
 - A spell on one enemy opens the Fight grid (feat_targeting_*.py) in spell mode and is cast on the enemy
   picked there; the original lets the game pick at random. A pick that would do nothing is refused with "No
   effect!" on the name bar: the grid asks the veto routine this module leaves in the picker's state
   (feat_skills_idle.py), so the targeting feature knows nothing about spells.
 
-The name bar's ailment tags for the grid are in feat_skills_tags.py.
+Skills cast on allies are in feat_skills_allies.py, the name bar's ailment tags for the grid in
+feat_skills_tags.py.
 """
 
 from dsde import targeting_consts as T
@@ -21,8 +22,6 @@ from dsde.feat_skills_table import LEVEL_ROWS
 from dsde.skills_common import (
     CHARACTER_RECORD_SIZE,
     FIRST_ENEMY,
-    FX_SELF,
-    FX_SIZE_SHIFT,
     LAST_ENEMY,
     LEVEL_INDEX,
     NEVER,
@@ -30,13 +29,14 @@ from dsde.skills_common import (
     SPELL_TABLE,
     hook,
 )
-from dsde.skills_data import GABRYEL, JIAN, SPELL_COUNT
+from dsde.skills_data import GABRYEL, JIAN, RUFUS, SPELL_COUNT
 
 # func_02050c50's branches by character (r5): each starts with `mov r0, #0xc` and goes on to its own test
-# (Jian's rings, Gabryel's flag 0x200 for Gale Cut)
+# (Jian's rings, Gabryel's flag 0x200 for Gale Cut, Rufus's flag 0x400 for Thunder Sword)
 LIST_JIAN = 0x02050D24
 LIST_GABRYEL = 0x02050DA8
-LIST_BRANCHES = {JIAN: LIST_JIAN, GABRYEL: LIST_GABRYEL}
+LIST_RUFUS = 0x02050DC4
+LIST_BRANCHES = {JIAN: LIST_JIAN, GABRYEL: LIST_GABRYEL, RUFUS: LIST_RUFUS}
 LIST_TAIL = 0x02050DDC  # `cmp r6, #1`: listed, then the max MP test
 CAST_JIAN = 0x02050AF8  # func_02050a74, Jian branch: `mov r0, #0xc`
 CAST_RING_TESTS = 0x02050B08  # with r4 = flags
@@ -54,9 +54,6 @@ LIST_OK_ENEMY = (
 )
 LIST_OK_ENEMY_WORD = 0x0A000007
 LIST_OK_DONE = 0x02036E18  # plays the menu sound, then the button epilogue (r5, r7 as the handler left them)
-LIST_OK_ALLY = 0x02036D10  # Special list OK, target bits 0x80000000: `beq 0x02036D88` (the ally picker)
-LIST_OK_ALLY_WORD = 0x0A00001C
-ALLY_PICKER = 0x02036D88
 MEMBER_DONE = 0x020377F0  # slides the page out when a member's command ends
 CLOSE_DESCRIPTION = 0x02039570  # (0)
 SPELL_BUTTON = 4  # the Special list's own button, slid out when leaving the page
@@ -261,39 +258,6 @@ DONE_ASM = f"""
     b     {LIST_OK_DONE:#x}
 """
 
-# Entered by `beq` from the Special list's OK handler for a spell on one ally (the handler's r4, r5, and r7
-# go on; r6, r8, and sb are free). A skill cast on its caster alone needs no picker: the member is the
-# target and the command ends, or the cast is refused if it would do nothing. Any other one-ally spell goes
-# to the ally picker as before.
-SELF_ASM = f"""
-    ldr   r6, self_menu
-    ldrh  r1, [r6, #{T.MENU_SPELL:#x}]
-    cmp   r1, #{SPELL_COUNT}
-    bhs   {ALLY_PICKER:#x}
-    ldr   r0, self_fx
-    add   r0, r0, r1, lsl #{FX_SIZE_SHIFT}
-    ldrb  r0, [r0, #{FX_SELF}]
-    cmp   r0, #0
-    beq   {ALLY_PICKER:#x}
-    ldrh  sb, [r6, #{T.MENU_MEMBER:#x}]
-    mov   r0, sb
-    bl    ${{cave_skill_idle}}
-    cmp   r0, #0
-    bne   ${{cave_skill_refuse}}
-    ldr   r1, self_battlers
-    ldr   r1, [r1]
-    mov   r2, #{T.BATTLER_SIZE:#x}
-    mla   r8, r2, sb, r1
-    strh  sb, [r8, #{T.TARGETS:#x}]
-    b     ${{cave_skill_done}}
-self_menu:
-    .word {T.MENU:#x}
-self_fx:
-    .word ${{cave_skill_fx}}
-self_battlers:
-    .word {T.BATTLERS_PTR:#x}
-"""
-
 # Replaces `bl func_02050f78` (r0 = 3, r1 = 0) where a party Special picks its one enemy. r4 = actor.
 # An enemy chosen on the grid (4..11 in the first target slot) is used, or the next living one;
 # without a choice, or with nobody left, the game's random pick runs as before.
@@ -336,13 +300,6 @@ MENU_PATCHES: tuple[CaveCode | AsmPatch, ...] = (
     ),
     CaveCode(
         "cave_skill_done", DONE_ASM, "a skill's command ends with its target kept"
-    ),
-    CaveCode("cave_skill_self", SELF_ASM, "a skill on its caster needs no ally picker"),
-    hook(
-        LIST_OK_ALLY,
-        LIST_OK_ALLY_WORD,
-        "beq ${cave_skill_self}",
-        "a skill on its caster needs no ally picker",
     ),
     CaveCode("cave_skill_cast", CAST_ASM, "level skills need no ring"),
     hook(CAST_JIAN, MOV_R0_12, "b ${cave_skill_cast}", "level skills need no ring"),

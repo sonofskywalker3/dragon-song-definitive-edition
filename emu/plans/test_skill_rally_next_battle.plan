@@ -1,0 +1,269 @@
+# skills: a raised stat lasts the battle and no longer. Jian (made strong with cheats_strong so the battle
+# ends quickly) and Rufus (party_rufus), Rufus at level 1 (level index 0 pinned), first temple battle.
+# Round 1: Jian Fights, Rufus casts Rally on himself (picker Right): his ATK stage (record 1 + 0x40) 0 -> 1
+# and his ATK 99 -> 123. Then A is pressed until the battle is won and the result screens are gone; the
+# stage stays 1 to the end of the battle (shot nb_won). A second battle is then forced from the field (the
+# three writes enemy_force.plan uses): at its first command prompt the stage is 0 and his ATK 99 again
+# (peeks stage_next_battle, atk_next_battle; shot nb_second). Battle records at 0x0228E860 in both
+# battles (peeked). Run with --save.
+include party_rufus
+include cheats_strong
+pin u32 0x020B47D4 0
+pinptr u32 0x020B8620 0x84 50
+wait 270
+peek u32 0x020B8620 records
+watch u32 0x0228e8e4 rufus_mp
+watch u16 0x0228e90c rufus_atk_stage
+watch u32 0x0228e8f0 rufus_atk
+watch u32 0x020B0010 main_state
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 30
+wait 300
+shot nb_cast
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+press A 8
+wait 40
+shot nb_won
+peek u16 0x0228e90c stage_after_battle
+poke u16 0x020B7838 0
+poke u16 0x020B783A 0
+poke u32 0x020B0010 0x73
+waituntil u32 0x020B0010 7 3000
+wait 110
+peek u32 0x020B8620 records_next_battle
+peek u16 0x0228e90c stage_next_battle
+peek u32 0x0228e8f0 atk_next_battle
+shot nb_second
