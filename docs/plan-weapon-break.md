@@ -502,3 +502,54 @@ feat_skills_look.py.
 - **Forcing the roll in a plan.** `execpoke 0x020503A0 u32 0x020A0238 N` sets the random state each time the
   effect hook site runs, so the next random number is fixed: N = 24 gives roll 3 (success), N = 15 gives 98
   (miss).
+
+## 13. Gabryel's skills (2026-11-12)
+
+Spell ids 44 to 50 as data in skills_data.py: Venom Claw, Blinding Swipe, Feral, Howl, and the all-enemy
+Venom Storm, Blinding Gale, Dread Roar. The effect record grew to 8 bytes (skills_common.FX_*): a chance
+byte and a self byte joined kind, argument, delta, and look.
+
+- **Listing by level.** func_02050c50 branches on the character (r5) at 0x02050D08: Jian 0x02050D24,
+  Gabryel 0x02050DA8, Rufus 0x02050DC4, each starting with `mov r0, #0xc`. Gabryel's own test is spell flag
+  0x200 (Gale Cut) and Rufus's 0x400; neither has a level. cave_skill_list is now one routine for every
+  fighter: it finds the fighter's row of cave_skill_levels from a small table by character id, compares the
+  spell's learn level with the level index at 0x020B4664 + 0x5C * character, and for a spell with no level
+  goes back into the fighter's own branch. Jian's and Gabryel's branches are hooked; Rufus's row exists but
+  his branch is not hooked yet.
+- **Castable.** func_02050a74 needs nothing for her: for any character but Jian a listed spell with the
+  battle flag is castable (0x02050AF0: `cmp r6, #0; bne` to "yes"), and the MP test follows.
+- **Self target (Feral).** The spell is a one-ally spell (flags 0x80000000) with the self byte set. The
+  Special list's OK handler sends one-ally spells to the ally picker (`beq 0x02036D88` at 0x02036D10);
+  cave_skill_self sits on that branch: for a self skill it asks cave_skill_idle about the member, refuses
+  ("No effect!", the list stays) or stores the member's own battler index as the first target and ends the
+  command through cave_skill_done, the shared copy of the list's ending (0x02036D20) that leaves the target
+  alone. The resolver's one-ally case uses that target as it is.
+- **Stage up.** The same stage step with delta +1: func_02054dec(record, 4, 1), the party recompute
+  func_02054ebc, and result word 2 = 1 as the game's buffs leave it. Seen: stage 0 -> 1 and ATK 18 -> 22
+  (one stage up is 125 percent), banner row 21 (sprite 298, "ATK UP").
+- **No roll.** The chance byte is 100 for poison and blind: the effect hook then skips the random call
+  altogether, so no random number is drawn. Howl and Dread Roar carry 70; each target of Dread Roar rolls
+  for itself, since the effect hook runs per target.
+- **The cast look by owner.** A skill with the ATTACK look takes its caster's attack file from the
+  character table (0x020953D4 + 0x12 * character, +4) and one of eight scripts from a pointer table in the
+  cave: Jian's combo copies, or for anyone else copies of the game's single attack, 0x020958C0 against the
+  front row and 0x020954F0 (a leap) against the back row, with the hit step (flags 0xC0) made the step that
+  starts the target's effect and waits for it. Gabryel can cast on the back row this way although her Fight
+  reaches only the front (the spell grid lists every enemy).
+- **The ROW look's pose.** The banner rows' caster script (0x02095294) and the generic cast (0x02094E84) play
+  animations 0 and 1 of slot 0. For a card or an item slot 0 is the character's item pose file (table +0x0E);
+  for a spell the game loads the Special file (+0x0C: Gale Cut's for Gabryel). For our skills with the ROW
+  look the hook puts the item pose file back, so she raises her hand as she does for a card. For Jian both
+  files are the same (18), so nothing changed for him.
+- **What poison and blind do applied this way.** Both are queued with func_0202d1d4 like every status. Poison
+  (6) showed 97 -> 93 HP on the enemy's own turn in the following round (5 percent of max HP), with no
+  end; blind (2) and fear (4) show on the name bar as Bld and Par. A status poked into a record by hand
+  (sleep) was cleared on the enemy's next turn because no duration came with it, so the plans only poke
+  poison, which has none.
+- **Refill and plans.** In this battle front slot 8 is empty at the start, so the back-row enemy of that
+  column (battler 4) drops into it during the first round; Gabryel acts after the enemies. The plans aim at
+  battler 9 (Down on the grid in round 1, Down then Right in round 2) so the target does not move.
+- **Test party.** `party_gabryel.plan` puts character 2 alone in party slot 0 (pins of the three slot words
+  and her HP), as party2_strong does for two members; her graphics load and the battle runs. Records are at
+  0x0228E860 there too (battler 0 and record 0 are hers).
+

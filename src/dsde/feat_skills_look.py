@@ -1,10 +1,14 @@
 """How a learned skill's cast plays (the party action setup, func_02068308).
 
 - A skill with the ATTACK look plays its owner's attack with the hit flags taken out and starts the effect
-  row's sprite on the last blow (Jeff: a regular attack, then the effect). Only Jian has such skills so far;
-  the scripts are copies of his combo. If the skill would do nothing to the target (the menu refuses a pick
-  like that, but the target can change after the pick) the cast has no effect step, so no banner, and the
-  message line says "No effect!" as the cast starts.
+  row's sprite on the last blow (Jeff: a regular attack, then the effect). Jian's scripts are copies of his
+  combo; the other fighters' are copies of the single attack the game gives everyone else. If the skill
+  would do nothing to the target (the menu refuses a pick like that, but the target can change after the
+  pick) the cast has no effect step, so no banner, and the message line says "No effect!" as the cast
+  starts.
+- A skill with the ROW look plays its effect row's own cast, which is written for the pose a character
+  takes to use an item or a card; a spell gets the character's Special file instead, so the pose file is put
+  back in its place.
 - A skill on all enemies plays its effect row's own cast, as a card does. Before the setup, the enemies it
   would do nothing to are taken out of the caster's target list, so no banner shows on them and the effect
   never runs for them; if that leaves nobody, the list stays as it is and the line says "No effect!".
@@ -17,7 +21,12 @@ from dsde.skills_common import (
     ALL_TARGETS,
     BATTLE_WORK_PTR,
     BATTLER_COMMAND,
+    BATTLER_ROW,
     BATTLER_SCRIPT,
+    CHARACTER_FILES,
+    CHARACTER_FILES_SIZE,
+    FILE_ATTACK,
+    FILE_ITEM_POSE,
     FIRST_ENEMY,
     FIRST_FRONT_ENEMY,
     FX_KIND,
@@ -35,7 +44,7 @@ from dsde.skills_common import (
     WORK_SLOT0,
     hook,
 )
-from dsde.skills_data import SPELL_COUNT, Kind, Look
+from dsde.skills_data import JIAN, SPELL_COUNT, Kind, Look
 
 PARTY_SETUP_CALL = (
     0x020688B4  # func_02068890: `bl func_02068308` (party action setup), r0 = the actor
@@ -45,7 +54,6 @@ PARTY_SETUP = 0x02068308  # (actor, mode)
 SETUP_COUNTER = (
     1  # mode bit: the actor's counterattack, set up in slots 3 to 5 with its own script
 )
-JIAN_ATTACK_FILE = 0x020953D4 + 4  # character table, Jian: the 3-hit combo's file
 TARGET_SLOTS = 8  # s16 battler indices at battler + TARGETS, -1 = empty
 
 # Action script steps: flags, sound << 16 | effects started << 8, slot, animation, frames. Flags as in
@@ -81,6 +89,36 @@ JIAN_CAST_BACK: Steps = (
 )
 
 
+# The other fighters' attack: the single blow of 0x020958C0 (front row) and 0x020954F0 (the leap at a
+# back-row enemy), its hit (0xC0) gone and the blow starting and waiting for the effects
+FIGHTER_CAST: Steps = (
+    (0x00200001, 0x00000000, 1, 0, 0),
+    (0x00001016, 0x00030000, 1, 1, 6),
+    (0x00000012, 0x00000000, 1, 2, 6),
+    (0x00000001, 0x00000000, 1, 3, 0),
+    (0x00000001, 0x00000000, 0, 0, 0),
+    (0x00000001, 0x00010000, 0, 1, 0),
+    (0x00000001 | STEP_WAIT_EFFECTS, STEP_START_EFFECTS, 0, 2, 0),
+    (0x00000001, 0x00000000, 1, 0, 0),
+    (0x04009016, 0x00030000, 1, 2, 8),
+    (0x04000012, 0x00000000, 1, 1, 8),
+    (0x80000001, 0x00000000, 1, 3, 0),
+)
+FIGHTER_CAST_BACK: Steps = (
+    (0x00300001, 0x00000000, 1, 0, 0),
+    (0x00001012, 0x00030000, 1, 1, 10),
+    (0x00000001, 0x00000000, 0, 0, 0),
+    (0x00000001, 0x00010000, 0, 1, 0),
+    (0x00000001 | STEP_WAIT_EFFECTS, STEP_START_EFFECTS, 0, 2, 0),
+    (0x04009012, 0x00000000, 1, 2, 10),
+    (0x80000001, 0x00000000, 1, 3, 0),
+)
+# Index into anim_scripts: these bits added up
+SCRIPT_PLAIN = 1  # no effect step
+SCRIPT_BACK = 2  # the target is in the back row
+SCRIPT_FIGHTER = 4  # not Jian
+
+
 def _plain(steps: Steps) -> Steps:
     """The cast with no effect: the last blow is an ordinary step (as the blows before it)."""
     return tuple(
@@ -113,9 +151,10 @@ _NO_EFFECT_LINE = f"""
 
 # Replaces `bl func_02068308`. r0 = the acting party battler, r1 = mode. A counter (which keeps the queued
 # command and spell) is set up untouched. Before the game's setup an all-enemy skill's target list is
-# pruned (anim_prune); after it, a skill with the ATTACK look gets Jian's attack file in slot 0 and its own
-# script: run in (or leap up to a back-row enemy), the combo without hits, the effect on the target, back,
-# or the same with no effect step when the skill would do nothing.
+# pruned (anim_prune). After it, a skill with the ROW look gets its caster's item pose file in slot 0, and
+# a skill with the ATTACK look its caster's attack file and its own script: run in (or leap up to a
+# back-row enemy), the attack without hits, the effect on the target, back, or the same with no effect step
+# when the skill would do nothing.
 ANIM_ASM = f"""
     push  {{r4-r8, lr}}
     mov   r4, r0
@@ -150,18 +189,27 @@ anim_setup:
     bl    {PARTY_SETUP:#x}
     cmn   r6, #1
     popeq {{r4-r8, pc}}
+    ldr   r8, [r4, #{BATTLER_ROW:#x}]
+    ldr   r0, anim_files
+    mov   r1, #{CHARACTER_FILES_SIZE:#x}
+    mla   r2, r1, r8, r0
+    ldr   r3, anim_work
+    ldr   r3, [r3]
     ldrb  r0, [r7, #{FX_LOOK}]
     cmp   r0, #{Look.ATTACK}
+    ldrhne r0, [r2, #{FILE_ITEM_POSE:#x}]
+    strhne r0, [r3, #{WORK_SLOT0:#x}]
     popne {{r4-r8, pc}}
-    ldr   r0, anim_file
-    ldrh  r0, [r0]
-    ldr   r1, anim_work
-    ldr   r1, [r1]
-    strh  r0, [r1, #{WORK_SLOT0:#x}]
-    adr   r0, anim_script
+    ldrh  r0, [r2, #{FILE_ATTACK:#x}]
+    strh  r0, [r3, #{WORK_SLOT0:#x}]
+    cmp   r8, #{JIAN}
+    moveq r8, #0
+    movne r8, #{SCRIPT_FIGHTER}
     ldrsh r1, [r4, #{T.TARGETS:#x}]
     cmp   r1, #{FIRST_FRONT_ENEMY}
-    adrlt r0, anim_script_back
+    addlt r8, r8, #{SCRIPT_BACK}
+    adr   r0, anim_scripts
+    ldr   r0, [r0, r8, lsl #2]
     str   r0, [r4, #{BATTLER_SCRIPT:#x}]
     cmp   r1, #{FIRST_ENEMY}
     poplt {{r4-r8, pc}}
@@ -170,10 +218,9 @@ anim_setup:
     bl    ${{cave_skill_idle}}
     cmp   r0, #0
     popeq {{r4-r8, pc}}
-    adr   r0, anim_plain
-    ldrsh r1, [r4, #{T.TARGETS:#x}]
-    cmp   r1, #{FIRST_FRONT_ENEMY}
-    adrlt r0, anim_plain_back
+    add   r8, r8, #{SCRIPT_PLAIN}
+    adr   r0, anim_scripts
+    ldr   r0, [r0, r8, lsl #2]
     str   r0, [r4, #{BATTLER_SCRIPT:#x}]
     ldr   r1, anim_work
     ldr   r1, [r1]
@@ -223,18 +270,29 @@ anim_table:
     .word ${{cave_skill_fx}}
 anim_spells:
     .word {SPELL_TABLE:#x}
-anim_file:
-    .word {JIAN_ATTACK_FILE:#x}
+anim_files:
+    .word {CHARACTER_FILES:#x}
 anim_work:
     .word {BATTLE_WORK_PTR:#x}
-anim_script:
+anim_scripts:
+    .word anim_jian, anim_jian_plain, anim_jian_back, anim_jian_back_plain
+    .word anim_fighter, anim_fighter_plain, anim_fighter_back, anim_fighter_back_plain
+anim_jian:
 {_script(JIAN_CAST)}
-anim_script_back:
-{_script(JIAN_CAST_BACK)}
-anim_plain:
+anim_jian_plain:
 {_script(_plain(JIAN_CAST))}
-anim_plain_back:
+anim_jian_back:
+{_script(JIAN_CAST_BACK)}
+anim_jian_back_plain:
 {_script(_plain(JIAN_CAST_BACK))}
+anim_fighter:
+{_script(FIGHTER_CAST)}
+anim_fighter_plain:
+{_script(_plain(FIGHTER_CAST))}
+anim_fighter_back:
+{_script(FIGHTER_CAST_BACK)}
+anim_fighter_back_plain:
+{_script(_plain(FIGHTER_CAST_BACK))}
 """
 
 LOOK_PATCHES: tuple[CaveCode | AsmPatch, ...] = (

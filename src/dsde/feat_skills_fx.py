@@ -5,7 +5,8 @@ The effect hook sits in func_020500dc, which runs once per target of a spell. By
 
 - STAGE: the stat moves one stage with the game's own routine and the target's stats are recomputed,
   choosing the recompute by the target's side as the debuff cards do;
-- STATUS: a success roll (skills_data.STATUS_CHANCE), then the status is queued the way the game's own
+- STATUS: a success roll against the skill's chance (none, and no random number drawn, for a skill that
+  always lands), then the status is queued the way the game's own
   status skills queue it (func_0202d1d4), so the flash, the mark over the battler, and the turn handling are
   the game's; a failed roll shows the game's MISS popup over the target with its sound;
 - FLAG: the battle-wide flag is set, with the result word the card of that flag leaves.
@@ -29,6 +30,7 @@ from dsde.skills_common import (
     BATTLERS_PTR,
     DRAW_TEXT,
     FX_ARG,
+    FX_CHANCE,
     FX_DELTA,
     FX_KIND,
     FX_SIZE_SHIFT,
@@ -44,7 +46,7 @@ from dsde.skills_common import (
     WORK_MESSAGE,
     hook,
 )
-from dsde.skills_data import SPELL_COUNT, STATUS_CHANCE, Kind
+from dsde.skills_data import SPELL_COUNT, SURE, Kind
 
 FX_SITE = 0x020503A0  # func_020500dc: `ands r0, r5, #0x1000000`, the first buff test
 FX_WORD = 0xE2150401
@@ -125,12 +127,16 @@ fx_result:
     str   r1, [r0, #{RESULT_FLAG}]
     b     fx_out
 fx_status:
+    ldrb  r8, [sb, #{FX_CHANCE}]
+    cmp   r8, #{SURE}
+    bhs   fx_lands
     bl    {RANDOM:#x}
     bic   r0, r0, #0x80000000
     mov   r1, #{PERCENT}
     bl    {DIVMOD:#x}
-    cmp   r1, #{STATUS_CHANCE}
+    cmp   r1, r8
     bhs   fx_miss
+fx_lands:
     mov   r0, r7
     ldrb  r1, [sb, #{FX_ARG}]
     bl    {QUEUE_STATUS:#x}

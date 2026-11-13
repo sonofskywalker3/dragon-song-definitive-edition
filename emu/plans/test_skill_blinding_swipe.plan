@@ -1,0 +1,76 @@
+# skills: Blinding Swipe (blind, always lands). Gabryel alone at level 39 (level index 38 pinned, battle MP pinned to 50), first temple battle.
+# On the Special list Right reaches the skill (shot bs_list), A opens the enemy grid,
+# Down moves to the first front-row enemy (battler 9, which stays in its slot; bs_grid), A casts:
+# after the enemies' turns she runs in, strikes without damage, and the green ring shows on it (shots
+# bs_a to bs_i), the MP is taken, and its status goes 0 -> 2. By the next round a back-row
+# enemy has dropped into front slot 8, so Down, Right reaches battler 9: the name bar reads its name
+# and "Bld" (bs_tag) and A is refused with "No effect!" (bs_refused), no MP taken.
+# Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18). Run with --save.
+include party_gabryel
+pin u32 0x020B471C 38
+pinptr u32 0x020B8620 0x18 50
+wait 270
+peek u32 0x020B8620 records
+watch u32 0x0228e878 gabryel_mp
+watch u8 0x0228ea18 status4
+watch u8 0x0228ea84 status5
+watch u8 0x0228eaf0 status6
+watch u8 0x0228ebc8 status8
+watch u8 0x0228ec34 status9
+watch u8 0x0228eca0 status10
+watch u32 0x0228ec40 hp9
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+shot bs_list
+press A 8
+wait 80
+press Down 8
+wait 30
+shot bs_grid
+press A 8
+wait 30
+wait 210
+wait 30
+shot bs_a
+wait 30
+shot bs_b
+wait 30
+shot bs_c
+wait 30
+shot bs_d
+wait 30
+shot bs_e
+wait 30
+shot bs_f
+wait 30
+shot bs_g
+wait 30
+shot bs_h
+wait 30
+shot bs_i
+waituntil u32 0x020B0010 7 3000
+wait 110
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 80
+press Down 8
+wait 30
+press Right 8
+wait 30
+shot bs_tag
+press A 8
+wait 30
+shot bs_refused
+wait 100
+shot bs_after

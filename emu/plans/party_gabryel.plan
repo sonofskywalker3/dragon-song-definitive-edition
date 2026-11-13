@@ -1,0 +1,17 @@
+# Gabryel alone in the party (slot 0 = character 2, the other slots empty), in the first Delrich Temple
+# battle, for the skill plans. Her HP is pinned to 999 so she lives through any number of rounds; her other
+# stats are left as the save has them (level 1), so ATK changes show. Her field record is at 0x020B4710
+# (0x020B4658 + 2 * 0x5C): level index +0x0C (0x020B471C), HP +0x10 / +0x14. Battler 0 and stat record 0
+# are hers in the battle. Built like party2_strong.plan (the pins are repeated because warp6 drops them).
+include boot_from_save
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u16 0x020B464C 2
+pin u16 0x020B4650 65535
+pin u16 0x020B4654 65535
+include warp6
+pin u16 0x020B4724 999
+pin u16 0x020B4720 999
+pin u16 0x020B464C 2
+pin u16 0x020B4650 65535
+pin u16 0x020B4654 65535

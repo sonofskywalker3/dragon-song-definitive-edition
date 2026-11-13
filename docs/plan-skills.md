@@ -52,17 +52,17 @@ Red, White, Black Dragons 23 to 28; Blue Dragon 36; final fights 40 to 42. Late 
 
 ### Gabryel (beast)
 
-| Skill | Lv | MP | Target | Effect | Animation |
-|---|---|---|---|---|---|
-| Gale Cut | joins with | 10 | all enemies | unchanged | unchanged |
-| Savage Rush | joins with | 5 | one enemy | heavy physical hit | unused double claw (btldata 33) |
-| Venom Claw | 13 | 8 | one enemy | poison, 5% max HP per turn | claw + ring |
-| Blinding Swipe | 17 | 7 | one enemy | blind 2 to 4 turns | claw + purple slash (318) |
-| Feral | 21 | 8 | self | ATK up one stage | special pose + sword-up icon |
-| Howl | 26 | 9 | one enemy | fear (the paralysis status renamed): no action 2 to 4 turns | special pose + ring |
-| Venom Storm | 31 | tbd | all enemies | Venom Claw on all | |
-| Blinding Gale | 35 | tbd | all enemies | Blinding Swipe on all | |
-| Dread Roar | 39 | tbd | all enemies | Howl on all | |
+| Skill | Id / built | Lv | MP | Target | Effect | Animation |
+|---|---|---|---|---|---|---|
+| Gale Cut | game's own | joins with | 10 | all enemies | unchanged | unchanged |
+| Savage Rush | not built | joins with | 5 | one enemy | heavy physical hit | unused double claw (btldata 33) |
+| Venom Claw | 44, built | 13 | 8 | one enemy | poison, 5% max HP per turn; always lands, bosses too | her attack with no hit, then the green ring |
+| Blinding Swipe | 45, built | 17 | 7 | one enemy | blind 2 to 4 turns; always lands, bosses too | her attack with no hit, then the green ring |
+| Feral | 46, built | 21 | 8 | self, no picker | ATK up one stage | item pose, ATK UP banner on her |
+| Howl | 47, built | 26 | 9 | one enemy | fear (the paralysis status): no action 2 to 4 turns; 70 percent; bosses immune | her attack with no hit, then the green ring |
+| Venom Storm | 48, built | 31 | 12 | all enemies | Venom Claw on all, skipping those with a status | item pose, green ring on each |
+| Blinding Gale | 49, built | 35 | 10 | all enemies | Blinding Swipe on all, skipping those with a status | item pose, green ring on each |
+| Dread Roar | 50, built | 39 | 13 | all enemies | Howl on all, each with its own roll | item pose, green ring on each |
 
 ### Rufus (leader of the beastmen's strike force; joins at 15, leaves, returns late in the Retold story)
 

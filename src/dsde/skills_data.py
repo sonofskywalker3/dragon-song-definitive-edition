@@ -16,11 +16,13 @@ STAT_ATK, STAT_DEF, STAT_AGI, STAT_INT, STAT_DEX, STAT_LUK = range(4, 10)
 
 # Statuses (the low nibble of stat record + 0x08; docs/re-cards.md)
 STATUS_SLEEP = 1
+STATUS_BLIND = 2
+STATUS_PARALYSIS = 4  # no action; Gabryel's Howl calls it fear
+STATUS_POISON = 6
 # Statuses a boss row (enemy row flags bit 31) never takes; blind (2) and poison (6) land on bosses too
 BOSS_IMMUNE = frozenset({1, 3, 4, 5, 7})
-STATUS_CHANCE = (
-    70  # percent: a status skill's success roll (the cards never miss a regular enemy)
-)
+STATUS_CHANCE = 70  # percent: the success roll of the statuses that stop a turn (the cards never miss)
+SURE = 100  # percent: no roll at all, so no random number is drawn
 
 # Battle-wide flags in the first word of the battle work area, set by the cards and cleared with it at the
 # start of each battle
@@ -43,7 +45,7 @@ class Kind(IntEnum):
 
     NONE = 0  # the game's own spells
     STAGE = 1  # moves stat `arg` one stage (`delta`), and never past one stage from 0
-    STATUS = 2  # gives status `arg`, with a success roll; never over another status or to an immune boss
+    STATUS = 2  # gives status `arg` (a roll if `chance` is under 100); never over another status
     FLAG = 3  # sets battle-wide flag `arg` for the rest of the battle
 
 
@@ -70,8 +72,11 @@ class Skill:
     delta: int  # STAGE: -1 lowers, +1 raises; 0 for the other kinds
     row: int
     look: Look
+    chance: int = SURE  # STATUS: percent chance to land
+    self_only: bool = False  # an ALLY_ONE skill cast on its caster, with no ally picker
 
 
+ROW_ATK_UP = 21  # "ATK UP" banner (sprite 298)
 ROW_ATK_DOWN = 27  # "ATK DOWN" banner (sprite 304), the Quetzalcoatl card's row
 ROW_DEF_DOWN = 28  # "DEF DOWN" banner (sprite 305), the Abadon card's row
 ROW_STATUS = 34  # green rings on the target (sprite 314), the status cards' row
@@ -134,6 +139,7 @@ SKILLS: tuple[Skill, ...] = (
         0,
         ROW_STATUS,
         Look.ATTACK,
+        STATUS_CHANCE,
     ),
     # Jian cannot run to every enemy: the all-enemy versions play the row's own cast, as the cards do
     Skill(
@@ -163,6 +169,108 @@ SKILLS: tuple[Skill, ...] = (
         -1,
         ROW_DEF_DOWN,
         Look.ROW,
+    ),
+    # Gabryel. Poison and blind always land, on bosses too; fear is the game's paralysis and rolls
+    Skill(
+        44,
+        "Venom Claw",
+        "Poison one monster",
+        8,
+        GABRYEL,
+        13,
+        Target.ENEMY_ONE,
+        Kind.STATUS,
+        STATUS_POISON,
+        0,
+        ROW_STATUS,
+        Look.ATTACK,
+    ),
+    Skill(
+        45,
+        "Blinding Swipe",
+        "Blind one monster",
+        7,
+        GABRYEL,
+        17,
+        Target.ENEMY_ONE,
+        Kind.STATUS,
+        STATUS_BLIND,
+        0,
+        ROW_STATUS,
+        Look.ATTACK,
+    ),
+    Skill(
+        46,
+        "Feral",
+        "Raise your own attack",
+        8,
+        GABRYEL,
+        21,
+        Target.ALLY_ONE,
+        Kind.STAGE,
+        STAT_ATK,
+        1,
+        ROW_ATK_UP,
+        Look.ROW,
+        self_only=True,
+    ),
+    Skill(
+        47,
+        "Howl",
+        "Scare one monster stiff",
+        9,
+        GABRYEL,
+        26,
+        Target.ENEMY_ONE,
+        Kind.STATUS,
+        STATUS_PARALYSIS,
+        0,
+        ROW_STATUS,
+        Look.ATTACK,
+        STATUS_CHANCE,
+    ),
+    Skill(
+        48,
+        "Venom Storm",
+        "Poison all monsters",
+        12,
+        GABRYEL,
+        31,
+        Target.ENEMY_ALL,
+        Kind.STATUS,
+        STATUS_POISON,
+        0,
+        ROW_STATUS,
+        Look.ROW,
+    ),
+    Skill(
+        49,
+        "Blinding Gale",
+        "Blind all monsters",
+        10,
+        GABRYEL,
+        35,
+        Target.ENEMY_ALL,
+        Kind.STATUS,
+        STATUS_BLIND,
+        0,
+        ROW_STATUS,
+        Look.ROW,
+    ),
+    Skill(
+        50,
+        "Dread Roar",
+        "Scare all monsters stiff",
+        13,
+        GABRYEL,
+        39,
+        Target.ENEMY_ALL,
+        Kind.STATUS,
+        STATUS_PARALYSIS,
+        0,
+        ROW_STATUS,
+        Look.ROW,
+        STATUS_CHANCE,
     ),
 )
 

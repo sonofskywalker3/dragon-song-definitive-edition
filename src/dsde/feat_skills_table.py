@@ -14,7 +14,7 @@ the fighters' skills are not listed there.
 Descriptions. One 61-byte record per spell id in sysmenupack entry 61, appended after the game's 16.
 
 Cave tables, indexed by spell id: `cave_skill_levels` (one row of learn level indices per fighter, 255 = not
-his or hers) and `cave_skill_fx` (kind, stat, delta, look; see skills_data.py).
+his or hers) and `cave_skill_fx` (kind, argument, delta, look, chance, self; see skills_common.FX_*).
 """
 
 import struct
@@ -24,6 +24,7 @@ from dsde.jp_hint_pairs import END
 from dsde.patching import AsmPatch, CaveCode, DataPatch, Patch, byte_patches
 from dsde.skills_common import (
     FLAG_BATTLE,
+    FX_SIZE,
     NEVER,
     SPELL_ENTRY_SIZE,
     SPELL_NAME_FIRST,
@@ -196,22 +197,24 @@ def _levels_asm() -> str:
 
 
 def _fx_asm() -> str:
-    """Effect record per spell id: kind, argument, delta (s8), look; zeros for the game's own spells."""
+    """Effect record per spell id (skills_common.FX_*); zeros for the game's own spells."""
     lines = []
     for spell in range(SPELL_COUNT):
         skill = BY_SPELL.get(spell)
         record = (
-            (skill.kind, skill.arg, skill.delta & 0xFF, skill.look)
+            (
+                skill.kind,
+                skill.arg,
+                skill.delta & 0xFF,
+                skill.look,
+                skill.chance,
+                int(skill.self_only),
+            )
             if skill
-            else (0, 0, 0, 0)
+            else ()
         )
-        lines.append(f"    .byte {byte_list(bytes(record))}")
+        lines.append(f"    .byte {byte_list(bytes(record).ljust(FX_SIZE, bytes(1)))}")
     return "\n".join(lines) + "\n"
-
-
-def level_row_offset(owner: int) -> int:
-    """Byte offset of a fighter's row in cave_skill_levels."""
-    return LEVEL_ROWS.index(owner) * SPELL_COUNT
 
 
 def table_patches() -> tuple[Patch | AsmPatch | CaveCode | DataPatch, ...]:

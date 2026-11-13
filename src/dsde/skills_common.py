@@ -53,12 +53,23 @@ TARGET_BITS = 0xC0000000  # spell flags: who it is cast on (skills_data.Target)
 ALL_TARGETS = 0x40000000  # set for both all-enemy and all-ally spells
 DRAW_TEXT = 0x02045114  # (handle, x, y, string, [sp] = style)
 
-# Per-spell effect record in cave_skill_fx: 4 bytes per spell id
-FX_SIZE_SHIFT = 2
+# Per-spell effect record in cave_skill_fx: 8 bytes per spell id
+FX_SIZE_SHIFT = 3
 FX_KIND = 0  # skills_data.Kind
 FX_ARG = 1  # a stat id, a status, or a battle flag mask, by kind
 FX_DELTA = 2  # s8
 FX_LOOK = 3  # skills_data.Look
+FX_CHANCE = 4  # percent chance for a status to land; 100 = no roll
+FX_SELF = 5  # 1 = cast on the caster with no ally picker
+FX_SIZE = 1 << FX_SIZE_SHIFT
+
+# Character table: 0x12 bytes of btldata entries per character
+CHARACTER_FILES = 0x020953D4
+CHARACTER_FILES_SIZE = 0x12
+FILE_ATTACK = 0x04  # the attack's sprite file
+FILE_ITEM_POSE = 0x0E  # the pose for using an item or a card
+LEVEL_INDEX = 0x020B4664  # u32 level index (0 = level 1) in Jian's field record; + 0x5C per character
+CHARACTER_RECORD_SIZE = 0x5C
 
 _CODES = {char: code for code, char in USA_TABLE.items()}
 

@@ -1,0 +1,69 @@
+# skills: Venom Storm (poison on every enemy). Gabryel alone at level 39 (level index 38 pinned, battle MP pinned to 50), first temple battle
+# (back row 4, 5, 6; front row 9, 10). On the Special list Down, Right, Right reaches the skill (shot
+# vs_list); A casts with no picker: her pose, then a green ring on each enemy (shots vs_a to
+# vs_i), MP 50 -> 38 once, and every enemy's status goes 0 -> 6. Next round A on it is refused with "No
+# effect!" (vs_refused): every enemy has a status. Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18).
+# Run with --save.
+include party_gabryel
+pin u32 0x020B471C 38
+pinptr u32 0x020B8620 0x18 50
+wait 270
+peek u32 0x020B8620 records
+watch u32 0x0228e878 gabryel_mp
+watch u8 0x0228ea18 status4
+watch u8 0x0228ea84 status5
+watch u8 0x0228eaf0 status6
+watch u8 0x0228ebc8 status8
+watch u8 0x0228ec34 status9
+watch u8 0x0228eca0 status10
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 50
+press Right 8
+wait 50
+press Right 8
+wait 50
+shot vs_list
+press A 8
+wait 30
+wait 210
+wait 30
+shot vs_a
+wait 30
+shot vs_b
+wait 30
+shot vs_c
+wait 30
+shot vs_d
+wait 30
+shot vs_e
+wait 30
+shot vs_f
+wait 30
+shot vs_g
+wait 30
+shot vs_h
+wait 30
+shot vs_i
+waituntil u32 0x020B0010 7 3000
+wait 110
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 50
+press Right 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 30
+shot vs_refused
+wait 100
+shot vs_after
