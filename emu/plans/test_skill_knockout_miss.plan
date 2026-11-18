@@ -1,6 +1,8 @@
 # skills: Knockout Kick failing its success roll. As test_skill_knockout, but the random state is set to
 # 15, which gives roll 98: the cast plays, the game's MISS popup shows over the enemy (shot km_miss, with
 # its miss sound), MP 50 -> 41 is spent, and no status changes. Run with --save.
+# Since the lists are in learn order (2026-11-18) Stone Throw is the first entry, so the plan presses Down
+# or Right once more to reach its skill.
 include boot_from_save
 include cheats_strong
 include warp6
@@ -26,7 +28,7 @@ press A 8
 wait 50
 press Right 8
 wait 50
-press Down 8
+press Right 8
 wait 50
 press A 8
 wait 50

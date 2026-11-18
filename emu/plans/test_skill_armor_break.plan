@@ -1,9 +1,9 @@
 # skills: Jian at level 14 (level index 13 pinned, battle MP pinned to 50) has Weapon Break and Armor Break.
-# First temple battle (five enemies). Special lists both (shot ab_list, Weapon Break highlighted); Down moves
+# First temple battle (five enemies). Special lists three (shot ab_list, Stone Throw highlighted); Right moves
 # to Armor Break (ab_list_down: "Armor Break", 6, "Lower one monster's defense"); A opens the enemy grid,
 # Right moves to the second back-row enemy (battler 5), A casts on it. Expect: MP 50 -> 44, battler 5's DEF
 # stage 0 -> -1 (0xFFFF) and its DEF lower, no ATK stage change, Jian leaps up, kicks without damage, and the
-# DEF DOWN banner shows on it (ab_cast). Round 2: Special, Down, A opens the grid on that enemy: the name bar
+# DEF DOWN banner shows on it (ab_cast). Round 2: Special, Right, A opens the grid on that enemy: the name bar
 # reads its name and "DEF" with a down triangle (ab_tag); A is refused with "No effect!" (ab_refused), no MP
 # is taken; Right and A cast on another enemy (second drop to 44, a second DEF stage to 0xFFFF).
 # Battle records at 0x0228E860 (0x6C each: MP +0x18, DEF +0x28, ATK stage +0x40, DEF stage +0x42).
@@ -32,7 +32,7 @@ wait 50
 press A 8
 wait 50
 shot ab_list
-press Down 8
+press Right 8
 wait 30
 shot ab_list_down
 press A 8
@@ -50,7 +50,7 @@ press Right 8
 wait 50
 press A 8
 wait 50
-press Down 8
+press Right 8
 wait 30
 press A 8
 wait 80

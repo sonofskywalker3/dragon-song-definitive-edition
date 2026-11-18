@@ -3,6 +3,8 @@
 # cast needs no grid): MP 50 -> 42, the enemy's ATK stage 0 -> -1 (0xFFFF), ATK 20 -> 16. Next round he tries
 # again: A on Weapon Break in the Special list is refused, the name bar says "No effect!" (shot cap_refused),
 # the list stays up, and no MP is taken (only one drop to 42 in the log). Run with --save.
+# Since the lists are in learn order (2026-11-18) Stone Throw is the first entry, so the plan presses Down
+# or Right once more to reach its skill.
 include boot_from_save
 include cheats_strong
 # Delrich Temple (map 6), standing off the enemy spawn points (as boss_gronk.plan)
@@ -53,6 +55,8 @@ press Right 8
 wait 50
 press A 8
 wait 50
+press Down 8
+wait 50
 press A 8
 wait 50
 shot cap_cast1
@@ -62,6 +66,8 @@ wait 110
 press Right 8
 wait 50
 press A 8
+wait 50
+press Down 8
 wait 50
 shot cap_list
 press A 8

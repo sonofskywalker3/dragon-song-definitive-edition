@@ -19,6 +19,7 @@ wait 50
 press A 8
 wait 60
 shot ll_lv1
+dump 0x020B8844 20 list_ll_lv1
 press B 8
 wait 60
 pin u32 0x020b46c0 3
@@ -28,6 +29,7 @@ wait 50
 press A 8
 wait 60
 shot ll_lv4
+dump 0x020B8844 20 list_ll_lv4
 press B 8
 wait 60
 pin u32 0x020b46c0 7
@@ -37,6 +39,7 @@ wait 50
 press A 8
 wait 60
 shot ll_lv8
+dump 0x020B8844 20 list_ll_lv8
 press B 8
 wait 60
 pin u32 0x020b46c0 10
@@ -46,6 +49,7 @@ wait 50
 press A 8
 wait 60
 shot ll_lv11
+dump 0x020B8844 20 list_ll_lv11
 press B 8
 wait 60
 pin u32 0x020b46c0 12
@@ -55,6 +59,7 @@ wait 50
 press A 8
 wait 60
 shot ll_lv13
+dump 0x020B8844 20 list_ll_lv13
 press B 8
 wait 60
 pin u32 0x020b46c0 39
@@ -64,5 +69,6 @@ wait 50
 press A 8
 wait 60
 shot ll_lv40
+dump 0x020B8844 20 list_ll_lv40
 press B 8
 wait 60

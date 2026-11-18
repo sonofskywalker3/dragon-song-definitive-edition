@@ -12,7 +12,8 @@ skills_flora.py, written in the terms of skills_types.py). This feature is put t
 - feat_skills_tags.py: the grid's name bar lists the highlighted enemy's ailments;
 - feat_skills_fx.py: the effect itself and the "No effect!" line;
 - feat_skills_look.py: how the cast plays;
-- feat_skills_stone.py: the stone of Stone Throw, a sprite file made from Jian's unused throw.
+- feat_skills_stone.py: the stone of Stone Throw, a sprite file made from Jian's unused throw;
+- feat_skills_order.py: the spell lists (Special in battle, Magic in the field) in learn order.
 
 Needs manual-targeting (the enemy grid and its helpers).
 """
@@ -22,6 +23,7 @@ from dsde.feat_skills_fx import FX_PATCHES
 from dsde.feat_skills_idle import IDLE_PATCHES
 from dsde.feat_skills_look import LOOK_PATCHES
 from dsde.feat_skills_menu import MENU_PATCHES
+from dsde.feat_skills_order import ORDER_PATCHES
 from dsde.feat_skills_stone import stone_patch
 from dsde.feat_skills_table import table_patches
 from dsde.feat_skills_tags import TAG_PATCHES
@@ -37,6 +39,7 @@ SKILLS_FEATURE = Feature(
         *TAG_PATCHES,
         *FX_PATCHES,
         *LOOK_PATCHES,
+        *ORDER_PATCHES,
         stone_patch(),
     ),
 )

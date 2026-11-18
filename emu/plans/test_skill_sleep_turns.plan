@@ -1,7 +1,7 @@
 # skills: a sleeping enemy loses its turns and wakes. Jian at level 25 (level index 24 pinned, battle MP
 # pinned to 50, HP 999 at the start and not pinned in battle) against one forced Ice Mongrel with 30000
 # HP that attacks every turn (setup as test_skill_cap.plan); the random state is set to 24 whenever the
-# effect hook runs, so Knockout Kick lands. Round 1 Knockout Kick (Down, Right on the list): status9
+# effect hook runs, so Knockout Kick lands. Round 1 Knockout Kick (Right, Right on the list): status9
 # 0 -> 1. Rounds 2 to 4 Jian does it no harm (Weapon Break, Armor Break, Focus), so nothing wakes it:
 # expect no drop of jian_hp in the rounds it sleeps, then status9 back to 0 after its 2 to 4 turns and
 # jian_hp dropping again. Rounds 5 and 6 he Fights. One shot at each command prompt (st_r1 to st_r7).
@@ -57,7 +57,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press Right 8
 wait 50
@@ -71,6 +71,8 @@ press Right 8
 wait 50
 press A 8
 wait 60
+press Down 8
+wait 50
 press A 8
 wait 30
 waituntil u32 0x020B0010 8 600
@@ -81,7 +83,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press A 8
 wait 30
@@ -94,6 +96,8 @@ wait 50
 press A 8
 wait 60
 press Right 8
+wait 50
+press Down 8
 wait 50
 press A 8
 wait 30

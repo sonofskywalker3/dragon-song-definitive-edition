@@ -19,6 +19,9 @@ does, with numbers), docs/boss-exp.md (expected level at each boss).
   it is highlighted in the enemy grid ("Thanatos ATKvDEFvPsn"); with that, no always-on icon beside the
   monster is needed.
 - **Flora learns Miracle Tears** (vanilla: never), late.
+- **Spell lists are in learn order** (Jeff, 2026-11-18): the Special list in battle and the Magic page in the
+  field show a member's spells by the level they are learned at, so a newly learned spell, an all-target
+  version included, comes after everything learned before it and nothing already listed moves.
 - Possible later: a card slot (or the planned ring slot) that grants a skill or passive while a card is
   equipped. Not scoped.
 

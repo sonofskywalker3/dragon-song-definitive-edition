@@ -1,6 +1,6 @@
 # skills: Jian at level 9 (level index 8 pinned) casts Weapon Break in the first temple battle (five enemies).
-# Special opens the spell list (Weapon Break, 8; it is the only entry at this level, so Down leaves the
-# highlight on it, shot wb_list_down: Armor Break comes at level 14), A opens the enemy grid, Right moves to the second back-row
+# Special opens the spell list in learn order (shot wb_list on Stone Throw; Down moves to Weapon Break, 8,
+# shot wb_list_down; Armor Break comes at level 14), A opens the enemy grid, Right moves to the second back-row
 # enemy (battler 5), A casts on it. Expect: Jian's battle MP 10 -> 2, battler 5's ATK stage 0 -> -1 (0xFFFF)
 # and its ATK 20 -> 16, no other stage changes. Jian leaps up to it, kicks without damage, and the ATK DOWN
 # banner shows on it. The repeat cast is test_skill_cap. Battle records are at 0x0228E860 in this battle (0x6C each:

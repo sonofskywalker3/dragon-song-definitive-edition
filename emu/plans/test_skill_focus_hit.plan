@@ -1,7 +1,7 @@
 # skills: Focus makes attacks that would miss hit. Jian at level 19 (level index 18 pinned, battle MP
 # pinned to 50) against one forced Ice Mongrel with 30000 HP (setup as test_skill_cap.plan) whose AGI
 # (stat record 9 + 0x30) is pinned to 30000, so his hit chance is next to nothing. Round 1 Fight: MISS on
-# every blow, hp9 unchanged (shots fh_miss_*). Round 2 Focus (Right on the list): MP 50 -> 44. Round 3
+# every blow, hp9 unchanged (shots fh_miss_*). Round 2 Focus (Right, Down on the list): MP 50 -> 44. Round 3
 # Fight: the blows land and hp9 drops (fh_hit_*).
 # Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK +0x24, ATK stage +0x40). Run with --save.
 include boot_from_save
@@ -85,6 +85,8 @@ wait 50
 press A 8
 wait 60
 press Right 8
+wait 50
+press Down 8
 wait 50
 shot fh_focus
 press A 8

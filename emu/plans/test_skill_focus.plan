@@ -1,5 +1,5 @@
 # skills: Focus. Jian at level 19 (level index 18 pinned, battle MP pinned to 50), first temple battle.
-# Special lists Weapon Break, Armor Break, and Focus; Right moves to Focus (shot fc_list: "Focus", 6,
+# Special lists Stone Throw, Weapon Break, Armor Break, and Focus; Right, Down moves to Focus (shot fc_list: "Focus", 6,
 # "Attacks will not miss"). A casts it at once, with no picker: MP 50 -> 44, the battle-wide flags at the
 # start of the battle work area (0x02282940 here) gain bit 4 (the Bealzebub card's "always hit" for the
 # whole party), and the HIT banner shows on Jian (fc_cast). Next round the same pick is refused: the name
@@ -24,6 +24,8 @@ press A 8
 wait 50
 press Right 8
 wait 50
+press Down 8
+wait 50
 shot fc_list
 press A 8
 wait 50
@@ -37,6 +39,8 @@ wait 50
 press A 8
 wait 50
 press Right 8
+wait 50
+press Down 8
 wait 50
 press A 8
 wait 50

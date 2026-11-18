@@ -1,5 +1,5 @@
 # skills: Knockout Kick. Jian at level 25 (level index 24 pinned, battle MP pinned to 50), first temple
-# battle. Special lists four skills; Right, Down is Knockout Kick (shot kk_list: 9, "Put one monster to
+# battle. Special lists five skills; Right, Right is Knockout Kick (shot kk_list: 9, "Put one monster to
 # sleep"). A opens the enemy grid, Right picks the second back-row enemy (battler 5), A casts: Jian leaps
 # up and kicks without damage, the green ring shows on it, MP 50 -> 41, and its status goes 0 -> 1 (sleep;
 # the game's own queue applies it after the action, with the flash and the Zzz). Next round the grid opens
@@ -33,7 +33,7 @@ press A 8
 wait 50
 press Right 8
 wait 50
-press Down 8
+press Right 8
 wait 50
 shot kk_list
 press A 8
@@ -57,7 +57,7 @@ press A 8
 wait 50
 press Right 8
 wait 50
-press Down 8
+press Right 8
 wait 50
 press A 8
 wait 50

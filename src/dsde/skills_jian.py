@@ -107,8 +107,8 @@ JIAN_SKILLS: tuple[Skill, ...] = (
         ROW_DEF_DOWN,
         Look.ROW,
     ),
-    # His first skill by level, but the last id (the ids run in the order the skills were made), so the
-    # Special list, which goes by id, shows it after the others once he has them. He stays where
+    # His first skill by level and the last id (the ids run in the order the skills were made); the lists go
+    # by learn level (feat_skills_order.py), so it is listed first. He stays where
     # he is, tosses the stone and bats it, and it flies at the target as Flora's arrow does, hitting for his
     # ordinary attack's damage (it can miss as an attack can)
     Skill(

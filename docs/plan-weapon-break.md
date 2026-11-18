@@ -678,3 +678,23 @@ SKILLS is sorted by id rather than gathered by owner). Kind.HIT, Look.THROW.
   (build/stone_hit/stone_throw.gif). Not seen: a front-row target, a target that dies before Jian acts,
   Jian's other skills' casts after this change (their path is unchanged code).
 
+## 17. Spell lists in learn order (2026-11-18)
+
+Jeff: every list shows its spells in the order they are learned, and learning a new one (an all-target
+version included) does not reorder what is there. feat_skills_order.py sorts both lists after the game builds
+them, with one stable insertion sort (cave_skill_sort) keyed by the level the member learns each spell at:
+
+- **Battle Special list:** func_02035e00 case 2 writes halfword ids at menu 0x020B8800 + 0x44 and sets
+  +0x82 to 1 (0 for the item and card lists); its shared exit loads the menu at 0x02035F6C with the count in
+  r7. That load is the hook; the member is the battler at menu + 0x34, character id at battler + 4.
+- **Field Magic page:** func_02064ff0 keeps 8-byte entries on its stack (r5) and the count in r7; the load
+  after its loop (0x02065070) is the hook. Its sb is the **party slot**, not the character: the character is
+  the s16 at 0x020B464C + slot * 4, as in func_02050c50's field branch.
+- **Keys:** a healer's byte of the spell's table entry (+8 Lucia, +9 Flora: the spell-levels schedule and
+  her own skills); a fighter's row of cave_skill_order (his or her skills' level indices, 0 for Gale Cut and
+  Thunder Sword, which they have on joining, 254 for anything else, which for Jian is Dragon Magic from the
+  rings, so ring spells come last). Ties keep id order (Thunder Sword before Rally and Stand Fast).
+- **Plans.** The list cursor is a grid of columns of two, three columns a page; Down moves one entry, Right
+  two, and Right from the last column turns the page. Stone Throw first shifts each of Jian's skills one
+  entry, so his plans gained a press; Flora's Miracle Tears moved from the fifth entry to the seventh.
+

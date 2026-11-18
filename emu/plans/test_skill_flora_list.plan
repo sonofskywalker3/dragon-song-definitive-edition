@@ -20,6 +20,7 @@ wait 50
 press A 8
 wait 60
 shot fl_lv13
+dump 0x020B8844 20 list_fl_lv13
 press B 8
 wait 60
 pin u32 0x020b4778 15
@@ -29,6 +30,7 @@ wait 50
 press A 8
 wait 60
 shot fl_lv16
+dump 0x020B8844 20 list_fl_lv16
 press B 8
 wait 60
 pin u32 0x020b4778 19
@@ -38,6 +40,7 @@ wait 50
 press A 8
 wait 60
 shot fl_lv20
+dump 0x020B8844 20 list_fl_lv20
 press B 8
 wait 60
 pin u32 0x020b4778 27
@@ -47,6 +50,7 @@ wait 50
 press A 8
 wait 60
 shot fl_lv28
+dump 0x020B8844 20 list_fl_lv28
 press Right 8
 wait 50
 press Right 8
@@ -64,6 +68,7 @@ wait 50
 press A 8
 wait 60
 shot fl_lv32
+dump 0x020B8844 20 list_fl_lv32
 press Right 8
 wait 50
 press Right 8
@@ -80,6 +85,7 @@ wait 50
 press A 8
 wait 60
 shot fl_lv40
+dump 0x020B8844 20 list_fl_lv40
 press Right 8
 wait 50
 press Right 8

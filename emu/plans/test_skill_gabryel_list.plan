@@ -22,6 +22,7 @@ wait 50
 press A 8
 wait 60
 shot gl_1
+dump 0x020B8844 20 list_gl_1
 press Down 8
 wait 50
 press Right 8
@@ -35,6 +36,7 @@ wait 50
 press A 8
 wait 60
 shot gl_2
+dump 0x020B8844 20 list_gl_2
 press B 8
 wait 60
 poke u32 0x020B471C 30
@@ -43,6 +45,7 @@ wait 50
 press A 8
 wait 60
 shot gl_6
+dump 0x020B8844 20 list_gl_6
 press B 8
 wait 60
 poke u32 0x020B471C 34
@@ -51,6 +54,7 @@ wait 50
 press A 8
 wait 60
 shot gl_7
+dump 0x020B8844 20 list_gl_7
 press Right 8
 wait 50
 press Right 8
@@ -66,6 +70,7 @@ wait 50
 press A 8
 wait 60
 shot gl_8
+dump 0x020B8844 20 list_gl_8
 press Right 8
 wait 50
 press Right 8

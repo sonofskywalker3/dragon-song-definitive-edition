@@ -4,6 +4,8 @@
 # enemy in front of it, and kills it first; battler 5 drops into slot 9 (battler and stat record are
 # copied). Expect the ATK stage of record 9 (the moved enemy) to go 0 -> -1 (0xFFFF) and no other stage to
 # change. Battle records at 0x0228E860 (peeked below), 0x6C each, ATK stage +0x40. Run with --save.
+# Since the lists are in learn order (2026-11-18) Stone Throw is the first entry, so the plan presses Down
+# or Right once more to reach its skill.
 include party2_strong
 pin u32 0x020B4664 8
 wait 270
@@ -20,6 +22,8 @@ wait 50
 press Right 8
 wait 50
 press A 8
+wait 50
+press Down 8
 wait 50
 press A 8
 wait 70
