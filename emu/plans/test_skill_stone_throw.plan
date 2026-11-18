@@ -1,0 +1,154 @@
+# skills: Jian's Stone Throw (level 4, 3 MP, one enemy, his ordinary physical hit at range). Jian alone at
+# level 4 (level index 3 pinned, battle MP pinned to 50), first temple battle (five enemies). Special lists
+# Stone Throw alone (st_list: "Stone Throw", 3, "Throw a stone at one monster"); A opens the enemy grid,
+# Right moves to the second back-row enemy (battler 5), A throws. Expect: Jian stays where he stands (no
+# run-in, no leap), tosses the stone and swings, and the stone flies to battler 5 along the path of Flora's
+# arrows; MP 50 -> 47 (st_00 to st_59). Seen: all of that, and the stone MISSes there (an ordinary
+# hit roll, his DEX against its AGI; the hit is test_skill_stone_throw_hit).
+# Battle records at 0x0228E860 (0x6C each: HP +0x14, MP +0x18). Run with --save.
+include boot_from_save
+include cheats_strong
+include warp6
+include cheats_strong
+pin u32 0x020B4664 3
+pinptr u32 0x020B8620 0x18 50
+wait 270
+peek u32 0x020B8620 records
+peek u32 0x020B8640 battlers_base
+watch u32 0x0228E878 jian_mp
+watch u32 0x0228EAB0 hp5
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 50
+shot st_list
+press A 8
+wait 70
+shot st_grid
+press Right 8
+wait 20
+press A 8
+wait 4
+shot st_00
+wait 4
+shot st_01
+wait 4
+shot st_02
+wait 4
+shot st_03
+wait 4
+shot st_04
+wait 4
+shot st_05
+wait 4
+shot st_06
+wait 4
+shot st_07
+wait 4
+shot st_08
+wait 4
+shot st_09
+wait 4
+shot st_10
+wait 4
+shot st_11
+wait 4
+shot st_12
+wait 4
+shot st_13
+wait 4
+shot st_14
+wait 4
+shot st_15
+wait 4
+shot st_16
+wait 4
+shot st_17
+wait 4
+shot st_18
+wait 4
+shot st_19
+wait 4
+shot st_20
+wait 4
+shot st_21
+wait 4
+shot st_22
+wait 4
+shot st_23
+wait 4
+shot st_24
+wait 4
+shot st_25
+wait 4
+shot st_26
+wait 4
+shot st_27
+wait 4
+shot st_28
+wait 4
+shot st_29
+wait 4
+shot st_30
+wait 4
+shot st_31
+wait 4
+shot st_32
+wait 4
+shot st_33
+wait 4
+shot st_34
+wait 4
+shot st_35
+wait 4
+shot st_36
+wait 4
+shot st_37
+wait 4
+shot st_38
+wait 4
+shot st_39
+wait 4
+shot st_40
+wait 4
+shot st_41
+wait 4
+shot st_42
+wait 4
+shot st_43
+wait 4
+shot st_44
+wait 4
+shot st_45
+wait 4
+shot st_46
+wait 4
+shot st_47
+wait 4
+shot st_48
+wait 4
+shot st_49
+wait 4
+shot st_50
+wait 4
+shot st_51
+wait 4
+shot st_52
+wait 4
+shot st_53
+wait 4
+shot st_54
+wait 4
+shot st_55
+wait 4
+shot st_56
+wait 4
+shot st_57
+wait 4
+shot st_58
+wait 4
+shot st_59
+wait 120
+shot st_after

@@ -46,6 +46,7 @@ class Kind(IntEnum):
     STAGE = 1  # moves stat `arg` one stage (`delta`), and never past one stage from 0
     STATUS = 2  # gives status `arg` (a roll if `chance` is under 100); never over another status
     FLAG = 3  # sets battle-wide flag `arg` for the rest of the battle
+    HIT = 4  # the caster's own physical hit, dealt by the hit step of the look's script (no effect hook)
 
 
 class Look(IntEnum):
@@ -54,6 +55,7 @@ class Look(IntEnum):
     ROW = 0  # the effect row's own caster script in the item pose, as a card is played
     ATTACK = 1  # the owner's attack with the hits taken out, then the row's effect on the target
     SPELL = 2  # the effect row's own caster script in the caster's Special pose, as a healer's spell
+    THROW = 3  # Jian's unused throw where he stands, then the skill's sprite flies at the target as an arrow
 
 
 @dataclass(frozen=True)
@@ -90,4 +92,7 @@ ROW_DEF_DOWN = 28  # "DEF DOWN" banner (sprite 305), the Abadon card's row
 ROW_STATUS = 34  # green rings on the target (sprite 314), the status cards' row
 ROW_SURE_HIT = 37  # "HIT" banner on each ally (sprite 319), the Bealzebub card's row
 
+ROW_UNUSED = 0  # a skill whose look sets up its own scripts and sprite takes nothing from its row
+
 SPRITE_WATER_RIBBON = 313  # a ribbon of water coiling round the target; in the game's files, used by nothing
+SPRITE_STONE = 17  # the stone Jian tosses in his throw, as a file of its own (feat_skills_stone.py)

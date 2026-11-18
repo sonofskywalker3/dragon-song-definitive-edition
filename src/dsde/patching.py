@@ -67,6 +67,7 @@ class DataPatch:
     old: bytes
     new: bytes
     note: str
+    whole: bool = False  # the entry becomes `new` (which may differ in size); `old` must be all of it
 
 
 @dataclass(frozen=True)
@@ -195,13 +196,22 @@ def apply_data(files_dir: Path, features: list[Feature]) -> None:
             data = decoded.setdefault(
                 patch.entry, bytearray(decompress(entries[patch.entry]))
             )
-            current = bytes(data[patch.offset : patch.offset + len(patch.old)])
+            if patch.whole and patch.offset != 0:
+                raise PatchError(
+                    f"{feature.name} {archive}/{patch.entry:03d}: a whole-entry patch starts at 0"
+                )
+            current = bytes(
+                data
+                if patch.whole
+                else data[patch.offset : patch.offset + len(patch.old)]
+            )
             if current != patch.old:
                 raise PatchError(
                     f"{feature.name} {archive}/{patch.entry:03d}+{patch.offset:#x}: "
                     f"expected {patch.old.hex()}, found {current.hex()}"
                 )
-            data[patch.offset : patch.offset + len(patch.new)] = patch.new
+            end = len(data) if patch.whole else patch.offset + len(patch.new)
+            data[patch.offset : end] = patch.new
             logger.info(
                 "%s %s/%03d+%#x: %s",
                 feature.name,

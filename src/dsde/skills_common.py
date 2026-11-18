@@ -44,6 +44,7 @@ RECORD_DEF_STAGE = 0x42
 BATTLE_WORK_PTR = 0x020B8550  # its first word: battle-wide flags (skills_data.FLAG_*)
 WORK_SLOT0 = 0x50  # btldata entry of animation slot 0 (slot 1 is the move file, slot 2 the effect sprite)
 WORK_EFFECT_SPRITE = 0x54  # btldata entry of animation slot 2, the effect row's sprite
+WORK_EFFECT_SCRIPTS = 0x78  # u32 x 8: the effect script for each target slot
 WORK_EFFECT_MODE = 0x74  # 0 = no effect helpers this action (as for Fight); the effect row's value otherwise
 WORK_MESSAGE = 0xDA  # message line bits: 1 "Escape failed!", 2 "Pray unsuccessful!"
 MESSAGE_NO_EFFECT = 4  # our bit: "No effect!"

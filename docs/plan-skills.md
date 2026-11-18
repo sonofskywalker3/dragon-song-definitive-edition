@@ -41,7 +41,7 @@ Red, White, Black Dragons 23 to 28; Blue Dragon 36; final fights 40 to 42. Late 
 
 | Skill | Id / built | Lv | MP | Target | Effect | Animation |
 |---|---|---|---|---|---|---|
-| Stone Throw | not built | 4 | 3 | one enemy, any row | physical damage at range | unused pitch (btldata 15); needs a stone projectile, Flora's arrow path is the model |
+| Stone Throw | 61, built | 4 | 3 | one enemy, any row | his ordinary physical hit at range (it can miss) | he stays where he stands and plays his unused throw (btldata 15): tosses the stone and bats it; the stone (its own file, btldata 17) flies on Flora's arrow path |
 | Weapon Break | 38, built | 9 | 8 | one enemy | ATK down one stage | his attack with no hits, then the ATK DOWN banner |
 | Armor Break | 39, built | 14 | 6 | one enemy | DEF down one stage | his attack with no hits, then the DEF DOWN banner |
 | Focus | 40, built | 19 | 6 | all allies (the engine's flag is party-wide) | physical attacks never miss this battle | fist raise, HIT banner on each ally |
@@ -123,8 +123,9 @@ map-enemy cards; the steal and break blockers.
 - A hook from the spell effect code to the card effects (statuses, never-miss flag); stat stages already go
   through func_02054dec.
 - Success rolls and the one-stage cap.
-- How damage is computed for a party-cast physical skill (Stone Throw, Savage Rush).
-- Stone projectile sprite; whether Rufus's return exists in the story scripts.
+- How damage is computed for a party-cast physical skill (Stone Throw: the projectile's hit step is the
+  ordinary physical hit, docs/plan-weapon-break.md 16; Savage Rush still open).
+- Whether Rufus's return exists in the story scripts.
 - Removing the Tools / Cards choice from the battle Item command.
 
 First prototype: Jian's Weapon Break end to end. Built 2026-11-12 (docs/plan-weapon-break.md): in both

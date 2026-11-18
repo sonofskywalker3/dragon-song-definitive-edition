@@ -89,6 +89,8 @@ FX_ASM = f"""
     ldrb  r0, [sb, #{FX_KIND}]
     cmp   r0, #{Kind.NONE}
     beq   fx_out
+    cmp   r0, #{Kind.HIT}
+    beq   fx_out
     mov   r0, r7
     mov   r1, r6
     bl    ${{cave_skill_idle}}

@@ -43,11 +43,11 @@ __all__ = [
     "Target",
 ]
 
-SKILLS: tuple[Skill, ...] = (
-    *JIAN_SKILLS,
-    *GABRYEL_SKILLS,
-    *RUFUS_SKILLS,
-    *FLORA_SKILLS,
+SKILLS: tuple[Skill, ...] = tuple(
+    sorted(
+        (*JIAN_SKILLS, *GABRYEL_SKILLS, *RUFUS_SKILLS, *FLORA_SKILLS),
+        key=lambda skill: skill.spell,
+    )
 )
 
 DESCRIPTION_MAX = 30

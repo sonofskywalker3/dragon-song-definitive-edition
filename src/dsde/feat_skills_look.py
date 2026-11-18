@@ -13,6 +13,10 @@
   Special pose, which is how a healer's own spells play.
 - A skill can name a sprite of its own: it goes in the effect sprite slot in place of the row's, and the
   row's effect script plays it (Flora's water ribbon on the status row, whose script plays animation 0).
+- A skill with the THROW look (Stone Throw) is Jian's unused throw (btldata 15) played where he stands: he
+  tosses the stone, then bats it as he swings, and the swing starts the stone (the skill's sprite) flying at
+  the target on the effect script of Flora's arrows, in the game's projectile mode, whose hit step deals his
+  ordinary attack's damage.
 - A skill on all enemies or all allies plays its effect row's own cast, as a card does. Before the setup,
   the targets it would do nothing to are taken out of the caster's target list, so no banner shows on them
   and the effect never runs for them; if that leaves nobody, the list stays as it is and the line says
@@ -45,6 +49,7 @@ from dsde.skills_common import (
     SPELL_ENTRY_SIZE,
     SPELL_TABLE,
     WORK_EFFECT_MODE,
+    WORK_EFFECT_SCRIPTS,
     WORK_EFFECT_SPRITE,
     WORK_MESSAGE,
     WORK_SLOT0,
@@ -61,6 +66,13 @@ SETUP_COUNTER = (
     1  # mode bit: the actor's counterattack, set up in slots 3 to 5 with its own script
 )
 TARGET_SLOTS = 8  # s16 battler indices at battler + TARGETS, -1 = empty
+THROW_FILE = (
+    15  # Jian's unused throw: animation 0 tosses the stone up, animation 1 swings at it
+)
+EFFECT_PROJECTILE = 1  # effect mode: each effect starts on a helper at the caster and flies (Flora's arrows)
+ARROW_FLIGHT = (
+    0x02094EE4  # effect script of Flora's arrows: 16 frames to the target, then the hit
+)
 
 # Action script steps: flags, sound << 16 | effects started << 8, slot, animation, frames. Flags as in
 # Jian's combo 0x02095AF0, with the three hit flags (0x40) gone and the last kick starting the target's
@@ -118,6 +130,11 @@ FIGHTER_CAST_BACK: Steps = (
     (0x00000001 | STEP_WAIT_EFFECTS, STEP_START_EFFECTS, 0, 2, 0),
     (0x04009012, 0x00000000, 1, 2, 10),
     (0x80000001, 0x00000000, 1, 3, 0),
+)
+# Jian's throw: the toss, then the swing, which starts the stone and waits for it to land
+JIAN_THROW: Steps = (
+    (0x00000001, 0x00000000, 0, 0, 0),
+    (0x80000001 | STEP_WAIT_EFFECTS, 0x00010000 | STEP_START_EFFECTS, 0, 1, 0),
 )
 # Index into anim_scripts: these bits added up
 SCRIPT_PLAIN = 1  # no effect step
@@ -207,6 +224,8 @@ anim_setup:
     ldrb  r0, [r7, #{FX_LOOK}]
     cmp   r0, #{Look.SPELL}
     popeq {{r4-r8, pc}}
+    cmp   r0, #{Look.THROW}
+    beq   anim_throw_setup
     cmp   r0, #{Look.ATTACK}
     ldrhne r0, [r2, #{FILE_ITEM_POSE:#x}]
     strhne r0, [r3, #{WORK_SLOT0:#x}]
@@ -238,6 +257,26 @@ anim_setup:
     mov   r0, #0
     strh  r0, [r1, #{WORK_EFFECT_MODE:#x}]
 {_NO_EFFECT_LINE}
+    pop   {{r4-r8, pc}}
+
+anim_throw_setup:
+    mov   r0, #{THROW_FILE}
+    strh  r0, [r3, #{WORK_SLOT0:#x}]
+    mov   r0, #{EFFECT_PROJECTILE}
+    strh  r0, [r3, #{WORK_EFFECT_MODE:#x}]
+    ldr   r0, anim_throw_at
+    str   r0, [r4, #{BATTLER_SCRIPT:#x}]
+    ldr   r1, anim_flight
+    mov   r2, #0
+throw_loop:
+    add   r0, r4, r2, lsl #1
+    ldrsh r0, [r0, #{T.TARGETS:#x}]
+    cmn   r0, #1
+    addne r0, r3, r2, lsl #2
+    strne r1, [r0, #{WORK_EFFECT_SCRIPTS:#x}]
+    add   r2, r2, #1
+    cmp   r2, #{TARGET_SLOTS}
+    blt   throw_loop
     pop   {{r4-r8, pc}}
 
 anim_prune:
@@ -285,6 +324,10 @@ anim_files:
     .word {CHARACTER_FILES:#x}
 anim_work:
     .word {BATTLE_WORK_PTR:#x}
+anim_throw_at:
+    .word anim_throw
+anim_flight:
+    .word {ARROW_FLIGHT:#x}
 anim_scripts:
     .word anim_jian, anim_jian_plain, anim_jian_back, anim_jian_back_plain
     .word anim_fighter, anim_fighter_plain, anim_fighter_back, anim_fighter_back_plain
@@ -304,6 +347,8 @@ anim_fighter_back:
 {_script(FIGHTER_CAST_BACK)}
 anim_fighter_back_plain:
 {_script(_plain(FIGHTER_CAST_BACK))}
+anim_throw:
+{_script(JIAN_THROW)}
 """
 
 LOOK_PATCHES: tuple[CaveCode | AsmPatch, ...] = (

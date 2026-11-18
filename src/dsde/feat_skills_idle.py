@@ -66,6 +66,8 @@ IDLE_ASM = f"""
     ldrb  r3, [r2, #{FX_KIND}]
     cmp   r3, #{Kind.NONE}
     beq   idle_fine
+    cmp   r3, #{Kind.HIT}
+    beq   idle_fine
     cmp   r3, #{Kind.FLAG}
     beq   idle_flag
     ldr   ip, idle_battlers

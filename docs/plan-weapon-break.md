@@ -641,3 +641,40 @@ the STAGE kind with delta +1 and the ROW look; nothing new in the effect.
 - The skill lists are split by owner since this step: skills_types.py (the `Skill` type, kinds, looks, rows),
   skills_jian.py, skills_gabryel.py, skills_rufus.py, skills_flora.py, and skills_data.py, which gathers and
   checks them (ids with no gaps, descriptions of 30 characters at most).
+
+## 16. Stone Throw (2026-11-18)
+
+Jian, level 4, 3 MP, one enemy in either row, spell id 61 (the ids run in the order the skills were made, so
+SKILLS is sorted by id rather than gathered by owner). Kind.HIT, Look.THROW.
+
+- **The cast.** Flora's attack is the model (func_02068308 case 1, character 3): slot 0 her bow file, slot 2
+  the arrow (btldata 10), work +0x74 = 1, every target slot's effect script 0x02094EE4. Effect mode 1 is the
+  projectile mode: as each effect starts, func_02067e6c puts a helper battler (14 + slot) at the caster,
+  copying its stat record index, targets, and +0x2E / +0x8A, and the helper runs the effect script: one
+  16-frame step to the first target (0x00202812), then the hit step (0x80000041). Look.THROW sets the same
+  after the game's Special setup, with Jian's unused throw (btldata 15) in slot 0 and a two-step caster
+  script: animation 0 (he tosses the stone up and catches it, 12 frames of cells) and animation 1 (the
+  swing), which starts the effects and waits for them. No run-in step and no 0x200000 position step, so he
+  stays where he stands.
+- **Damage.** The hit step (step flag 0x40) goes to func_02030b44 whatever the command: the hit roll
+  func_0205265c (attacker's DEX against the target's AGI; the battle's sure-hit flag, Focus, makes it
+  certain), then func_0205212c, the ordinary physical damage, from the attacker's record, which is Jian's.
+  The spell effect step (0x400000) is not in the script, so cave_skill_effect never runs for it; Kind.HIT
+  is skipped there anyway and never refused by cave_skill_idle. MP is charged by the Special path as for
+  every skill.
+- **The stone.** In btldata 15 the stone over his head is a piece of its own (piece 4, 16 x 16, tile unit
+  49; cells 4 and 5 reuse it). The arrow file is one animation, one frame, one cell of one 16 x 16 piece,
+  so the stone's file is the arrow's with those 128 bytes of tiles and the throw's 16-color palette in place
+  of its own (feat_skills_stone.py). It replaces btldata 17 (in no table). DataPatch gained `whole`: the
+  entry becomes the new bytes at their own size (244 bytes for 10,464); the default stays "write `new` at
+  the offset", which the script inserts rely on.
+- **MCE frames** (worked out here): animation records are u32 first frame, u32 0x1000, u32 frame count;
+  frame records 0x18 bytes: u16 cell, u16 duration, s32 -1, u32 x scale 0x1000, u32 y scale 0x1000, two
+  zero words.
+- **Seen** (`test_skill_stone_throw`, `test_skill_stone_throw_hit`, first temple battle, Jian alone at
+  level 4): Special lists Stone Throw alone ("Throw a stone at one monster", 3 MP); the grid picks the
+  second back-row flyer; Jian tosses and swings where he stands while the camera follows the stone to it;
+  MP 50 -> 47. Without help the stone missed (MISS); with the sure-hit flag set, 148 and the flyer falls
+  (build/stone_hit/stone_throw.gif). Not seen: a front-row target, a target that dies before Jian acts,
+  Jian's other skills' casts after this change (their path is unchanged code).
+
