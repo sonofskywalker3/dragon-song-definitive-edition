@@ -82,28 +82,30 @@ before then. The healers still have Quick, Grand Weapon, and Grand Shell until t
 | Forced March | 57, built | 40 | 10 | all allies | Quick March on everyone not yet raised |
 | War Council | 58, built | 42 | 12 | all allies | Stratagem on everyone not yet raised |
 
-### Lucia (levels 1 to about 13)
-
-| Spell | Lv (built today) | Lv (proposed) |
-|---|---|---|
-| Healing Water | 1 | 1 |
-| Cure Squall | 2 | 4 |
-| Escape | 3 | 6 |
-| Tender Rain | 6 | 8 |
-| Divine Rain | 10 | 11 |
-| Miracle Tears | 12 | 13 |
-
-### Flora (joins near 13, stays to the end)
+### Lucia (levels 1 to about 13) — built (spell-levels)
 
 | Spell | Lv |
 |---|---|
-| Healing Water, Cure Squall, Escape, Tender Rain | known on joining |
-| Water Bind (paralysis, one enemy; unused water ribbon, btldata 313) | 16 |
-| Divine Rain | 20 |
-| Binding Rain (Water Bind on all enemies) | 28 |
-| Miracle Tears | 32 |
+| Healing Water | 1 |
+| Cure Squall | 4 |
+| Escape (field only) | 6 |
+| Tender Rain | 8 |
+| Divine Rain | 11 |
+| Miracle Tears | 13 |
 
-The spell table has separate level bytes for Lucia and Flora, so the two lists can differ.
+### Flora (joins near 13, stays to the end) — built
+
+| Spell | Id / built | Lv | MP | Notes |
+|---|---|---|---|---|
+| Healing Water, Cure Squall, Escape, Tender Rain | game's own, built | 1, 4, 6, 8 | 4, 4, 2, 12 | known on joining |
+| Water Bind | 59, built | 16 | 9 | paralysis on one enemy, 70 percent, bosses immune; her spell pose and the unused water ribbon (btldata 313) |
+| Divine Rain | game's own, built | 20 | 16 | |
+| Binding Rain | 60, built | 28 | 13 | Water Bind on every enemy, each with its own roll |
+| Miracle Tears | game's own, built | 32 | 20 | vanilla never gave it to her |
+
+Quick, Grand Weapon, and Grand Shell are learned by neither healer (Rufus's orders replace them). The spell
+table has a level byte for each of the two, so the lists differ; the healers' own spells are scheduled in
+feat_spell_levels.py and Flora's two skills in skills_flora.py.
 
 ## Cut (no skill, no card use)
 

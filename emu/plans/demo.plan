@@ -1,0 +1,130 @@
+# Demo for Jeff to watch at normal speed: timed run, enemy picker, victory pages.
+include boot_from_save
+include cheats_strong
+poke u16 0x020B4650 3
+speed 100
+wait 60
+# 1. Running: hold B, Jian runs ~3 s, then walks while B is still held
+press B,Down 300
+wait 60
+# release and press again: runs again
+press B,Right 120
+wait 90
+# 2. Off to Delrich Temple (warp) with Flora in the party
+speed 400
+include warp6
+speed 100
+wait 270
+# 3. Jian: Manual > Fight > the picker opens; move right, confirm
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 120
+press Right 3
+wait 90
+press A 3
+wait 120
+# Flora: Fight > picker shows both rows; move up and right, confirm
+press A 3
+wait 90
+press A 3
+wait 120
+press Up 3
+wait 90
+press Right 3
+wait 90
+press A 3
+wait 120
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+press A 3
+wait 90
+wait 600

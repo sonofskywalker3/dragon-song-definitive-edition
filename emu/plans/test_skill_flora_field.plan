@@ -1,0 +1,30 @@
+# skills: the field Magic page lists no skill. Flora in party slot 1 at level 28 (level index 27 pinned),
+# when her battle list holds Water Bind and Binding Rain: the field page shows the game's own spells only
+# (Healing Water, Tender Rain, Cure Squall, Divine Rain greyed as battle-only, Escape), with no blank or
+# misnamed row after them (shots ff_page, and ff_down1 to ff_down5 after each Down). Run with --save.
+include boot_from_save
+pin u16 0x020B4650 3
+pin u32 0x020b4778 27
+wait 30
+press X 3
+wait 120
+press Down 8
+wait 30
+press A 8
+wait 60
+shot ff_page
+press Down 8
+wait 30
+shot ff_down1
+press Down 8
+wait 30
+shot ff_down2
+press Down 8
+wait 30
+shot ff_down3
+press Down 8
+wait 30
+shot ff_down4
+press Down 8
+wait 30
+shot ff_down5

@@ -1,0 +1,118 @@
+# skills: a boss cannot be bound, and the pick is refused up front. Jian and Flora (slots pinned as
+# party_flora, Flora at level 16, MP 60 through the field record) in the Sasquatch fight (event battle 1,
+# forced from Delrich Temple as boss_sasquatch.plan does): Sasquatch (a boss row) is battler 9 between two
+# Yetis (8 and 10). Jian Fights; Flora's Water Bind opens the grid on the left Yeti; Right moves to
+# Sasquatch and A is refused with "No effect!" (shot wo_refused), no MP taken; Right moves to the other
+# Yeti and A casts on it (MP 60 -> 51; with the random state set to 24 the roll succeeds and battler 10's
+# status goes 0 -> 4; wo_a to wo_t).
+# Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18). Run with --save.
+include boot_from_save
+pin u16 0x020B466C 999
+pin u16 0x020B4668 999
+pin u16 0x020B4780 999
+pin u16 0x020B477C 999
+pin u16 0x020B464C 0
+pin u16 0x020B4650 3
+pin u16 0x020B4654 65535
+pin u32 0x020b4784 60
+pin u32 0x020b4788 60
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+pin u16 0x020B466C 999
+pin u16 0x020B4668 999
+pin u16 0x020B4780 999
+pin u16 0x020B477C 999
+pin u16 0x020B464C 0
+pin u16 0x020B4650 3
+pin u16 0x020B4654 65535
+pin u32 0x020b4784 60
+pin u32 0x020b4788 60
+pin u32 0x020b4778 15
+execpoke 0x020503A0 u32 0x020A0238 24
+wait 30
+poke u16 0x020B7838 1
+poke u16 0x020B783A 1
+poke u32 0x020B0010 0x73
+waituntil u32 0x020B0010 7 3000
+wait 120
+battlers
+peek u32 0x020B8620 records
+watch u32 0x0228e8e4 flora_mp
+watch u8 0x0228ebc8 status8
+watch u8 0x0228ec34 status9
+watch u8 0x0228eca0 status10
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press Down 8
+wait 50
+press A 8
+wait 80
+shot wo_grid
+press Right 8
+wait 30
+shot wo_boss
+press A 8
+wait 20
+shot wo_refused
+wait 80
+press Right 8
+wait 30
+shot wo_yeti
+press A 8
+wait 30
+waituntil u32 0x0228e8e4 51 3000
+wait 8
+shot wo_a
+wait 8
+shot wo_b
+wait 8
+shot wo_c
+wait 8
+shot wo_d
+wait 8
+shot wo_e
+wait 8
+shot wo_f
+wait 8
+shot wo_g
+wait 8
+shot wo_h
+wait 8
+shot wo_i
+wait 8
+shot wo_j
+wait 8
+shot wo_k
+wait 8
+shot wo_l
+wait 8
+shot wo_m
+wait 8
+shot wo_n
+wait 8
+shot wo_o
+wait 8
+shot wo_p
+wait 8
+shot wo_q
+wait 8
+shot wo_r
+wait 8
+shot wo_s
+wait 8
+shot wo_t

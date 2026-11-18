@@ -1,0 +1,159 @@
+# skills: Flora's Water Bind (paralysis on one enemy, 9 MP, a 70 percent roll), its refusal, and its MP.
+# Jian and Flora (party_flora), Flora at level 16 (level index 15 pinned), her MP NOT pinned (18 at the
+# start), the random state set to 24 as each effect starts so the roll succeeds. Round 1: Jian Fights;
+# Flora's Special list (wb_list on Water Bind, the fourth entry), the enemy grid, Down to front-row
+# battler 9 and A: she casts in her spell pose and the ribbon of water coils round the enemy (wb_a to
+# wb_t), MP 18 -> 9, status9 0 -> 4. Round 2: the grid's name bar reads "Par" for it (wb_tag); A is
+# refused with "No effect!" (wb_refused), no MP taken; Left to battler 8 (the back-row enemy that
+# dropped into the empty front slot) and A: MP 9 -> 0, status8 -> 4. Round 3: Water Bind is greyed in the list and A on it is refused for lack of MP (wb_no_mp).
+# Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18). Run with --save.
+include party_flora
+pin u32 0x020b4778 15
+execpoke 0x020503A0 u32 0x020A0238 24
+wait 270
+peek u32 0x020B8620 records
+watch u32 0x0228e8e4 flora_mp
+watch u8 0x0228ea18 status4
+watch u8 0x0228ea84 status5
+watch u8 0x0228eaf0 status6
+watch u8 0x0228ebc8 status8
+watch u8 0x0228ec34 status9
+watch u8 0x0228eca0 status10
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press Down 8
+wait 50
+shot wb_list
+press A 8
+wait 80
+press Down 8
+wait 30
+shot wb_grid
+press A 8
+wait 30
+waituntil u32 0x0228e8e4 9 3000
+wait 8
+shot wb_a
+wait 8
+shot wb_b
+wait 8
+shot wb_c
+wait 8
+shot wb_d
+wait 8
+shot wb_e
+wait 8
+shot wb_f
+wait 8
+shot wb_g
+wait 8
+shot wb_h
+wait 8
+shot wb_i
+wait 8
+shot wb_j
+wait 8
+shot wb_k
+wait 8
+shot wb_l
+wait 8
+shot wb_m
+wait 8
+shot wb_n
+wait 8
+shot wb_o
+wait 8
+shot wb_p
+wait 8
+shot wb_q
+wait 8
+shot wb_r
+wait 8
+shot wb_s
+wait 8
+shot wb_t
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press Down 8
+wait 50
+press A 8
+wait 80
+press Down 8
+wait 30
+press Right 8
+wait 30
+shot wb_tag
+press A 8
+wait 20
+shot wb_refused
+wait 80
+press Left 8
+wait 30
+shot wb_other
+press A 8
+wait 30
+waituntil u32 0x0228e8e4 0 3000
+wait 8
+shot wc_a
+wait 8
+shot wc_b
+wait 8
+shot wc_c
+wait 8
+shot wc_d
+wait 8
+shot wc_e
+wait 8
+shot wc_f
+wait 8
+shot wc_g
+wait 8
+shot wc_h
+wait 8
+shot wc_i
+wait 8
+shot wc_j
+wait 8
+shot wc_k
+wait 8
+shot wc_l
+waituntil u32 0x020B0010 8 600
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press Down 8
+wait 50
+shot wb_no_mp_list
+press A 8
+wait 20
+shot wb_no_mp

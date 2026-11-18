@@ -598,3 +598,46 @@ the STAGE kind with delta +1 and the ROW look; nothing new in the effect.
   back row, and the no-effect variant of it; poison and blind on Sasquatch with Howl refused; Focus against
   an enemy whose AGI (record + 0x30) is pinned to 30000 (every blow misses before, lands after); a sleeping
   and a scared Ice Mongrel doing no damage for two of its turns and then attacking again.
+
+## 15. The healers: schedules, no buffs, and Flora's water spells (2026-11-12)
+
+- **Who owns what.** The healers' own spells stay with spell-levels (feat_spell_levels.py): its SCHEDULE now
+  holds a level for each healer per spell (`None` = never), and Quick (7), Grand Weapon (8), and Grand Shell
+  (9) are `None` for both, so nobody learns them. Nothing else reaches those three: items and cards go
+  through the medicine effect table, not spell ids; Auto gives every member Attack (func_02050f1c); enemy
+  rows hold skill ids 16 to 37 only. This also ends the stacking of a healer's buff on top of one of Rufus's
+  orders (the game's own buff adds a stage with no one-stage cap).
+- **How a healer learns a skill.** func_02050c50 lists a spell for Lucia (0x02050CA8) or Flora (0x02050CDC)
+  when her level index reaches her byte of the spell's own table entry (+8 Lucia, +9 Flora); there is no
+  flag or id test, which is why the enemy skills carry 0xFF in both bytes. A healer's skill therefore needs
+  no hook: feat_skills_table.py writes the owner's learn level into her byte and 0xFF into the other's, and
+  the fighters' rows of cave_skill_levels do not know the skill. Castable is automatic for anyone but Jian.
+- **The field Magic page lists no skill.** Its loop (func_02064ff0, bound at 0x02065068) keeps the original
+  0x26, so ids from 38 are never asked about there. Every skill is battle-only, the page reads names from the
+  string list (no entries from id 39) and has a buffer sized for the original count. `test_skill_flora_field`:
+  five rows at level 28, as before. (The fighters were already hidden there by cave_skill_list.)
+- **A skill's own effect sprite.** The effect record's last two bytes (FX_SPRITE, u16) name a btldata entry
+  that cave_skill_anim writes into the effect sprite slot (battle work +0x54) after the game's setup, in
+  place of the effect row's sprite; 0 keeps the row's. The row's effect script then plays it. Water Bind and
+  Binding Rain use row 34 (the status row: generic cast 0x02094E84, effect script 0x02094E24, one step that
+  plays animation 0 and applies the effect) with sprite 313, the water ribbon nothing in the game loads, which
+  has exactly one animation. No effect row was added and no script written.
+- **The SPELL look.** Row 34's caster script is the generic cast, written for a character's Special file
+  (two animations: raise, hold), which is what the game's setup loads for a spell. Look.SPELL leaves that
+  alone, so Flora casts as she casts Healing Water; Look.ROW (item pose in slot 0) stays for the fighters.
+- **Battle list.** By spell id: Healing Water, Tender Rain, Cure Squall, Divine Rain, Miracle Tears, Water
+  Bind, Binding Rain (Escape is field-only), so Flora has at most seven entries, six to a page. The list's
+  icon for a skill is the plain tile every id from 38 gets.
+- **Auto** cannot cast them (it only Fights). The refusals are the framework's: an enemy with any status or
+  a boss row is refused in the grid, Binding Rain at the list when every living enemy would be skipped, and
+  the game's own "Not enough MP!" when the pool is short.
+- **Plans and MP.** Pinning battle MP above a healer's max shows it snapping back to the max, so the Flora
+  plans either leave MP alone (18 at level 1 stats) or pin the field MP and max MP (0x020B4784, +4) to 60
+  before the battle; spending then persists in the battle record. A member whose field HP is held at 0
+  starts the battle knocked out (`test_skill_miracle_tears`).
+- `test_spell_levels_1/5/12` were rewritten for the new schedule with steadier key timing; `_5` now shows
+  two entries (Healing Water, Cure Squall) where the pre-skills baseline in build/regress/dsde_* shows three
+  (with Quick), by design.
+- The skill lists are split by owner since this step: skills_types.py (the `Skill` type, kinds, looks, rows),
+  skills_jian.py, skills_gabryel.py, skills_rufus.py, skills_flora.py, and skills_data.py, which gathers and
+  checks them (ids with no gaps, descriptions of 30 characters at most).

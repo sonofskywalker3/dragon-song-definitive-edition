@@ -1,0 +1,68 @@
+# spell-levels: Lucia's schedule (Healing Water 1, Cure Squall 4, Escape 6 (field only), Tender Rain 8,
+# Divine Rain 11, Miracle Tears 13) and no stat buffs at any level. Jian and Lucia (party2_strong), first
+# temple battle; Jian Fights, then Lucia's Special list is opened with her level index (0x020B46C0)
+# pinned to each level in turn: 1 (Healing Water), 4 (and Cure Squall), 8 (and Tender Rain), 11 (and
+# Divine Rain), 13 (and Miracle Tears), 40 (the same five: Quick, Grand Weapon, and Grand Shell are
+# gone). Shots ll_lv1 to ll_lv40. Run with --save.
+include party2_strong
+wait 270
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+pin u32 0x020b46c0 0
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot ll_lv1
+press B 8
+wait 60
+pin u32 0x020b46c0 3
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot ll_lv4
+press B 8
+wait 60
+pin u32 0x020b46c0 7
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot ll_lv8
+press B 8
+wait 60
+pin u32 0x020b46c0 10
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot ll_lv11
+press B 8
+wait 60
+pin u32 0x020b46c0 12
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot ll_lv13
+press B 8
+wait 60
+pin u32 0x020b46c0 39
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot ll_lv40
+press B 8
+wait 60

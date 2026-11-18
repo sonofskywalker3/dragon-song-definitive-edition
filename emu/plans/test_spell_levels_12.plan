@@ -1,22 +1,20 @@
-# Spell levels (feat_spell_levels.py): Lucia at level 12 (index 11 at 0x020B46C0) opens Special in the first
-# temple battle; the list shows the spells learned by then. Run with --save.
+# Spell levels (feat_spell_levels.py): Lucia at level 12 (index 11 at 0x020B46C0) opens
+# Special in the first temple battle after Jian Fights; the list shows the spells learned by then:
+# Healing Water, Tender Rain, Cure Squall, and Divine Rain (Miracle Tears comes at 13). Shots spells_lv12 and, after Down, spells_lv12_down. Run with --save.
 include party2_strong
-pin u32 0x020B46C0 11
-include warp6
+pin u32 0x020b46c0 11
 wait 270
-press A 3
-wait 30
-press A 3
-wait 30
-press A 3
-wait 30
-press A 3
-wait 30
-press Right 3
-wait 20
-press A 3
-wait 40
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
 shot spells_lv12
-press Down 3
-wait 20
+press Down 8
+wait 30
 shot spells_lv12_down

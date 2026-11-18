@@ -1,22 +1,20 @@
-# Spell levels (feat_spell_levels.py): Lucia at level 5 (index 4 at 0x020B46C0) opens Special in the first
-# temple battle; the list shows the spells learned by then. Run with --save.
+# Spell levels (feat_spell_levels.py): Lucia at level 5 (index 4 at 0x020B46C0) opens
+# Special in the first temple battle after Jian Fights; the list shows the spells learned by then:
+# Healing Water and Cure Squall (Escape, at 6, is for the field only). Shots spells_lv5 and, after Down, spells_lv5_down. Run with --save.
 include party2_strong
-pin u32 0x020B46C0 4
-include warp6
+pin u32 0x020b46c0 4
 wait 270
-press A 3
-wait 30
-press A 3
-wait 30
-press A 3
-wait 30
-press A 3
-wait 30
-press Right 3
-wait 20
-press A 3
-wait 40
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
 shot spells_lv5
-press Down 3
-wait 20
+press Down 8
+wait 30
 shot spells_lv5_down

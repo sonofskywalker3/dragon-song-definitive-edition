@@ -9,6 +9,10 @@
 - A skill with the ROW look plays its effect row's own cast, which is written for the pose a character
   takes to use an item or a card; a spell gets the character's Special file instead, so the pose file is put
   back in its place.
+- A skill with the SPELL look is left as the game set it up: the effect row's cast in the caster's
+  Special pose, which is how a healer's own spells play.
+- A skill can name a sprite of its own: it goes in the effect sprite slot in place of the row's, and the
+  row's effect script plays it (Flora's water ribbon on the status row, whose script plays animation 0).
 - A skill on all enemies or all allies plays its effect row's own cast, as a card does. Before the setup,
   the targets it would do nothing to are taken out of the caster's target list, so no banner shows on them
   and the effect never runs for them; if that leaves nobody, the list stays as it is and the line says
@@ -33,6 +37,7 @@ from dsde.skills_common import (
     FX_KIND,
     FX_LOOK,
     FX_SIZE_SHIFT,
+    FX_SPRITE,
     MESSAGE_FRAMES,
     MESSAGE_NO_EFFECT,
     MESSAGE_WINDOW,
@@ -40,6 +45,7 @@ from dsde.skills_common import (
     SPELL_ENTRY_SIZE,
     SPELL_TABLE,
     WORK_EFFECT_MODE,
+    WORK_EFFECT_SPRITE,
     WORK_MESSAGE,
     WORK_SLOT0,
     hook,
@@ -151,7 +157,8 @@ _NO_EFFECT_LINE = f"""
 
 # Replaces `bl func_02068308`. r0 = the acting party battler, r1 = mode. A counter (which keeps the queued
 # command and spell) is set up untouched. Before the game's setup an all-target skill's target list is
-# pruned (anim_prune). After it, a skill with the ROW look gets its caster's item pose file in slot 0, and
+# pruned (anim_prune). After it, a skill's own effect sprite replaces the row's, a skill with the SPELL
+# look is otherwise left alone, a skill with the ROW look gets its caster's item pose file in slot 0, and
 # a skill with the ATTACK look its caster's attack file and its own script: run in (or leap up to a
 # back-row enemy), the attack without hits, the effect on the target, back, or the same with no effect step
 # when the skill would do nothing.
@@ -194,7 +201,12 @@ anim_setup:
     mla   r2, r1, r8, r0
     ldr   r3, anim_work
     ldr   r3, [r3]
+    ldrh  r0, [r7, #{FX_SPRITE}]
+    cmp   r0, #0
+    strhne r0, [r3, #{WORK_EFFECT_SPRITE:#x}]
     ldrb  r0, [r7, #{FX_LOOK}]
+    cmp   r0, #{Look.SPELL}
+    popeq {{r4-r8, pc}}
     cmp   r0, #{Look.ATTACK}
     ldrhne r0, [r2, #{FILE_ITEM_POSE:#x}]
     strhne r0, [r3, #{WORK_SLOT0:#x}]

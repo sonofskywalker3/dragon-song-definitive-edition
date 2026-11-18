@@ -1,6 +1,7 @@
 """Skills the party learns by level (docs/plan-skills.md, docs/plan-weapon-break.md).
 
-The skills are data (skills_data.py). This feature is put together from these parts:
+The skills are data (skills_data.py, which gathers skills_jian.py, skills_gabryel.py, skills_rufus.py, and
+skills_flora.py, written in the terms of skills_types.py). This feature is put together from these parts:
 
 - feat_skills_table.py: the spell table entries (the stat growth table moves to the cave to make room), the
   names and descriptions, and the per-spell cave tables the hooks read;

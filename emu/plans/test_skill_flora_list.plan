@@ -1,0 +1,91 @@
+# spell-levels and skills: Flora's schedule (the first four as Lucia's, Water Bind 16, Divine Rain 20,
+# Binding Rain 28, Miracle Tears 32) and no stat buffs. Jian and Flora (party_flora), first temple
+# battle; Jian Fights, then Flora's Special list is opened with her level index (0x020B4778) pinned to
+# each level in turn: 13 (Healing Water, Tender Rain, Cure Squall), 16 (and Water Bind), 20 (and Divine
+# Rain), 28 (and Binding Rain: six entries), 32 (and Miracle Tears: seven, a second page), 40 (the same
+# seven). Shots fl_lv13 to fl_lv40, with _page2 where there is one; fl_wb and fl_br show the two new
+# entries' names, costs, and descriptions at level 28. Run with --save.
+include party_flora
+wait 270
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+pin u32 0x020b4778 12
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot fl_lv13
+press B 8
+wait 60
+pin u32 0x020b4778 15
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot fl_lv16
+press B 8
+wait 60
+pin u32 0x020b4778 19
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot fl_lv20
+press B 8
+wait 60
+pin u32 0x020b4778 27
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot fl_lv28
+press Right 8
+wait 50
+press Right 8
+wait 50
+shot fl_wb
+press Down 8
+wait 50
+shot fl_br
+press B 8
+wait 60
+pin u32 0x020b4778 31
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot fl_lv32
+press Right 8
+wait 50
+press Right 8
+wait 50
+press Right 8
+wait 50
+shot fl_lv32_page2
+press B 8
+wait 60
+pin u32 0x020b4778 39
+wait 10
+press Right 8
+wait 50
+press A 8
+wait 60
+shot fl_lv40
+press Right 8
+wait 50
+press Right 8
+wait 50
+press Right 8
+wait 50
+shot fl_lv40_page2
+press B 8
+wait 60

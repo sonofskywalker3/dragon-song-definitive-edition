@@ -4,17 +4,18 @@ Spell entries. The spell table (0x02094978) has one blank row after the game's 3
 growth table starts right behind it (0x02094B4C, six blocks of 0x60 bytes, read only as base + character *
 0x60 through two pool words). The growth table moves into the cave and its old bytes become spell entries 39
 and up, so the spell table itself, and the features that edit it in place (mp-economy, spell-levels), stay
-where they are. The four loops over the table run to the new count.
+where they are. The loops over the table run to the new count, except the field Magic page's.
 
 Names. The battle string list has room for one more name (entry 91, Weapon Break) and for "No effect!"
 (entry 99); skills from id 39 take their name from a pointer table in the cave, through the one place a
 spell name is drawn in battle (the name bar, func_02044c00). The field Magic page reads the list too, but
-the fighters' skills are not listed there.
+no skill is listed there.
 
 Descriptions. One 61-byte record per spell id in sysmenupack entry 61, appended after the game's 16.
 
 Cave tables, indexed by spell id: `cave_skill_levels` (one row of learn level indices per fighter, 255 = not
-his or hers) and `cave_skill_fx` (kind, argument, delta, look, chance, self; see skills_common.FX_*).
+his or hers; a healer's skill is learned by the level bytes of its table entry) and `cave_skill_fx`
+(kind, argument, delta, look, chance, self, sprite; see skills_common.FX_*).
 """
 
 import struct
@@ -42,20 +43,23 @@ from dsde.patching import ARM9_BASE
 from dsde.skills_data import (
     BY_SPELL,
     FIRST_SKILL,
+    FLORA,
     GABRYEL,
     JIAN,
+    LUCIA,
     RUFUS,
     SKILLS,
     SPELL_COUNT,
     Skill,
 )
 
-# Loops over the spell table: `cmp rN, #0x26`
+# Loops over the spell table: `cmp rN, #0x26`. The field Magic list's loop (0x02065068) keeps its 0x26:
+# every skill is for battle only, the field page would list a healer's skill greyed with a name read from
+# the string list (which has none from id 39), and its buffer is sized for the original count.
 BOUND_SITES = (
     (0x02035F64, 0xE3560026, "battle Special list"),
     (0x02050EB0, 0xE3540026, "first castable spell"),
     (0x02050F04, 0xE3540026, "has any spell"),
-    (0x02065068, 0xE3580026, "field Magic list"),
 )
 
 # Stat growth: six 0x60-byte blocks (the five characters and one more), read by func_020553xx and
@@ -105,14 +109,21 @@ def _word(arm9: bytes, addr: int) -> int:
 
 
 def _entry_patches(arm9: bytes) -> tuple[Patch, ...]:
-    """Each skill's spell table entry: flags, MP cost, and no healer levels with the effect row."""
+    """Each skill's spell table entry: flags, MP cost, the healers' level bytes, and the effect row.
+
+    The game lists a spell for Lucia or Flora when her level index reaches her byte of the entry
+    (func_02050c50), so a healer's skill is learned through that byte and the fighters' rows of
+    `cave_skill_levels` do not know it; everyone else's skills have "never" in both bytes.
+    """
     patches = []
     for skill in SKILLS:
         addr = SPELL_TABLE + skill.spell * SPELL_ENTRY_SIZE
+        lucia = skill.level - 1 if skill.owner == LUCIA else NEVER
+        flora = skill.level - 1 if skill.owner == FLORA else NEVER
         words = (
             FLAG_BATTLE | skill.target,
             skill.cost,
-            skill.row << 16 | NEVER << 8 | NEVER,
+            skill.row << 16 | flora << 8 | lucia,
         )
         for index, new in enumerate(words):
             at = addr + 4 * index
@@ -209,6 +220,7 @@ def _fx_asm() -> str:
                 skill.look,
                 skill.chance,
                 int(skill.self_only),
+                *struct.pack("<H", skill.sprite),
             )
             if skill
             else ()
