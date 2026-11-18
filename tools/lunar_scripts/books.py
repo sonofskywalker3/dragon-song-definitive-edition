@@ -228,6 +228,41 @@ ITEMS: tuple[Item, ...] = (
         "eng",
         "Lunar: Silver Star Harmony (PSP, XSEED, 2010): US instruction manual.",
     ),
+    Item(
+        "manga_vane",
+        "manga_Lunar_Vane_the_Story_of_the_Inheritance",
+        ("Lunar Vane the Story of the Inheritance (Complete).cbz",),
+        "eng",
+        "LUNAR ヴェーン飛空船物語 (manga, 船戸明里, Kadokawa あすかコミックスDX, 1998). "
+        "Unofficial English fan scanlation (scanlator group not credited on the item); uploaded to the Internet Archive manga_library by comicbookguy@textfiles.com, added 2017-12-14.",
+    ),
+    Item(
+        "manga_younenki",
+        "manga_Lunar_Younenki_no_Owari",
+        ("Lunar Younenki no Owari (Complete).cbz",),
+        "eng",
+        "LUNAR 幼年期の終り (manga, 船戸明里, original 重馬敬, Kadokawa ドラゴンJr, 1995). "
+        "Unofficial English fan scanlation (scanlator group not credited on the item); uploaded to the Internet Archive manga_library by comicbookguy@textfiles.com, added 2017-12-14.",
+    ),
+    Item(
+        "manga_lunar2",
+        "manga_Lunar_2_Eternal_Blue",
+        ("Lunar 2 Eternal Blue (Complete).cbz",),
+        "eng",
+        "LUNAR2 ETERNAL BLUE (manga, 成瀬かおり, original 重馬敬, Kadokawa あすかコミックスDX, 1999). "
+        "Unofficial English fan scanlation (scanlator group not credited on the item); uploaded to the Internet Archive manga_library by comicbookguy@textfiles.com, added 2017-12-14.",
+    ),
+    Item(
+        "manga_magic_school",
+        "manga_Magical_School_Lunar",
+        (
+            "Magical School Lunar! v01 c01-04.cbz",
+            "Magical School Lunar! v02 c05-11.cbz",
+        ),
+        "eng",
+        "魔法学園Lunar! 1-2 (manga, 東田寛子, Kadokawa ドラゴンJr, 1998). "
+        "Unofficial English fan scanlation (scanlator group not credited on the item); uploaded to the Internet Archive manga_library by comicbookguy@textfiles.com, added 2017-12-12.",
+    ),
 )
 BY_FOLDER = {i.folder: i for i in ITEMS}
 
