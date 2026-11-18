@@ -1,7 +1,7 @@
 # skills: Battle Cry (Rally on the whole party) and its refusal. Jian and Rufus (party_rufus), Rufus at
-# level 42 (level index 41 pinned, battle MP pinned to 50), first temple battle. His list has nine
-# entries on two pages (shots bc_list, and bc_page2 after three Rights); Battle Cry is the sixth (Right,
-# Right, Down). A casts with no picker: the ATK UP banner on both (bc_a to bc_l), MP 50 -> 38 once, both
+# level 42 (level index 41 pinned, battle MP pinned to 50), first temple battle. His list has five
+# entries (shot bc_list): Thunder Sword, then the party orders in the single orders' places; Battle Cry
+# is the second (Down). A casts with no picker: the ATK UP banner on both (bc_a to bc_l), MP 50 -> 38 once, both
 # ATK stages 0 -> 1. Next round A on it is refused with "No effect!" (bc_refused): everyone is raised.
 # Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK DEF AGI INT +0x24 +0x28 +0x30 +0x34, their stages +0x40 +0x42 +0x44 +0x46). Run with --save.
 include party_rufus
@@ -38,15 +38,6 @@ press A 8
 wait 60
 shot bc_list
 dump 0x020B8844 20 list_bc_list
-press Right 8
-wait 50
-press Right 8
-wait 50
-press Right 8
-wait 50
-shot bc_page2
-press Left 8
-wait 50
 press Down 8
 wait 50
 shot bc_on
@@ -88,10 +79,6 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Right 8
-wait 50
-press Right 8
-wait 50
 press Down 8
 wait 50
 press A 8

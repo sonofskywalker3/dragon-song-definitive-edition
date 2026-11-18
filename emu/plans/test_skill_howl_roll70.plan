@@ -2,8 +2,9 @@
 # (roll 70): the MP is taken (50 -> 41) and no status changes and the MISS popup shows over the enemy (shots h70_a to
 # h70_i). Rolls 69 and 70 sit on either side of the cutoff, so a wrong comparison shows.
 # Run with --save.
+# Gabryel at level 30 (level index 29): from 39 Dread Roar takes Howl's place in the list.
 include party_gabryel
-pin u32 0x020B471C 38
+pin u32 0x020B471C 29
 pinptr u32 0x020B8620 0x18 50
 execpoke 0x020503A0 u32 0x020A0238 133
 wait 270

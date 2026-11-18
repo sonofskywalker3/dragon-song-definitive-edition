@@ -60,3 +60,13 @@ if any(len(skill.text) > DESCRIPTION_MAX for skill in SKILLS):
 
 SPELL_COUNT = FIRST_SKILL + len(SKILLS)  # spell ids 0 .. SPELL_COUNT - 1 exist
 BY_SPELL = {skill.spell: skill for skill in SKILLS}
+
+for skill in SKILLS:
+    if skill.replaces:
+        base = BY_SPELL.get(skill.replaces)
+        if base is None or base.owner != skill.owner or base.level >= skill.level:
+            raise ValueError(
+                f"{skill.name} must upgrade an earlier skill of the same member"
+            )
+        if base.replaces or any(other.replaces == skill.spell for other in SKILLS):
+            raise ValueError(f"{skill.name}: an upgrade of an upgrade is not supported")

@@ -1,4 +1,4 @@
-# skills: a scared enemy loses its turns and recovers. Gabryel alone at level 39 (level index 38 pinned,
+# skills: a scared enemy loses its turns and recovers. Gabryel alone at level 30 (level index 29 pinned,
 # battle MP pinned to 50, HP 999 at the start and not pinned in battle) against one forced Ice Mongrel
 # with 30000 HP that attacks every turn; the random state is set to 24 whenever the effect hook runs, so
 # Howl lands. Round 1 Howl (Right, Right on the list): status9 0 -> 4. Round 2 Feral, rounds 3 to 6 Gale
@@ -47,7 +47,7 @@ execpoke 0x0202BC28 u16 0x020B85FA 0xFFFF
 # Start a regular (non-event) battle, formation 0, through the field's own battle state
 poke u16 0x020B7838 0
 poke u16 0x020B783A 0
-pin u32 0x020B471C 38
+pin u32 0x020B471C 29
 pinptr u32 0x020B8620 0x18 50
 poke u32 0x020B0010 0x73
 waituntil u32 0x020B0010 7 3000

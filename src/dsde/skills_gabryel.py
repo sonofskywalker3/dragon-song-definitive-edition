@@ -88,6 +88,7 @@ GABRYEL_SKILLS: tuple[Skill, ...] = (
         0,
         ROW_STATUS,
         Look.ROW,
+        replaces=44,
     ),
     Skill(
         49,
@@ -102,6 +103,7 @@ GABRYEL_SKILLS: tuple[Skill, ...] = (
         0,
         ROW_STATUS,
         Look.ROW,
+        replaces=45,
     ),
     Skill(
         50,
@@ -117,5 +119,6 @@ GABRYEL_SKILLS: tuple[Skill, ...] = (
         ROW_STATUS,
         Look.ROW,
         STATUS_CHANCE,
+        replaces=47,
     ),
 )

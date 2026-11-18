@@ -92,6 +92,7 @@ JIAN_SKILLS: tuple[Skill, ...] = (
         -1,
         ROW_ATK_DOWN,
         Look.ROW,
+        replaces=38,
     ),
     Skill(
         43,
@@ -106,6 +107,7 @@ JIAN_SKILLS: tuple[Skill, ...] = (
         -1,
         ROW_DEF_DOWN,
         Look.ROW,
+        replaces=39,
     ),
     # His first skill by level and the last id (the ids run in the order the skills were made); the lists go
     # by learn level (feat_skills_order.py), so it is listed first. He stays where

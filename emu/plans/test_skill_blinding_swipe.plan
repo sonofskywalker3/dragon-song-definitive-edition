@@ -1,4 +1,4 @@
-# skills: Blinding Swipe (blind, always lands). Gabryel alone at level 39 (level index 38 pinned, battle MP pinned to 50), first temple battle.
+# skills: Blinding Swipe (blind, always lands). Gabryel alone at level 30 (level index 29 pinned, battle MP pinned to 50), first temple battle.
 # On the Special list Right reaches the skill (shot bs_list), A opens the enemy grid,
 # Down moves to the first front-row enemy (battler 9, which stays in its slot; bs_grid), A casts:
 # after the enemies' turns she runs in, strikes without damage, and the green ring shows on it (shots
@@ -7,7 +7,7 @@
 # and "Bld" (bs_tag) and A is refused with "No effect!" (bs_refused), no MP taken.
 # Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18). Run with --save.
 include party_gabryel
-pin u32 0x020B471C 38
+pin u32 0x020B471C 29
 pinptr u32 0x020B8620 0x18 50
 wait 270
 peek u32 0x020B8620 records

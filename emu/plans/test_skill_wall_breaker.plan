@@ -1,6 +1,6 @@
 # skills: Wall Breaker, with one enemy lowered beforehand. Jian at level 36 (level index 35 pinned, battle MP
 # pinned to 50), first temple battle; battler 4's DEF stage (+0x42) is poked to -1 before the cast. Special
-# lists seven skills on two pages; Right, Right, Right (to the second page) is Wall Breaker (shot wl_list: 9, "Lower all monsters' defense"). A
+# lists five skills, the breakers in the breaks' places; Right is Wall Breaker (shot wl_list: 9, "Lower all monsters' defense"). A
 # casts: the DEF DOWN banner shows on the four other enemies and not on battler 4, the first back-row enemy
 # (wl_cast, wl_cast2); MP 50 -> 41; the DEF stage of battlers 5, 6, 9, and 10 goes to -1. Run with --save.
 include boot_from_save
@@ -25,10 +25,6 @@ wait 50
 press Right 8
 wait 50
 press A 8
-wait 50
-press Right 8
-wait 50
-press Right 8
 wait 50
 press Right 8
 wait 50

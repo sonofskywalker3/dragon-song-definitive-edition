@@ -1,6 +1,6 @@
 # skills: Flora's Binding Rain (Water Bind on every enemy, each with its own roll, 13 MP) and its MP.
 # Jian and Flora (party_flora), Flora at level 28 (level index 27 pinned), her MP NOT pinned (18), no
-# roll forced. Round 1: Jian Fights; Flora's list (br_list on Binding Rain, the sixth entry), A casts
+# roll forced. Round 1: Jian Fights; Flora's list (br_list on Binding Rain, the fourth entry, in Water Bind's place), A casts
 # with no picker: a ribbon on each enemy in turn (br_a to br_x), MP 18 -> 5 once, and each enemy's
 # status goes to 4 or stays 0 with a MISS by its own roll. Round 2: Binding Rain is greyed and refused
 # for lack of MP (br_no_mp).
@@ -26,8 +26,6 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Right 8
-wait 50
 press Right 8
 wait 50
 press Down 8

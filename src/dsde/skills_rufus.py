@@ -88,6 +88,7 @@ RUFUS_SKILLS: tuple[Skill, ...] = (
         1,
         ROW_ATK_UP,
         Look.ROW,
+        replaces=51,
     ),
     Skill(
         56,
@@ -102,6 +103,7 @@ RUFUS_SKILLS: tuple[Skill, ...] = (
         1,
         ROW_DEF_UP,
         Look.ROW,
+        replaces=52,
     ),
     Skill(
         57,
@@ -116,6 +118,7 @@ RUFUS_SKILLS: tuple[Skill, ...] = (
         1,
         ROW_AGI_UP,
         Look.ROW,
+        replaces=53,
     ),
     Skill(
         58,
@@ -130,5 +133,6 @@ RUFUS_SKILLS: tuple[Skill, ...] = (
         1,
         ROW_INT_UP,
         Look.ROW,
+        replaces=54,
     ),
 )

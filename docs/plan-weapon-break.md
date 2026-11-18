@@ -697,4 +697,14 @@ them, with one stable insertion sort (cave_skill_sort) keyed by the level the me
 - **Plans.** The list cursor is a grid of columns of two, three columns a page; Down moves one entry, Right
   two, and Right from the last column turns the page. Stone Throw first shifts each of Jian's skills one
   entry, so his plans gained a press; Flora's Miracle Tears moved from the fifth entry to the seventh.
+- **Upgrades replace their bases** (Jeff, 2026-11-18). `Skill.replaces` names the spell an all-target
+  upgrade replaces (cave_skill_base, a byte per spell id). sort_key gives an upgrade its base's key, so it
+  sorts into the base's place; after the sort a compaction pass drops every entry that is some listed
+  entry's base, zeroes the freed entries, and returns the new count, which both hooks put back in r7 (the
+  battle builder stores r7 at menu + 0x40 right after). skills_data.py checks that a base belongs to the
+  same member, is learned earlier, and is not itself an upgrade. The base is only hidden: it is still
+  learned and castable as far as the game's own tests go, and the list is the only way to pick a spell.
+  The key is learn level << 6 | spell id, an upgrade counting as its base for both: with the level alone
+  Battle Cry sorted after Stand Fast at level 36, since Rally and Stand Fast both come at level 1 and the
+  tie fell to the ids.
 

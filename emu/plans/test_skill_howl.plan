@@ -1,5 +1,5 @@
 # skills: Howl (fear: the game's paralysis, 70 percent). The random state is set to 24 (roll 3) at the
-# effect hook site, so it lands. Gabryel alone at level 39 (level index 38 pinned, battle MP pinned to 50), first temple battle.
+# effect hook site, so it lands. Gabryel alone at level 30 (level index 29 pinned, battle MP pinned to 50), first temple battle.
 # On the Special list Right, Right reaches the skill (shot ho_list), A opens the enemy grid,
 # Down moves to the first front-row enemy (battler 9, which stays in its slot; ho_grid), A casts:
 # after the enemies' turns she runs in, strikes without damage, and the green ring shows on it (shots
@@ -8,7 +8,7 @@
 # and "Par" (ho_tag) and A is refused with "No effect!" (ho_refused), no MP taken.
 # Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18). Run with --save.
 include party_gabryel
-pin u32 0x020B471C 38
+pin u32 0x020B471C 29
 pinptr u32 0x020B8620 0x18 50
 execpoke 0x020503A0 u32 0x020A0238 24
 wait 270

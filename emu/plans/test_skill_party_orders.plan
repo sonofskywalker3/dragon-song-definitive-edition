@@ -1,9 +1,8 @@
 # skills: the other party orders, and an ally already raised is passed over. Jian and Rufus
 # (party_rufus), Rufus at level 42 (level index 41 pinned, battle MP pinned to 50), first temple battle.
-# Jian's DEF stage is poked to 1 beforehand. Round 1 Shield Wall (page 2, first entry: three Rights from
-# the top left): the DEF UP banner on Rufus only (po_def_*), MP 50 -> 38, Rufus's DEF stage 0 -> 1, Jian's
-# stays 1. Round 2 Forced March (page 2, Down): AGI UP on both, MP 50 -> 40, both AGI stages 0 -> 1.
-# Round 3 War Council (page 2, Right): INT UP on both, MP 50 -> 38, both INT stages 0 -> 1.
+# Jian's DEF stage is poked to 1 beforehand. Round 1 Shield Wall (third entry: Right): the DEF UP banner on Rufus only (po_def_*), MP 50 -> 38, Rufus's DEF stage 0 -> 1, Jian's
+# stays 1. Round 2 Forced March (fourth: Right, Down): AGI UP on both, MP 50 -> 40, both AGI stages 0 -> 1.
+# Round 3 War Council (fifth: Right, Right): INT UP on both, MP 50 -> 38, both INT stages 0 -> 1.
 # Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK DEF AGI INT +0x24 +0x28 +0x30 +0x34, their stages +0x40 +0x42 +0x44 +0x46). Run with --save.
 include party_rufus
 pin u32 0x020B47D4 41
@@ -38,10 +37,6 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Right 8
-wait 50
-press Right 8
-wait 50
 press Right 8
 wait 50
 shot po_shield_wall
@@ -85,10 +80,6 @@ press A 8
 wait 60
 press Right 8
 wait 50
-press Right 8
-wait 50
-press Right 8
-wait 50
 press Down 8
 wait 50
 shot po_forced_march
@@ -130,10 +121,6 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Right 8
-wait 50
-press Right 8
-wait 50
 press Right 8
 wait 50
 press Right 8

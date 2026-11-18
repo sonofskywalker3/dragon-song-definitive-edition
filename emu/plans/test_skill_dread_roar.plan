@@ -1,6 +1,6 @@
 # skills: Dread Roar (fear on every enemy, each with its own roll). The random state is set to 24 (roll 3)
 # every time the effect hook site runs, so every roll lands. Gabryel alone at level 39 (level index 38 pinned, battle MP pinned to 50), first temple battle
-# (back row 4, 5, 6; front row 9, 10). On the Special list Down, Right, Right, Right reaches the skill (shot
+# (back row 4, 5, 6; front row 9, 10). On the Special list Right, Right reaches the skill (in Howl's place) (shot
 # dr_list); A casts with no picker: her pose, then a green ring on each enemy (shots dr_a to
 # dr_i), MP 50 -> 37 once, and every enemy's status goes 0 -> 4. Next round A on it is refused with "No
 # effect!" (dr_refused): every enemy has a status. Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18).
@@ -24,10 +24,6 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
-wait 50
-press Right 8
-wait 50
 press Right 8
 wait 50
 press Right 8
@@ -60,10 +56,6 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
-wait 50
-press Right 8
-wait 50
 press Right 8
 wait 50
 press Right 8

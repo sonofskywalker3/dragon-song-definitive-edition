@@ -46,5 +46,6 @@ FLORA_SKILLS: tuple[Skill, ...] = (
         Look.SPELL,
         STATUS_CHANCE,
         sprite=SPRITE_WATER_RIBBON,
+        replaces=59,
     ),
 )

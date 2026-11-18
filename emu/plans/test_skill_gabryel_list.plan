@@ -1,8 +1,8 @@
 # skills: Gabryel's Special list by level, and Gale Cut unchanged. Gabryel alone (party_gabryel), first
 # temple battle; her level index (0x020B471C) is poked before each look at the list. Level 12: only Gale
-# Cut (shot gl_1). Level 13: Venom Claw too (gl_2). Level 31: six entries, one page (gl_6). Level 35:
-# seven, with the PAGE tab (gl_7, and gl_7_page2 after Right from the last column). Level 39: eight
-# (gl_8, gl_8_page2). Then Gale Cut is cast from the list: every enemy takes damage and 10 MP goes
+# Cut (shot gl_1). Level 13: Venom Claw too (gl_2). Level 31: five entries, Venom Storm in Venom
+# Claw's place (gl_6). Level 35: five, Blinding Gale in Blinding Swipe's (gl_7). Level 39: five, Dread
+# Roar in Howl's (gl_8); one page throughout, so the _page2 shots show the same page. Then Gale Cut is cast from the list: every enemy takes damage and 10 MP goes
 # (50 -> 40), as before the skills (shots gl_a to gl_i). Run with --save.
 include party_gabryel
 pinptr u32 0x020B8620 0x18 50

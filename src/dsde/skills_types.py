@@ -79,6 +79,7 @@ class Skill:
     sprite: int = (
         0  # btldata entry shown in place of the effect row's sprite; 0 = the row's own
     )
+    replaces: int = 0  # the spell this one upgrades: it takes that spell's place in the list, which drops it
 
 
 ROW_ATK_UP = (

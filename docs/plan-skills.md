@@ -20,8 +20,11 @@ does, with numbers), docs/boss-exp.md (expected level at each boss).
   monster is needed.
 - **Flora learns Miracle Tears** (vanilla: never), late.
 - **Spell lists are in learn order** (Jeff, 2026-11-18): the Special list in battle and the Magic page in the
-  field show a member's spells by the level they are learned at, so a newly learned spell, an all-target
-  version included, comes after everything learned before it and nothing already listed moves.
+  field show a member's spells by the level they are learned at, so a newly learned spell comes after
+  everything learned before it and nothing already listed moves. An all-target upgrade takes its
+  single-target base's place and the base leaves the list (War Breaker for Weapon Break, Wall Breaker for
+  Armor Break, Venom Storm, Blinding Gale, and Dread Roar for Venom Claw, Blinding Swipe, and Howl, Rufus's
+  four party orders for his single orders, Binding Rain for Water Bind).
 - Possible later: a card slot (or the planned ring slot) that grants a skill or passive while a card is
   equipped. Not scoped.
 

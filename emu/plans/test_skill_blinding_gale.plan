@@ -1,6 +1,6 @@
 # skills: Blinding Gale (blind on every enemy), skipping one that already has a status: battler 5 is
 # poisoned by a poke first. Gabryel alone at level 39 (level index 38 pinned, battle MP pinned to 50), first temple battle
-# (back row 4, 5, 6; front row 9, 10). On the Special list Right, Right, Right reaches the skill (shot
+# (back row 4, 5, 6; front row 9, 10). On the Special list Right reaches the skill (in Blinding Swipe's place) (shot
 # bg_list); A casts with no picker: her pose, then a green ring on each enemy (shots bg_a to
 # bg_i), MP 50 -> 40 once, and the status of the others goes 0 -> 2 while battler 5 keeps its 6 and gets no ring. Next round A on it is refused with "No
 # effect!" (bg_refused): every enemy has a status. Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18).
@@ -24,10 +24,6 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Right 8
-wait 50
-press Right 8
-wait 50
 press Right 8
 wait 50
 shot bg_list
@@ -58,10 +54,6 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Right 8
-wait 50
-press Right 8
-wait 50
 press Right 8
 wait 50
 press A 8
