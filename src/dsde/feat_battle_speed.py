@@ -15,8 +15,12 @@ spell effects 2x). The setting lives in ITCM, starts at Fast and lasts until pow
 Picking Auto battle switches the setting to Faster (Jeff, 2026-10-08): the frame the Auto flag (battle work
 +0x28, 1 while Auto is on; func_020297d4 then lets func_02050f1c pick every command) turns on. R still cycles
 the speed during Auto, and the setting stays where it is when Auto ends.
+
+The setting is shown on a plank under the status bar (feat_battle_speed_label.py), which this cave
+keeps up every frame.
 """
 
+from dsde.feat_battle_speed_label import LABEL_CAVES
 from dsde.patching import AsmPatch, CaveCode, Feature
 
 SPEED_LEVEL_STORE = (
@@ -106,6 +110,9 @@ spd_level_out:
     ldrb  r3, [r2, r3]
     ldr   r1, spd_level
     str   r3, [r1]
+    ldr   r2, spd_state
+    ldrb  r0, [r2, #{STATE_SETTING}]
+    bl    ${{cave_speed_label}}
     pop   {{r4, pc}}
 spd_state:
     .word ${{cave_speed_state}}
@@ -123,6 +130,7 @@ BATTLE_SPEED = Feature(
         CaveCode("cave_speed_state", STATE_ASM, "battle speed setting"),
         CaveCode("cave_speed_levels", LEVELS_ASM, "speed level per setting"),
         CaveCode("cave_speed", SPEED_ASM, "R cycles the battle speed"),
+        *LABEL_CAVES,
         AsmPatch(
             SPEED_LEVEL_STORE,
             SPEED_LEVEL_STORE + 4,

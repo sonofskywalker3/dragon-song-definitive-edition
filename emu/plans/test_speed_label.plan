@@ -1,0 +1,168 @@
+# Battle speed plank (battle-speed): first temple battle with Jian, Lucia, and Gabryel. The plank under the
+# status bar reads FAST at the first command input, FASTER and NORMAL after R, and stays through the round;
+# it is gone on the victory and result pages. A every 20 frames after that, a shot every 100.
+include party3_strong
+wait 330
+shot sl_fast
+press R 5
+wait 20
+shot sl_faster
+press R 5
+wait 20
+shot sl_normal
+press R 5
+wait 20
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_00
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_01
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_02
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_03
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_04
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_05
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_06
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_07
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_08
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_09
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_10
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_11
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_12
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+press A 3
+wait 17
+shot sl_13

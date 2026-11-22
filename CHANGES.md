@@ -36,6 +36,8 @@ the design are in [docs/design.md](docs/design.md).
   Left and Right switch tabs, and A goes there. Touch works as before, and the D-pad no longer drags the map
   icon around. The chosen place is framed by the same corner brackets as the selected option in the
   System menu.
+- **B in a town menu picks the way out.** B (or the NO button) selects "Leave town", ready for A. In the
+  original it went back to the place you had just left. The world map is unchanged.
 
 ## Menus and text
 
@@ -91,6 +93,8 @@ the design are in [docs/design.md](docs/design.md).
     be skipped with A). The first temple battle takes 25 seconds on Fast, against 32 with the original game's
     own fast-forward held down and 38 without it.
   - Faster adds the original game's animation fast-forward on top.
+- **The speed is shown on the battle screen.** A small plank under the status bar, above the wooden sign, reads
+  NORMAL, FAST, or FASTER during command input and through the round.
 - **Lucia, Gabryel, and Rufus attack faster** on Fast and Faster (Lucia's attack: 204 frames down to 76). Jian's
   combo is unchanged.
 - **The next character no longer waits for a defeated enemy's sparkles** to finish (92 frames down to 16 between
@@ -116,13 +120,59 @@ the design are in [docs/design.md](docs/design.md).
 ## Spells and MP
 
 - **Spells cost about 40% of their old MP:** Healing Water 4 (was 10), Tender Rain 12 (30), Cure Squall 4 (8),
-  Divine Rain 16 (40), Miracle Tears 20 (50), Escape 2 (5), Quick 8 (20), Grand Weapon 10 (24), and Grand Shell
-  10 (28). Dragon Magic and Gabryel's and Rufus' skills are unchanged.
-- **Lucia learns her spells by level**, not all at once when her MP grows: Healing Water at 1, Cure Squall 2,
-  Escape 3, Quick 4, Tender Rain 6, Grand Weapon 7, Grand Shell 8, Divine Rain 10, and Miracle Tears 12 (she used
-  to have six by level 5). Flora follows the same levels.
+  Divine Rain 16 (40), Miracle Tears 20 (50), and Escape 2 (5). Dragon Magic, Gale Cut, and Thunder Sword are
+  unchanged.
+- **Lucia and Flora learn their spells by level**, not all at once when their MP grows. Lucia: Healing Water at
+  1, Cure Squall 4, Escape 6, Tender Rain 8, Divine Rain 11, and Miracle Tears 13 (she used to have six spells by
+  level 5). Flora: the first four at the same levels, Divine Rain at 20, and Miracle Tears at 32 (in the original
+  she never learns it).
+- **The healers no longer cast Quick, Grand Weapon, or Grand Shell.** Raising the party's stats is Rufus's job
+  now (see Skills).
+- **Spell lists are in the order the spells are learned**, in battle and on the field Magic page. A new spell
+  goes at the end, so nothing you already have moves; an all-enemy or all-ally version takes the place of the
+  single-target spell it replaces.
 - **Mental Gum restores 20 MP and Mental Drop 50 MP**, instead of a small share of max MP. Mental Gum costs 1000
   silver and is sold in every item shop from the third town on; Mental Drop is still a rare reward.
+
+## Skills
+
+Jian, Gabryel, Rufus, and Flora learn skills by level, in both editions. They are cast from Special for MP, like
+spells; everyone's Special now opens a list. A skill on one enemy is aimed on the enemy grid, as Fight is.
+
+- **A cast that would do nothing is refused before it happens.** If the enemy's stat is already lowered, it
+  already has a status, or it is a boss that is immune, the name bar says "No effect!" and no MP is spent.
+- **Highlighting an enemy in the grid shows what ails it** on the name bar: ATK or DEF with a down arrow for a
+  lowered stat, and three letters for its status (Psn, Bld, Slp, Par).
+- **Stat changes are one stage and last the battle.** Sleep, fear, and binding have a 70% chance and bosses
+  are immune; poison and blind always land, on bosses too.
+- **All-enemy and all-ally versions replace the single-target ones** in the list when they are learned.
+
+| Who | Level | Skill | MP | What it does |
+|---|---|---|---|---|
+| Jian | 4 | Stone Throw | 3 | Throws a stone at one enemy in either row, from where he stands, for his normal attack damage |
+| Jian | 9 | Weapon Break | 8 | Lowers one enemy's attack |
+| Jian | 14 | Armor Break | 6 | Lowers one enemy's defense |
+| Jian | 19 | Focus | 6 | The party's attacks never miss for the rest of the battle |
+| Jian | 25 | Knockout Kick | 9 | Puts one enemy to sleep |
+| Jian | 30 | War Breaker | 12 | Weapon Break on every enemy |
+| Jian | 36 | Wall Breaker | 9 | Armor Break on every enemy |
+| Gabryel | 13 | Venom Claw | 8 | Poisons one enemy |
+| Gabryel | 17 | Blinding Swipe | 7 | Blinds one enemy |
+| Gabryel | 21 | Feral | 8 | Raises her own attack |
+| Gabryel | 26 | Howl | 9 | Scares one enemy stiff: it loses its turns for a while |
+| Gabryel | 31 | Venom Storm | 12 | Venom Claw on every enemy |
+| Gabryel | 35 | Blinding Gale | 10 | Blinding Swipe on every enemy |
+| Gabryel | 39 | Dread Roar | 13 | Howl on every enemy |
+| Rufus | 1 | Rally | 6 | Raises one ally's attack |
+| Rufus | 1 | Stand Fast | 6 | Raises one ally's defense |
+| Rufus | 17 | Quick March | 5 | Raises one ally's speed |
+| Rufus | 19 | Stratagem | 6 | Raises one ally's intelligence |
+| Rufus | 36 to 42 | Battle Cry, Shield Wall, Forced March, War Council | 12, 12, 10, 12 | The same for the whole party |
+| Flora | 16 | Water Bind | 9 | Binds one enemy in water: it loses its turns for a while |
+| Flora | 28 | Binding Rain | 13 | Water Bind on every enemy |
+
+Rufus leaves the party before level 36 in the original story, so his party-wide orders only come into play
+if he returns.
 
 ## Party
 
@@ -167,6 +217,19 @@ gameplay, interface, and pacing change and keeps the original story and dialogue
 the Classic edition plus the rewrite: the new narration, the new wake-up, and the story work to come. Earlier
 releases were a single patch with the rewritten opening, like today's Retold edition. (The editions were first
 published as Engine and Story; the names changed the same day.)
+
+### v0.1.7 (not released yet)
+
+- Skills learned by level for Jian, Gabryel, Rufus, and Flora, in both editions (see Skills). Jian's Stone
+  Throw uses his throwing animation, which was in the original game but never used.
+- Lucia and Flora each have their own spell levels; Flora learns Miracle Tears at 32. Neither healer casts
+  Quick, Grand Weapon, or Grand Shell any more: those are Rufus's orders now.
+- Spell lists are in learn order, and an all-target version takes its single-target spell's place.
+- Highlighting an enemy in the grid shows its lowered stats and status on the name bar.
+- An enemy you picked keeps the pick when it moves up to the front row before your turn comes (Fight and
+  skills).
+- The battle speed is shown on a plank under the status bar.
+- B in a town menu selects "Leave town".
 
 ### v0.1.6 (2026-10-09)
 

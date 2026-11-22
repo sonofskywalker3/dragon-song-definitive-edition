@@ -14,6 +14,14 @@ four), +0x38 number of visible entries. Research and tests: docs/re-field-battle
   tab first for Left/Right), so the vanilla touch path plays the sound, switches the page, highlights the row,
   moves the Jian icon to the place and shows YES/NO, ready for A.
 - The free-cursor test (`ands r0, held, #0xF0`) sees no D-pad, so a held key does not drag the icon.
+
+B (and the NO button) picks the way out in a town (Jeff, 2026-11-22). In the original it went back to the
+entry for the place you had just left, which you seldom want again; now it selects "Leave town" (the first
+listed entry that leads to a world map hub, 0x104..0x11C), ready for A. A town part with no such entry
+(Zethos Castle) gets its entry to the neighboring part instead. On the world map, and in a town whose
+Leave entry is still hidden, B does what it did. The three places that looked up the entry of the previous
+map (func_020426c0) call the cave instead, and B no longer skips the lookup when the previous place is
+already selected.
 """
 
 from dsde.patching import AsmPatch, CaveCode
@@ -122,7 +130,97 @@ tk_menu:
     .word {MENU:#x}
 """
 
+BACK_ENTRY = (
+    0x020426C0  # (map) -> visible index of the entry that leads to map, -1 none
+)
+BACK_ENTRY_CALLS = {  # bl func_020426c0 with r0 = the previous map
+    0x020435BC: 0xEBFFFC3F,  # the NO button
+    0x02043990: 0xEBFFFB4A,  # B with an entry selected
+    0x020439B0: 0xEBFFFB42,  # B with nothing selected
+}
+BACK_SAME_SKIP = (
+    0x0204398C  # beq: B does nothing when the previous place is already selected
+)
+BACK_SAME_SKIP_WORD = 0x0A000009
+CURRENT_MAP = 0x020B6BE4  # s16
+MENU_EXITS = 0x34  # pointer to the hub table entry, whose first word is the exit list
+MENU_VISIBLE = 0x3C  # u8[]: visible entry -> exit list index
+EXIT_SHIFT = (
+    2  # an exit is 12 bytes (index * 3 << 2); its first s16 is the map it leads to
+)
+FIRST_HUB = 0x104  # world map hubs 0x104..0x11C
+FIRST_TOWN_HUB = 0x11D  # town hubs from here on
+
+# Replaces `bl func_020426c0` (r0 = the previous map): the entry B goes to.
+TOWN_BACK_ASM = f"""
+    push  {{r4-r7, lr}}
+    mov   r7, r0
+    ldr   r4, tb_menu
+    ldr   r0, tb_map
+    ldrsh r0, [r0]
+    ldr   r1, tb_town
+    cmp   r0, r1
+    blt   tb_previous
+    ldr   r5, [r4, #{MENU_COUNT:#x}]
+    ldr   r6, [r4, #{MENU_EXITS:#x}]
+    ldr   r6, [r6]
+    mov   r2, #0
+    mvn   r3, #0
+tb_next:
+    cmp   r2, r5
+    bge   tb_listed
+    add   r0, r4, r2
+    ldrb  r0, [r0, #{MENU_VISIBLE:#x}]
+    add   r0, r0, r0, lsl #1
+    add   r0, r6, r0, lsl #{EXIT_SHIFT}
+    ldrsh r0, [r0]
+    cmp   r0, #{FIRST_HUB:#x}
+    blt   tb_step
+    cmp   r0, r1
+    movlt r0, r2
+    poplt {{r4-r7, pc}}
+    cmn   r3, #1
+    moveq r3, r2
+tb_step:
+    add   r2, r2, #1
+    b     tb_next
+tb_listed:
+    cmn   r3, #1
+    movne r0, r3
+    popne {{r4-r7, pc}}
+tb_previous:
+    mov   r0, r7
+    bl    {BACK_ENTRY:#x}
+    pop   {{r4-r7, pc}}
+tb_menu:
+    .word {MENU:#x}
+tb_map:
+    .word {CURRENT_MAP:#x}
+tb_town:
+    .word {FIRST_TOWN_HUB:#x}
+"""
+
 TOWN_MENU_PATCHES = (
+    CaveCode("cave_town_back", TOWN_BACK_ASM, "town menus: B picks the way out"),
+    *(
+        AsmPatch(
+            addr,
+            addr + 4,
+            word,
+            word,
+            "bl ${cave_town_back}",
+            "town menus: B picks the way out",
+        )
+        for addr, word in BACK_ENTRY_CALLS.items()
+    ),
+    AsmPatch(
+        BACK_SAME_SKIP,
+        BACK_SAME_SKIP + 4,
+        BACK_SAME_SKIP_WORD,
+        BACK_SAME_SKIP_WORD,
+        "nop",
+        "town menus: B picks the way out even from the previous place",
+    ),
     CaveCode("cave_town_keys", TOWN_KEYS_ASM, "map menus: D-pad picks rows and tabs"),
     AsmPatch(
         TOUCH_HIT_CALL,

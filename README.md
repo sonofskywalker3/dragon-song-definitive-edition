@@ -36,7 +36,7 @@ dialogue word for word, and **Retold** adds the rewrite (see [Which patch to pic
   </tr>
 </table>
 
-This is an early beta (v0.1.6). A lot of the systems work is done, and more is coming as playtesting turns up
+This is an early beta (v0.1.7). A lot of the systems work is done, and more is coming as playtesting turns up
 what still drags, such as trimming the fluff from enemy attack animations. Work on the story has started too:
 better character development, smoother rough edges, and no more retcons or contradictions with Lunar 1 and 2.
 Feedback is welcome in [Issues](../../issues).
@@ -75,14 +75,18 @@ how each one was built and tested is in [docs/status.md](docs/status.md).
 - You pick your own targets, and an attack is never wasted. With only one enemy in reach, Fight attacks it
   right away.
 - Switch between three battle speeds by pressing R: Fast (the default), Faster, and Normal. Party attacks and the gaps between them are
-  quicker, and Auto switches to Faster.
+  quicker, Auto switches to Faster, and a plank on the battle screen shows the speed.
 - No microphone: hold L and R to run away.
 - Benched characters gain the same exp as the party, including before you meet them.
 - Gear and items that are broken or stolen during battle are returned after you win.
 
 **Spells and MP**
 
-- Spells cost about 40% of their old MP, and Lucia learns them one level at a time.
+- Spells cost about 40% of their old MP, and Lucia and Flora learn them one level at a time.
+- Jian, Gabryel, Rufus, and Flora learn skills by level: stat breaks, poison, blind, sleep, Rufus's orders
+  that raise the party's stats, Flora's water binding, and a thrown stone from an animation the original never
+  used. A cast that would do nothing is refused, with no MP spent.
+- Spell lists are in the order the spells are learned.
 - MP items restore a flat amount, and Mental Gum is sold in shops.
 
 **Gad's Express**

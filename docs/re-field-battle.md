@@ -938,6 +938,7 @@ Only while no fade (func_02018c78(3) == 0):
    - 0x020438DC: `new & 0xC03` (A,B,X,Y): ==1 (A alone): sel == -1 -> sound 2 (buzz); else state 7 + sound 1.
      ==2 (B alone): sound 3, re-select the entry for the place you came from (F+4, 0x020B6BE8 = previous map
      via func_020426c0). **B does not leave the menu** (there is no cancel; you leave by picking a place).
+     (Since 2026-11-22 our build selects the town's "Leave town" entry instead, feat_town_menu.py.)
    - 0x020439DC: move top sprite 5 (Jian icon) to the cursor.
 4. State 7 (0x020439E4): entry = exits[S+0x3C[sel]]; map < 0x104 -> func_0201d8f8(map, 9999, e+9, e+6), fade,
    state 8; else (another hub) F+4 = current, F+0 = new map, +0x18 = 1, state 10.

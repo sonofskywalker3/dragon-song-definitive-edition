@@ -1,0 +1,44 @@
+# Town menu B (town-menu-dpad): with "Leave town" unlocked (story flag 0x1E1 pinned), warp from Jian's room
+# to the Port Searis menu. B selects Leave town (entry 0); Down then B goes back to it; Down then the NO
+# button too; A leaves to the world map (map 260), where B is as in the original.
+include boot_from_save
+pinptr u32 0x020B4640 0x3C 2
+pin u16 0x020B77EC 285
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 60
+watch u16 0x020B8C5C sel
+watch u16 0x020B8C5E tab
+watch u16 0x020B6BE4 map
+peek u32 0x020B8C64 count
+shot tb_0
+press B 3
+wait 30
+shot tb_b
+press Down 3
+wait 30
+press Down 3
+wait 30
+shot tb_down
+press B 3
+wait 30
+shot tb_b2
+press Right 3
+wait 30
+shot tb_right
+touch 26 180 5
+wait 30
+shot tb_no
+press A 3
+wait 200
+shot tb_world
+press Down 3
+wait 30
+shot tb_world_down
+press B 3
+wait 30
+shot tb_world_b
