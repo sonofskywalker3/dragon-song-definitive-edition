@@ -8,7 +8,8 @@ the design are in [docs/design.md](docs/design.md).
 
 - **Running costs no HP.** Where enemies are about, press B to dash for about 3 seconds, then it cools down for
   about 3 seconds, like the Eternal Blue dash. A press starts the whole dash, so you can let go of B and keep
-  running. Holding B runs once; press it again to run again. The run is ready again whenever you enter a new area.
+  running. Holding B runs once; press it again to run again. The run is ready again whenever you enter a new area
+  and after every battle: a battle ends the dash, and you come out of it walking with a full gauge.
 - **Run freely where it is safe.** In towns, in rooms with no enemies, and in any area once every enemy in it is
   beaten, running has no time limit and no cooldown.
 - **The pocketwatch shows danger and the run.** The field screen's pocketwatch (the Virtue clock in the original)
@@ -230,6 +231,7 @@ published as Engine and Story; the names changed the same day.)
   skills).
 - The battle speed is shown on a plank under the status bar.
 - B in a town menu selects "Leave town".
+- A battle ends the dash and refills the run gauge, instead of freezing both until the battle is over.
 
 ### v0.1.6 (2026-10-09)
 

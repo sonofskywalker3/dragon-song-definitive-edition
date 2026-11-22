@@ -95,6 +95,29 @@ store:
     b     {TIMED_RUN_EXIT:#x}
 """
 
+# A battle ends the run (Jeff, 2026-11-22): the state used to freeze during a battle, so a dash or a
+# cooldown cut short by an enemy carried on afterwards. Every frame of the battle mode (func_020297d4)
+# puts the state at the end of the cooldown: back in the field the hand shows a full gauge, Jian walks,
+# and the state drops to ready as soon as B is up, so a B held through the battle does not start a run.
+BATTLE_MODE_SETUP = (
+    0x020297E0  # func_020297d4: mov r6, #3 (r0 holds a pointer for the next call)
+)
+BATTLE_MODE_SETUP_WORD = 0xE3A06003
+RUN_BATTLE_ASM = f"""
+    push  {{r0, r1}}
+    ldr   r0, battle_run_state
+    ldr   r1, [r0]
+    bic   r1, r1, #{COUNTER_MASK_HIGH:#x}
+    bic   r1, r1, #{COUNTER_MASK_LOW:#x}
+    orr   r1, r1, #{(RUN_TICKS + COOLDOWN_TICKS) << 5:#x}
+    str   r1, [r0]
+    pop   {{r0, r1}}
+    mov   r6, #3
+    bx    lr
+battle_run_state:
+    .word {RUN_STATE:#x}
+"""
+
 # Branch encodings: 0xEA000000 | ((target - (addr + 8)) >> 2).
 NO_RUN_HP_COST = Feature(
     "no-run-hp-cost",
@@ -120,6 +143,15 @@ TIMED_RUN = Feature(
         WATCH_OPEN_CAVE,
         CaveCode("cave_run_area_last", "    .word 0", "map the run state belongs to"),
         CaveCode("cave_run_area", RUN_AREA_ASM, "run ready again in a new area"),
+        CaveCode("cave_run_battle", RUN_BATTLE_ASM, "a battle ends the run"),
+        AsmPatch(
+            BATTLE_MODE_SETUP,
+            BATTLE_MODE_SETUP + 4,
+            BATTLE_MODE_SETUP_WORD,
+            BATTLE_MODE_SETUP_WORD,
+            "bl ${cave_run_battle}",
+            "a battle ends the run",
+        ),
         Patch(
             0x020251A8,
             0x1A00001E,
