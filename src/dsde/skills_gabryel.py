@@ -1,4 +1,4 @@
-"""Gabryel's skills: poison, blindness, and fear on one enemy and later on all, and Feral for herself."""
+"""Gabryel's skills: Savage Rush, poison, blindness, and fear on one enemy and later on all, and Feral for herself."""
 
 from dsde.skills_types import (
     GABRYEL,
@@ -6,6 +6,7 @@ from dsde.skills_types import (
     Look,
     ROW_ATK_UP,
     ROW_STATUS,
+    ROW_UNUSED,
     STATUS_BLIND,
     STATUS_CHANCE,
     STATUS_PARALYSIS,
@@ -120,5 +121,20 @@ GABRYEL_SKILLS: tuple[Skill, ...] = (
         Look.ROW,
         STATUS_CHANCE,
         replaces=47,
+    ),
+    # Two of her ordinary hits, one on each swipe of her unused double claw; each can miss
+    Skill(
+        62,
+        "Savage Rush",
+        "Claw one monster twice",
+        5,
+        GABRYEL,
+        1,
+        Target.ENEMY_ONE,
+        Kind.HIT,
+        0,
+        0,
+        ROW_UNUSED,
+        Look.CLAW,
     ),
 )

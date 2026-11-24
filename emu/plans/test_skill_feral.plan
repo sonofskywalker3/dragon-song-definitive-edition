@@ -1,5 +1,5 @@
 # skills: Feral (Gabryel's own ATK up one stage, no picker). Gabryel alone at level 39 (level index 38 pinned, battle MP pinned to 50), first temple battle.
-# On the Special list Down, Right reaches Feral (shot fe_list); A casts at once, with no ally picker:
+# On the Special list Right, Right reaches Feral (shot fe_list); A casts at once, with no ally picker:
 # the ATK UP banner shows on her (shots fe_a to fe_i), MP 50 -> 42, her ATK stage (record 0 +0x40) goes
 # 0 -> 1 and her ATK (+0x24) up by a quarter. Next round A on Feral is refused with "No effect!"
 # (fe_refused), the list stays, no MP is taken. Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18). Run with --save.
@@ -17,7 +17,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press Right 8
 wait 50
@@ -49,7 +49,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press Right 8
 wait 50

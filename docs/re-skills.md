@@ -68,7 +68,7 @@ Every one of the 49 rows is used:
 |---|---|---|
 | **313 (0x139)** | blue water ribbon that coils and splashes, 8 cells, 68 x 72, one animation | sits between two used effect sprites (0x138, 0x13A); no effect row names it. The only orphaned spell effect. |
 | **15** | Jian: tosses something up, then a rising slash with a long arc, 16 cells, 64 x 116, 2 animations | character table column +8. Only Flora's +8 is ever read (her bow), so Jian's is never loaded. Used since 2026-11-18 by Stone Throw. |
-| **33** | Gabryel: leap and double claw with white arcs, 13 cells, 2 animations | same column +8. Close to her normal attack (file 32, red streaks), so less new than it sounds. |
+| **33** | Gabryel: leap and double claw with white arcs, 13 cells, 2 animations | same column +8. Close to her normal attack (file 32, red streaks), so less new than it sounds: the same body cells, white arcs; animation 0 is file 32's wind-up and strike in one, animation 1 its swipe. Used since 2026-11-24 by Savage Rush. |
 | 26 | the same Gabryel animation in an orange palette, in Lucia's +8 column | placeholder |
 | 16 | Jian standing, 2 cells, 8-bit color | column +0xA, never read for anyone |
 | 17, 29 | Lucia idle and turn, 8 cells each (4-bit and 8-bit copies) | in no table at all; 17 is replaced by Stone Throw's stone since 2026-11-18 |

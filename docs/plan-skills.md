@@ -61,7 +61,7 @@ Red, White, Black Dragons 23 to 28; Blue Dragon 36; final fights 40 to 42. Late 
 | Skill | Id / built | Lv | MP | Target | Effect | Animation |
 |---|---|---|---|---|---|---|
 | Gale Cut | game's own | joins with | 10 | all enemies | unchanged | unchanged |
-| Savage Rush | not built | joins with | 5 | one enemy | heavy physical hit | unused double claw (btldata 33) |
+| Savage Rush | 62, built | 1 (she has it on joining) | 5 | one enemy, any row | two of her ordinary physical hits (each can miss) | she runs in (or leaps), winds up, and swipes twice with her unused double claw (btldata 33), a hit on each swipe |
 | Venom Claw | 44, built | 13 | 8 | one enemy | poison, 5% max HP per turn; always lands, bosses too | her attack with no hit, then the green ring |
 | Blinding Swipe | 45, built | 17 | 7 | one enemy | blind 2 to 4 turns; always lands, bosses too | her attack with no hit, then the green ring |
 | Feral | 46, built | 21 | 8 | self, no picker | ATK up one stage | item pose, ATK UP banner on her |
@@ -130,7 +130,8 @@ map-enemy cards; the steal and break blockers.
   through func_02054dec.
 - Success rolls and the one-stage cap.
 - How damage is computed for a party-cast physical skill (Stone Throw: the projectile's hit step is the
-  ordinary physical hit, docs/plan-weapon-break.md 16; Savage Rush still open).
+  ordinary physical hit, docs/plan-weapon-break.md 16; Savage Rush: two hit steps of her own attack script,
+  docs/plan-weapon-break.md 18).
 - Whether Rufus's return exists in the story scripts.
 - Removing the Tools / Cards choice from the battle Item command.
 

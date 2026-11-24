@@ -1,6 +1,6 @@
 # skills: Howl (fear: the game's paralysis, 70 percent). The random state is set to 24 (roll 3) at the
 # effect hook site, so it lands. Gabryel alone at level 30 (level index 29 pinned, battle MP pinned to 50), first temple battle.
-# On the Special list Right, Right reaches the skill (shot ho_list), A opens the enemy grid,
+# On the Special list Down, Right, Right reaches the skill (shot ho_list), A opens the enemy grid,
 # Down moves to the first front-row enemy (battler 9, which stays in its slot; ho_grid), A casts:
 # after the enemies' turns she runs in, strikes without damage, and the green ring shows on it (shots
 # ho_a to ho_i), the MP is taken, and its status goes 0 -> 4. By the next round a back-row
@@ -27,6 +27,8 @@ press Right 8
 wait 50
 press A 8
 wait 60
+press Down 8
+wait 50
 press Right 8
 wait 50
 press Right 8
@@ -64,6 +66,8 @@ press Right 8
 wait 50
 press A 8
 wait 60
+press Down 8
+wait 50
 press Right 8
 wait 50
 press Right 8

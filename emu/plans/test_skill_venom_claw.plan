@@ -1,5 +1,5 @@
 # skills: Venom Claw (poison, always lands). The poison then takes HP on the enemy's own turns (watch hp9). Gabryel alone at level 30 (level index 29 pinned, battle MP pinned to 50), first temple battle.
-# On the Special list Down reaches the skill (shot vc_list), A opens the enemy grid,
+# On the Special list Right reaches the skill (shot vc_list), A opens the enemy grid,
 # Down moves to the first front-row enemy (battler 9, which stays in its slot; vc_grid), A casts:
 # after the enemies' turns she runs in, strikes without damage, and the green ring shows on it (shots
 # vc_a to vc_i), the MP is taken, and its status goes 0 -> 6. By the next round a back-row
@@ -25,7 +25,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 shot vc_list
 press A 8
@@ -60,7 +60,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press A 8
 wait 80

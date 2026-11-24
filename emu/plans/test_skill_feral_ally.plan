@@ -1,6 +1,6 @@
 # skills: Feral raises only its caster, whichever slot she is in. Jian (slot 0) and Gabryel (slot 1,
 # party_jian_gabryel), Gabryel at level 21 (level index 20 pinned, battle MP pinned to 50), first temple
-# battle. Jian Fights; Gabryel's list holds Gale Cut, Venom Claw, Blinding Swipe, and Feral (Down, Right;
+# battle. Jian Fights; Gabryel's list holds Gale Cut, Savage Rush, Venom Claw, Blinding Swipe, and Feral (Right, Right;
 # shot fa_list); A casts at once with no picker. Expect MP 50 -> 42, her ATK stage (record 1) 0 -> 1 and
 # her ATK up, Jian's stage (record 0) still 0, and her first target slot (battler 1 + 0x8C, battlers at
 # the address peeked below) = 1, her own battler.
@@ -27,7 +27,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press Right 8
 wait 50

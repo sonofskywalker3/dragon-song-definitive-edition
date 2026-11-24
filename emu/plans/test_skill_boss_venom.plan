@@ -1,8 +1,8 @@
 # skills: a boss refuses fear but takes poison. Gabryel alone at level 26 (level index 25 pinned, battle
 # MP pinned to 50) in the Sasquatch fight (event battle 1, forced from Delrich Temple as
 # test_skill_knockout_boss.plan does): Sasquatch (a boss row) is battler 9 between two Yetis (8, 10).
-# Howl (Right, Right on the list), grid Right to Sasquatch, A: refused with "No effect!" (shot
-# bv_refused), no MP taken. B back to the commands; Venom Claw (Down on the list), Right to Sasquatch, A:
+# Howl (Down, Right, Right on the list), grid Right to Sasquatch, A: refused with "No effect!" (shot
+# bv_refused), no MP taken. B back to the commands; Venom Claw (Right on the list), Right to Sasquatch, A:
 # cast (bv_00 to bv_23), MP 50 -> 42, status9 0 -> 6.
 # Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK +0x24, ATK stage +0x40). Run with --save.
 include boot_from_save
@@ -43,6 +43,8 @@ press Right 8
 wait 50
 press A 8
 wait 60
+press Down 8
+wait 50
 press Right 8
 wait 50
 press Right 8
@@ -63,7 +65,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press A 8
 wait 70

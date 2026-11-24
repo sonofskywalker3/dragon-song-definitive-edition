@@ -1,5 +1,5 @@
 # skills: a boss takes blind. Gabryel alone at level 26 (level index 25 pinned, battle MP pinned to 50)
-# in the Sasquatch fight (as test_skill_boss_venom.plan). Blinding Swipe (Right on the list), grid Right
+# in the Sasquatch fight (as test_skill_boss_venom.plan). Blinding Swipe (Down, Right on the list), grid Right
 # to Sasquatch (battler 9), A: cast (bb_00 to bb_23), MP 50 -> 43, status9 0 -> 2.
 # Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK +0x24, ATK stage +0x40). Run with --save.
 include boot_from_save
@@ -40,6 +40,8 @@ press Right 8
 wait 50
 press A 8
 wait 60
+press Down 8
+wait 50
 press Right 8
 wait 50
 press A 8

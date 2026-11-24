@@ -56,6 +56,7 @@ class Look(IntEnum):
     ATTACK = 1  # the owner's attack with the hits taken out, then the row's effect on the target
     SPELL = 2  # the effect row's own caster script in the caster's Special pose, as a healer's spell
     THROW = 3  # Jian's unused throw where he stands, then the skill's sprite flies at the target as an arrow
+    CLAW = 4  # Gabryel's unused double claw (btldata 33): she runs in and swipes twice, a hit on each swipe
 
 
 @dataclass(frozen=True)

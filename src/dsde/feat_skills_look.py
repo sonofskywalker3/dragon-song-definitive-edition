@@ -17,6 +17,9 @@
   tosses the stone, then bats it as he swings, and the swing starts the stone (the skill's sprite) flying at
   the target on the effect script of Flora's arrows, in the game's projectile mode, whose hit step deals his
   ordinary attack's damage.
+- A skill with the CLAW look (Savage Rush) is Gabryel's unused double claw (btldata 33): she runs in (or
+  leaps up to a back-row enemy) as for her attack, winds up, and swipes twice, each swipe an ordinary hit,
+  so it deals two of her Fight's blows.
 - A skill on all enemies or all allies plays its effect row's own cast, as a card does. Before the setup,
   the targets it would do nothing to are taken out of the caster's target list, so no banner shows on them
   and the effect never runs for them; if that leaves nobody, the list stays as it is and the line says
@@ -69,6 +72,8 @@ TARGET_SLOTS = 8  # s16 battler indices at battler + TARGETS, -1 = empty
 THROW_FILE = (
     15  # Jian's unused throw: animation 0 tosses the stone up, animation 1 swings at it
 )
+CLAW_FILE = 33  # Gabryel's unused double claw: animation 0 the wind-up, 1 a swipe with white arcs
+EFFECT_NONE = 0  # effect mode: no effect helpers this action, as for Fight
 EFFECT_PROJECTILE = 1  # effect mode: each effect starts on a helper at the caster and flies (Flora's arrows)
 ARROW_FLIGHT = (
     0x02094EE4  # effect script of Flora's arrows: 16 frames to the target, then the hit
@@ -135,6 +140,26 @@ FIGHTER_CAST_BACK: Steps = (
 JIAN_THROW: Steps = (
     (0x00000001, 0x00000000, 0, 0, 0),
     (0x80000001 | STEP_WAIT_EFFECTS, 0x00010000 | STEP_START_EFFECTS, 0, 1, 0),
+)
+# Gabryel's double claw: her attack's run in and back (0x020958C0, 0x020954F0 at a back-row enemy), with the
+# blow the wind-up and two swipes, each with the hit flag (0x40) and its own sound. The last keeps the 0x80
+# of the game's single hit (hand over to a follow-up actor).
+STEP_HIT = 0x00000041
+STEP_LAST_HIT = 0x000000C1
+CLAW_BLOWS: Steps = (
+    (0x00000001, 0x00000000, 0, 0, 0),
+    (STEP_HIT, 0x00010000, 0, 1, 0),
+    (STEP_LAST_HIT, 0x00010000, 0, 1, 0),
+)
+CLAW_CAST: Steps = (
+    *FIGHTER_CAST[:4],
+    *CLAW_BLOWS,
+    *FIGHTER_CAST[7:],
+)
+CLAW_CAST_BACK: Steps = (
+    *FIGHTER_CAST_BACK[:2],
+    *CLAW_BLOWS,
+    *FIGHTER_CAST_BACK[5:],
 )
 # Index into anim_scripts: these bits added up
 SCRIPT_PLAIN = 1  # no effect step
@@ -226,6 +251,8 @@ anim_setup:
     popeq {{r4-r8, pc}}
     cmp   r0, #{Look.THROW}
     beq   anim_throw_setup
+    cmp   r0, #{Look.CLAW}
+    beq   anim_claw_setup
     cmp   r0, #{Look.ATTACK}
     ldrhne r0, [r2, #{FILE_ITEM_POSE:#x}]
     strhne r0, [r3, #{WORK_SLOT0:#x}]
@@ -279,6 +306,18 @@ throw_loop:
     blt   throw_loop
     pop   {{r4-r8, pc}}
 
+anim_claw_setup:
+    mov   r0, #{CLAW_FILE}
+    strh  r0, [r3, #{WORK_SLOT0:#x}]
+    mov   r0, #{EFFECT_NONE}
+    strh  r0, [r3, #{WORK_EFFECT_MODE:#x}]
+    ldrsh r1, [r4, #{T.TARGETS:#x}]
+    cmp   r1, #{FIRST_FRONT_ENEMY}
+    ldrge r0, anim_claw_at
+    ldrlt r0, anim_claw_back_at
+    str   r0, [r4, #{BATTLER_SCRIPT:#x}]
+    pop   {{r4-r8, pc}}
+
 anim_prune:
     push  {{sb, lr}}
     mov   r2, #0
@@ -328,6 +367,10 @@ anim_throw_at:
     .word anim_throw
 anim_flight:
     .word {ARROW_FLIGHT:#x}
+anim_claw_at:
+    .word anim_claw
+anim_claw_back_at:
+    .word anim_claw_back
 anim_scripts:
     .word anim_jian, anim_jian_plain, anim_jian_back, anim_jian_back_plain
     .word anim_fighter, anim_fighter_plain, anim_fighter_back, anim_fighter_back_plain
@@ -349,6 +392,10 @@ anim_fighter_back_plain:
 {_script(_plain(FIGHTER_CAST_BACK))}
 anim_throw:
 {_script(JIAN_THROW)}
+anim_claw:
+{_script(CLAW_CAST)}
+anim_claw_back:
+{_script(CLAW_CAST_BACK)}
 """
 
 LOOK_PATCHES: tuple[CaveCode | AsmPatch, ...] = (

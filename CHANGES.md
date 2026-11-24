@@ -157,6 +157,7 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
 | Jian | 25 | Knockout Kick | 9 | Puts one enemy to sleep |
 | Jian | 30 | War Breaker | 12 | Weapon Break on every enemy |
 | Jian | 36 | Wall Breaker | 9 | Armor Break on every enemy |
+| Gabryel | 1 | Savage Rush | 5 | Claws one enemy in either row twice, two of her normal attack's blows |
 | Gabryel | 13 | Venom Claw | 8 | Poisons one enemy |
 | Gabryel | 17 | Blinding Swipe | 7 | Blinds one enemy |
 | Gabryel | 21 | Feral | 8 | Raises her own attack |
@@ -222,7 +223,8 @@ published as Engine and Story; the names changed the same day.)
 ### v0.1.7 (not released yet)
 
 - Skills learned by level for Jian, Gabryel, Rufus, and Flora, in both editions (see Skills). Jian's Stone
-  Throw uses his throwing animation, which was in the original game but never used.
+  Throw uses his throwing animation and Gabryel's Savage Rush her double claw, both in the original game but
+  never used.
 - Lucia and Flora each have their own spell levels; Flora learns Miracle Tears at 32. Neither healer casts
   Quick, Grand Weapon, or Grand Shell any more: those are Rufus's orders now.
 - Spell lists are in learn order, and an all-target version takes its single-target spell's place.

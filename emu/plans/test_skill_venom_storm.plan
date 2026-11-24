@@ -1,5 +1,5 @@
 # skills: Venom Storm (poison on every enemy). Gabryel alone at level 39 (level index 38 pinned, battle MP pinned to 50), first temple battle
-# (back row 4, 5, 6; front row 9, 10). On the Special list Down reaches the skill (in Venom Claw's place) (shot
+# (back row 4, 5, 6; front row 9, 10). On the Special list Right reaches the skill (in Venom Claw's place) (shot
 # vs_list); A casts with no picker: her pose, then a green ring on each enemy (shots vs_a to
 # vs_i), MP 50 -> 38 once, and every enemy's status goes 0 -> 6. Next round A on it is refused with "No
 # effect!" (vs_refused): every enemy has a status. Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18).
@@ -22,7 +22,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 shot vs_list
 press A 8
@@ -52,7 +52,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press A 8
 wait 30

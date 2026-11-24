@@ -1,9 +1,9 @@
 # skills: Gabryel casts on a back-row enemy that stays in the back row (her leap), and the cast with no
 # effect step. Gabryel alone at level 30 (level index 29 pinned, battle MP pinned to 50), first temple
 # battle: back row 4, 5, 6, front row 9, 10, so battlers 5 and 6 have a living enemy in front and stay
-# up. Round 1: Venom Claw (Down on the list), grid Right to battler 5, A: she leaps up to it, strikes with
+# up. Round 1: Venom Claw (Right on the list), grid Right to battler 5, A: she leaps up to it, strikes with
 # no damage, the green ring shows (shots br_00 to br_23), MP 50 -> 42, status5 0 -> 6. Round 2: Blinding
-# Swipe (Right on the list); battler 4 has dropped to the front, so the grid opens on battler 5 (tag Psn)
+# Swipe (Down, Right on the list); battler 4 has dropped to the front, so the grid opens on battler 5 (tag Psn)
 # and Right is battler 6; A, and then battler 6 is poisoned in memory before she acts: the cast plays
 # the leap with no ring, the message line says "No effect!" (bs_00 to bs_35), MP 50 -> 43 is still
 # taken, status6 stays 6.
@@ -25,7 +25,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press A 8
 wait 70
@@ -89,6 +89,8 @@ press Right 8
 wait 50
 press A 8
 wait 60
+press Down 8
+wait 50
 press Right 8
 wait 50
 press A 8

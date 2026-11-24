@@ -708,3 +708,34 @@ them, with one stable insertion sort (cave_skill_sort) keyed by the level the me
   Battle Cry sorted after Stand Fast at level 36, since Rally and Stand Fast both come at level 1 and the
   tie fell to the ids.
 
+
+## 18. Savage Rush (2026-11-24)
+
+Gabryel, level 1 (she has it on joining), 5 MP, one enemy in either row, spell id 62. Kind.HIT, Look.CLAW.
+
+- **The file.** btldata 33 (her +8 column, never read by the game) has the same body cells as her attack,
+  file 32, with thin white arcs in place of the red streaks. File 32 has three animations: 0 the wind-up
+  (cells 0 to 5), 1 the strike pose (cell 6), 2 the swipe (cells 7, 10, 8, 11, 12, 9, 0). File 33 has two:
+  0 is the wind-up and the strike pose together (cells 0 to 6), 1 the same swipe. Each swipe shows two arcs
+  four frames apart, too close for a hit each, so the double claw is the swipe played twice.
+- **The cast.** Look.CLAW puts file 33 in slot 0 (the game loads it as it loaded the throw for Stone Throw),
+  sets effect mode 0 (no effect helpers, as for Fight), and points the battler at a cave copy of the game's
+  single attack, 0x020958C0, or its leap 0x020954F0 for a back-row target, with the blow replaced by three
+  steps: slot 0 animation 0, then animation 1 with flags 0x41, then animation 1 again with 0xC1, each swipe
+  with the hit sound. 0xC1 is the single attack's own hit (0x80: hand over to a follow-up actor); Jian's
+  combo uses 0x41 on all three of its hits.
+- **Damage.** Each hit step is an ordinary physical hit (func_02030b44: the hit roll, then func_0205212c from
+  her record), so Savage Rush deals two of her Fight's blows, and each can miss on its own. As with Stone
+  Throw the spell effect step is not in the script, and Kind.HIT is never refused by cave_skill_idle.
+- **List.** Learn level 1 sorts it right after Gale Cut (key 0), so each of her other skills moves one entry
+  on. The list is a grid of columns of two and Down does not leave a column, so a plan that reached its
+  skill with Down now starts with Right (Venom Claw, Feral), and one that started with Right gains a Down
+  (Blinding Swipe, Howl).
+- **Seen** (`test_skill_savage_rush`, Gabryel alone at level 1, the sure-hit flag pinned): her list is Gale
+  Cut and Savage Rush ("Claw one monster twice", 5 MP); MP 50 -> 45; front-row battler 9 takes 7 and 7
+  (26 -> 19 -> 12, 16 frames apart), a hit flash and a number on each swipe; next round back-row battler 6
+  takes 9 and 4 (13 -> 4 -> 0) after her leap and falls on the second swipe (build/savage/savage_rush.gif).
+  If the first swipe kills, the second is spent on nothing: the hit-on-a-dead-enemy retarget
+  (feat_targeting.py, cave_tgt_hit) and the follow-up (feat_targeting_anim.py) only act for Fight, so the
+  second hit stays on the dead target and its alive check skips the damage (traced in the code, not seen in
+  the emulator). Not seen either: a miss without the flag.

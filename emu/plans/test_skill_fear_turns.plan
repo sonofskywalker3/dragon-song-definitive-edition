@@ -1,7 +1,7 @@
 # skills: a scared enemy loses its turns and recovers. Gabryel alone at level 30 (level index 29 pinned,
 # battle MP pinned to 50, HP 999 at the start and not pinned in battle) against one forced Ice Mongrel
 # with 30000 HP that attacks every turn; the random state is set to 24 whenever the effect hook runs, so
-# Howl lands. Round 1 Howl (Right, Right on the list): status9 0 -> 4. Round 2 Feral, rounds 3 to 6 Gale
+# Howl lands. Round 1 Howl (Down, Right, Right on the list): status9 0 -> 4. Round 2 Feral, rounds 3 to 6 Gale
 # Cut (damage does not end it): expect no drop of gabryel_hp while it is scared, then status9 back to 0
 # after its 2 to 4 turns and gabryel_hp dropping again. One shot at each command prompt (ft_r1 to ft_r7).
 # Battle records at 0x0228E860 (0x6C each: status in the low nibble of +0x08, HP +0x14, MP +0x18, ATK +0x24, ATK stage +0x40). Run with --save.
@@ -63,6 +63,8 @@ press Right 8
 wait 50
 press A 8
 wait 60
+press Down 8
+wait 50
 press Right 8
 wait 50
 press Right 8
@@ -77,7 +79,7 @@ press Right 8
 wait 50
 press A 8
 wait 60
-press Down 8
+press Right 8
 wait 50
 press Right 8
 wait 50

@@ -1,0 +1,293 @@
+# skills: Savage Rush (Gabryel, level 1, 5 MP): she runs in, winds up, and swipes twice with her unused
+# double claw (btldata 33), an ordinary hit on each swipe. Gabryel alone at level 1 (level index 0 pinned,
+# battle MP pinned to 50), first temple battle, the battle's sure-hit flag (Focus, bit 4 of the battle
+# work's first word) pinned so neither swipe misses. Round 1: Down on the list (Gale Cut, Savage Rush;
+# shot sr_list), A, grid Down to battler 9 in the front row (sr_grid), A: shots sr_a00 on, MP 50 -> 45
+# and hp9 drops twice. Round 2: the same with grid Right, a back-row enemy (her leap; shots sr_b00 on).
+# Battle records at 0x0228E860 (0x6C each: HP +0x14, MP +0x18). Run with --save.
+include party_gabryel
+pin u32 0x020B471C 0
+pinptr u32 0x020B8620 0x18 50
+pinptr u32 0x020B8550 0x0 4
+wait 270
+peek u32 0x020B8620 records
+watch u32 0x0228e878 gabryel_mp
+watch u32 0x0228ea24 hp4
+watch u32 0x0228ea90 hp5
+watch u32 0x0228eafc hp6
+watch u32 0x0228ebd4 hp8
+watch u32 0x0228ec40 hp9
+watch u32 0x0228ecac hp10
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 50
+shot sr_list
+press A 8
+wait 80
+press Down 8
+wait 30
+shot sr_grid
+press A 8
+wait 100
+wait 6
+shot sr_a00
+wait 6
+shot sr_a01
+wait 6
+shot sr_a02
+wait 6
+shot sr_a03
+wait 6
+shot sr_a04
+wait 6
+shot sr_a05
+wait 6
+shot sr_a06
+wait 6
+shot sr_a07
+wait 6
+shot sr_a08
+wait 6
+shot sr_a09
+wait 6
+shot sr_a10
+wait 6
+shot sr_a11
+wait 6
+shot sr_a12
+wait 6
+shot sr_a13
+wait 6
+shot sr_a14
+wait 6
+shot sr_a15
+wait 6
+shot sr_a16
+wait 6
+shot sr_a17
+wait 6
+shot sr_a18
+wait 6
+shot sr_a19
+wait 6
+shot sr_a20
+wait 6
+shot sr_a21
+wait 6
+shot sr_a22
+wait 6
+shot sr_a23
+wait 6
+shot sr_a24
+wait 6
+shot sr_a25
+wait 6
+shot sr_a26
+wait 6
+shot sr_a27
+wait 6
+shot sr_a28
+wait 6
+shot sr_a29
+wait 6
+shot sr_a30
+wait 6
+shot sr_a31
+wait 6
+shot sr_a32
+wait 6
+shot sr_a33
+wait 6
+shot sr_a34
+wait 6
+shot sr_a35
+wait 6
+shot sr_a36
+wait 6
+shot sr_a37
+wait 6
+shot sr_a38
+wait 6
+shot sr_a39
+wait 6
+shot sr_a40
+wait 6
+shot sr_a41
+wait 6
+shot sr_a42
+wait 6
+shot sr_a43
+wait 6
+shot sr_a44
+wait 6
+shot sr_a45
+wait 6
+shot sr_a46
+wait 6
+shot sr_a47
+wait 6
+shot sr_a48
+wait 6
+shot sr_a49
+wait 6
+shot sr_a50
+wait 6
+shot sr_a51
+wait 6
+shot sr_a52
+wait 6
+shot sr_a53
+wait 6
+shot sr_a54
+wait 6
+shot sr_a55
+wait 6
+shot sr_a56
+wait 6
+shot sr_a57
+wait 6
+shot sr_a58
+wait 6
+shot sr_a59
+waituntil u32 0x020B0010 7 3000
+wait 110
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 50
+press A 8
+wait 80
+press Right 8
+wait 30
+shot sr_grid2
+press A 8
+wait 100
+wait 6
+shot sr_b00
+wait 6
+shot sr_b01
+wait 6
+shot sr_b02
+wait 6
+shot sr_b03
+wait 6
+shot sr_b04
+wait 6
+shot sr_b05
+wait 6
+shot sr_b06
+wait 6
+shot sr_b07
+wait 6
+shot sr_b08
+wait 6
+shot sr_b09
+wait 6
+shot sr_b10
+wait 6
+shot sr_b11
+wait 6
+shot sr_b12
+wait 6
+shot sr_b13
+wait 6
+shot sr_b14
+wait 6
+shot sr_b15
+wait 6
+shot sr_b16
+wait 6
+shot sr_b17
+wait 6
+shot sr_b18
+wait 6
+shot sr_b19
+wait 6
+shot sr_b20
+wait 6
+shot sr_b21
+wait 6
+shot sr_b22
+wait 6
+shot sr_b23
+wait 6
+shot sr_b24
+wait 6
+shot sr_b25
+wait 6
+shot sr_b26
+wait 6
+shot sr_b27
+wait 6
+shot sr_b28
+wait 6
+shot sr_b29
+wait 6
+shot sr_b30
+wait 6
+shot sr_b31
+wait 6
+shot sr_b32
+wait 6
+shot sr_b33
+wait 6
+shot sr_b34
+wait 6
+shot sr_b35
+wait 6
+shot sr_b36
+wait 6
+shot sr_b37
+wait 6
+shot sr_b38
+wait 6
+shot sr_b39
+wait 6
+shot sr_b40
+wait 6
+shot sr_b41
+wait 6
+shot sr_b42
+wait 6
+shot sr_b43
+wait 6
+shot sr_b44
+wait 6
+shot sr_b45
+wait 6
+shot sr_b46
+wait 6
+shot sr_b47
+wait 6
+shot sr_b48
+wait 6
+shot sr_b49
+wait 6
+shot sr_b50
+wait 6
+shot sr_b51
+wait 6
+shot sr_b52
+wait 6
+shot sr_b53
+wait 6
+shot sr_b54
+wait 6
+shot sr_b55
+wait 6
+shot sr_b56
+wait 6
+shot sr_b57
+wait 6
+shot sr_b58
+wait 6
+shot sr_b59
+waituntil u32 0x020B0010 7 3000
+shot sr_after
