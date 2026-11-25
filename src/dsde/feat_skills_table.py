@@ -85,6 +85,11 @@ NAME_SLOTS_USED = range(92, 99)  # their blanks hold Weapon Break's name
 NO_EFFECT_OFFSET = 0x0317
 NO_EFFECT_SLOTS_USED = range(100, 105)  # their blanks hold "No effect!"
 NO_EFFECT_TEXT = "No effect!"
+# Renamed game spells (Jeff, 2026-11-25). The battle string list's spell names are also the field Magic page's.
+# A name that fits is written over the old one; a longer one comes from the cave, in battle only (Dragon Magic
+# is never on the field Magic page).
+IN_PLACE_NAMES = {3: "Cure Water"}  # Cure Squall
+CAVE_RENAMES = {11: "Crashing Wave"}  # Loud Call
 FIRST_CAVE_NAME = (
     FIRST_SKILL + 1
 )  # names from this spell id on come from the cave table
@@ -97,7 +102,9 @@ MENU_BAR_ID = 0x94  # menu field: the id the name bar shows (here the spell)
 MENU_BAR_MEMBER = 0x9C  # menu field: the battler whose list it is
 RECORD_CHARACTER = 4  # battle stat record: the character id
 EQUIPMENT = 0x020B4698  # a character's equipment slots, CHARACTER_RECORD_SIZE apart
-CARD_SLOT_OFFSET = 10  # slot 5, the card slot of the card feature (docs/plan-cards.md 7.1)
+CARD_SLOT_OFFSET = (
+    10  # slot 5, the card slot of the card feature (docs/plan-cards.md 7.1)
+)
 ITEM_NAME_OFFSETS = 0x020A78EC  # u16 per item id: its name's offset from ITEM_NAMES
 ITEM_NAMES = 0x020A7C30
 
@@ -155,7 +162,7 @@ def _growth_asm(arm9: bytes) -> str:
 
 
 def _string_patches(arm9: bytes) -> tuple[Patch, ...]:
-    """Weapon Break's name (entry 91) and "No effect!" (entry 99) in the battle string list."""
+    """Weapon Break's name (entry 91), "No effect!" (entry 99), and Cure Squall renamed in the string list."""
     first = BY_SPELL[FIRST_SKILL]
     edits = dict(enumerate(encode(first.name), STRING_BASE + NAME_OFFSET))
     offsets = {SPELL_NAME_FIRST + first.spell: NAME_OFFSET}
@@ -166,7 +173,18 @@ def _string_patches(arm9: bytes) -> tuple[Patch, ...]:
     for entry, offset in offsets.items():
         addr = STRING_OFFSETS + 2 * entry
         edits |= dict(enumerate(struct.pack("<H", offset), addr))
+    for spell, name in IN_PLACE_NAMES.items():
+        at = STRING_BASE + _string_offset(arm9, SPELL_NAME_FIRST + spell)
+        old_end = arm9.index(END, at - ARM9_BASE) + ARM9_BASE
+        new = encode(name)
+        if at + len(new) > old_end + 1:
+            raise ValueError(f"{name} is longer than the name it replaces")
+        edits |= dict(enumerate(new, at))
     return byte_patches(arm9, edits, "skill strings")
+
+
+def _string_offset(arm9: bytes, entry: int) -> int:
+    return struct.unpack_from("<H", arm9, STRING_OFFSETS + 2 * entry - ARM9_BASE)[0]
 
 
 def _cave_names() -> tuple[Skill, ...]:
@@ -180,10 +198,24 @@ def _name_asm() -> str:
         f"name_{skill.spell}:\n    .byte {byte_list(encode(skill.name))}"
         for skill in _cave_names()
     )
+    renames = "\n".join(
+        f"""    cmp   ip, #{spell}
+    ldreq r3, rename_ptr_{spell}
+    bxeq  lr"""
+        for spell in CAVE_RENAMES
+    )
+    rename_ptrs = "\n".join(
+        f"rename_ptr_{spell}:\n    .word rename_{spell}" for spell in CAVE_RENAMES
+    )
+    renamed = "\n".join(
+        f"rename_{spell}:\n    .byte {byte_list(encode(name))}"
+        for spell, name in CAVE_RENAMES.items()
+    )
     return f"""
     add   r3, ip, r3
     ldr   ip, name_menu
     ldr   ip, [ip, #{MENU_BAR_ID:#x}]
+{renames}
     cmp   ip, #{CARD_SPELL}
     beq   name_card
     cmp   ip, #{SPELL_COUNT}
@@ -231,9 +263,11 @@ name_items:
     .word {ITEM_NAMES:#x}
 name_menu:
     .word {T.MENU:#x}
+{rename_ptrs}
 name_table:
 {pointers}
 {strings}
+{renamed}
     .align 2
 """
 

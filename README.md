@@ -140,6 +140,9 @@ Lunar: Dragon Song was developed by Japan Art Media with Game Arts and published
 (Japan), Ubisoft (North America), and Rising Star Games (Europe). This repository contains no game data;
 you need your own copy of the game.
 
+New and changed artwork, and how each piece was made (some of it with AI, because I'm not an artist), is
+listed in [ART-SOURCES.md](ART-SOURCES.md). Replacements drawn by real artists are welcome, with full credit.
+
 ## Building it yourself
 
 You need your own copy of the game. This repo never contains the ROM or anything extracted from it.

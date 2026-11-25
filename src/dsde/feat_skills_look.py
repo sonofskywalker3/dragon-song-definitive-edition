@@ -17,7 +17,7 @@
   tosses the stone, then bats it as he swings, and the swing starts the stone (the skill's sprite) flying at
   the target on the effect script of Flora's arrows, in the game's projectile mode, whose hit step deals his
   ordinary attack's damage.
-- A skill with the CLAW look (Savage Rush) is Gabryel's unused double claw (btldata 33): she runs in (or
+- A skill with the CLAW look (Double Strike) is Gabryel's unused double claw (btldata 33): she runs in (or
   leaps up to a back-row enemy) as for her attack, winds up, and swipes twice, each swipe an ordinary hit,
   so it deals two of her Fight's blows.
 - A skill on all enemies or all allies plays its effect row's own cast, as a card does. Before the setup,

@@ -29,6 +29,7 @@ from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_party_chat import PARTY_CHAT
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN
+from dsde.feat_skill_icons import icon_patches
 from dsde.feat_skills import SKILLS_FEATURE
 from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
 from dsde.feat_statue import STATUE_ANY_SIDE
@@ -259,6 +260,7 @@ BOSS_EXP = Feature(
     ),
 )
 
+SKILL_ICONS = Feature("skill-icons", icon_patches())
 TOWN_MENU = Feature("town-menu-dpad", TOWN_MENU_PATCHES + TOWN_BRACKET_PATCHES)
 
 FEATURES: tuple[Feature, ...] = (
@@ -288,6 +290,7 @@ FEATURES: tuple[Feature, ...] = (
     SPELL_LEVELS_FEATURE,
     SKILLS_FEATURE,
     CARDS,
+    SKILL_ICONS,
     WALK_SPEED,
     GAD_EXPRESS,
     MIC_SIGN,
@@ -343,6 +346,7 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     SPELL_LEVELS_FEATURE.name,
     SKILLS_FEATURE.name,
     CARDS.name,  # ring and card slots (docs/plan-cards.md)
+    SKILL_ICONS.name,  # a picture in each Special list box
     WALK_SPEED.name,
     GAD_EXPRESS.name,
     MIC_SIGN.name,
@@ -383,5 +387,6 @@ REQUIRES = MappingProxyType(
         TITLE_SEAL_RETOLD.name: (TITLE_SEAL.name,),
         SKILLS_FEATURE.name: (MANUAL_TARGETING.name,),
         CARDS.name: (SKILLS_FEATURE.name,),
+        SKILL_ICONS.name: (SKILLS_FEATURE.name, MANUAL_TARGETING.name),
     }
 )

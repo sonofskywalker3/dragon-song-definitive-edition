@@ -656,3 +656,22 @@ The 70% roll was broken until this run: the hook read r2, which the boss test's 
 every sleep, paralysis, and stone from a card was resisted; it reads the roll from r5 now (the game computes it
 there and copies it to r2). Not seen: Shaitan (a knocked-out ally could not be set up by poking HP: the game
 still gave Jian his turn), a status card's refusal.
+
+### 11.9 Icons and renames (approved list, point 1; 2026-11-25)
+
+`feat_skill_icons.py` (feature `skill-icons`, both editions). The Special list's boxes already draw a picture
+per spell from sysmenupack entry 0x35 (a palette and 256 images, image = spell - 1); the game fills only
+images 0 to 14, so every skill from id 38 was a blank box. The entry is rebuilt on the item icons' palette
+(entry 0x36), with every listed spell's image: the PNGs in `art/icons/`, the Boots for Escape, the four
+Dragon Rings for Dragon Magic, and the game's own sigil (recolored) for Quick, Grand Weapon, and Grand Shell.
+The hook at 0x020357F4 copies the worn card's icon from the item icon file for the card entry. The field Magic
+page reads the same file, so the healers' icons show there too.
+
+Renames: Cure Squall to Cure Water in place in the string list (which the field Magic page shares); Loud Call
+to Crashing Wave from the name cave (battle only; it is longer); Savage Rush, Venom Storm, and Feral in
+`skills_gabryel.py`. Seen in the emulator: Gabryel's, Rufus's, and Lucia's lists with every icon, the card
+entry with its card's icon (Comet, Shreeker), and the names Cure Water, Crashing Wave, Venom Rain, and Feral
+Rage on the name bar. The first build reached Crashing Wave's string with an `adr` out of range: Keystone
+prints the error and still returns a broken instruction, so highlighting the ring broke the list. It loads a
+pointer now. To do: make the build fail on Keystone's printed errors (they bypass Python's stderr on
+Windows; a check in a child process).

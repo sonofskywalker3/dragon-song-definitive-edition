@@ -120,11 +120,11 @@ the design are in [docs/design.md](docs/design.md).
 
 ## Spells and MP
 
-- **Spells cost about 40% of their old MP:** Healing Water 4 (was 10), Tender Rain 12 (30), Cure Squall 4 (8),
+- **Spells cost about 40% of their old MP:** Healing Water 4 (was 10), Tender Rain 12 (30), Cure Water 4 (8),
   Divine Rain 16 (40), Miracle Tears 20 (50), and Escape 2 (5). Dragon Magic, Gale Cut, and Thunder Sword are
   unchanged.
 - **Lucia and Flora learn their spells by level**, not all at once when their MP grows. Lucia: Healing Water at
-  1, Cure Squall 4, Escape 6, Tender Rain 8, Divine Rain 11, and Miracle Tears 13 (she used to have six spells by
+  1, Cure Water 4, Escape 6, Tender Rain 8, Divine Rain 11, and Miracle Tears 13 (she used to have six spells by
   level 5). Flora: the first four at the same levels, Divine Rain at 20, and Miracle Tears at 32 (in the original
   she never learns it).
 - **The healers no longer cast Quick, Grand Weapon, or Grand Shell.** Raising the party's stats is Rufus's job
@@ -147,6 +147,9 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
 - **Stat changes are one stage and last the battle.** Sleep, fear, and binding have a 70% chance and bosses
   are immune; poison and blind always land, on bosses too.
 - **All-enemy and all-ally versions replace the single-target ones** in the list when they are learned.
+- **Every box in the Special list has an icon**: each skill and spell its own picture, Dragon Magic its ring, and
+  a worn card its card. Cure Squall is renamed Cure Water, and Jian's water Dragon Magic, Loud Call, is renamed
+  Crashing Wave. Where the icons come from is in [ART-SOURCES.md](ART-SOURCES.md).
 
 | Who | Level | Skill | MP | What it does |
 |---|---|---|---|---|
@@ -157,12 +160,12 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
 | Jian | 25 | Knockout Kick | 9 | Puts one enemy to sleep |
 | Jian | 30 | War Breaker | 12 | Weapon Break on every enemy |
 | Jian | 36 | Wall Breaker | 9 | Armor Break on every enemy |
-| Gabryel | 1 | Savage Rush | 5 | Claws one enemy in either row twice, two of her normal attack's blows |
+| Gabryel | 1 | Double Strike | 5 | Claws one enemy in either row twice, two of her normal attack's blows |
 | Gabryel | 13 | Venom Claw | 8 | Poisons one enemy |
 | Gabryel | 17 | Blinding Swipe | 7 | Blinds one enemy |
-| Gabryel | 21 | Feral | 8 | Raises her own attack |
+| Gabryel | 21 | Feral Rage | 8 | Raises her own attack |
 | Gabryel | 26 | Howl | 9 | Scares one enemy stiff: it loses its turns for a while |
-| Gabryel | 31 | Venom Storm | 12 | Venom Claw on every enemy |
+| Gabryel | 31 | Venom Rain | 12 | Venom Claw on every enemy |
 | Gabryel | 35 | Blinding Gale | 10 | Blinding Swipe on every enemy |
 | Gabryel | 39 | Dread Roar | 13 | Howl on every enemy |
 | Rufus | 1 | Rally | 6 | Raises one ally's attack |

@@ -1,0 +1,28 @@
+# skill-icons: Lucia at level index 40 wearing the Tidal Ring (0x020B4700 = 0xCC). Her Special list shows the
+# healer icons and the ring; the name bar reads Cure Water and Crashing Wave as the cursor moves (shots li_*).
+include party2_strong
+poke u8 0x0213B9FB 1
+poke u16 0x020B4700 0xCC
+pin u32 0x020b46c0 40
+wait 270
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+watch u32 0x020B8840 count
+watch u32 0x020B8828 cur
+watch u32 0x020B883C first
+shot li_0
+press Down 8
+wait 60
+press Right 8
+wait 60
+press Right 8
+wait 60
+shot li_1
