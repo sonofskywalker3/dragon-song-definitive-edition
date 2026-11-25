@@ -1,0 +1,47 @@
+# cards: a card moves a stat one stage at most (docs/plan-cards.md 3.3). Lucia wears Quetzalcoatl (ATK down, all
+# enemies) at 2000 points; the enemies' HP is pinned so the battle lasts. She uses it in rounds 1 and 2: battler 9's
+# ATK stage (its stat record 0x0228EC2C + 0x40) goes to -1 and stays there (vanilla: -2); points 2000 -> 1800.
+include party2_strong
+poke u8 0x0213BA1B 1
+poke u16 0x020B48AC 2000
+poke u16 0x020B46FE 236
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+watch u16 0x0228EC6C atk_stage9
+watch u16 0x020B48AC points
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+press A 8
+wait 1500
+shot cr_r2_start
+press A 8
+wait 60
+shot cr_r2_a1
+press A 8
+wait 60
+shot cr_r2_a2
+press Right 8
+wait 50
+press A 8
+wait 60
+shot cr_r2_list
+press Down 8
+wait 30
+press A 8
+wait 700
+peek u16 0x0228EC6C atk_stage9_end

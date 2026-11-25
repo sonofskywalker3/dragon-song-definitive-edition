@@ -530,5 +530,10 @@ and the list's Back (0x0203727C) goes to the command page (`test_card_item_comma
 the command page, Item again the list, Fight the enemy grid). A card at 0 points: func_0207f83c no longer takes it out of the bag
 (0x0207F894) and returns 1 (0x0207F898), so no "Lost" line; the card spell's castable answer is -1 with no battle
 card worn (not listed), 0 below 100 points (listed with the NO mark, refused), else 1 (`test_card_empty`: one use
-at 100 points, then 0, the card still in the bag; next round "Quetzalcoatl 0" with the NO mark, A refused). To do:
-the rules and versions of spec 3, auto battle.
+at 100 points, then 0, the card still in the bag; next round "Quetzalcoatl 0" with the NO mark, A refused). Rules (feat_card_rules.py): a card's stage change in func_0206a2f8 goes
+through cave_card_stage, which skips a raise on a stat already above 0 and a lowering on one already below 0
+(the calls at 0x0206A398 and 0x0206A43C); a card's sleep, paralysis, or stone on a regular enemy is resisted
+when the status loop's roll (0 to 99) is 70 or more (0x0206A560, where the game had "lands"). **Seen**
+(`test_card_rules`, Quetzalcoatl in rounds 1 and 2): battler 9's ATK stage goes to -1 and stays there; points
+2000, 1900, 1800. Not seen: the 70% roll. To do: refusing a use that would change nothing, the basic and
+upgraded versions, auto battle.
