@@ -79,6 +79,7 @@ STATE9_FIRST_WORD = 0xE3A01000
 PAD_NEW = 0x020AFF7A  # u16 keys newly pressed this frame
 KEY_UP = 0x40
 KEY_DOWN = 0x80
+KEYS_MEMBER = 0x300  # R and L: a member switch the same frame wins over a scroll
 GAME_STATE = 0x020B0010
 STATE_DRAW_PAGE = 8
 SLOT_FIELD = 0xE8  # the loads' offset (after the +0x4000)
@@ -220,6 +221,8 @@ KEYS_ASM = f"""
     ldrh  r2, [r2]
     ldr   r3, ss_offset
     ldr   r0, [r3]
+    tst   r2, #{KEYS_MEMBER:#x}
+    bne   ss_done
     tst   r2, #{KEY_UP:#x}
     beq   ss_down
     cmp   r0, #0
