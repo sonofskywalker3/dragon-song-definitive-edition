@@ -496,7 +496,7 @@ and a down arrow; Down twice shows gloves to card, the ring row with the gold ba
 icon, and an up arrow; Down again does nothing; R to Lucia and L back start at the top; the top menu and the Item
 page's icons are unchanged.
 
-### 11.6 Dragon Magic for anyone (2026-11-25, the look open)
+### 11.6 Dragon Magic for anyone (2026-11-25)
 
 feat_ring_slot.py: at the end of func_02050c50 (`cmp r6, #1`, 0x02050DDC) a ring spell is listed exactly when the
 member wears its ring in the ring slot; casting follows from func_02050a74. **Seen** (`test_ring_lucia`, Jian and
@@ -504,4 +504,9 @@ Lucia, Lucia wearing the Blazing Ring, the Tidal Ring only in the bag): Lucia's 
 Inferno; Inferno costs her 10 MP (18 to 8) and hits every enemy (556); Jian, wearing no ring, has nothing listed.
 The look: the cast swaps Lucia's sprite for Jian's mid-cast, because the Dragon Magic files (btldata 19 to 22)
 are Jian's body in the cast poses; the pillar on the enemies is a separate effect (`diag_dragon_magic_*` record the
-four spells as Jian casts them). How a non-Jian wearer's cast looks waits on Jeff.
+four spells as Jian casts them). Jeff (2026-11-25): keep the right character and the right effect. Built: the
+action setup's switch on spell - 10 (0x020686A8) is skipped for a caster who is not Jian, so its default puts the
+caster's own Special file in slot 0; the cast script is unchanged, and the ring's effect (flame pillar, water,
+wind cloud, earth aura), which does not come from that file, plays as for Jian. **Seen** (`test_ring_look_*`,
+Lucia wearing each ring): she steps up and raises her umbrella in her own pose, the ring's effect plays around
+the enemies, and each enemy takes the damage (556 for Inferno). Decision 3's element bursts are not used.

@@ -6,6 +6,10 @@ one test (`cmp r6, #1` at 0x02050DDC, r6 = listed, r5 = the character, r8 = the 
 there a ring spell is listed exactly when the member wears its ring in the ring slot (slot 6), for anyone, and no
 longer from the bag. Casting follows: func_02050a74 lets a listed spell be cast by anyone but Jian with no other
 test, and for Jian it asks func_0206b8ec, which looks through all seven slots.
+
+The cast: the action setup puts Jian's Dragon Magic file (his body) in animation slot 0 for any caster; for anyone
+else it now puts the caster's own Special file there, so the wearer casts in their own pose and the ring's
+pillar, which does not come from that file, plays as it does for Jian (Jeff, 2026-11-25).
 """
 
 from dsde.cards_common import (
@@ -20,7 +24,13 @@ from dsde.skills_common import RING_FLAGS, SPELL_ENTRY_SIZE, SPELL_TABLE, hook
 
 LIST_TAIL = 0x02050DDC  # func_02050c50: `cmp r6, #1`
 LIST_TAIL_WORD = 0xE3560001
-RING_FLAG_SHIFT = 20  # the lowest ring bit, 0x100000, is the Blazing Ring's
+RING_FLAG_SHIFT = 20
+LOOK_SWITCH = 0x020686A8  # func_02068308, a party Special: `sub r1, r1, #0xa`, then a switch on spell - 10
+LOOK_SWITCH_WORD = 0xE241100A
+OUT_OF_SWITCH = (
+    6  # past the switch's cases: the default, the caster's own Special file in slot 0
+)
+JIAN_FILES = 0x020953D4  # r4 = the caster's row of the character file table (0x12 each, Jian's first)  # the lowest ring bit, 0x100000, is the Blazing Ring's
 
 # In place of `cmp r6, #1`: for a ring spell, r6 = 1 when the member (r5) wears that ring in the ring slot, else
 # 0; then the compare. Keeps every register but r6.
@@ -58,6 +68,20 @@ rl_slots:
 """
 
 
+# In place of `sub r1, r1, #0xa`: the switch puts Jian's Dragon Magic file (btldata 19 to 22, his body in the
+# cast) in animation slot 0 for spells 10 to 13 whoever casts; for anyone else the switch's default puts the
+# caster's own Special file there, so they cast in their own pose and the ring's pillar plays all the same.
+LOOK_ASM = f"""
+    sub   r1, r1, #10
+    ldr   r2, look_jian
+    cmp   r4, r2
+    movne r1, #{OUT_OF_SWITCH}
+    bx    lr
+look_jian:
+    .word {JIAN_FILES:#x}
+"""
+
+
 def ring_patches() -> tuple:
     return (
         CaveCode(
@@ -70,5 +94,12 @@ def ring_patches() -> tuple:
             LIST_TAIL_WORD,
             "bl ${cave_ring_listed}",
             "a ring's spell is listed for whoever wears it",
+        ),
+        CaveCode("cave_ring_look", LOOK_ASM, "a ring's spell in the caster's own pose"),
+        hook(
+            LOOK_SWITCH,
+            LOOK_SWITCH_WORD,
+            "bl ${cave_ring_look}",
+            "a ring's spell in the caster's own pose",
         ),
     )
