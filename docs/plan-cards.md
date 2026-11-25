@@ -1,6 +1,6 @@
 # Plan: the card overhaul, with a dragon ring slot and a card slot (design, 2026-11-25)
 
-Draft for Jeff's approval. Nothing here is built. It supersedes the "cards lose their battle use" line of
+Approved by Jeff 2026-11-25 (section 8). Nothing here is built yet. It supersedes the "cards lose their battle use" line of
 docs/plan-skills.md and item 7 of docs/playtest-feedback.md. Background: docs/re-cards.md (what each card does),
 docs/re-mp-jobs-rings.md 3 (slots and Dragon Magic), docs/re-enemies.md (drops, stealing), docs/design.md 10
 (dragon rings). Tags: **[confirmed]** read in code or data, **[inferred]** fits the code but not run,
@@ -80,7 +80,7 @@ The other cards do not show in the field.
 - The normal item drop is unchanged: the roll that would have landed on the card slot gives slot 0 instead, as
   vanilla does once a card is owned (docs/re-enemies.md, drop table).
 - **Boss cards always drop** (vanilla: 30 to 50%, and a boss is fought once). Gideon 2, Gideon 3, and Ignatius
-  have no source today (section 8, question 2).
+  have no source today and stay collection cards for now (decision 2).
 
 ## 3. Monster cards: basic or upgraded by wearer
 
@@ -107,7 +107,7 @@ Uses = full value / 100 (docs/re-cards.md 1). Flags read from the card effect ta
 |---|---|---|---|---|
 | Quetzalcoatl (20) | ATK down, all enemies | Weapon Break (Jian 9) | ATK down, one enemy | all enemies |
 | Abadon (14) | DEF down, all enemies | Armor Break (Jian 14) | DEF down, one enemy | all enemies |
-| Ikontabipu (13) | sleep, all enemies, never misses | Knockout Kick (Jian 25) | sleep one enemy, 70% | all enemies, each 70% (question 1) |
+| Ikontabipu (13) | sleep, all enemies, never misses | Knockout Kick (Jian 25) | sleep one enemy, 70% | all enemies, each 70% (decision 1) |
 | Shreeker (12) | poison, all enemies | Venom Claw (Gabryel 13) | poison one enemy | all enemies |
 | Asmodee (18) | blind, all enemies | Blinding Swipe (Gabryel 17) | blind one enemy | all enemies |
 | Tick (13) | paralysis, all enemies | Water Bind (Flora 16), Howl (Gabryel 26; fear is the same status) | paralysis on one enemy, 70% | all enemies, each 70% |
@@ -145,7 +145,7 @@ Notes:
 | Ice Mongrel (10) | escape the battle |
 | Field: Blob (8), Ohainkaru (16), Mad Fang (16), Ghoula (14), Treant (13), Gloomwing (13) | today's field effects |
 
-### 3.3 Stat and status rules for cards (question 1)
+### 3.3 Stat and status rules for cards (decision 1)
 
 Today a stat card moves a stage per use and uses stack to four stages (a boss's hit goes from 42 to 1), and a
 status card never misses a regular enemy. The skills have a rule against that: one stage at most and a success
@@ -158,9 +158,10 @@ kills makes the strong battle-wide cards (Insector, Ochu) cheap to keep using.
 ## 4. Boss cards: permanent passives
 
 A boss card in the card slot gives its wearer a passive while worn and never uses points. Each is fitted to the
-boss's stats, attacks, or element (stats at the boss's minimum fight level). Fifteen are item data only (the
-card's six stat shorts and its gear effect id, which the stat and effect code reads once it includes the card
-slot); one is a small hook; three are new code. Bonuses are first numbers to tune in play.
+boss's stats, attacks, or element (stats at the boss's minimum fight level). Seventeen get a passive now:
+fourteen are item data only (the card's six stat shorts and its gear effect id, which the stat and effect code
+reads once it includes the card slot) and three are new code. Gideon 2, Gideon 3 (a small HP hook), and Ignatius
+wait (decision 2). Bonuses are first numbers to tune in play.
 
 | Boss card | What stands out | Passive | How |
 |---|---|---|---|
@@ -181,9 +182,9 @@ slot); one is a small hook; three are new code. Bonuses are first numbers to tun
 | Blue Dragon | water caster | INT +15, 25% less water damage | data (0x1F) |
 | Dark Jian | a mirror of Jian | +5 to all six stats | data |
 | Gideon | sword, sleep strike | ATK +15, DEX +10 | data |
-| Gideon 2 | caster form | INT +15, regain 1% max MP each own turn | data (0x1E) |
-| Gideon 3 | huge HP | max HP +15% | small hook |
-| Ignatius | the unbeatable foe | 25% less damage from everything | data (0x25) |
+| Gideon 2 | caster form | later (decision 2): INT +15, regain 1% max MP each own turn | data (0x1E) |
+| Gideon 3 | huge HP | later (decision 2): max HP +15% | small hook |
+| Ignatius | the unbeatable foe | later (decision 2): 25% less damage from everything | data (0x25) |
 
 - **Moran and Orcus:** once per attack action (Fight, Stone Throw, Savage Rush), on its first landed hit, a 25%
   chance that the target's DEF (Moran) or ATK (Orcus) drops one stage, through func_02054dec as Jian's breaks
@@ -234,8 +235,8 @@ func_020186b8 path, save, and load. A watch cannot prove that nothing reads them
 that loads from a record with an offset of 0x4A to 0x4D.
 
 **Slot 5 = card, slot 6 = ring.** Cards have item type 0x8005 (low nibble 5), so the equip routine's "slot =
-type" puts a card in slot 5; the 34 monster and 20 boss cards get the five "who may equip" bits (0x10 to 0x100),
-the six character cards do not. The rings keep type 0x8014 (accessory, so the Item page keeps them on its
+type" puts a card in slot 5; the 34 monster cards and the 17 boss cards with passives get the five "who may equip" bits (0x10 to 0x100),
+the six character cards and the three deferred boss cards do not. The rings keep type 0x8014 (accessory, so the Item page keeps them on its
 accessory page) with all five "who" bits, and func_0206b46c sends 0xCB to 0xCE to slot 6. The Status page shows
 slot 6 before slot 5.
 
@@ -270,7 +271,7 @@ nothing else (the Cards page's "usable" test, the card command) reads a boss car
 - Listing (func_02050c50): a ring spell (flags 0x100000 to 0x800000) is listed for any member whose slot 6
   holds that ring, and no longer for Jian from the bag alone.
 - Casting (func_02050a74): the same test on the caster's slot 6, for every member.
-- The look: Jian keeps his four Dragon Magic files (btldata 19 to 22) in slot 0. For anyone else see question 3.
+- The look: Jian keeps his four Dragon Magic files (btldata 19 to 22) in slot 0. For anyone else: decision 3.
 
 ### 7.4 Monster cards in the Special list and the field Magic page
 
@@ -309,8 +310,7 @@ loot buffer. Bosses: the card slot's chance becomes 100% for all 20 (func_02069f
 
 ### 7.6 Boss passives
 
-Data: each boss card's six stat shorts and +2 gear effect id. Hooks: Gideon 3's max HP +15% in the HP recompute
-(func_0206b030 or func_02054ebc); Moran and Orcus after a landed physical hit in func_02030b44, wearer only
+Data: each boss card's six stat shorts and +2 gear effect id. Hooks (Gideon 3's max HP +15% is deferred, decision 2): Moran and Orcus after a landed physical hit in func_02030b44, wearer only
 (test the attacker's slot 5; one roll per action); Steal as above. The battle-wide flag word is party-wide, so
 none of the wearer-only effects uses it.
 
@@ -329,18 +329,19 @@ type edits), `feat_card_slots.py` (record slots, equipment code, equip routing, 
 routing, points, no "Lost"), `feat_card_drops.py`, `feat_card_bosses.py` (hooks, Steal), and the ring changes in
 `feat_ring_slot.py`. The scroll trial branch (`spike/status-scroll`) is a reference only, never merged.
 
-## 8. Questions for Jeff
+## 8. Decisions (Jeff, 2026-11-25: "go with what you've got and we'll adjust if needed")
 
-1. **Card stat and status rules (3.3).** Recommendation: cards follow the skill rules (one stage, 70% rolls,
-   refusal), not today's stacking.
-2. **Gideon 2, Gideon 3, and Ignatius cards.** Vanilla never drops them (0%), Gideon 2 and 3 are the final
-   fights, and the Ignatius fight cannot be won. Recommendation: leave them as collection cards for now (no
-   passive) and settle them with the Retold Ignatius fight; their draft passives stay in the table for then.
-3. **How a ring spell looks on someone other than Jian.** Jian's four Dragon Magic files show Jian himself
-   **[verify]**. Recommendation: the wearer's own cast pose, then the game's element effects that the party has
-   never used (224 burst, 225 geyser, 226 flame column, 227 shattering boulder, tinted) on each enemy, which also
-   answers "the same spell four times". Pictures before building.
-4. **The boss passive table (section 4).** Approve or adjust; the numbers are first drafts to tune in play.
+The doc is approved, with each of these recommendations taken:
+
+1. **Card stat and status rules (3.3):** cards follow the skill rules (one stage, 70% rolls, refusal), not
+   today's stacking.
+2. **Gideon 2, Gideon 3, and Ignatius cards:** they stay collection cards for now (no passive, never slotted)
+   and are settled with the Retold Ignatius fight; their draft passives stay in the table for then. So 17 boss
+   cards get passives now.
+3. **A ring spell on someone other than Jian:** the wearer's own cast pose, then the element effect that the
+   party has never used (224 burst, 225 geyser, 226 flame column, 227 shattering boulder, tinted) on each enemy,
+   once it is confirmed that Jian's Dragon Magic files show Jian himself. Pictures go to Jeff before it is built.
+4. **The boss passive table (section 4)** as drafted; the numbers get tuned in play.
 
 ## 9. Test plan (emulator, both editions)
 
@@ -352,7 +353,7 @@ routing, points, no "Lost"), `feat_card_drops.py`, `feat_card_bosses.py` (hooks,
 - Each ring on Lucia: listed, castable at 10 MP, +10 INT; Jian without it: not listed.
 - One paired card in each state: basic on a non-learner, upgraded on a learner, both charge 100 points and no MP;
   0 points greyed and refused; first-win drop, +100 per later kill, cap; nothing after an escape.
-- A boss data passive (stat totals change on the Status page), Gideon 3's HP, Moran or Orcus on a forced roll,
+- A boss data passive (stat totals change on the Status page), Moran or Orcus on a forced roll,
   Steal success, refusal, and fallbacks.
 - Field card from the Magic page on a member with no spell.
 - Plans and GIFs under `emu/plans/`; at most two emulator instances at once.
@@ -363,8 +364,8 @@ routing, points, no "Lost"), `feat_card_drops.py`, `feat_card_bosses.py` (hooks,
    use.
 2. Equipment code, equip routing, Item page preview, leaving members, old saves (7.2, 7.1, 2.2).
 3. Status page scroll and icons (2.3, 6).
-4. Ring spells for anyone (7.3), after question 3.
+4. Ring spells for anyone (7.3), with pictures of the look to Jeff first (decision 3).
 5. Cards in the Special list and the field Magic page, points, no "Lost", Item menu without Cards (7.4).
 6. Drops and recharge (7.5).
-7. Boss passives: data first, then Gideon 3, Moran and Orcus, Steal (7.6, 5).
+7. Boss passives: data first, then Moran and Orcus, Steal (7.6, 5).
 8. Text (7.7), then the full test plan.
