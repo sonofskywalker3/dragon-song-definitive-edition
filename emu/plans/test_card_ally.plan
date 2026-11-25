@@ -1,0 +1,58 @@
+# cards: a basic version on one ally (docs/plan-cards.md 3). Lucia wears Comet (INT up, all allies; paired with
+# Rufus's Stratagem, so hers is one ally) at 1300 points (0x020B48AE). Round 1: Jian Fights; Lucia's card entry
+# opens the ally picker (shot ca_picker); A on the first portrait raises that ally's INT one stage (watches
+# int_jian 0x0228E8A6, int_lucia 0x0228E912), points 1300 -> 1200. Round 2, both INT stages set to +1 first: the
+# pick is refused ("No effect!", shot ca_refused), points stay 1200.
+include party2_strong
+poke u8 0x0213BA1C 1
+poke u16 0x020B48AE 1300
+poke u16 0x020B46FE 237
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+watch u16 0x0228E8A6 int_jian
+watch u16 0x0228E912 int_lucia
+watch u16 0x020B48AE points
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+shot ca_pick
+press A 8
+wait 60
+shot ca_picker
+press A 8
+wait 40
+shot ca_after
+wait 1500
+shot ca_r2_start
+poke u16 0x0228E8A6 1
+poke u16 0x0228E912 1
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+press A 8
+wait 60
+shot ca_r2_picker
+press A 8
+wait 20
+shot ca_refused

@@ -511,7 +511,7 @@ wind cloud, earth aura), which does not come from that file, plays as for Jian. 
 Lucia wearing each ring): she steps up and raises her umbrella in her own pose, the ring's effect plays around
 the enemies, and each enemy takes the damage (556 for Inferno). Decision 3's element bursts are not used.
 
-### 11.7 Cards in the Special list (2026-11-25, in progress)
+### 11.7 Cards in the Special list (2026-11-25)
 
 The card ability is one spell id, 63 (skills_cards.py, in the skills list so every spell table covers it: learn
 level past the last, so never learned by level; all enemies, so the menu takes it with no picker). Steal moves to
@@ -535,5 +535,33 @@ through cave_card_stage, which skips a raise on a stat already above 0 and a low
 (the calls at 0x0206A398 and 0x0206A43C); a card's sleep, paralysis, or stone on a regular enemy is resisted
 when the status loop's roll (0 to 99) is 70 or more (0x0206A560, where the game had "lands"). **Seen**
 (`test_card_rules`, Quetzalcoatl in rounds 1 and 2): battler 9's ATK stage goes to -1 and stays there; points
-2000, 1900, 1800. Not seen: the 70% roll. To do: refusing a use that would change nothing, the basic and
-upgraded versions, auto battle.
+2000, 1900, 1800. Not seen: the 70% roll.
+
+Basic and upgraded, and the refusal (feat_card_targets.py). Each monster card has an 8-byte record built from
+its effect entry and its pair (basic version: none, one enemy, one ally, or Namia's regen; what "would change
+nothing" means: the stats it moves and which way, its status, or its battle flag bit) and two learner slots
+(character, learn level index: a skill's level, or the healers' spell-levels schedule for Tender Rain, Divine
+Rain, and Miracle Tears). cave_card_basic gives the basic version for a wearer who is not a learner or whose
+level index is below the learn level; cave_card_targets turns it into target bits (one enemy, one ally, or the
+card's own). The Special list's OK handler reads spell 63's bits from it (0x02036CE0, in place of the spell
+table): a basic use opens the enemy grid or the ally picker as a one-target skill does, with the card's test
+written into spell 63's effect record so the grid and the picker refuse a wasted pick through the skills' own
+test; an all-target use is refused at the list when every living target would be unchanged (cave_card_idle:
+every stat it moves already a stage past 0 that way, a status already held or a boss immune to it, or the battle
+flag already set). The resolver's item branch takes the same bits (0x02051F58), and a one-enemy card uses the
+enemy picked on the grid (0x02051F84, the skills' cave_skill_pick), Dagon included. Namia: func_0206a744 sets
+Divine Rain's 5% bit (0x10) instead of Namia's 10% bit (0x08) for a wearer who has not learned Divine Rain
+(0x0206A790, the actor from the battle work's +0x32). **Seen:**
+- `test_card_basic`: Lucia with Quetzalcoatl (not a learner) gets the enemy grid; one enemy's ATK goes to -1,
+  points 2000 to 1900; with every enemy already at -1, the pick shows "No effect!", the grid stays up, and the
+  points stay 1900.
+- `test_card_upgrade`: Jian at level 9 (Weapon Break learned) with Quetzalcoatl: no grid, ATK DOWN on all five
+  enemies, points 2000 to 1900; next round the card is refused at the list with "No effect!".
+- `test_card_ally`: Lucia with Comet (Rufus's pair) gets the ally picker ("Who to use it for?"); Jian's INT goes
+  to +1, points 1300 to 1200; with both at +1 the pick is refused.
+- `test_card_namia`: Lucia (level 1) with Namia: the battle flags get 0x10, not 0x08; points 1300 to 1200.
+- `test_card_auto`: Auto with Jian and Lucia both wearing Quetzalcoatl at 2000: several rounds, the points never
+  move (Auto never uses the card).
+
+Not seen: Shaitan's and Vitra's basic versions on a picked ally (the same picker as Comet, Kind NONE so no
+refusal), a status card's refusal (the skills' status test, written into spell 63's record).

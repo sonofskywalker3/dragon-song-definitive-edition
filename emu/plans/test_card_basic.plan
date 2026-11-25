@@ -1,0 +1,70 @@
+# cards: the basic version (docs/plan-cards.md 3). Lucia wears Quetzalcoatl (paired with Jian's Weapon Break, so
+# hers is the basic: ATK down on one picked enemy) at 2000 points. Round 1: Jian Fights; Lucia's card entry opens
+# the enemy grid (shot cb_grid); A on the highlighted enemy uses the card on it alone: only that enemy's ATK stage
+# goes to -1 (watches stage_*), points 2000 -> 1900. Round 2, every enemy's ATK set one stage down first: the
+# pick is refused ("No effect!", shot cb_refused), the grid stays up, and the points stay 1900.
+include party2_strong
+poke u8 0x0213BA1B 1
+poke u16 0x020B48AC 2000
+poke u16 0x020B46FE 236
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+watch u16 0x0228EA50 stage_0
+watch u16 0x0228EABC stage_1
+watch u16 0x0228EB28 stage_2
+watch u16 0x0228EB94 stage_3
+watch u16 0x0228EC00 stage_4
+watch u16 0x0228EC6C stage_5
+watch u16 0x0228ECD8 stage_6
+watch u16 0x020B48AC points
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+shot cb_pick
+press A 8
+wait 60
+shot cb_grid
+press A 8
+wait 40
+shot cb_after
+wait 1500
+shot cb_r2_start
+poke u16 0x0228EA50 65535
+poke u16 0x0228EABC 65535
+poke u16 0x0228EB28 65535
+poke u16 0x0228EB94 65535
+poke u16 0x0228EC00 65535
+poke u16 0x0228EC6C 65535
+poke u16 0x0228ECD8 65535
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+press A 8
+wait 60
+shot cb_r2_grid
+press A 8
+wait 20
+shot cb_refused
+wait 60
+shot cb_refused2

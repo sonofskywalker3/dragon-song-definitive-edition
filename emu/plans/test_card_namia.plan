@@ -1,0 +1,34 @@
+# cards: Namia's basic version (docs/plan-cards.md 3.1). Lucia (level 1, Divine Rain not learned) wears Namia
+# (219, points 0x020B488A) at 1300. Round 1: Jian Fights; Lucia's card entry (all allies, no picker): the battle
+# flags word (the battle work's first word, its pointer at 0x020B8550, 0x02282940 in this battle) gets Divine Rain's 5% bit 0x10, not
+# Namia's 10% bit 0x08; points 1300 -> 1200.
+include party2_strong
+poke u8 0x0213BA0A 1
+poke u16 0x020B488A 1300
+poke u16 0x020B46FE 219
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+peek u32 0x020B8550 work_ptr
+watch u32 0x02282940 battle_flags
+watch u16 0x020B488A points
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+shot cn_pick
+press A 8
+wait 1300
+shot cn_after
