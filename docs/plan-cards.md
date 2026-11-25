@@ -522,5 +522,7 @@ resolver's party branch (0x02051A08) turns a Special with spell 63 into the item
 before the Special branch's silence test and MP charge, so the card's effect, animation, and points are the
 game's. **Seen** (`test_card_use`, Lucia wearing Quetzalcoatl at 2000 points): her list shows Healing Water and
 the card entry ("Use the card in your slot"); A uses it in her item pose, ATK DOWN on every enemy, points 2000 to
-1900, MP unchanged. To do: the card's name and points on the name bar, the rules and versions of spec 3, a card at
+1900, MP unchanged. The name bar shows the worn card's name (the skills' name hook, for spell 63, takes the item
+name of the member's card slot) and its uses left, points / 100 (cave_card_bar in place of the cost at
+0x02044E88, never marked short of MP): "Quetzalcoatl 20". To do: the rules and versions of spec 3, a card at
 0 points greyed (today it leaves the list), no "Lost", the Item command without Cards, auto battle.

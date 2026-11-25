@@ -23,8 +23,15 @@ import struct
 from dsde import targeting_consts as T
 from dsde.jp_hint_pairs import END
 from dsde.patching import AsmPatch, CaveCode, DataPatch, Patch, byte_patches
+from dsde.skills_cards import CARD_SPELL
 from dsde.skills_common import (
+    BATTLER_RECORD,
+    BATTLER_SIZE,
+    BATTLERS_PTR,
+    CHARACTER_RECORD_SIZE,
     FLAG_BATTLE,
+    RECORD_SIZE,
+    RECORDS_PTR,
     FX_SIZE,
     NEVER,
     SPELL_ENTRY_SIZE,
@@ -87,6 +94,12 @@ FIRST_CAVE_NAME = (
 NAME_SITE = 0x02044E7C
 NAME_SITE_WORD = 0xE08C3003
 MENU_BAR_ID = 0x94  # menu field: the id the name bar shows (here the spell)
+MENU_BAR_MEMBER = 0x9C  # menu field: the battler whose list it is
+RECORD_CHARACTER = 4  # battle stat record: the character id
+EQUIPMENT = 0x020B4698  # a character's equipment slots, CHARACTER_RECORD_SIZE apart
+CARD_SLOT_OFFSET = 10  # slot 5, the card slot of the card feature (docs/plan-cards.md 7.1)
+ITEM_NAME_OFFSETS = 0x020A78EC  # u16 per item id: its name's offset from ITEM_NAMES
+ITEM_NAMES = 0x020A7C30
 
 # Spell descriptions: sysmenupack entry 61, 61-byte records from file + 0x24, one per spell id
 DESCRIPTIONS_ARCHIVE = "sysmenupack"
@@ -171,6 +184,8 @@ def _name_asm() -> str:
     add   r3, ip, r3
     ldr   ip, name_menu
     ldr   ip, [ip, #{MENU_BAR_ID:#x}]
+    cmp   ip, #{CARD_SPELL}
+    beq   name_card
     cmp   ip, #{SPELL_COUNT}
     bxhs  lr
     subs  ip, ip, #{FIRST_CAVE_NAME}
@@ -178,6 +193,42 @@ def _name_asm() -> str:
     adr   r3, name_table
     ldr   r3, [r3, ip, lsl #2]
     bx    lr
+@ the card spell: the name of the card the member (menu + 0x9C, a battler) wears in the card slot
+name_card:
+    push  {{r0-r2}}
+    ldr   r0, name_menu
+    ldr   r0, [r0, #{MENU_BAR_MEMBER:#x}]
+    ldr   r1, name_battlers
+    ldr   r1, [r1]
+    mov   r2, #{BATTLER_SIZE:#x}
+    mla   r1, r0, r2, r1
+    ldr   r1, [r1, #{BATTLER_RECORD:#x}]
+    ldr   r0, name_records
+    ldr   r0, [r0]
+    mov   r2, #{RECORD_SIZE:#x}
+    mla   r0, r1, r2, r0
+    ldr   r0, [r0, #{RECORD_CHARACTER}]
+    ldr   r1, name_slots
+    mov   r2, #{CHARACTER_RECORD_SIZE:#x}
+    mla   r1, r0, r2, r1
+    ldrh  r0, [r1, #{CARD_SLOT_OFFSET:#x}]
+    ldr   r1, name_offsets
+    add   r1, r1, r0, lsl #1
+    ldrh  r1, [r1]
+    ldr   r3, name_items
+    add   r3, r3, r1
+    pop   {{r0-r2}}
+    bx    lr
+name_battlers:
+    .word {BATTLERS_PTR:#x}
+name_records:
+    .word {RECORDS_PTR:#x}
+name_slots:
+    .word {EQUIPMENT:#x}
+name_offsets:
+    .word {ITEM_NAME_OFFSETS:#x}
+name_items:
+    .word {ITEM_NAMES:#x}
 name_menu:
     .word {T.MENU:#x}
 name_table:

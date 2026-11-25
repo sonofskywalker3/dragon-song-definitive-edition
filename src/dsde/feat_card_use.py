@@ -29,6 +29,17 @@ RESOLVE_COMMAND = (
     0x02051A08  # func_020514ec, party: `ldrsh r0, [r4, #0x84]` (r4 = the battler)
 )
 RESOLVE_COMMAND_WORD = 0xE1D408F4
+BAR_NUMBER = 0x02044E88  # the name bar's spell case: `mov r3, r5` (r5 = the MP cost, r4 = 1 if it is short)
+BAR_NUMBER_WORD = 0xE1A03005
+MENU = 0x020B8800
+MENU_BAR_ID = 0x94
+MENU_BAR_MEMBER = 0x9C  # a battler index
+BATTLERS_PTR = 0x020B8640
+BATTLER_SIZE = 0x12C
+BATTLER_RECORD = 0x10
+RECORDS_PTR = 0x020B8620
+RECORD_SIZE = 0x6C
+RECORD_CHARACTER = 4
 COMMAND_SPECIAL = 2
 COMMAND_ITEM = 4
 BATTLER_CHARACTER = 4
@@ -112,6 +123,56 @@ cr_keep:
 """
 
 
+# In place of `mov r3, r5` in the name bar: for the card spell, the number is the card's uses left (its points
+# / 100) and is never shown as short of MP.
+BAR_ASM = f"""
+    mov   r3, r5
+    push  {{r0-r2, lr}}
+    ldr   r0, cb_menu
+    ldr   r1, [r0, #{MENU_BAR_ID:#x}]
+    cmp   r1, #{CARD_SPELL}
+    bne   cb_done
+    ldr   r0, [r0, #{MENU_BAR_MEMBER:#x}]
+    ldr   r1, cb_battlers
+    ldr   r1, [r1]
+    mov   r2, #{BATTLER_SIZE:#x}
+    mla   r1, r0, r2, r1
+    ldr   r1, [r1, #{BATTLER_RECORD:#x}]
+    ldr   r0, cb_records
+    ldr   r0, [r0]
+    mov   r2, #{RECORD_SIZE:#x}
+    mla   r0, r1, r2, r0
+    ldr   r0, [r0, #{RECORD_CHARACTER}]
+    ldr   r1, cb_slots
+    mov   r2, #{CHAR_RECORD_SIZE:#x}
+    mla   r1, r0, r2, r1
+    ldrh  r0, [r1, #{CARD_SLOT * 2}]
+    sub   r0, r0, #{FIRST_CARD:#x}
+    ldr   r1, cb_points
+    add   r1, r1, r0, lsl #1
+    ldrsh r1, [r1]
+    mov   r3, #0
+cb_divide:
+    cmp   r1, #{POINTS_PER_USE}
+    subge r1, r1, #{POINTS_PER_USE}
+    addge r3, r3, #1
+    bge   cb_divide
+    mov   r4, #0
+cb_done:
+    pop   {{r0-r2, pc}}
+cb_menu:
+    .word {MENU:#x}
+cb_battlers:
+    .word {BATTLERS_PTR:#x}
+cb_records:
+    .word {RECORDS_PTR:#x}
+cb_slots:
+    .word {CHAR_RECORDS + EQUIP_OFFSET:#x}
+cb_points:
+    .word {CARD_POINTS:#x}
+"""
+
+
 def use_patches() -> tuple:
     return (
         CaveCode("cave_card_usable", USABLE_ASM, "a worn battle card with points left"),
@@ -121,6 +182,13 @@ def use_patches() -> tuple:
             CASTABLE_WORD,
             "b ${cave_card_castable}",
             "the card spell is castable",
+        ),
+        CaveCode("cave_card_bar", BAR_ASM, "the card's uses left on the name bar"),
+        hook(
+            BAR_NUMBER,
+            BAR_NUMBER_WORD,
+            "bl ${cave_card_bar}",
+            "the card's uses left on the name bar",
         ),
         CaveCode(
             "cave_card_resolve", RESOLVE_ASM, "the card spell becomes the card command"
