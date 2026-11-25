@@ -22,7 +22,7 @@ from dsde.cards_common import (
     POINTS_PER_USE,
 )
 from dsde.cards_data import FIELD_CARDS
-from dsde.patching import CaveCode
+from dsde.patching import CaveCode, Patch
 from dsde.skills_cards import CARD_SPELL
 from dsde.skills_common import hook
 
@@ -51,6 +51,10 @@ TOOLS_BUTTON = (
 LIST_BACK_PAGE = 0x0203727C  # page 4's Back: `strh r4, [r2, #0xa]` with r4 = 3 (the Tools / Cards page)
 LIST_BACK_WORD = 0xE1C240BA
 PAGE_COMMANDS = 1
+LOST_REMOVE = 0x0207F894  # func_0207f83c at 0 points: `bl func_0206b98c` (take the card out of the bag)
+LOST_RETURN = 0x0207F898  # `mov r0, #0`: the caller then shows "Lost <name> card"
+NOP = 0xE1A00000
+ANY_POINTS = 0
 COMMAND_SPECIAL = 2
 COMMAND_ITEM = 4
 BATTLER_CHARACTER = 4
@@ -69,29 +73,30 @@ def _kinds() -> str:
     return ", ".join(str(k) for k in kinds)
 
 
-# r0 = character id -> r0 = the worn card if it is a battle card with a use of points left, else 0. Keeps r1 to r3.
-USABLE_ASM = f"""
-    push  {{r1, r2, lr}}
-    ldr   r1, cu_slots
-    mov   r2, #{CHAR_RECORD_SIZE:#x}
-    mla   r1, r0, r2, r1
-    ldrh  r0, [r1, #{CARD_SLOT * 2}]
-    sub   r1, r0, #{FIRST_CARD:#x}
-    cmp   r1, #{MONSTER_CARD_COUNT}
+# r0 = character id, r1 = the fewest points it must have -> r0 = the worn card if it is a battle card with at
+# least that many points, else 0. Keeps r1 to r3.
+WORN_BATTLE_ASM = f"""
+    push  {{r2, r3, lr}}
+    ldr   r2, cu_slots
+    mov   r3, #{CHAR_RECORD_SIZE:#x}
+    mla   r2, r0, r3, r2
+    ldrh  r0, [r2, #{CARD_SLOT * 2}]
+    sub   r2, r0, #{FIRST_CARD:#x}
+    cmp   r2, #{MONSTER_CARD_COUNT}
     bhs   cu_none
-    adr   r2, cu_kinds
-    ldrb  r2, [r2, r1]
-    cmp   r2, #{CARD_KIND_BATTLE}
+    adr   r3, cu_kinds
+    ldrb  r3, [r3, r2]
+    cmp   r3, #{CARD_KIND_BATTLE}
     bne   cu_none
-    ldr   r2, cu_points
-    add   r2, r2, r1, lsl #1
-    ldrsh r2, [r2]
-    cmp   r2, #{POINTS_PER_USE}
+    ldr   r3, cu_points
+    add   r3, r3, r2, lsl #1
+    ldrsh r3, [r3]
+    cmp   r3, r1
     bge   cu_done
 cu_none:
     mov   r0, #0
 cu_done:
-    pop   {{r1, r2, pc}}
+    pop   {{r2, r3, pc}}
 cu_slots:
     .word {CHAR_RECORDS + EQUIP_OFFSET:#x}
 cu_points:
@@ -101,14 +106,57 @@ cu_kinds:
     .align 2
 """
 
-# func_02050a74's first instruction: the card spell is castable (it is only listed when it can be used) and its
-# "cost" is 1, which the menu needs to accept a pick; no MP is ever taken for it.
+# r0 = character id -> r0 = the worn battle card if it has a use of points left, else 0. Keeps r1 to r3.
+USABLE_ASM = f"""
+    push  {{r1, lr}}
+    mov   r1, #{POINTS_PER_USE}
+    bl    ${{cave_card_worn_battle}}
+    pop   {{r1, pc}}
+"""
+
+# r0 = character id -> r0 = the worn battle card whatever its points (it is listed, greyed at 0), else 0.
+LISTABLE_ASM = f"""
+    push  {{r1, lr}}
+    mov   r1, #{ANY_POINTS}
+    bl    ${{cave_card_worn_battle}}
+    pop   {{r1, pc}}
+"""
+
+# func_02050a74's first instruction, for the card spell: -1 (not listed) with no battle card worn, 0 (listed,
+# greyed, refused) with fewer than 100 points, else 1, the "cost" the menu needs to accept a pick; no MP is ever
+# taken for it.
 CASTABLE_ASM = f"""
     cmp   r1, #{CARD_SPELL}
-    moveq r0, #1
-    bxeq  lr
+    beq   cc_card
     push  {{r4-r10, lr}}
     b     {CASTABLE + 4:#x}
+cc_card:
+    push  {{r1, r2, lr}}
+    ldr   r1, cc_battlers
+    ldr   r1, [r1]
+    mov   r2, #{BATTLER_SIZE:#x}
+    mla   r1, r0, r2, r1
+    ldr   r1, [r1, #{BATTLER_RECORD:#x}]
+    ldr   r0, cc_records
+    ldr   r0, [r0]
+    mov   r2, #{RECORD_SIZE:#x}
+    mla   r0, r1, r2, r0
+    ldr   r0, [r0, #{RECORD_CHARACTER}]
+    mov   r2, r0
+    bl    ${{cave_card_listable}}
+    cmp   r0, #0
+    mvneq r0, #0
+    beq   cc_done
+    mov   r0, r2
+    bl    ${{cave_card_usable}}
+    cmp   r0, #0
+    movne r0, #1
+cc_done:
+    pop   {{r1, r2, pc}}
+cc_battlers:
+    .word {BATTLERS_PTR:#x}
+cc_records:
+    .word {RECORDS_PTR:#x}
 """
 
 # In place of `ldrsh r0, [r4, #0x84]`: a Special with the card spell becomes the item command with the worn card.
@@ -213,7 +261,16 @@ def use_patches() -> tuple:
             "bl ${cave_card_list_back}",
             "back from the item list to the commands",
         ),
+        CaveCode("cave_card_worn_battle", WORN_BATTLE_ASM, "a worn battle card"),
         CaveCode("cave_card_usable", USABLE_ASM, "a worn battle card with points left"),
+        CaveCode("cave_card_listable", LISTABLE_ASM, "a worn battle card, listed"),
+        Patch(LOST_REMOVE, 0xEBFFB03C, NOP, "a card at 0 points stays in the bag"),
+        Patch(
+            LOST_RETURN,
+            0xE3A00000,
+            0xE3A00001,
+            'no "Lost" message for a card at 0 points',
+        ),
         CaveCode("cave_card_castable", CASTABLE_ASM, "the card spell is castable"),
         hook(
             CASTABLE,

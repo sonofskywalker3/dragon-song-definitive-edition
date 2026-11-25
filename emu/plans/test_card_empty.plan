@@ -1,0 +1,47 @@
+# cards: a worn card at 0 points (docs/plan-cards.md 2.4). Lucia wears Quetzalcoatl with 100 points (one use).
+# Round 1: Jian Fights, Lucia uses the card: points 100 -> 0, the card stays in the bag (0x0213BA1B = 1) and no
+# "Lost" line. Round 2: Lucia's Special list still shows it, greyed (shot ce_list), and A on it is refused.
+include party2_strong
+poke u8 0x0213BA1B 1
+poke u16 0x020B48AC 100
+poke u16 0x020B46FE 236
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+watch u16 0x020B48AC points
+watch u8 0x0213BA1B in_bag
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+press A 8
+wait 200
+shot ce_after_use
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+shot ce_list
+press A 8
+wait 60
+shot ce_refused

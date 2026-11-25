@@ -527,5 +527,8 @@ name of the member's card slot) and its uses left, points / 100 (cave_card_bar i
 0x02044E88, never marked short of MP): "Quetzalcoatl 20". The battle Item command opens the item list directly:
 the command page's Item case (0x02036804) jumps to the Tools button's block of the Tools / Cards page (0x02036F2C),
 and the list's Back (0x0203727C) goes to the command page (`test_card_item_command`: Item shows Healing Gum, B
-the command page, Item again the list, Fight the enemy grid). To do: the rules and versions of spec 3, a card at
-0 points greyed (today it leaves the list), no "Lost", auto battle.
+the command page, Item again the list, Fight the enemy grid). A card at 0 points: func_0207f83c no longer takes it out of the bag
+(0x0207F894) and returns 1 (0x0207F898), so no "Lost" line; the card spell's castable answer is -1 with no battle
+card worn (not listed), 0 below 100 points (listed with the NO mark, refused), else 1 (`test_card_empty`: one use
+at 100 points, then 0, the card still in the bag; next round "Quetzalcoatl 0" with the NO mark, A refused). To do:
+the rules and versions of spec 3, auto battle.

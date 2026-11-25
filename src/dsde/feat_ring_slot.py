@@ -44,7 +44,7 @@ LISTED_ASM = f"""
     cmp   r7, #0
     beq   rl_done
     mov   r0, r5
-    bl    ${{cave_card_usable}}
+    bl    ${{cave_card_listable}}
     cmp   r0, #0
     movne r6, #1
     b     rl_done
