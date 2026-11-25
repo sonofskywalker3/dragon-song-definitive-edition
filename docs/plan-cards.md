@@ -375,6 +375,55 @@ goes):
   poison (Venom Claw, Venom Storm, Shreeker) lands on a boss 80% of the time (regular monsters: always). Blind the
   same: the party's blind (Blinding Swipe, Blinding Gale, Asmodee) lands on a boss 80% of the time. Jeff: poison for the whole battle plus a stronger tick would take half a boss's HP and more.
 
+**Approved build list (Jeff, 2026-11-25, point by point).** It replaces the matching parts of sections 2 to 5.
+
+1. **Icons and names.** Every Special list entry gets an icon; the worn card's entry shows its card's icon.
+   Drawn icons are PNG files in `art/icons/`, read by the build, so an artist can replace a file of the same
+   name. `ART-SOURCES.md` lists and links every file (drawn: generated with AI; reused: the game's own item
+   icon). Icons: Stone Throw the thrown stone; Weapon Break and War Breaker the sword with the down arrow at
+   the bottom left; Rally and Battle Cry the same swords with the up arrow; Stand Fast and Shield Wall the
+   breakers' armor with the up arrow; Quick March and Forced March the Escape boot with the up arrow; Focus a
+   black crosshair; Knockout Kick a sheep; Gale Cut a wind swirl; Blinding Gale the same wind with a dark
+   purple and black glow; Double Strike two impact bursts; Venom Claw bubbles; Venom Rain smaller spread
+   bubbles; Blinding Swipe glasses with black lenses; Feral Rage claw slashes with the up arrow; Howl 3 and
+   Dread Roar 4 black concentric circles; Water Bind three stacked rings, Binding Rain three stacks of three;
+   Healing Water a blue drop, Cure Water a green drop, Tender Rain a wide cloud with rain, Divine Rain a gold
+   cloud with white rain, Miracle Tears a slim purple tear; Thunder Sword bolts along the blade; Stratagem the
+   Old Book and War Council a map, both with the up arrow. Renames, both editions: Loud Call to Crashing Wave,
+   Savage Rush to Double Strike, Cure Squall to Cure Water, Venom Storm to Venom Rain, Feral to Feral Rage.
+2. **Cards enhance matching skills** as in the revision above. Focus becomes Jian only; Bealzebub makes it
+   party-wide (an enhancement, not one version).
+3. **Status rules.** Poison 2 to 4 turns on everyone; the party's poison and blind land on bosses 80% of the
+   time; Phantom's silence 2 to 4 turns and 80% on bosses (check vanilla silence first); Kuntukapu's MP regen
+   2 to 4 turns.
+4. **Changed cards.** Yeti: the user steals one item from the enemy's loot table, 25%, never a card. Termite:
+   breaks and steals miss one picked party member this battle. Hellbird: one ally to full MP. Insector and
+   Ochu: 2 to 4 turns instead of the whole battle (all three are common: four areas each, Insector and
+   Hellbird from the first area). If Insector is still too strong, try x1.50 to 1.75 next.
+5. **Boss cards.** The four dragons take 50% less damage from their element; Caucus regains 3% of max HP a
+   turn; Morus's Steal 50% with a 10% bonus toward the rarer item (Yeti's is 25%); the rest as section 4.
+   Gideon 2, Gideon 3, and Ignatius wait for their source (to do, below).
+6. **Field cards** keep vanilla effects and points. Players' descriptions: Mad Fang draws symbols (map
+   monsters) toward you; Ghoula makes them flee for a while; Treant restores HP on the map for a while;
+   Gloomwing restores 30 MP per member over about 30 seconds.
+7. **Getting and recharging** as section 2.6, and the bestiary as 2.7.
+8. **Custom installer**, shipped with this release as a third download beside the two IPS files: the story is
+   one switch (all or none); every engine and gameplay change is its own switch (for example HP drain while
+   running, B in a town menu selecting Leave town); dependencies are switched on or greyed out; defaults match
+   the full release. A design (switch list, dependencies, Windows app or web page) goes to Jeff first.
+
+**To do, later (Jeff, 2026-11-25):**
+- Gideon 2, Gideon 3, and Ignatius cards: the vanilla unwinnable Ignatius fight stays, then the Gideon fights;
+  winning Gideon 2 and 3 gives their cards (vanilla has zeroed card drops there: Gideon 3's drop row
+  0x02097CC0 lists the Althena and Ignatius cards at chance 0, Gideon 2's row 0x02097CB4 the Rufus card and its
+  own); a chance to save and equip them; then a new, winnable second Ignatius fight, after which the ground
+  collapses and he falls, and his card is given. An epilogue or New Game+ uses it later.
+- Character cards (Jian, Lucia, Flora, Rufus, Gabryel, Althena): given when the character is first met, not by
+  battle. Owned cards of party members add "Summon Lucia" and so on to Jian's field Magic page (no slot
+  needed); it asks who to replace. Jian cannot be replaced; story scenes that need a set party lock it and
+  restore it; the bench gets full EXP; gear stays on the member. Althena stays a collectible. A passive when
+  worn: later.
+
 ## 9. Test plan (emulator, both editions)
 
 - Watch on the new slot shorts (7.1) through equip, battle, leave and rejoin, the func_020186b8 reset, save, and
