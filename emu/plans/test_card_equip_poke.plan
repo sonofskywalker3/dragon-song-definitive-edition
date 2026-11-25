@@ -1,0 +1,32 @@
+# cards: the two new slots are read as equipment. Jian gets the Blazing Ring (0xCB) and the Sasquatch card (250)
+# in the bag (count bytes at 0x0213B930 + id - 1) and, poked straight into his record, in slot 6 (0x020B46A4)
+# and slot 5 (0x020B46A2). In the first temple battle his battle record (record 0 at [0x020B8620], 0x6C bytes)
+# should show the ring's INT +10 and the card's ATK +4 and DEF +8 (he has ATK 15, DEF 19, INT 4 with his gear
+# alone); Inferno (the ring's spell) is the first entry of his Special list and casts for 10 MP (battle MP at
+# record + 0x18 = 0x0228E878), which needs func_0206b8ec to find the ring in slot 6.
+# Run with --save. Expected before the cards feature: no stat change, Inferno listed but not castable.
+include boot_from_save
+wait 100
+poke u8 0x0213B9FA 1
+poke u8 0x0213BA29 1
+poke u16 0x020B46A4 0xCB
+poke u16 0x020B46A2 250
+include warp6
+wait 270
+peek u32 0x020B8620 records
+dump 0x0228E860 0x6C jian_record
+watch u32 0x0228E878 jian_mp
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 60
+shot ep_list
+press A 8
+wait 80
+shot ep_cast
+press A 8
+wait 300
+shot ep_after
+peek u32 0x0228E878 jian_mp_after

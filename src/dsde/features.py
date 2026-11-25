@@ -5,6 +5,7 @@ from types import MappingProxyType
 
 from dsde.boss_exp import boss_exp, check_tables
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
+from dsde.feat_cards import CARDS
 from dsde.feat_battle_end import BATTLE_END_RULES
 from dsde.feat_battle_flow import BATTLE_FLOW
 from dsde.feat_battle_kill import KILL_ON_HIT
@@ -286,6 +287,7 @@ FEATURES: tuple[Feature, ...] = (
     MP_ECONOMY,
     SPELL_LEVELS_FEATURE,
     SKILLS_FEATURE,
+    CARDS,
     WALK_SPEED,
     GAD_EXPRESS,
     MIC_SIGN,
@@ -340,6 +342,7 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     MP_ECONOMY.name,
     SPELL_LEVELS_FEATURE.name,
     SKILLS_FEATURE.name,
+    CARDS.name,  # ring and card slots (docs/plan-cards.md)
     WALK_SPEED.name,
     GAD_EXPRESS.name,
     MIC_SIGN.name,
@@ -379,5 +382,6 @@ REQUIRES = MappingProxyType(
         OPENING_TEXT.name: (OPENING.name,),
         TITLE_SEAL_RETOLD.name: (TITLE_SEAL.name,),
         SKILLS_FEATURE.name: (MANUAL_TARGETING.name,),
+        CARDS.name: (SKILLS_FEATURE.name,),
     }
 )

@@ -389,3 +389,21 @@ The doc is approved, with each of these recommendations taken:
   every marker came back unchanged, from the battery save too.
 - So slot 5 is +0x4A and slot 6 is +0x4C, and func_020555e8's two stores to them (0x0205567C, 0x02055680)
   become no-ops.
+
+### 11.2 Equipment code for slots 5 and 6 (2026-11-25)
+
+feat_card_slots.py, feature `cards` (both editions, after `skills`):
+- Item data: the "who" bits (0x1F0) on the 34 monster cards, the 17 boss cards with passives, and the four
+  dragon rings; each of those boss cards gets its six stat shorts and gear effect id (cards_data.py).
+- func_0206b930 accepts slot number 5 (`cmp r2, #5` to `#6` at 0x0206B950); func_0206b46c's slot (0x0206B4B4)
+  comes from cave_card_equip_slot, slot 6 for 0xCB to 0xCE; func_0206b880 is rewritten in place to count
+  wearers in the slot the item goes in, a ring's in slot 6, over the same five members; the slot loops of
+  func_0206b8ec, func_0206b4d8, func_0206aabc, and func_0206ab6c run to slot 6; func_020555e8's two stores to
+  slots 5 and 6 are no-ops.
+- A boss card's +2 is also read as a card effect by func_0206aa94, which maps every id below 0x100 to entry 0,
+  the same as vanilla's 0, so nothing changes there.
+- **Seen** (`test_card_equip_poke`, Jian with the Blazing Ring poked into slot 6 and the Sasquatch card into
+  slot 5, first temple battle): his battle record has ATK +2, DEF +4, INT +5, half of +4, +8, +10 because Jian
+  is cursed in that save (equipment bonuses are halved, func_0206b4d8); Inferno casts from his Special list
+  (MP 10 to 0). The build without the feature: no change and Inferno not castable (MP stays 10).
+  `test_skill_lucia_list` and `test_field_menu` unchanged.
