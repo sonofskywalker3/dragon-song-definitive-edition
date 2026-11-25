@@ -201,7 +201,7 @@ BOSS_HOOKS = frozenset({"moran", "orcus", "steal"})
 MONSTER_CARDS = frozenset(range(FIRST_CARD, FIRST_BOSS_CARD))
 PAIRED = frozenset(pair.card for pair in PAIRS)
 SLOTTABLE = MONSTER_CARDS | frozenset(passive.card for passive in BOSS_PASSIVES)
-STEAL_SPELL = 63
+STEAL_SPELL = 64
 
 
 def _check() -> None:

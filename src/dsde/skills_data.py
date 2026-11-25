@@ -6,6 +6,7 @@ skills_rufus.py, and skills_flora.py in the terms of skills_types.py. The featur
 tables the hooks read, and the learn levels, so adding a skill of an existing kind is one more `Skill`.
 """
 
+from dsde.skills_cards import CARD_SKILLS
 from dsde.skills_flora import FLORA_SKILLS
 from dsde.skills_gabryel import GABRYEL_SKILLS
 from dsde.skills_jian import JIAN_SKILLS
@@ -45,7 +46,7 @@ __all__ = [
 
 SKILLS: tuple[Skill, ...] = tuple(
     sorted(
-        (*JIAN_SKILLS, *GABRYEL_SKILLS, *RUFUS_SKILLS, *FLORA_SKILLS),
+        (*JIAN_SKILLS, *GABRYEL_SKILLS, *RUFUS_SKILLS, *FLORA_SKILLS, *CARD_SKILLS),
         key=lambda skill: skill.spell,
     )
 )

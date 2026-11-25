@@ -1,0 +1,107 @@
+# cards: a worn card from the Special list (docs/plan-cards.md 2.4). Jian and Lucia (party2_strong), first temple
+# battle. Lucia wears the Quetzalcoatl card (her slot 5, 0x020B46FE = 236) with 2000 points (0x020B48AC). Round 1:
+# Jian Fights; Lucia's Special list shows Healing Water and the card entry (shots cu_list, cu_pick); A uses it:
+# every enemy's ATK goes down (banners, shots cu_use_*), the card's points drop to 1900, her battle MP (record 1,
+# 0x0228E8E4) stays 18. Run with --save.
+include party2_strong
+poke u8 0x0213BA1B 1
+poke u16 0x020B48AC 2000
+poke u16 0x020B46FE 236
+wait 270
+watch u32 0x0228E8E4 lucia_mp
+watch u16 0x020B48AC points
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+shot cu_list
+press Down 8
+wait 30
+shot cu_pick
+press A 8
+wait 10
+shot cu_use_00
+wait 10
+shot cu_use_01
+wait 10
+shot cu_use_02
+wait 10
+shot cu_use_03
+wait 10
+shot cu_use_04
+wait 10
+shot cu_use_05
+wait 10
+shot cu_use_06
+wait 10
+shot cu_use_07
+wait 10
+shot cu_use_08
+wait 10
+shot cu_use_09
+wait 10
+shot cu_use_10
+wait 10
+shot cu_use_11
+wait 10
+shot cu_use_12
+wait 10
+shot cu_use_13
+wait 10
+shot cu_use_14
+wait 10
+shot cu_use_15
+wait 10
+shot cu_use_16
+wait 10
+shot cu_use_17
+wait 10
+shot cu_use_18
+wait 10
+shot cu_use_19
+wait 10
+shot cu_use_20
+wait 10
+shot cu_use_21
+wait 10
+shot cu_use_22
+wait 10
+shot cu_use_23
+wait 10
+shot cu_use_24
+wait 10
+shot cu_use_25
+wait 10
+shot cu_use_26
+wait 10
+shot cu_use_27
+wait 10
+shot cu_use_28
+wait 10
+shot cu_use_29
+wait 10
+shot cu_use_30
+wait 10
+shot cu_use_31
+wait 10
+shot cu_use_32
+wait 10
+shot cu_use_33
+wait 10
+shot cu_use_34
+wait 10
+shot cu_use_35
+wait 10
+shot cu_use_36
+wait 10
+shot cu_use_37
+wait 10
+shot cu_use_38
+wait 10
+shot cu_use_39

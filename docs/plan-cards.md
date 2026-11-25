@@ -510,3 +510,17 @@ caster's own Special file in slot 0; the cast script is unchanged, and the ring'
 wind cloud, earth aura), which does not come from that file, plays as for Jian. **Seen** (`test_ring_look_*`,
 Lucia wearing each ring): she steps up and raises her umbrella in her own pose, the ring's effect plays around
 the enemies, and each enemy takes the damage (556 for Inferno). Decision 3's element bursts are not used.
+
+### 11.7 Cards in the Special list (2026-11-25, in progress)
+
+The card ability is one spell id, 63 (skills_cards.py, in the skills list so every spell table covers it: learn
+level past the last, so never learned by level; all enemies, so the menu takes it with no picker). Steal moves to
+64. feat_card_use.py: the listing tail (cave_ring_listed) lists it in battle for a member whose card slot holds a
+battle card (a monster card that is not a field card) with at least 100 points (cave_card_usable);
+func_02050a74 returns 1 for it at once, the "cost" the menu needs to accept the pick; when the action runs, the
+resolver's party branch (0x02051A08) turns a Special with spell 63 into the item command (4) with the worn card,
+before the Special branch's silence test and MP charge, so the card's effect, animation, and points are the
+game's. **Seen** (`test_card_use`, Lucia wearing Quetzalcoatl at 2000 points): her list shows Healing Water and
+the card entry ("Use the card in your slot"); A uses it in her item pose, ATK DOWN on every enemy, points 2000 to
+1900, MP unchanged. To do: the card's name and points on the name bar, the rules and versions of spec 3, a card at
+0 points greyed (today it leaves the list), no "Lost", the Item command without Cards, auto battle.
