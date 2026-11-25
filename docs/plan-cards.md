@@ -359,6 +359,20 @@ The doc is approved, with each of these recommendations taken:
    once it is confirmed that Jian's Dragon Magic files show Jian himself. Pictures go to Jeff before it is built.
 4. **The boss passive table (section 4)** as drafted; the numbers get tuned in play.
 
+**Revised (Jeff, 2026-11-25, later): a card enhances the matching skill.** It replaces section 3's basic and
+upgraded versions for a wearer who knows the skill (the version built in 11.7 and tested in 11.8 for learners
+goes):
+- A wearer who knows the matching skill no longer lists the card. While the card has points, every cast of the
+  skill is enhanced and costs the skill's MP plus 100 points (a one-target skill) or 200 points (an all-target
+  skill); at 0 points the skill casts as normal. The name bar shows "+" after the name.
+- A wearer who does not know it keeps the card entry: one picked target, 100 points, no MP (as built).
+- Enhancements: a stat skill moves 2 stages (Weapon Break, War Breaker, Armor Break, Wall Breaker, Stratagem, War
+  Council; the one exception to the one-stage rule). A status that rolls always lands on a regular monster
+  (Knockout Kick; Water Bind, Binding Rain, Howl, Dread Roar). A status that already always lands lasts longer
+  (Blinding Swipe and Blinding Gale: 4 to 6 turns); poison already lasts the battle, so Venom Claw and Venom Storm
+  take 10% a turn instead of 5%. Divine Rain regen 10%; Tender Rain heals to full; Miracle Tears revives at full.
+  Bosses keep their immunities. Bealzebub keeps one version (Focus cannot be stronger).
+
 ## 9. Test plan (emulator, both editions)
 
 - Watch on the new slot shorts (7.1) through equip, battle, leave and rejoin, the func_020186b8 reset, save, and
