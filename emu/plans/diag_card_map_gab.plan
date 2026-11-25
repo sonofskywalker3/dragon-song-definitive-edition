@@ -1,0 +1,41 @@
+# Diagnostic: map the Special list of member 2 at level index 25 wearing card 218.
+include party_jian_gabryel
+poke u8 0x0213ba09 1
+poke u16 0x020b4888 1300
+poke u16 0x020b475a 218
+poke u32 0x020b471c 25
+wait 270
+watch u32 0x020B8894 bar
+watch u32 0x020B883C first
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+shot m_00
+press Right 8
+wait 30
+shot m_01
+press Right 8
+wait 30
+shot m_02
+press Down 8
+wait 30
+shot m_03
+press Down 8
+wait 30
+shot m_04
+press Right 8
+wait 30
+shot m_05
+press Down 8
+wait 30
+shot m_06
+press R 8
+wait 30
+shot m_07

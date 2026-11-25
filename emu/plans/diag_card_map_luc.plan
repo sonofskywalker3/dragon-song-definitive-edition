@@ -1,0 +1,34 @@
+# Diagnostic: map the Special list of member 1 at level index 12 wearing card 239.
+include party2_strong
+poke u8 0x0213ba1e 1
+poke u16 0x020b48b2 1300
+poke u16 0x020b46fe 239
+poke u32 0x020b46c0 12
+wait 270
+watch u32 0x020B8894 bar
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+shot m_00
+press Right 8
+wait 30
+shot m_01
+press Right 8
+wait 30
+shot m_02
+press Down 8
+wait 30
+shot m_03
+press Left 8
+wait 30
+shot m_04
+press Left 8
+wait 30
+shot m_05

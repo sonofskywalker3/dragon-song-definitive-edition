@@ -566,3 +566,28 @@ since the game turns it into a plain attack. **Seen:**
 
 Not seen: Shaitan's and Vitra's basic versions on a picked ally (the same picker as Comet, Kind NONE so no
 refusal), a status card's refusal (the skills' status test, written into spell 63's record).
+
+### 11.8 Every pair, basic and upgraded (2026-11-25)
+
+`emu/gen_card_pair_plans.py` writes `test_card_pair_*`: one round of the first temple battle per case, the wearer
+in party slot 1 (Jian in slot 0) at a level that makes the card basic (Lucia at 1) or upgraded (the learner at
+a level past the paired skill), the effect watched in the battle stat records. The Special list is a 3 x 2 grid;
+the card is its last entry, and Right from the last column goes to the next page (Gabryel at 26 has six skills
+before it). **Seen**, points 1300 to 1200 in each:
+
+| Card | Basic (Lucia, one picked target) | Upgraded |
+|---|---|---|
+| Abadon | one enemy's DEF -1 | Jian at 25: all five enemies' DEF -1 |
+| Ikontabipu | the one roll missed (30%) | Jian at 25: three of five asleep (rolls 53, 0, 70, 34, 95: under 70 lands) |
+| Shreeker | one enemy poisoned | Gabryel at 26: all five poisoned |
+| Asmodee | one enemy blinded | Gabryel at 26: all five blinded |
+| Tick | the one roll missed | Flora at 20 and Gabryel at 26: each paralysis one of five |
+| Comet | (11.7) Jian's INT +1 | Rufus at 19: both allies' INT +1 |
+| Namia | (11.7) bit 0x10 | Lucia at 13: bit 0x08 |
+| Vitra | Jian picked, 100 HP to full, Lucia stays at 100 | Lucia at 13: both to full |
+| Quetzalcoatl | (11.7) | (11.7) |
+
+The 70% roll was broken until this run: the hook read r2, which the boss test's call before it overwrites, so
+every sleep, paralysis, and stone from a card was resisted; it reads the roll from r5 now (the game computes it
+there and copies it to r2). Not seen: Shaitan (a knocked-out ally could not be set up by poking HP: the game
+still gave Jian his turn), a status card's refusal.

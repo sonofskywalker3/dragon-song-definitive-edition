@@ -36,7 +36,8 @@ stage_up:
     b     {SET_STAGE:#x}
 """
 
-# In place of `mov r0, #0` (r4 = the status, r2 = a roll of 0 to 99): r0 = 1 (resisted) for a rolled status when
+# In place of `mov r0, #0` (r4 = the status, r5 = the target's roll of 0 to 99; r2 held a copy, but the boss test's
+# call before this point overwrites it): r0 = 1 (resisted) for a rolled status when
 # the roll misses, else 0.
 ROLL_ASM = f"""
     mov   r0, #0
@@ -44,7 +45,7 @@ ROLL_ASM = f"""
     cmpne r4, #{ROLLED_STATUSES[1]}
     cmpne r4, #{ROLLED_STATUSES[2]}
     bxne  lr
-    cmp   r2, #{STATUS_CHANCE}
+    cmp   r5, #{STATUS_CHANCE}
     movhs r0, #1
     bx    lr
 """
