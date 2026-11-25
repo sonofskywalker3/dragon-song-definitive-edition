@@ -30,7 +30,7 @@ from dsde.cards_common import (
     ITEM_SIZE,
     ITEM_TABLE,
 )
-from dsde.cards_data import GAME_SPELLS, PAIRS, CardPair
+from dsde.cards_data import GAME_SPELLS, PAIRS, TICK, CardPair
 from dsde.feat_spell_levels import SCHEDULE
 from dsde.patching import CaveCode
 from dsde.skills_cards import CARD_SPELL
@@ -84,6 +84,8 @@ NAMIA_REGEN_WORD = 0xE3833008
 NAMIA_BIT = 0x08
 DIVINE_RAIN_BIT = 0x10  # Divine Rain's 5% regen
 BATTLE_ACTOR = 0x32  # battle work: the acting battler
+FIRST_FRONT = 8  # enemy battlers 8 to 11: the front row
+FRONT_SLOTS = 4
 
 # The card record, 8 bytes per monster card
 REC_SHIFT = 3
@@ -356,7 +358,8 @@ ci_fx:
 # In place of `bl func_02050094` in the Special list's OK handler (r0 = the spell). Any other spell: its flags.
 # The card spell: the target bits of the member's card use. An all-target use that would change nothing on any
 # living target is refused there (the handler's r4, r5, and r7 kept, r6 = the menu, as cave_skill_refuse wants);
-# a one-target use writes the card's test into the card spell's effect record for the grid and the picker.
+# a one-target use writes the card's test into the card spell's effect record for the grid and the picker. Tick
+# with no living front-row enemy is never refused: the game turns it into a plain attack (func_020514ec).
 MENU_ASM = f"""
     cmp   r0, #{CARD_SPELL}
     bne   {SPELL_FLAGS:#x}
@@ -372,7 +375,24 @@ MENU_ASM = f"""
     mov   r5, r0
     movs  r6, r1
     bmi   cm_none
-    cmp   r2, #{BASIC_REGEN}
+    mov   r7, r2
+    cmp   r6, #{TICK - FIRST_CARD}
+    bne   cm_kind
+    mov   r4, #{FIRST_FRONT}
+cm_front:
+    ldr   r0, cm_battlers
+    ldr   r0, [r0]
+    mov   r1, #{T.BATTLER_SIZE:#x}
+    mla   r0, r1, r4, r0
+    bl    {T.BATTLER_ALIVE:#x}
+    cmp   r0, #0
+    bgt   cm_kind
+    add   r4, r4, #1
+    cmp   r4, #{FIRST_FRONT + FRONT_SLOTS}
+    blt   cm_front
+    b     cm_none
+cm_kind:
+    cmp   r7, #{BASIC_REGEN}
     ldr   r2, cm_records
     add   r2, r2, r6, lsl #{REC_SHIFT}
     orreq r6, r6, #{BASIC_FLAG:#x}

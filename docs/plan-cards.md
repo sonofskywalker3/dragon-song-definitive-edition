@@ -551,7 +551,8 @@ every stat it moves already a stage past 0 that way, a status already held or a 
 flag already set). The resolver's item branch takes the same bits (0x02051F58), and a one-enemy card uses the
 enemy picked on the grid (0x02051F84, the skills' cave_skill_pick), Dagon included. Namia: func_0206a744 sets
 Divine Rain's 5% bit (0x10) instead of Namia's 10% bit (0x08) for a wearer who has not learned Divine Rain
-(0x0206A790, the actor from the battle work's +0x32). **Seen:**
+(0x0206A790, the actor from the battle work's +0x32). Tick with no living front-row enemy is never refused,
+since the game turns it into a plain attack. **Seen:**
 - `test_card_basic`: Lucia with Quetzalcoatl (not a learner) gets the enemy grid; one enemy's ATK goes to -1,
   points 2000 to 1900; with every enemy already at -1, the pick shows "No effect!", the grid stays up, and the
   points stay 1900.
