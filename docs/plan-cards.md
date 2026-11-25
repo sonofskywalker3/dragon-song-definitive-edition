@@ -369,9 +369,11 @@ goes):
 - Enhancements: a stat skill moves 2 stages (Weapon Break, War Breaker, Armor Break, Wall Breaker, Stratagem, War
   Council; the one exception to the one-stage rule). A status that rolls always lands on a regular monster
   (Knockout Kick; Water Bind, Binding Rain, Howl, Dread Roar). A status that already always lands lasts longer
-  (Blinding Swipe and Blinding Gale: 4 to 6 turns); poison already lasts the battle, so Venom Claw and Venom Storm
-  take 10% a turn instead of 5%. Divine Rain regen 10%; Tender Rain heals to full; Miracle Tears revives at full.
+  (Blinding Swipe and Blinding Gale: 4 to 6 turns); Venom Claw and Venom Storm take 10% a turn instead of 5%. Divine Rain regen 10%; Tender Rain heals to full; Miracle Tears revives at full.
   Bosses keep their immunities. Bealzebub keeps one version (Focus cannot be stronger).
+- Poison on a monster, from any party source (Venom Claw, Venom Storm, Shreeker), lasts 2 to 4 turns instead of
+  the whole battle, and lands on a boss 80% of the time (regular monsters: always). Poison on the party is
+  unchanged. Jeff: poison for the whole battle plus a stronger tick would take half a boss's HP and more.
 
 ## 9. Test plan (emulator, both editions)
 
