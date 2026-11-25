@@ -371,9 +371,9 @@ goes):
   (Knockout Kick; Water Bind, Binding Rain, Howl, Dread Roar). A status that already always lands lasts longer
   (Blinding Swipe and Blinding Gale: 4 to 6 turns); Venom Claw and Venom Storm take 10% a turn instead of 5%. Divine Rain regen 10%; Tender Rain heals to full; Miracle Tears revives at full.
   Bosses keep their immunities. Bealzebub keeps one version (Focus cannot be stronger).
-- Poison on a monster, from any party source (Venom Claw, Venom Storm, Shreeker), lasts 2 to 4 turns instead of
-  the whole battle, and lands on a boss 80% of the time (regular monsters: always). Poison on the party is
-  unchanged. Jeff: poison for the whole battle plus a stronger tick would take half a boss's HP and more.
+- Poison lasts 2 to 4 turns instead of the whole battle, on monsters and on the party alike, and the party's
+  poison (Venom Claw, Venom Storm, Shreeker) lands on a boss 80% of the time (regular monsters: always). Blind
+  keeps always landing, bosses included (Jeff: no boss miss for blind). Jeff: poison for the whole battle plus a stronger tick would take half a boss's HP and more.
 
 ## 9. Test plan (emulator, both editions)
 
