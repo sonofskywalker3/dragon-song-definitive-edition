@@ -1,0 +1,27 @@
+# Diagnostic: where the Item page's per-item icons come from. On the Accessories page, log the two icon
+# resources at 0x02139F2C and the start of the second one (palette, then 0x100 bytes per item from item 1).
+include boot_from_save
+wait 100
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Right 8
+wait 20
+press Right 8
+wait 20
+press Right 8
+wait 20
+press Right 8
+wait 30
+press A 8
+wait 60
+dump 0x02139F2C 0x14 icon_handles
+dump 0x022A8F80 0x40 res1_head
+dump 0x022A9180 0x40 res1_item1
+dump 0x022B6680 0x40 res1_item_d7
+dump 0x0228ED60 0x40 res0_head

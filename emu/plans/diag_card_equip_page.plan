@@ -1,0 +1,36 @@
+# Diagnostic: the Cards category of the Item page sent to the equip page. Jian gets the Quetzalcoatl card
+# (given through the bag so its points are set) and the Sasquatch card; X, Items, Cards (bottom row, second),
+# A, then shots and an A on the first card. Logs the state, Jian's slots 4 to 6, and the card counts.
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA29 1
+watch u32 0x020B0010 state
+watch u16 0x020B46A0 jian_slot4
+watch u16 0x020B46A2 jian_slot5
+watch u16 0x020B46A4 jian_slot6
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+shot ce_00
+press A 8
+wait 60
+shot ce_01
+press Right 8
+wait 30
+shot ce_02
+press A 8
+wait 60
+shot ce_03
+press A 8
+wait 60
+shot ce_04

@@ -423,3 +423,25 @@ feat_card_slots.py, feature `cards` (both editions, after `skills`):
   is cursed in that save (equipment bonuses are halved, func_0206b4d8); Inferno casts from his Special list
   (MP 10 to 0). The build without the feature: no change and Inferno not castable (MP stays 10).
   `test_skill_lucia_list` and `test_field_menu` unchanged.
+
+### 11.3 Equipping on the Item page (2026-11-25, in progress)
+
+- **The page.** func_02063e5c builds the Item page's list (0x0213A008, 8 bytes an entry: item, count): category
+  (0x02139FD4 + 4) 1 to 5 lists items of slot number 0 to 4, 6 Tools, 7 Cards (slot number 5), 8 Rare Items, 9
+  Quest Items, each item only while the bag holds more than are worn (func_0206b880). State 0x17 opens the equip
+  page (0x24, idle 0x1A, equip 0x25: func_0206b46c with the list entry) for categories 1 to 5 and the list page
+  (0x1C) for the rest; B on a page (func_0205747c) goes back to the categories, except Cards, which leave through
+  the card viewer's exit (0x59).
+- **Item icons.** sysmenupack entry 54: a 256-colour palette, then a 16x16 8bpp icon (0x100 bytes) per item from
+  item 1 (func_020280e8). Every item has its own: the dragon rings 0xCB to 0xCE are red, blue, green, and brown
+  rings, the accessory "Ring" (0xD7) a plain gold band, and each card a monster portrait.
+- **Built** (feat_card_equip.py): the Cards category opens the equip page (0x0205CC10); B there goes back to the
+  categories (0x02057DD4 compares with 0xFF); the worn item's icon (func_02064824), name (func_02064a4c), and
+  stats (the switch in func_02065240) come from cave_card_worn: slot 5 for Cards, slot 6 on the Accessories page
+  while a dragon ring is highlighted, else the category's slot.
+- **Seen** (`test_card_equip_menu`, Jian with Quetzalcoatl, Sasquatch, and the Blazing Ring): Items, Cards opens
+  the equip page; A slots Quetzalcoatl (slot 5 = 236); with Sasquatch highlighted the box shows Quetzalcoatl worn
+  and ATK 19, DEF 27 up; A swaps in Sasquatch (250); B goes back; Accessories, Blazing Ring: the box compares it
+  with the empty ring slot (INT 4 to 14), A puts it in slot 6 (0xCB), and Counter Prototype stays on (0xD0).
+- **To do:** worn cards and dragon rings stay listed (marked), picking one moves it, the member's own takes it
+  off; the box shows a card's points (current/max) in place of the count.
