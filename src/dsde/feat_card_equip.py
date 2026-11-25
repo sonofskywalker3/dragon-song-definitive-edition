@@ -81,6 +81,14 @@ GLYPH_SLASH = 11
 GLYPH_TIMES = 0x20
 COUNT_RIGHT = 0x1D  # the count's last column
 COUNT_TIMES = 0x1A
+WORN_HIDE_LOOPS = (
+    0x0205CF60,
+    0x0205D670,
+)  # states 0x18 and 0x19: hide the worn icon (sprite 10) when the slot is empty
+WORN_HIDE_LOOP_SIZE = 0x54
+WORN_HIDE_FIRST = 0xE5D61004
+WORN_HIDE_LAST = 0xBAFFFFEA
+HIDE_SPRITE = 0x02027AE8
 MARK_TEST = 0x02063D88  # func_02063d44: `cmp r0, #8` / `bhs`: Tools and Cards get the "usable here" mark
 
 # r1 = the category -> the flags of `cmp r1, #5`, with Cards counted as an equipment category; r1 is
@@ -323,6 +331,30 @@ WORN_STATS_ASM = f"""
 """
 
 
+def _worn_hide_asm(end: int) -> str:
+    """In place of a loop over slots 0 to 4 that hides the worn icon (r6 = the Item page, fp the sprite set,
+    r8 = 10, r7 = -1): hide it on an equipment page, Cards included, when cave_card_worn finds nothing."""
+    return f"""
+    ldrb  r1, [r6, #{ITEM_PAGE_CATEGORY}]
+    cmp   r1, #{CATEGORY_CARDS}
+    beq   hide_check
+    sub   r1, r1, #1
+    cmp   r1, #{LAST_EQUIP_CATEGORY - 1}
+    bhi   hide_done
+hide_check:
+    bl    ${{cave_card_worn}}
+    cmp   r0, #0
+    bne   hide_done
+    mov   r0, fp
+    mov   r1, r8
+    mov   r2, r7
+    bl    {HIDE_SPRITE:#x}
+hide_done:
+    mov   sl, #{LAST_EQUIP_CATEGORY}
+    b     {end:#x}
+"""
+
+
 def equip_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
     return (
         Patch(
@@ -374,6 +406,17 @@ def equip_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
         ),
         CaveCode(
             "cave_card_worn", WORN_ASM, "the worn item an equip page compares with"
+        ),
+        *(
+            AsmPatch(
+                loop,
+                loop + WORN_HIDE_LOOP_SIZE,
+                WORN_HIDE_FIRST,
+                WORN_HIDE_LAST,
+                _worn_hide_asm(loop + WORN_HIDE_LOOP_SIZE),
+                "equip page: the worn icon hidden by the slot the page compares with",
+            )
+            for loop in WORN_HIDE_LOOPS
         ),
         AsmPatch(
             WORN_ICON,

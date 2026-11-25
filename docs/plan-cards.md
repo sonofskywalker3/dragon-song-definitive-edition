@@ -456,3 +456,22 @@ feat_card_slots.py, feature `cards` (both editions, after `skills`):
   it (Lucia 236, Jian 0); A again takes it off (Lucia 0); back on Jian's page A slots it again.
 - **Open, for Jeff with pictures:** how the list marks an entry worn by someone else, and whether the box's "new"
   side should read blank when the pick takes the worn item off (it shows the item's name today).
+- **Review fixes.** Moving a ring or card with no free copy now clears only the first member who wears it (with
+  both Earth Rings worn, a third member's pick took both). The two loops that hide the box's icon when the worn
+  slot is empty (0x0205CF60 and 0x0205D670, states 0x18 and 0x19) ask cave_card_worn too, so the Cards page and
+  the ring slot behave as the game's own pages do: with nothing worn the box shows a black square on the worn
+  line and no icon beside the new item, exactly as the Accessories page does for a member with no accessory
+  (`diag_empty_worn`, on the build without the card feature). Not changed: func_02056420's preview (types 0 to
+  4 only) belongs to a screen that never offers a dragon ring or a card.
+
+### 11.4 Leaving members and old saves (2026-11-25)
+
+- The leave wrapper of `leave-drops-gear` (feat_party.py) clears seven slots instead of five, so a leaving
+  member's card and ring stay with the party; without the card feature the two extra slots are always 0.
+  **Not seen in the emulator:** `test_leave_gear` no longer reaches its leave (the opening now skips Jian's
+  wake-up scene it pokes; it fails the same way on the build without the card feature), so `test_card_leave`,
+  made from it, needs a new way to the leave.
+- An old save is read back (func_0206d7fc, at its `mov fp, #1`) with any dragon ring in an accessory slot moved
+  to the empty ring slot (cave_card_load_rings). **Seen** (`make_old_ring_save` on the build without the card
+  feature: Jian wears the Blazing Ring as his accessory and saves; `test_card_old_save` on the new build loads
+  it): slot 4 is 0 and slot 6 is 0xCB.

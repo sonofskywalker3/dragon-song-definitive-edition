@@ -7,8 +7,9 @@ Flora in 019) or until gear found meanwhile has outclassed it (Gabryel in 009 an
 
 The inventory count already includes equipped items (docs/re-enemies.md section 5), and field
 character records hold level stats only (gear bonuses are added when the battle copy is built,
-func_0206b030), so dropping gear is just emptying the five slots (weapon, body, arm, head, accessory
-at record + 0x3C; 0 is empty). The op table entry for 0x1C points at a wrapper that does this for a
+func_0206b030), so dropping gear is just emptying the slots (weapon, body, arm, head, accessory, then the card and
+ring slots of the card feature, at record + 0x3C; 0 is empty; without that feature the last two are
+always 0). The op table entry for 0x1C points at a wrapper that does this for a
 character who is in the party, then runs the game's handler. It skips the intro's setup leaves
 (script 026 removes Lucia, Gabryel, Flora and Rufus before the game starts) by acting only once story
 flag 0x1 is set, which Jian's wake-up scene sets right after the intro.
@@ -31,7 +32,9 @@ PARTY_SLOT_SIZE = 4
 CHARACTERS = 0x020B465C  # character records, CHARACTER_SIZE each, in id order
 CHARACTER_SIZE = 0x5C
 EQUIPMENT = 0x3C  # five u16 slots
-EQUIPMENT_SLOTS = 5
+EQUIPMENT_SLOTS = (
+    7  # the five of the game, then the card and ring slots (docs/plan-cards.md 7.1)
+)
 LAST_CHARACTER = 4
 
 # Op 0x1C handler: r0 = script context. Empties the leaving character's equipment when they are in

@@ -1,0 +1,95 @@
+# cards: a leaving member's card and ring slots are cleared with the rest of the gear (feat_party.py, docs/plan-cards.md
+# 2.2), so a one-of-a-kind card or ring stays with the party. The leave of test_leave_gear (Lucia, after the intro),
+# with the Quetzalcoatl card (236) and the Blazing Ring (0xCB) poked into her slots 5 and 6 (0x020B46FE, 0x020B4700).
+# Expected: lucia_gear_after all zero, slots 5 and 6 included.
+wait 1800
+touch 40 108 5
+wait 300
+press A 5
+wait 200
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+press A 3
+wait 300
+peek u16 0x020B6BE4 map
+poke u16 0x020B4650 1
+poke u32 0x02288918 0x0001001C
+poke u32 0x0228891C 0
+exec 0x02040238 party_leave_handler
+dump 0x020B464C 12 party_before
+poke u16 0x020B46FE 236
+poke u16 0x020B4700 0xCB
+dump 0x020B46F4 16 lucia_gear_before
+watch u32 0x02288918 poked_op
+press A 3
+wait 200
+shot lv_01
+press A 3
+wait 200
+shot lv_02
+press A 3
+wait 200
+shot lv_03
+press A 3
+wait 200
+shot lv_04
+press A 3
+wait 200
+shot lv_05
+press A 3
+wait 200
+shot lv_06
+press A 3
+wait 200
+shot lv_07
+press A 3
+wait 200
+shot lv_08
+press A 3
+wait 200
+shot lv_09
+press A 3
+wait 200
+shot lv_10
+dump 0x020B464C 12 party_after
+dump 0x020B46F4 16 lucia_gear_after
+dump 0x0213B930 0x1A4 inventory_after
+shot leave_after

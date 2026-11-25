@@ -1,0 +1,13 @@
+# For test_card_old_save: on a build without the card feature, Jian wears the Blazing Ring in his accessory slot
+# (0x020B46A0 = 0xCB, one in the bag) and the game is saved to album No.1 (Select, A, A).
+include boot_from_save
+wait 250
+poke u8 0x0213B9FA 1
+poke u16 0x020B46A0 0xCB
+press Select 3
+wait 150
+press A 3
+wait 60
+press A 3
+wait 120
+shot old_saved

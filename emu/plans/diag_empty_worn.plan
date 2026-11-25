@@ -1,0 +1,25 @@
+# Diagnostic: the equip page's box when the member wears nothing in that slot (Jian's accessory emptied, the
+# Blazing Ring in the bag). Shot ew_acc.
+include boot_from_save
+wait 100
+poke u8 0x0213B9FA 1
+poke u16 0x020B46A0 0
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Right 8
+wait 20
+press Right 8
+wait 20
+press Right 8
+wait 20
+press Right 8
+wait 30
+press A 8
+wait 60
+shot ew_acc

@@ -16,6 +16,7 @@ accessory type (so the Item page keeps it on its accessory page) and is sent to 
   func_0206ab6c (gear effects) cover the two new slots. A monster card's effect id (0x117 and up) is past the
   gear effect switch's last case (0x2D), so a slotted monster card adds no gear effect.
 - func_020555e8 (the reset that keeps the records, EXP, and cards) no longer zeroes the two new slots.
+- A save from before the ring slot is read back with any dragon ring in an accessory slot moved to the ring slot.
 
 func_02055760 (the new game's default gear), func_0206b144 (break's replacement item), and func_0206b1d0
 (the break picker) keep the game's five slots.
@@ -61,6 +62,11 @@ MP_GEAR_LIMIT = 0x0206AB38  # func_0206aabc: `cmp r7, #4` / `ble`, the slot loop
 EFFECTS_LIMIT = 0x0206AECC  # func_0206ab6c: `cmp sb, #4` / `ble`, the slot loop
 RESET_SLOT5 = 0x0205567C  # func_020555e8: `strh r5, [r1, #0xf2]`, record + 0x4A
 RESET_SLOT6 = 0x02055680  # `strh r5, [r1, #0xf4]`, record + 0x4C
+LOAD_DONE = (
+    0x0206D9B0  # func_0206d7fc, a save read back: `mov fp, #1` (the success it returns)
+)
+LOAD_DONE_WORD = 0xE3A0B001
+ACCESSORY_SLOT = 4
 
 
 def _vanilla() -> bytes:
@@ -90,7 +96,7 @@ def _item_edits(arm9: bytes) -> dict[int, int]:
 # Called in place of `and r1, r3, #0xf` in func_0206b46c (r3 = the item's type, r4 = the item, r5 = the member,
 # r2 = the member's equipment): r1 = the slot. A dragon ring goes to the ring slot. A ring or a card is one of a
 # kind: if the member already wears it, it comes off (r4 = 0 is written); if no copy is free, it is taken from
-# whoever wears it first.
+# the first member who wears it (only that one: the second Earth Ring stays where it is).
 EQUIP_SLOT_ASM = f"""
     push  {{r0, r2, r3, r6, r7, lr}}
     and   r1, r3, #{ITEM_TYPE_SLOT:#x}
@@ -123,11 +129,14 @@ eq_unique:
 eq_clear:
     ldrh  r1, [r6]
     cmp   r1, r4
-    moveq r1, #0
-    strheq r1, [r6]
+    beq   eq_found
     add   r6, r6, #{CHAR_RECORD_SIZE:#x}
     subs  r0, r0, #1
     bne   eq_clear
+    b     eq_keep
+eq_found:
+    mov   r1, #0
+    strh  r1, [r6]
 eq_keep:
     mov   r1, r7
 eq_done:
@@ -171,6 +180,34 @@ wearers_slots:
 """
 
 
+# In place of `mov fp, #1` once a save is read back: a save from before the ring slot may hold a dragon ring in
+# a member's accessory slot; it moves to the ring slot when that is empty. Keeps r0 to r3.
+LOAD_ASM = f"""
+    push  {{r0-r3, lr}}
+    ldr   r0, load_slots
+    mov   r1, #{CHARACTERS}
+load_member:
+    ldrh  r2, [r0, #{ACCESSORY_SLOT * 2}]
+    sub   r3, r2, #{FIRST_RING:#x}
+    cmp   r3, #{RING_SPAN}
+    bhi   load_next
+    ldrh  r3, [r0, #{RING_SLOT * 2}]
+    cmp   r3, #0
+    bne   load_next
+    strh  r2, [r0, #{RING_SLOT * 2}]
+    mov   r2, #0
+    strh  r2, [r0, #{ACCESSORY_SLOT * 2}]
+load_next:
+    add   r0, r0, #{CHAR_RECORD_SIZE:#x}
+    subs  r1, r1, #1
+    bne   load_member
+    mov   fp, #1
+    pop   {{r0-r3, pc}}
+load_slots:
+    .word {CHAR_RECORDS + EQUIP_OFFSET:#x}
+"""
+
+
 def slot_patches() -> tuple[Patch | AsmPatch | CaveCode, ...]:
     arm9 = _vanilla()
     return (
@@ -208,6 +245,17 @@ def slot_patches() -> tuple[Patch | AsmPatch | CaveCode, ...]:
         Patch(TOTALS_LIMIT, 0xE35E0005, 0xE35E0007, "stat totals: seven slots"),
         Patch(MP_GEAR_LIMIT, 0xE3570004, 0xE3570006, "MP cost gear: seven slots"),
         Patch(EFFECTS_LIMIT, 0xE3590004, 0xE3590006, "gear effects: seven slots"),
+        CaveCode(
+            "cave_card_load_rings",
+            LOAD_ASM,
+            "old saves: a worn dragon ring moves to the ring slot",
+        ),
+        hook(
+            LOAD_DONE,
+            LOAD_DONE_WORD,
+            "bl ${cave_card_load_rings}",
+            "old saves: a worn dragon ring moves to the ring slot",
+        ),
         Patch(RESET_SLOT5, 0xE1C15FB2, NOP, "the keep-EXP reset keeps the card slot"),
         Patch(RESET_SLOT6, 0xE1C15FB4, NOP, "the keep-EXP reset keeps the ring slot"),
     )

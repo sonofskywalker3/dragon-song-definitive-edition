@@ -1,0 +1,8 @@
+# cards: a save from before the ring slot (make_old_ring_save, Jian with the Blazing Ring in his accessory slot)
+# loaded on a build with the card feature: the ring moves to his ring slot. Expected: slot 4 (0x020B46A0) 0, slot 6
+# (0x020B46A4) 0xCB. Run with --save build/emu/saves/old_ring.SaveRAM.
+include boot_from_save
+wait 100
+peek u16 0x020B46A0 jian_slot4
+peek u16 0x020B46A4 jian_slot6
+shot old_loaded
