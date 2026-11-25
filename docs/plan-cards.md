@@ -495,3 +495,13 @@ pieces with tile 52.
 and a down arrow; Down twice shows gloves to card, the ring row with the gold band and the card row with the card
 icon, and an up arrow; Down again does nothing; R to Lucia and L back start at the top; the top menu and the Item
 page's icons are unchanged.
+
+### 11.6 Dragon Magic for anyone (2026-11-25, the look open)
+
+feat_ring_slot.py: at the end of func_02050c50 (`cmp r6, #1`, 0x02050DDC) a ring spell is listed exactly when the
+member wears its ring in the ring slot; casting follows from func_02050a74. **Seen** (`test_ring_lucia`, Jian and
+Lucia, Lucia wearing the Blazing Ring, the Tidal Ring only in the bag): Lucia's list shows Healing Water and
+Inferno; Inferno costs her 10 MP (18 to 8) and hits every enemy (556); Jian, wearing no ring, has nothing listed.
+The look: the cast swaps Lucia's sprite for Jian's mid-cast, because the Dragon Magic files (btldata 19 to 22)
+are Jian's body in the cast poses; the pillar on the enemies is a separate effect (`diag_dragon_magic_*` record the
+four spells as Jian casts them). How a non-Jian wearer's cast looks waits on Jeff.

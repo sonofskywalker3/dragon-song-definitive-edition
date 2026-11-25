@@ -1,0 +1,111 @@
+# cards: Dragon Magic for whoever wears the ring (docs/plan-cards.md 7.3). Jian and Lucia (party2_strong), first
+# temple battle. Lucia wears the Blazing Ring in her ring slot (0x020B4700 = 0xCB); the Tidal Ring is only in the
+# bag. Round 1: Jian Fights; Lucia's Special list shows Healing Water and Inferno (shot rl_list); Down, A casts
+# Inferno: her battle MP (record 1, 0x0228E8E4) drops by 10 and every enemy takes fire damage (shots rl_cast_*).
+# Round 2: Jian's Special has nothing to list (no ring worn, Tidal Wave not listed from the bag): shot rl_jian.
+# Run with --save.
+include party2_strong
+poke u8 0x0213B9FA 1
+poke u8 0x0213B9FB 1
+poke u16 0x020B4700 0xCB
+wait 270
+watch u32 0x0228E8E4 lucia_mp
+watch u32 0x0228ea24 hp4
+watch u32 0x0228ea90 hp5
+watch u32 0x0228ebd4 hp8
+watch u32 0x0228ec40 hp9
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+shot rl_list
+press Down 8
+wait 30
+shot rl_pick
+press A 8
+wait 60
+wait 10
+shot rl_cast_00
+wait 10
+shot rl_cast_01
+wait 10
+shot rl_cast_02
+wait 10
+shot rl_cast_03
+wait 10
+shot rl_cast_04
+wait 10
+shot rl_cast_05
+wait 10
+shot rl_cast_06
+wait 10
+shot rl_cast_07
+wait 10
+shot rl_cast_08
+wait 10
+shot rl_cast_09
+wait 10
+shot rl_cast_10
+wait 10
+shot rl_cast_11
+wait 10
+shot rl_cast_12
+wait 10
+shot rl_cast_13
+wait 10
+shot rl_cast_14
+wait 10
+shot rl_cast_15
+wait 10
+shot rl_cast_16
+wait 10
+shot rl_cast_17
+wait 10
+shot rl_cast_18
+wait 10
+shot rl_cast_19
+wait 10
+shot rl_cast_20
+wait 10
+shot rl_cast_21
+wait 10
+shot rl_cast_22
+wait 10
+shot rl_cast_23
+wait 10
+shot rl_cast_24
+wait 10
+shot rl_cast_25
+wait 10
+shot rl_cast_26
+wait 10
+shot rl_cast_27
+wait 10
+shot rl_cast_28
+wait 10
+shot rl_cast_29
+wait 10
+shot rl_cast_30
+wait 10
+shot rl_cast_31
+wait 10
+shot rl_cast_32
+wait 10
+shot rl_cast_33
+wait 10
+shot rl_cast_34
+wait 10
+shot rl_cast_35
+waituntil u32 0x020B0010 7 3000
+wait 110
+press Right 8
+wait 50
+press A 8
+wait 60
+shot rl_jian
