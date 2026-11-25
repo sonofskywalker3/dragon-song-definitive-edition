@@ -1,0 +1,67 @@
+# Diagnostic: the field Item page (docs/plan-cards.md 2.2). Jian gets the Blazing Ring and the Quetzalcoatl
+# card in the bag; X, Items, then each page in turn (shots ip_*), the accessory page's item picked for Jian,
+# who already wears Counter Prototype in his accessory slot. Logs the menu state and Jian's slot 4.
+include boot_from_save
+wait 100
+poke u8 0x0213B9FA 1
+poke u8 0x0213BA1B 1
+watch u32 0x020B0010 state
+watch u16 0x020B46A0 jian_slot4
+watch u16 0x020B46A2 jian_slot5
+watch u16 0x020B46A4 jian_slot6
+watch u8 0x0213B9FA ring_count
+watch u8 0x0213BA1B card_count
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+shot ip_00
+press Right 8
+wait 30
+shot ip_01
+press Right 8
+wait 30
+shot ip_02
+press Right 8
+wait 30
+shot ip_03
+press Right 8
+wait 30
+shot ip_04
+press Right 8
+wait 30
+shot ip_05
+press Right 8
+wait 30
+shot ip_06
+press R 8
+wait 30
+shot ip_07
+press R 8
+wait 30
+shot ip_08
+press R 8
+wait 30
+shot ip_09
+press R 8
+wait 30
+shot ip_10
+press R 8
+wait 30
+shot ip_11
+press A 8
+wait 40
+shot ip_12
+press A 8
+wait 40
+shot ip_13
+press A 8
+wait 40
+shot ip_14
+press A 8
+wait 60
+shot ip_15

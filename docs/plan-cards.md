@@ -27,17 +27,24 @@ frees the accessory slot, as Lunar 1 and 2 do.
   in one slot at a time. The six "character cards" the dragons drop (items 270 to 275, Jian to Althena) stay
   collectibles and cannot be slotted.
 
-### 2.2 Equipping (the Item page does not change)
+### 2.2 Equipping (Jeff, 2026-11-25, after seeing the real Item page)
 
-The Item page keeps its pages: rings on the accessory page, cards on the Cards page. Equipping stays "pick the
-item, then pick who":
-- A dragon ring goes to the picked member's ring slot, leaving the accessory alone.
-- A card picked on the Cards page goes to the picked member's card slot (today it is used instead).
-- The "who" picker's preview compares ring with ring and card with card: the member's current ring or card is
-  the "old" side.
-- Picking an item a member is already wearing for the same member takes it off **[verify how vanilla unequips an
-  accessory; follow it if it has a way, else use this toggle]**. Picking a ring or card worn by someone else for
-  a new member moves it (the old wearer's slot empties).
+The Item page is a grid of category icons (Weapons, Armor, Arm, Head, Accessories; then Tools, Cards, Rare
+Items, Quest Items). An equipment category opens a page for one member at a time: the member's portrait with L
+and R to change member, their stats, a box comparing the worn item with the highlighted one (each with its own
+small item icon, the stat change, and the item's description line), and below it the items that member can
+wear. A equips the highlighted item at once, swapping out the worn one, which goes back into the list. Worn
+items are not listed, and no page takes an item off. **[seen: diag_item_page, diag_item_page2]**
+
+- **Dragon rings** stay on the Accessories page. A on a dragon ring puts it in the member's ring slot, leaving
+  the accessory alone; the comparison box shows the member's current dragon ring as the worn side.
+- **Cards get an equip page like the Accessories page.** The Cards icon opens the same kind of page: portrait,
+  L and R, stats, and the comparison box, with the card list below. A card's lines in the box are its name, its
+  points as current/max (a boss card shows none), and what it does in the slot (the description line). A slots
+  it into that member. Today's Cards viewer moves to the bestiary (2.7).
+- **Moving and taking off.** A dragon ring or a card worn by another member stays in the list, marked as worn;
+  picking it moves it to this member and empties the other member's slot. Picking the member's own worn ring or
+  card takes it off. **[how the list marks a worn entry is settled when the page is built; pictures to Jeff]**
 - When a member leaves the party (Lucia, Rufus), that member's ring and card slots are cleared, so a unique card
   stays usable by the others. Equipping never takes an item out of the bag (func_0206b46c only writes the slot;
   equipped copies are subtracted for display through func_0206b880), so clearing the slot is all it takes
@@ -48,7 +55,7 @@ item, then pick who":
 The equipment box shows five rows at a time and now has seven entries: the five slots, then the ring, then the
 card. Up and Down scroll it (Up/Down are unused on that page today **[confirmed by the scroll trial]**). A small
 arrow shows that more rows are above or below. The offset resets to the top when the page opens and on each L/R
-member switch. Icons: the ring row uses a new silver band icon (section 6); the card row uses the menu's card
+member switch. Icons: the ring row uses the ring icon of section 6; the card row uses the menu's card
 icon (frame 12). An empty slot shows the row's icon and no name, as the other slots do.
 
 ### 2.4 Battle
@@ -81,6 +88,14 @@ The other cards do not show in the field.
   vanilla does once a card is owned (docs/re-enemies.md, drop table).
 - **Boss cards always drop** (vanilla: 30 to 50%, and a boss is fought once). Gideon 2, Gideon 3, and Ignatius
   have no source today and stay collection cards for now (decision 2).
+
+### 2.7 The bestiary (Jeff, 2026-11-25)
+
+Today's Cards viewer (the card's art, name, max points, attribute and weakness icons, and a description) becomes
+a bestiary for looking at the cards collected: the card art stays; the points go; in their place the enemy's
+class (beast, slime, human, beastman, Vile Tribe, boss, and so on: a table to draft for Jeff), its stats (HP,
+ATK, DEF, AGI, INT, DEX, LUCK at a stated level), and its attribute and weakness. Placement: an entry in the
+System list beside Music Hall, another collection viewer (a proposal, open to change).
 
 ## 3. Monster cards: basic or upgraded by wearer
 
@@ -214,11 +229,12 @@ wait (decision 2). Bonuses are first numbers to tune in play.
 
 ## 6. The ring slot icon
 
-Option 2 (decided): the unused round shield from btldata 157 (third of its four 16x16 8bpp icons) with everything
-inside its outer metal band removed, in grey: a plain silver band. Mockup `.planning/ring_options.png`, second
-tile; the hollowed pixels `.planning/hollow.png` (greyscale it). It is added as a new frame plus its greyed
-twin to the menu icon art, sysmenupack entry 42 (NTC8, 16x16 8bpp; entry 22 holds copies, keep them in step),
-never a reuse of the arm slot's ring icon (frame 6).
+Jeff (2026-11-25): use the game's own ring item icon (the plain gold band drawn beside the accessory "Ring",
+item 0xD7, in the Item page's comparison box) instead of the hollowed shield, if it can be shown on the Status
+page. Each accessory has its own small icon there (Counter Prototype a blue charm, Ring a gold band, Blazing Ring
+a red ring); where the game keeps them and how it picks one per item is not found yet (no per-item icon field in
+the item table, no icon character in the names, none in sysmenupack's or common's 16x16 sheets). Fallback: the
+hollowed shield (option 2), `.planning/ring_options.png`.
 
 ## 7. How it is built
 

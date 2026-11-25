@@ -1,0 +1,72 @@
+# Diagnostic: the Item page's accessory list for other members (L/R, touch) and the Cards category.
+# Lucia is put in party slot 1. Shots iq_*.
+include boot_from_save
+wait 100
+pin u16 0x020B4650 1
+poke u8 0x0213B9FA 1
+poke u8 0x0213BA1B 1
+watch u32 0x020B0010 state
+watch u16 0x020B46A0 jian_slot4
+watch u16 0x020B46FC lucia_slot4
+watch u8 0x0213BA1B card_count
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Right 8
+wait 20
+press Right 8
+wait 20
+press Right 8
+wait 20
+press Right 8
+wait 30
+press A 8
+wait 40
+shot iq_00
+press R 8
+wait 40
+shot iq_01
+press Down 8
+wait 30
+shot iq_02
+press Right 8
+wait 30
+shot iq_03
+press L 8
+wait 40
+shot iq_04
+press B 8
+wait 40
+shot iq_05
+press Down 8
+wait 30
+shot iq_06
+press Left 8
+wait 30
+shot iq_07
+press Left 8
+wait 30
+shot iq_08
+press A 8
+wait 60
+shot iq_09
+press Down 8
+wait 30
+shot iq_10
+press A 8
+wait 60
+shot iq_11
+press A 8
+wait 60
+shot iq_12
+press A 8
+wait 60
+shot iq_13
+press B 8
+wait 60
+shot iq_14
