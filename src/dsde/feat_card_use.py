@@ -6,6 +6,9 @@ as a spell on all targets, so no picker opens. When the action runs, the resolve
 member's command Special with that spell and turns it into the game's own item command (4) with the worn card,
 before the Special branch's silence test and MP charge: the card's effect, animation, and the points it costs are
 the game's, and silence does not stop a card.
+
+The Item command opens the item list directly (the Tools / Cards page is skipped), and Back from the list goes to
+the command page.
 """
 
 from dsde.cards_common import (
@@ -40,6 +43,14 @@ BATTLER_RECORD = 0x10
 RECORDS_PTR = 0x020B8620
 RECORD_SIZE = 0x6C
 RECORD_CHARACTER = 4
+ITEM_BUTTON_CASE = 0x02036804  # the command page's button switch, case 5 (Item): `b 0x02036918` (to page 3)
+ITEM_BUTTON_WORD = 0xEA000043
+TOOLS_BUTTON = (
+    0x02036F2C  # page 3's Tools button: build the item list and open it (page 4)
+)
+LIST_BACK_PAGE = 0x0203727C  # page 4's Back: `strh r4, [r2, #0xa]` with r4 = 3 (the Tools / Cards page)
+LIST_BACK_WORD = 0xE1C240BA
+PAGE_COMMANDS = 1
 COMMAND_SPECIAL = 2
 COMMAND_ITEM = 4
 BATTLER_CHARACTER = 4
@@ -173,8 +184,35 @@ cb_points:
 """
 
 
+# Page 4's Back goes to the command page (r2 = the menu); r4 keeps the Back sound it is passed on to.
+LIST_BACK_ASM = f"""
+    push  {{r4}}
+    mov   r4, #{PAGE_COMMANDS}
+    strh  r4, [r2, #0xa]
+    pop   {{r4}}
+    bx    lr
+"""
+
+
 def use_patches() -> tuple:
     return (
+        hook(
+            ITEM_BUTTON_CASE,
+            ITEM_BUTTON_WORD,
+            f"b {TOOLS_BUTTON:#x}",
+            "Item opens the item list, no Tools / Cards",
+        ),
+        CaveCode(
+            "cave_card_list_back",
+            LIST_BACK_ASM,
+            "back from the item list to the commands",
+        ),
+        hook(
+            LIST_BACK_PAGE,
+            LIST_BACK_WORD,
+            "bl ${cave_card_list_back}",
+            "back from the item list to the commands",
+        ),
         CaveCode("cave_card_usable", USABLE_ASM, "a worn battle card with points left"),
         CaveCode("cave_card_castable", CASTABLE_ASM, "the card spell is castable"),
         hook(

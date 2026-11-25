@@ -524,5 +524,8 @@ game's. **Seen** (`test_card_use`, Lucia wearing Quetzalcoatl at 2000 points): h
 the card entry ("Use the card in your slot"); A uses it in her item pose, ATK DOWN on every enemy, points 2000 to
 1900, MP unchanged. The name bar shows the worn card's name (the skills' name hook, for spell 63, takes the item
 name of the member's card slot) and its uses left, points / 100 (cave_card_bar in place of the cost at
-0x02044E88, never marked short of MP): "Quetzalcoatl 20". To do: the rules and versions of spec 3, a card at
-0 points greyed (today it leaves the list), no "Lost", the Item command without Cards, auto battle.
+0x02044E88, never marked short of MP): "Quetzalcoatl 20". The battle Item command opens the item list directly:
+the command page's Item case (0x02036804) jumps to the Tools button's block of the Tools / Cards page (0x02036F2C),
+and the list's Back (0x0203727C) goes to the command page (`test_card_item_command`: Item shows Healing Gum, B
+the command page, Item again the list, Fight the enemy grid). To do: the rules and versions of spec 3, a card at
+0 points greyed (today it leaves the list), no "Lost", auto battle.

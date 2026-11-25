@@ -1,0 +1,26 @@
+# cards: the battle Item command opens the item list directly, with no Tools / Cards page, and Back returns to the
+# command page (docs/plan-cards.md 2.4). Jian and Lucia (party2_strong). Item: the list (bi_list); B: the command
+# page (bi_back); Item again (bi_list2); Fight still works from the command page after (bi_fight).
+include party2_strong
+wait 270
+watch u16 0x020B880A page
+press A 8
+wait 50
+press Down 8
+wait 40
+press A 8
+wait 60
+shot bi_list
+press B 8
+wait 60
+shot bi_back
+press A 8
+wait 60
+shot bi_list2
+press B 8
+wait 60
+press Up 8
+wait 40
+press A 8
+wait 60
+shot bi_fight
