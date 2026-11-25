@@ -12,7 +12,24 @@ comparison (inside func_02065240). Each now asks cave_card_worn, which also know
 and, on the Accessories page, slot 6 while a dragon ring is highlighted.
 """
 
-from dsde.cards_common import CARD_SLOT, CHAR_RECORD_SIZE, CHAR_RECORDS, EQUIP_OFFSET, RING_ITEMS, RING_SLOT
+from dsde.cards_common import (
+    CARD_FULL,
+    CARD_FULL_SIZE,
+    CARD_POINTS,
+    FIRST_BOSS_CARD,
+    FIRST_CARD,
+    LAST_CARD,
+    CARD_SLOT,
+    CHAR_RECORD_SIZE,
+    CHAR_RECORDS,
+    EQUIP_OFFSET,
+    ITEM_SIZE,
+    ITEM_TABLE,
+    ITEM_TYPE_SLOT,
+    RING_ITEMS,
+    RING_SLOT,
+    WHO_BITS,
+)
 from dsde.patching import AsmPatch, CaveCode, Patch
 from dsde.skills_common import hook
 
@@ -29,7 +46,9 @@ PARTY = 0x020B464C  # s16 character id per party slot, 4 bytes apart
 FIRST_RING = RING_ITEMS[0]
 RING_SPAN = len(RING_ITEMS) - 1
 
-PAGE_KIND_TEST = 0x0205CC10  # state 0x17: `cmp r1, #5` (r1 = the category); ls = the equip page
+PAGE_KIND_TEST = (
+    0x0205CC10  # state 0x17: `cmp r1, #5` (r1 = the category); ls = the equip page
+)
 PAGE_KIND_WORD = 0xE3510005
 WORN_ICON = 0x0206482C  # func_02064824 after its prologue: the category switch and slot 0's lookup
 WORN_ICON_END = 0x0206488C  # draws the icon of item r2
@@ -37,11 +56,32 @@ WORN_ICON_EXIT = 0x020648A8
 WORN_NAME = 0x02064A5C  # func_02064a4c after `bl 0x02067098`: the category switch and slot 0's lookup
 WORN_NAME_END = 0x02064AB8  # draws the name of item r2
 WORN_NAME_EXIT = 0x02064CA4
-WORN_STATS = 0x020652F0  # func_02065240: the category switch over func_0206b7ec(worn item, r1)
+WORN_STATS = (
+    0x020652F0  # func_02065240: the category switch over func_0206b7ec(worn item, r1)
+)
 WORN_STATS_END = 0x020653B8
 TAKE_OFF_STATS = 0x0206B7EC
 BACK_VIEWER_TEST = 0x02057DD4  # func_0205747c, B: `cmp r0, #7`, Cards leave through the card viewer's exit
 NO_CATEGORY = 0xFF
+LIST_WORN = (
+    0x02063EC4  # func_02063e5c: `bl func_0206b880`, the worn count kept out of the list
+)
+LIST_WORN_WORD = 0xEB001E6D
+WEARERS = 0x0206B880
+COUNT_BLOCK = 0x0205D788  # state 0x19, equip page: the highlighted entry's count ("x 01"), sl = the text handle
+COUNT_BLOCK_END = 0x0205D830
+COUNT_ROW = 0x11
+DRAW_STRING = (
+    0x02066F90  # (handle, string, column, row, [sp] 0, [sp + 4] 5, [sp + 8] 0xB)
+)
+GLYPHS = 0x020A6438  # u16 offsets of the menu's short strings: 0 to 9 the digits, 10 a blank, 11 "/", 32 "x"
+GLYPH_TEXT = 0x020A65F4
+GLYPH_BLANK = 10
+GLYPH_SLASH = 11
+GLYPH_TIMES = 0x20
+COUNT_RIGHT = 0x1D  # the count's last column
+COUNT_TIMES = 0x1A
+MARK_TEST = 0x02063D88  # func_02063d44: `cmp r0, #8` / `bhs`: Tools and Cards get the "usable here" mark
 
 # r1 = the category -> the flags of `cmp r1, #5`, with Cards counted as an equipment category; r1 is
 # overwritten right after by the page kind, so it may change here.
@@ -102,6 +142,162 @@ worn_slots:
     .word {CHAR_RECORDS + EQUIP_OFFSET:#x}
 """
 
+# Called in place of the list builder's `bl func_0206b880` (r0 = the item -> r0 = how many are worn): a dragon
+# ring or a card anyone may wear counts as none worn, so it stays listed while someone wears it and can be moved
+# or taken off from the list.
+LIST_WORN_ASM = f"""
+    sub   r1, r0, #{FIRST_RING:#x}
+    cmp   r1, #{RING_SPAN}
+    bls   list_none
+    ldr   r1, list_items
+    mov   r2, #{ITEM_SIZE:#x}
+    mla   r1, r0, r2, r1
+    ldrh  r1, [r1]
+    and   r2, r1, #{ITEM_TYPE_SLOT:#x}
+    cmp   r2, #{CARD_SLOT}
+    bne   list_count
+    tst   r1, #{WHO_BITS:#x}
+    bne   list_none
+list_count:
+    b     {WEARERS:#x}
+list_none:
+    mov   r0, #0
+    bx    lr
+list_items:
+    .word {ITEM_TABLE:#x}
+"""
+
+# r0 = the text handle, r1 = the row: the highlighted entry's count on the equip page. A monster card shows its
+# points as current/max; a boss card shows nothing; anything else "x" and two digits, as the game does.
+COUNT_ASM = f"""
+    push  {{r4-r9, lr}}
+    mov   r4, r0
+    mov   r5, r1
+    ldr   r0, cnt_page
+    ldrb  r1, [r0]
+    sub   r1, r1, #1
+    ldr   r0, cnt_list
+    add   r0, r0, r1, lsl #{ITEM_LIST_SHIFT}
+    ldrh  r6, [r0]
+    ldrb  r7, [r0, #4]
+    sub   r0, r6, #{FIRST_CARD:#x}
+    cmp   r0, #{FIRST_BOSS_CARD - FIRST_CARD - 1}
+    bls   cnt_points
+    cmp   r0, #{LAST_CARD - FIRST_CARD}
+    bls   cnt_done
+    mov   r0, r7
+    mov   r1, #{COUNT_RIGHT:#x}
+    mov   r2, #2
+    mov   r3, #0
+    bl    cnt_number
+    mov   r0, #{GLYPH_TIMES:#x}
+    mov   r1, #{COUNT_TIMES:#x}
+    bl    cnt_glyph
+    b     cnt_done
+cnt_points:
+    ldr   r1, cnt_points_base
+    add   r1, r1, r0, lsl #1
+    ldrsh r8, [r1]
+    ldr   r1, cnt_full
+    mov   r2, #{CARD_FULL_SIZE}
+    mla   r1, r0, r2, r1
+    ldrh  r9, [r1]
+    mov   r0, r9
+    mov   r1, #{COUNT_RIGHT:#x}
+    mov   r2, #4
+    mov   r3, #1
+    bl    cnt_number
+    mov   r0, #{GLYPH_SLASH}
+    mov   r1, #{COUNT_RIGHT - 4:#x}
+    bl    cnt_glyph
+    mov   r0, r8
+    mov   r1, #{COUNT_RIGHT - 5:#x}
+    mov   r2, #4
+    mov   r3, #1
+    bl    cnt_number
+cnt_done:
+    pop   {{r4-r9, pc}}
+
+@ r0 = value, r1 = its last column, r2 = digits, r3 = 1 to blank leading zeros; r4 handle, r5 row
+cnt_number:
+    push  {{r6-r10, lr}}
+    mov   r6, r0
+    mov   r7, r1
+    mov   r8, r2
+    mov   r9, r3
+    mov   r10, #1
+num_next:
+    cmp   r10, #0
+    bne   num_digit
+    cmp   r9, #0
+    beq   num_digit
+    cmp   r6, #0
+    moveq r0, #{GLYPH_BLANK}
+    beq   num_draw
+num_digit:
+    mov   r1, #0
+num_div:
+    cmp   r6, #10
+    blt   num_split
+    sub   r6, r6, #10
+    add   r1, r1, #1
+    b     num_div
+num_split:
+    mov   r0, r6
+    mov   r6, r1
+num_draw:
+    mov   r1, r7
+    bl    cnt_glyph
+    mov   r10, #0
+    sub   r7, r7, #1
+    subs  r8, r8, #1
+    bne   num_next
+    pop   {{r6-r10, pc}}
+
+@ r0 = glyph index, r1 = column; r4 handle, r5 row
+cnt_glyph:
+    push  {{lr}}
+    sub   sp, sp, #12
+    mov   r3, #0
+    str   r3, [sp]
+    mov   r3, #5
+    str   r3, [sp, #4]
+    mov   r3, #0xb
+    str   r3, [sp, #8]
+    mov   r2, r1
+    ldr   r3, cnt_glyphs
+    add   r3, r3, r0, lsl #1
+    ldrh  r3, [r3]
+    ldr   r1, cnt_text
+    add   r1, r1, r3
+    mov   r0, r4
+    mov   r3, r5
+    bl    {DRAW_STRING:#x}
+    add   sp, sp, #12
+    pop   {{pc}}
+cnt_page:
+    .word {ITEM_PAGE:#x}
+cnt_list:
+    .word {ITEM_LIST:#x}
+cnt_points_base:
+    .word {CARD_POINTS:#x}
+cnt_full:
+    .word {CARD_FULL:#x}
+cnt_glyphs:
+    .word {GLYPHS:#x}
+cnt_text:
+    .word {GLYPH_TEXT:#x}
+"""
+
+COUNT_BLOCK_ASM = f"""
+    mov   r0, sl
+    mov   r1, #{COUNT_ROW:#x}
+    bl    ${{cave_card_count}}
+    mov   sb, #2
+    add   fp, sp, #0x108
+    b     {COUNT_BLOCK_END:#x}
+"""
+
 WORN_ICON_ASM = f"""
     bl    ${{cave_card_worn}}
     movs  r2, r0
@@ -135,12 +331,72 @@ def equip_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
             0xE3500000 | NO_CATEGORY,
             "B on the Cards equip page goes back to the categories, not through the card viewer's exit",
         ),
-        CaveCode("cave_card_page_kind", PAGE_KIND_ASM, "the Cards category opens an equip page"),
-        hook(PAGE_KIND_TEST, PAGE_KIND_WORD, "bl ${cave_card_page_kind}", "the Cards category opens an equip page"),
-        CaveCode("cave_card_worn", WORN_ASM, "the worn item an equip page compares with"),
-        AsmPatch(WORN_ICON, WORN_ICON_END, 0xE59F01F0, 0x012FFF1E, WORN_ICON_ASM, "equip page: the worn item's icon"),
-        AsmPatch(WORN_NAME, WORN_NAME_END, 0xE59F125C, 0x0A00007A, WORN_NAME_ASM, "equip page: the worn item's name"),
+        CaveCode(
+            "cave_card_page_kind",
+            PAGE_KIND_ASM,
+            "the Cards category opens an equip page",
+        ),
+        hook(
+            PAGE_KIND_TEST,
+            PAGE_KIND_WORD,
+            "bl ${cave_card_page_kind}",
+            "the Cards category opens an equip page",
+        ),
+        CaveCode(
+            "cave_card_list_worn",
+            LIST_WORN_ASM,
+            "worn cards and dragon rings stay listed",
+        ),
+        hook(
+            LIST_WORN,
+            LIST_WORN_WORD,
+            "bl ${cave_card_list_worn}",
+            "worn cards and dragon rings stay listed",
+        ),
+        Patch(
+            MARK_TEST,
+            0xE3500008,
+            0xE3500007,
+            "a card's mark on the list is whether the member can wear it",
+        ),
+        CaveCode(
+            "cave_card_count",
+            COUNT_ASM,
+            "equip page: a card's points in place of the count",
+        ),
         AsmPatch(
-            WORN_STATS, WORN_STATS_END, 0xE59F0460, 0xEB00190C, WORN_STATS_ASM, "equip page: the worn item's stats"
+            COUNT_BLOCK,
+            COUNT_BLOCK_END,
+            0xE5D12000,
+            0xEB0025D7,
+            COUNT_BLOCK_ASM,
+            "equip page: a card's points",
+        ),
+        CaveCode(
+            "cave_card_worn", WORN_ASM, "the worn item an equip page compares with"
+        ),
+        AsmPatch(
+            WORN_ICON,
+            WORN_ICON_END,
+            0xE59F01F0,
+            0x012FFF1E,
+            WORN_ICON_ASM,
+            "equip page: the worn item's icon",
+        ),
+        AsmPatch(
+            WORN_NAME,
+            WORN_NAME_END,
+            0xE59F125C,
+            0x0A00007A,
+            WORN_NAME_ASM,
+            "equip page: the worn item's name",
+        ),
+        AsmPatch(
+            WORN_STATS,
+            WORN_STATS_END,
+            0xE59F0460,
+            0xEB00190C,
+            WORN_STATS_ASM,
+            "equip page: the worn item's stats",
         ),
     )

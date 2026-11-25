@@ -8,7 +8,8 @@ accessory type (so the Item page keeps it on its accessory page) and is sent to 
 - Item data: every slottable card and every dragon ring may be equipped by anyone (the "who" bits), and each
   boss card with a passive gets its stat bonuses and gear effect (cards_data.BOSS_PASSIVES).
 - func_0206b930 (may this member equip it) accepts slot number 5.
-- func_0206b46c (equip) sends a dragon ring to slot 6.
+- func_0206b46c (equip) sends a dragon ring to slot 6, and makes a ring or a card one of a kind: equipping
+  the one a member wears takes it off, and one with no free copy moves from its wearer.
 - func_0206b880 (how many members wear an item) looks in slot 6 for a ring; its loop over the five members
   stays as it is.
 - func_0206b8ec (does a member wear it), func_0206b4d8 (stat totals), func_0206aabc (MP cost gear), and
@@ -23,6 +24,10 @@ func_02055760 (the new game's default gear), func_0206b144 (break's replacement 
 import struct
 
 from dsde.cards_common import (
+    BAG,
+    CARD_SLOT,
+    CHAR_RECORD_SIZE,
+    CHARACTERS,
     CHAR_RECORDS,
     EQUIP_OFFSET,
     ITEM_SIZE,
@@ -82,15 +87,55 @@ def _item_edits(arm9: bytes) -> dict[int, int]:
     return edits
 
 
-# Called in place of `and r1, r3, #0xf` in func_0206b46c (r3 = the item's type, r4 = the item): r1 = the
-# slot. Touches only r1 and the flags.
+# Called in place of `and r1, r3, #0xf` in func_0206b46c (r3 = the item's type, r4 = the item, r5 = the member,
+# r2 = the member's equipment): r1 = the slot. A dragon ring goes to the ring slot. A ring or a card is one of a
+# kind: if the member already wears it, it comes off (r4 = 0 is written); if no copy is free, it is taken from
+# whoever wears it first.
 EQUIP_SLOT_ASM = f"""
+    push  {{r0, r2, r3, r6, r7, lr}}
     and   r1, r3, #{ITEM_TYPE_SLOT:#x}
-    sub   r4, r4, #{FIRST_RING:#x}
-    cmp   r4, #{RING_SPAN}
+    sub   r0, r4, #{FIRST_RING:#x}
+    cmp   r0, #{RING_SPAN}
     movls r1, #{RING_SLOT}
-    add   r4, r4, #{FIRST_RING:#x}
-    bx    lr
+    bls   eq_unique
+    cmp   r1, #{CARD_SLOT}
+    bne   eq_done
+eq_unique:
+    ldr   r6, eq_slots
+    mov   r7, #{CHAR_RECORD_SIZE:#x}
+    mla   r6, r5, r7, r6
+    add   r6, r6, r1, lsl #1
+    ldrh  r0, [r6]
+    cmp   r0, r4
+    moveq r4, #0
+    beq   eq_done
+    mov   r7, r1
+    mov   r0, r4
+    bl    {WEARERS:#x}
+    ldr   r1, eq_bag
+    add   r1, r1, r4
+    ldrb  r1, [r1, #-1]
+    cmp   r0, r1
+    blt   eq_keep
+    ldr   r6, eq_slots
+    add   r6, r6, r7, lsl #1
+    mov   r0, #{CHARACTERS}
+eq_clear:
+    ldrh  r1, [r6]
+    cmp   r1, r4
+    moveq r1, #0
+    strheq r1, [r6]
+    add   r6, r6, #{CHAR_RECORD_SIZE:#x}
+    subs  r0, r0, #1
+    bne   eq_clear
+eq_keep:
+    mov   r1, r7
+eq_done:
+    pop   {{r0, r2, r3, r6, r7, pc}}
+eq_slots:
+    .word {CHAR_RECORDS + EQUIP_OFFSET:#x}
+eq_bag:
+    .word {BAG:#x}
 """
 
 # func_0206b880 rewritten: r0 = item -> r0 = how many of the five members wear it, in the slot it goes in.

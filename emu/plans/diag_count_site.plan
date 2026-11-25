@@ -1,0 +1,26 @@
+# Diagnostic: which count-drawing site runs on the Cards equip page.
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u16 0x020B48AC 1500
+exec 0x0205D788 site_equip
+exec 0x0205D4CC site_list
+exec 0x0205E2D0 site_e2d0
+exec 0x0205E6C8 site_e6c8
+exec 0x0205D070 site_d070
+exec 0x0205D094 site_d094
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot cs_cards

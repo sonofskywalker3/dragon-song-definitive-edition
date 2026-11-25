@@ -424,7 +424,7 @@ feat_card_slots.py, feature `cards` (both editions, after `skills`):
   (MP 10 to 0). The build without the feature: no change and Inferno not castable (MP stays 10).
   `test_skill_lucia_list` and `test_field_menu` unchanged.
 
-### 11.3 Equipping on the Item page (2026-11-25, in progress)
+### 11.3 Equipping on the Item page (2026-11-25)
 
 - **The page.** func_02063e5c builds the Item page's list (0x0213A008, 8 bytes an entry: item, count): category
   (0x02139FD4 + 4) 1 to 5 lists items of slot number 0 to 4, 6 Tools, 7 Cards (slot number 5), 8 Rare Items, 9
@@ -443,5 +443,16 @@ feat_card_slots.py, feature `cards` (both editions, after `skills`):
   the equip page; A slots Quetzalcoatl (slot 5 = 236); with Sasquatch highlighted the box shows Quetzalcoatl worn
   and ATK 19, DEF 27 up; A swaps in Sasquatch (250); B goes back; Accessories, Blazing Ring: the box compares it
   with the empty ring slot (INT 4 to 14), A puts it in slot 6 (0xCB), and Counter Prototype stays on (0xD0).
-- **To do:** worn cards and dragon rings stay listed (marked), picking one moves it, the member's own takes it
-  off; the box shows a card's points (current/max) in place of the count.
+- **One of a kind** (cave_card_equip_slot in func_0206b46c, cave_card_list_worn at the list builder's worn count
+  0x02063EC4): a dragon ring or a card anyone may wear stays listed while worn; picking the one the member wears
+  takes it off; picking one worn by another member with no free copy moves it (the second Earth Ring is a free
+  copy). The list's OK/NO mark for a card is whether the member can wear it (0x02063D88 compares with 7).
+- **Points** (cave_card_count in place of the equip page's count block 0x0205D788): a monster card shows its points
+  as current/max (glyphs from the menu's short strings: digits 0 to 9, 10 blank, 11 "/"), a boss card nothing,
+  anything else "x" and the count as before.
+- **Seen** (`test_card_equip_menu` again, Quetzalcoatl at 1500 points): the box shows 1500/2000; after A the card
+  stays listed and, with Sasquatch highlighted, the box shows Quetzalcoatl as worn and no count for Sasquatch.
+  `test_card_equip_move` (Jian and Lucia): Jian slots Quetzalcoatl; on Lucia's page it is still listed and A moves
+  it (Lucia 236, Jian 0); A again takes it off (Lucia 0); back on Jian's page A slots it again.
+- **Open, for Jeff with pictures:** how the list marks an entry worn by someone else, and whether the box's "new"
+  side should read blank when the pick takes the worn item off (it shows the item's name today).

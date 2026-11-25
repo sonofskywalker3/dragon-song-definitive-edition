@@ -1,0 +1,45 @@
+# cards: a card is one of a kind on the Item page (docs/plan-cards.md 2.2). Jian and Lucia (party slot 1), the
+# Quetzalcoatl card in the bag. Items, Cards: A slots it on Jian (Jian slot 5 = 236); R to Lucia, whose list still
+# shows it (shot mv_lucia): A moves it (Lucia 0x020B46FE = 236, Jian 0); A again takes it off (Lucia 0); R back to
+# Jian, A slots it on him again. Run with --save.
+include boot_from_save
+wait 100
+pin u16 0x020B4650 1
+poke u8 0x0213BA1B 1
+watch u32 0x020B0010 state
+watch u16 0x020B46A2 jian_slot5
+watch u16 0x020B46FE lucia_slot5
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot mv_jian
+press A 8
+wait 60
+shot mv_jian_on
+press R 8
+wait 60
+shot mv_lucia
+press A 8
+wait 60
+shot mv_lucia_on
+press A 8
+wait 60
+shot mv_lucia_off
+press L 8
+wait 60
+press A 8
+wait 60
+shot mv_jian_again
+peek u16 0x020B46A2 jian_slot5_end
+peek u16 0x020B46FE lucia_slot5_end

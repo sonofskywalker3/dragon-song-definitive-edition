@@ -1,14 +1,16 @@
 # cards: equipping a card and a dragon ring from the Item page (docs/plan-cards.md 2.2). Jian has the Quetzalcoatl
 # and Sasquatch cards and the Blazing Ring in the bag. Items, Cards (bottom row, second): the equip page opens
-# (state 0x24, then 0x1A); A slots the first card (slot 5 = 236), the box then shows it as worn while the next
-# card is highlighted (shot em_cards_worn), A swaps in Sasquatch (slot 5 = 250). B, Accessories: Right to the
+# (state 0x24, then 0x1A); A slots the first card (slot 5 = 236), which stays listed; Down highlights the next
+# card and the box shows Quetzalcoatl as worn (shot em_cards_worn); A swaps in Sasquatch (slot 5 = 250). B, Accessories: Right to the
 # Blazing Ring (the box compares it with the empty ring slot, shot em_ring_box), A puts it in slot 6 (0xCB) and
-# the accessory (Counter Prototype, 0xD0) stays. Run with --save.
+# the accessory (Counter Prototype, 0xD0) stays. Quetzalcoatl has 1500 of its 2000 points (0x020B48AC), which the
+# box shows as 1500/2000 (shot em_cards); Sasquatch, a boss card, shows none. Run with --save.
 include boot_from_save
 wait 100
 poke u8 0x0213BA1B 1
 poke u8 0x0213BA29 1
 poke u8 0x0213B9FA 1
+poke u16 0x020B48AC 1500
 watch u32 0x020B0010 state
 watch u16 0x020B46A0 jian_slot4
 watch u16 0x020B46A2 jian_slot5
@@ -30,6 +32,8 @@ wait 60
 shot em_cards
 press A 8
 wait 60
+press Down 8
+wait 40
 shot em_cards_worn
 press A 8
 wait 60
