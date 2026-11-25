@@ -475,3 +475,23 @@ feat_card_slots.py, feature `cards` (both editions, after `skills`):
   to the empty ring slot (cave_card_load_rings). **Seen** (`make_old_ring_save` on the build without the card
   feature: Jian wears the Blazing Ring as his accessory and saves; `test_card_old_save` on the new build loads
   it): slot 4 is 0 and slot 6 is 0xCB.
+
+### 11.5 The Status page (2026-11-25)
+
+feat_card_status.py. State 8 draws the box's rows; the two item loads (0x0205B17C for the empty test and the
+row's icon, 0x0205B1DC for the name) read entry (row + offset) of the list slot 0 to 4, ring slot, card slot;
+state 9's first instruction (0x0205B364) reads Up and Down and redraws through state 8; state 7's first
+(0x0205AEE0) puts the offset back to 0, so the page opens and each L/R switch starts at the top. After the rows
+(0x0205B220) an up arrow (menu glyph 14) at column 0x1D, row 4, and a down arrow (glyph 15) at row 16 show rows
+hidden above or below; the rows' text colour argument is 1 (the Item page's 5 draws nothing here).
+
+The ring icon: the menu icons are cell list sysmenupack 30 (CLT8: 20 frames of one 16x16 piece, frame 2n an
+icon, 2n + 1 its greyed twin in the second palette) over art sysmenupack 42 (NTC8: two palettes, 52 tiles: sword,
+armor, hat, bracelet, amulet, bag, card, a 32x32 box, bag, key). The Ring item's icon (sysmenupack 54, item 0xD7)
+is mapped to the art's first palette and appended as tiles 52 to 55, and frames 20 and 21 copy the sword's two
+pieces with tile 52.
+
+**Seen** (`test_card_status`, Jian with the Blazing Ring and the Sasquatch card, Lucia in the party): five rows
+and a down arrow; Down twice shows gloves to card, the ring row with the gold band and the card row with the card
+icon, and an up arrow; Down again does nothing; R to Lucia and L back start at the top; the top menu and the Item
+page's icons are unchanged.

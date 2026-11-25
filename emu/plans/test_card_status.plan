@@ -1,0 +1,46 @@
+# cards: the Status page's equipment box scrolls (docs/plan-cards.md 2.3). Jian wears the Blazing Ring (slot 6,
+# 0x020B46A4) and the Sasquatch card (slot 5, 0x020B46A2); Lucia is in party slot 1. X, Status: five rows (shot
+# st_0, a down arrow); Down: rows 2 to 6 (st_1, both arrows); Down: rows 3 to 7, the ring with the gold band icon and
+# the card (st_2, an up arrow); Down again does nothing (st_3); Up (st_4); R to Lucia: back at the top (st_5); L to
+# Jian: at the top (st_6). Then the top menu and the Item page (st_menu, st_items), whose icons share the art. Run with --save.
+include boot_from_save
+wait 100
+pin u16 0x020B4650 1
+poke u8 0x0213B9FA 1
+poke u8 0x0213BA29 1
+poke u16 0x020B46A4 0xCB
+poke u16 0x020B46A2 250
+watch u32 0x020B0010 state
+press X 3
+wait 80
+press A 8
+wait 80
+shot st_0
+press Down 8
+wait 60
+shot st_1
+press Down 8
+wait 60
+shot st_2
+press Down 8
+wait 60
+shot st_3
+press Up 8
+wait 60
+shot st_4
+press R 8
+wait 80
+shot st_5
+press L 8
+wait 80
+shot st_6
+press B 8
+wait 80
+shot st_menu
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+shot st_items
