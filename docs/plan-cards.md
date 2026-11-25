@@ -1,0 +1,370 @@
+# Plan: the card overhaul, with a dragon ring slot and a card slot (design, 2026-11-25)
+
+Draft for Jeff's approval. Nothing here is built. It supersedes the "cards lose their battle use" line of
+docs/plan-skills.md and item 7 of docs/playtest-feedback.md. Background: docs/re-cards.md (what each card does),
+docs/re-mp-jobs-rings.md 3 (slots and Dragon Magic), docs/re-enemies.md (drops, stealing), docs/design.md 10
+(dragon rings). Tags: **[confirmed]** read in code or data, **[inferred]** fits the code but not run,
+**[verify]** must be checked in the emulator before building on it. Both editions get all of it (gameplay, not story).
+
+## 1. Why
+
+The level-learned skills took over most card effects, so the cards became redundant, but a skill belongs to one
+character: when that character is away, the party loses it, and some card effects are in no kit at all. A card
+slot makes each effect a loadout choice for any member. The dragon ring slot does the same for Dragon Magic and
+frees the accessory slot, as Lunar 1 and 2 do.
+
+## 2. What the player sees
+
+### 2.1 Two new slots for every member
+
+- **Dragon ring slot.** Holds one of the four dragon rings (Blazing 0xCB, Tidal 0xCC, Gale 0xCD, Earth 0xCE).
+  Anyone can wear one. The wearer gets the ring's +10 INT and its spell, listed in that member's Special list and
+  cast at its 10 MP. A ring spell is listed only while worn, so Jian loses a ring's spell when he gives the ring
+  away. The accessory slot keeps ordinary rings and amulets only. The Black Dragon and Dark Jian both drop an
+  Earth Ring **[confirmed: drop rows 149 and 151]**, so two members can wear Earth; this plan allows it.
+- **Card slot.** Holds one card: a monster card (an ability used from the Special list, or from the field Magic
+  page for the six field cards) or a boss card (a permanent passive). One copy of each card exists, so a card is
+  in one slot at a time. The six "character cards" the dragons drop (items 270 to 275, Jian to Althena) stay
+  collectibles and cannot be slotted.
+
+### 2.2 Equipping (the Item page does not change)
+
+The Item page keeps its pages: rings on the accessory page, cards on the Cards page. Equipping stays "pick the
+item, then pick who":
+- A dragon ring goes to the picked member's ring slot, leaving the accessory alone.
+- A card picked on the Cards page goes to the picked member's card slot (today it is used instead).
+- The "who" picker's preview compares ring with ring and card with card: the member's current ring or card is
+  the "old" side.
+- Picking an item a member is already wearing for the same member takes it off **[verify how vanilla unequips an
+  accessory; follow it if it has a way, else use this toggle]**. Picking a ring or card worn by someone else for
+  a new member moves it (the old wearer's slot empties).
+- When a member leaves the party (Lucia, Rufus), that member's ring and card slots are cleared, so a unique card
+  stays usable by the others. Equipping never takes an item out of the bag (func_0206b46c only writes the slot;
+  equipped copies are subtracted for display through func_0206b880), so clearing the slot is all it takes
+  **[confirmed]**. This extends the existing leaving-member code.
+
+### 2.3 The Status page
+
+The equipment box shows five rows at a time and now has seven entries: the five slots, then the ring, then the
+card. Up and Down scroll it (Up/Down are unused on that page today **[confirmed by the scroll trial]**). A small
+arrow shows that more rows are above or below. The offset resets to the top when the page opens and on each L/R
+member switch. Icons: the ring row uses a new silver band icon (section 6); the card row uses the menu's card
+icon (frame 12). An empty slot shows the row's icon and no name, as the other slots do.
+
+### 2.4 Battle
+
+- **The Item command lists items only.** The Tools / Cards choice goes; Item opens the item list directly.
+- **A slotted monster card is the last entry of its wearer's Special list**, after every spell, ring spell
+  included. The name bar shows its name and its points, as the Cards page shows them today. Using it costs 100
+  points and the turn, as today; it costs no MP. Silence does not block it (cards were items).
+- A card at 0 points stays in the slot, greyed out, and cannot be picked until a kill recharges it (2.6). Nothing
+  is ever "Lost".
+- A boss card in the slot adds nothing to the Special list except Morus's Steal (section 5).
+
+### 2.5 Field
+
+The six field cards (Blob, Ohainkaru, Mad Fang, Ghoula, Treant, Gloomwing) are used from the wearer's field
+Magic page, last in the list, for 100 points, with today's effects and today's rule that the map must still have
+enemies (func_0206e838). The Magic page is enabled for a member who has a field card even with no spell.
+The other cards do not show in the field.
+
+### 2.6 Getting and recharging cards
+
+- **The first won battle against a species gives its card**, every time, no roll, full, in addition to the
+  normal item drops; the results screen lists it as it lists a drop today.
+- **Every later kill of that species recharges its card by 100 points**, capped at the card's full value,
+  wherever the card is (slot or bag). Three Blobs in one battle give +300. Kills are counted during the battle
+  and the card and recharges are granted only when the battle is won: an escape or a loss gives nothing. No
+  message for a recharge: the points on the card show it. **[Proposal: a results line "Blob card +100" if Jeff
+  wants it.]**
+- The normal item drop is unchanged: the roll that would have landed on the card slot gives slot 0 instead, as
+  vanilla does once a card is owned (docs/re-enemies.md, drop table).
+- **Boss cards always drop** (vanilla: 30 to 50%, and a boss is fought once). Gideon 2, Gideon 3, and Ignatius
+  have no source today (section 8, question 2).
+
+## 3. Monster cards: basic or upgraded by wearer
+
+Rule (decided): a card whose effect overlaps a kit skill gives the **basic** version to a wearer who has not
+learned that skill and the **upgraded** version to one who has. "Learned" means learned by level by now, the
+same test that lists the skill (func_02050c50 and the skills framework's level table), including a skill that is
+hidden because its all-target upgrade replaced it in the list. The basic version works on one picked target with
+the skill's rules (its success roll, its "No effect!" refusal); the upgraded version works on all targets. A card
+with no overlapping skill has one version.
+
+Every use, either version, plays the card's own animation from today (the wearer's item pose, then the card's
+effect on each target), never the paired skill's look, so a borrowed effect needs no new animation on a member
+who could never learn the skill. Only the targets and the rules change.
+
+A consequence of the rule as decided: the all-target version comes as soon as the base skill is learned, long
+before the skill's own upgrade (Quetzalcoatl gives Jian all-enemies ATK down from level 9, War Breaker comes at
+30; Shreeker gives Gabryel all-enemies poison from 13, Venom Storm at 31). The card's points are the limit.
+
+Uses = full value / 100 (docs/re-cards.md 1). Flags read from the card effect table **[confirmed]**.
+
+### 3.1 Paired cards
+
+| Card (uses) | Effect today | Pairs with | Basic (anyone else) | Upgraded (knows the skill) |
+|---|---|---|---|---|
+| Quetzalcoatl (20) | ATK down, all enemies | Weapon Break (Jian 9) | ATK down, one enemy | all enemies |
+| Abadon (14) | DEF down, all enemies | Armor Break (Jian 14) | DEF down, one enemy | all enemies |
+| Ikontabipu (13) | sleep, all enemies, never misses | Knockout Kick (Jian 25) | sleep one enemy, 70% | all enemies, each 70% (question 1) |
+| Shreeker (12) | poison, all enemies | Venom Claw (Gabryel 13) | poison one enemy | all enemies |
+| Asmodee (18) | blind, all enemies | Blinding Swipe (Gabryel 17) | blind one enemy | all enemies |
+| Tick (13) | paralysis, all enemies | Water Bind (Flora 16), Howl (Gabryel 26; fear is the same status) | paralysis on one enemy, 70% | all enemies, each 70% |
+| Comet (12) | INT up, all allies | Stratagem (Rufus 19) | INT up, one ally | all allies |
+| Namia (13) | regen 10% of max HP a turn, party | Divine Rain (Lucia 11, Flora 20) | Divine Rain's 5% regen | Namia's 10% (stacks with Divine Rain: 15%) |
+| Shaitan (10) | revive all allies, full HP | Miracle Tears (Lucia 13, Flora 32) | revive one ally, full HP | revive all allies |
+| Vitra (13) | all allies to full HP | Tender Rain (healers 8) | one ally to full HP | all allies to full HP |
+| Bealzebub (9) | party never misses | Focus (Jian 19) | one version: Focus is already party-wide, so this is how the party gets it while Jian is away or below 19 | |
+
+Notes:
+- Tick keeps its own rule in both versions: with no living enemy in the front row the use turns into a plain
+  attack **[confirmed]**. It is a check on the front row, not a limit on targets.
+- Vitra and Shaitan are their own effects (fill HP, revive at full) on one picked ally; Tender Rain and Miracle
+  Tears only decide who gets the upgrade. The basic heal versions open the ally picker as Rufus's orders do.
+
+### 3.2 Cards with one version
+
+| Card (uses) | Effect (today's) |
+|---|---|
+| Onlooker (11) | AGI down, all enemies |
+| Chupacabra (16) | DEX down, all enemies |
+| Enigma (17) | INT down, all enemies |
+| Thanatos (14) | LUCK down, all enemies |
+| Duager (12) | every stat down, all enemies |
+| Sturge (11) | LUCK up, all allies |
+| Evil Earth (15) | DEX up, all allies |
+| Dagon (18) | stone, one enemy |
+| Phantom (14) | silence, all enemies |
+| Druid (17) | "confusion": each turn 50% lost, all enemies (no attacking allies; it is closer to numb) |
+| Insector (12) | party damage dealt x 1.75 to 2.00, this battle |
+| Ochu (13) | party damage taken x 0.50 to 0.75, this battle |
+| Kuntukapu (11) | regen 5% of max MP a turn, party (decided: no pair) |
+| Hellbird (10) | all allies to full MP |
+| Yeti (18), Termite (10) | enemy steals or breaks miss, this battle |
+| Ice Mongrel (10) | escape the battle |
+| Field: Blob (8), Ohainkaru (16), Mad Fang (16), Ghoula (14), Treant (13), Gloomwing (13) | today's field effects |
+
+### 3.3 Stat and status rules for cards (question 1)
+
+Today a stat card moves a stage per use and uses stack to four stages (a boss's hit goes from 42 to 1), and a
+status card never misses a regular enemy. The skills have a rule against that: one stage at most and a success
+roll (docs/plan-skills.md, balance rules). **Recommendation:** every card, one-version cards included, follows
+the same rules: a stat card moves each target one stage at most and is refused when every target is already
+there; sleep, paralysis, and stone roll 70% on regular enemies; bosses keep their immunities; poison and blind
+still always land. Without it, Enigma or Duager used four times trivializes every boss, and recharging from easy
+kills makes the strong battle-wide cards (Insector, Ochu) cheap to keep using.
+
+## 4. Boss cards: permanent passives
+
+A boss card in the card slot gives its wearer a passive while worn and never uses points. Each is fitted to the
+boss's stats, attacks, or element (stats at the boss's minimum fight level). Fifteen are item data only (the
+card's six stat shorts and its gear effect id, which the stat and effect code reads once it includes the card
+slot); one is a small hook; three are new code. Bonuses are first numbers to tune in play.
+
+| Boss card | What stands out | Passive | How |
+|---|---|---|---|
+| Sasquatch | DEF-heavy brawler | DEF +8, ATK +4 | data |
+| Armored Boar | its charge is a double-damage hit | DEF +8, 20% chance a hit does double damage | data (gear effect 0x27) |
+| Raft | the fastest Coliseum fighter | AGI +12, DEX +5 | data |
+| Sharif | blinds the party | LUCK +10, immune to blind | data (0x10) |
+| Moran | breaks gear | **decided**: the wearer's attacks may lower the target's DEF one stage | new code |
+| Deuce | the orb guardian wall | DEF +12, LUCK +8 | data |
+| Gronk | wind caster | INT +12, 25% less wind damage | data (0x21) |
+| Zethos | top ATK of his time | ATK +12, LUCK +10 | data |
+| Caucus | casts and heals the trio | INT +10, regain 2% max HP each own turn | data (0x1D) |
+| Orcus | breaks gear | **decided**: the wearer's attacks may lower the target's ATK one stage | new code |
+| Morus | thief | **decided**: Steal (section 5) | new code |
+| Red Dragon | fire | ATK +12, 25% less fire damage | data (0x22) |
+| White Dragon | fastest dragon, wind | AGI +15, 25% less wind damage | data (0x21) |
+| Black Dragon | DEF nearly double the others, earth | DEF +15, 25% less earth damage | data (0x20) |
+| Blue Dragon | water caster | INT +15, 25% less water damage | data (0x1F) |
+| Dark Jian | a mirror of Jian | +5 to all six stats | data |
+| Gideon | sword, sleep strike | ATK +15, DEX +10 | data |
+| Gideon 2 | caster form | INT +15, regain 1% max MP each own turn | data (0x1E) |
+| Gideon 3 | huge HP | max HP +15% | small hook |
+| Ignatius | the unbeatable foe | 25% less damage from everything | data (0x25) |
+
+- **Moran and Orcus:** once per attack action (Fight, Stone Throw, Savage Rush), on its first landed hit, a 25%
+  chance that the target's DEF (Moran) or ATK (Orcus) drops one stage, through func_02054dec as Jian's breaks
+  do, only if the stage is not already below 0 (the skill cap), bosses included. Jian's combo and Savage Rush's
+  two swipes get one roll, not one per hit. The name bar tag shows it; a banner after the hit if the attack
+  script can take one cheaply.
+- Gear effects are one id per item, so each data card has at most one effect; the six stat shorts are halved
+  under the curse like any equipment **[confirmed: func_0206b4d8]**.
+- No theft or break protection passives (decided).
+- Element names follow the dragons (fire, water, wind, earth) **[inferred]**; the resistance bytes and the gear
+  effects 0x10, 0x1D to 0x27 in func_0206ab6c's switch are **[confirmed]**; each still gets one equip and one
+  battle to see it work.
+
+## 5. Morus's Steal
+
+- With the Morus card slotted, the wearer's Special list has **Steal** (free, costs the turn).
+- Pick one enemy (the enemy grid, any row). The roll is the game's hit chance, `DEX * 8 / (DEX * 8 + target AGI)`
+  (89% at equal stats), halved: **about 45% at equal stats**. On success the item is the enemy's drop slot 1
+  (the rarer one) 25% of the time and slot 0 otherwise; a slot with no item, a dragon ring, or a key item (ids 387
+  and up) falls back to the other slot, and with neither, "Nothing to steal". The card slot (slot 2) is never
+  stolen.
+- Silence blocks Steal, as it blocks other skills.
+- Each enemy can be robbed once; a second try on it is refused up front ("No effect!", as a wasted skill is).
+- The stolen item goes to the bag at once, separate from the normal drop at the end.
+- Message: "Stole <item>!" **[verify that the game's "<item> was stolen" line (enemy steals) can be reused with a
+  new verb; else "No effect!" on a miss and the item name alone on success]**.
+
+## 6. The ring slot icon
+
+Option 2 (decided): the unused round shield from btldata 157 (third of its four 16x16 8bpp icons) with everything
+inside its outer metal band removed, in grey: a plain silver band. Mockup `.planning/ring_options.png`, second
+tile; the hollowed pixels `.planning/hollow.png` (greyscale it). It is added as a new frame plus its greyed
+twin to the menu icon art, sysmenupack entry 42 (NTC8, 16x16 8bpp; entry 22 holds copies, keep them in step),
+never a reuse of the arm slot's ring icon (frame 6).
+
+## 7. How it is built
+
+### 7.1 Slots in the character record **[verify first]**
+
+The record is 0x5C bytes per character at 0x020B4658; the five equipment u16s are at +0x40 (Jian 0x020B4698),
+indexed `slot * 2` **[confirmed]**. Slots 5 and 6 fall at +0x4A and +0x4C. The save copies 0x39C bytes from
+0x020B464C, which covers every record, so they persist **[confirmed: func_0206da14, func_0206d7fc]**. Two
+writers zero them today: game init, and **func_020555e8** (decomp lines 61108 and 61109), reached from
+func_020186b8, a stash-and-restore reset that keeps EXP and cards, from field states 0xC and 0xD of
+func_0201e6a0. That second writer must keep slots 5 and 6. Before anything else: a read and write watch on
++0x4A, +0x4C (and +0x5A as the fallback) through equip, battle, the curse, a member leaving and rejoining, the
+func_020186b8 path, save, and load. A watch cannot prove that nothing reads them, so also list every instruction
+that loads from a record with an offset of 0x4A to 0x4D.
+
+**Slot 5 = card, slot 6 = ring.** Cards have item type 0x8005 (low nibble 5), so the equip routine's "slot =
+type" puts a card in slot 5; the 34 monster and 20 boss cards get the five "who may equip" bits (0x10 to 0x100),
+the six character cards do not. The rings keep type 0x8014 (accessory, so the Item page keeps them on its
+accessory page) with all five "who" bits, and func_0206b46c sends 0xCB to 0xCE to slot 6. The Status page shows
+slot 6 before slot 5.
+
+Old saves: on load, a dragon ring found in a member's accessory slot moves to slot 6.
+
+### 7.2 Equipment code
+
+Each place has its own fix; none is a blanket `< 5` to `< 7` **[confirmed by reading each]**:
+
+| Function | What it is | Change |
+|---|---|---|
+| func_0206b930 | "may this member equip it": false when the type's low nibble is above 4 | allow nibble 5 (cards with "who" bits) |
+| func_0206b880 | how many members wear an item: looks only in the slot named by the type; its `< 5` is the member loop | look in slot 5 for cards and slot 6 for rings; the member loop stays 5 |
+| func_0206b8ec | does a member wear this item (Dragon Magic's cast test) | search slots 0 to 6 |
+| func_0206b4d8 | stat totals | add slots 5 and 6 |
+| func_0206b0fc's users: func_0206ab6c (gear effects; its bound is `if (4 < i) return`, decomp ~73713) and func_0206aabc (MP cost) | gear effects | include slots 5 and 6 |
+| func_02055760 | copies a five-per-member default gear table (0x02094720) | unchanged |
+| func_0206b144 | break's "replace with the default item" | unchanged |
+| func_0206b1d0 | break picker | unchanged (4) |
+
+Then the Item page's "who" picker preview (the callers of func_0206b030 around decomp lines 54616, 55160, 64463,
+and 69627) and the per-slot menu routines func_02064824, func_02064a4c, func_02065240, func_02059f84, and
+func_02056420 take the old item from slot 6 for a ring and slot 5 for a card. Search the rest of arm9 for slot
+reads by address (record + 0x40 + 2 * n) before calling it done.
+
+A monster card's item +2 is its card effect id (0x117 to 0x139); the gear effect switch ignores ids above 0x2D
+**[confirmed]**, so a slotted monster card adds nothing there. Boss cards get gear effect ids at +2; check that
+nothing else (the Cards page's "usable" test, the card command) reads a boss card's +2 as a card effect.
+
+### 7.3 Dragon Magic for anyone
+
+- Listing (func_02050c50): a ring spell (flags 0x100000 to 0x800000) is listed for any member whose slot 6
+  holds that ring, and no longer for Jian from the bag alone.
+- Casting (func_02050a74): the same test on the caster's slot 6, for every member.
+- The look: Jian keeps his four Dragon Magic files (btldata 19 to 22) in slot 0. For anyone else see question 3.
+
+### 7.4 Monster cards in the Special list and the field Magic page
+
+Card entries do not pretend to be spells. Spell ids index the spell table everywhere (func_02050a74, targeting
+flags, descriptions, the field name pool 0x0205C108), so a card entry carries a **marker** that every consumer
+checks first, through one set of shared helpers (name, description, icon, targets, usable, cost).
+
+- The list builders (battle func_02035e00 case 2, field func_02064ff0) pass through the skills framework's sort
+  and compaction (feat_skills_order.py). After the sort, append one entry for the slotted card: the marker plus
+  the card's item id. Morus's Steal is an ordinary new skill (spell id 63) and sorts normally. Id 63 is the last
+  one the sort key's 6 id bits hold (`KEY_ID_BITS`); widen the key before adding any later skill.
+- Name bar: the card's name and points; description line: the card's description; row icon: the card icon.
+- Cast: a card entry issues today's card command (command 4 with that item), so the effect, the animation, and
+  the 100-point charge (func_0207f83c) stay the game's own, and no MP path is touched. The battler keeps the
+  version (basic or upgraded) chosen when the entry was picked. In the card effect path: basic narrows the
+  targets to the one picked (the enemy grid for enemies, the ally picker for allies); every use applies the rules
+  of 3.3 (one stage, 70% rolls, and the refusal before the turn through the skills framework's idle test and
+  the grid's veto).
+- The battle auto or AI caller (decomp ~58339) handles a card entry or skips it.
+- func_0207f83c: at 0 points the card is no longer removed and "Lost <name> card" no longer shows. A card at 0 is
+  listed greyed and refused when picked.
+- The "has any spell" test (func_02050ec8) also answers yes for a member with a slotted card or Steal, so Special
+  (battle) and the Magic page (field) are enabled.
+- Battle Item menu: drop the Tools / Cards choice (func_02035e00's card list, +0x82 = 0).
+
+### 7.5 Drops and recharge
+
+Normal enemy drops run from func_02069f34, which calls the roll func_02069e00; the card id is
+`(row >> 2) + 0xD8` and the owned test is func_0206ba54 (the bag count, which includes a slotted card). Both run
+as each enemy dies, before the battle is won, and DE's `one-battle-mode` already changes this path (vanilla
+Virtue mode gave EXP instead of a drop), so the hook goes after that patch. During the battle, count kills per
+species in a small battle-time table; on victory (the results step) grant each card not yet owned at full value,
+and add 100 per kill (not counting the one that won it) to each owned card's counter (0x020B4884 + 2 * (card -
+0xD8)), capped at its full value (0x0209EA14 + 8 * (card - 0xD8)). The new card does not use the four-entry
+loot buffer. Bosses: the card slot's chance becomes 100% for all 20 (func_02069f34's boss branch).
+
+### 7.6 Boss passives
+
+Data: each boss card's six stat shorts and +2 gear effect id. Hooks: Gideon 3's max HP +15% in the HP recompute
+(func_0206b030 or func_02054ebc); Moran and Orcus after a landed physical hit in func_02030b44, wearer only
+(test the attacker's slot 5; one roll per action); Steal as above. The battle-wide flag word is party-wide, so
+none of the wearer-only effects uses it.
+
+### 7.7 Text
+
+- Item descriptions (sysmenupack 058, CMTX, one string per item id): rewrite the 34 monster cards to say what the
+  card does in a slot, and the 20 boss cards ("A collection card, it cannot be used" today) to say their passive.
+  The four rings: "Grants <spell> to the wearer." Both editions.
+- New strings: "Steal", its description, "Stole <item>!", "Nothing to steal".
+
+### 7.8 Modules
+
+New feature `cards` (both editions), split under 400 lines a file: `cards_data.py` (pairs, boss passives, item
+type edits), `feat_card_slots.py` (record slots, equipment code, equip routing, leaving members, old saves),
+`feat_card_status.py` (Status page scroll, icon, arrow), `feat_card_use.py` (Special and Magic entries, cast
+routing, points, no "Lost"), `feat_card_drops.py`, `feat_card_bosses.py` (hooks, Steal), and the ring changes in
+`feat_ring_slot.py`. The scroll trial branch (`spike/status-scroll`) is a reference only, never merged.
+
+## 8. Questions for Jeff
+
+1. **Card stat and status rules (3.3).** Recommendation: cards follow the skill rules (one stage, 70% rolls,
+   refusal), not today's stacking.
+2. **Gideon 2, Gideon 3, and Ignatius cards.** Vanilla never drops them (0%), Gideon 2 and 3 are the final
+   fights, and the Ignatius fight cannot be won. Recommendation: leave them as collection cards for now (no
+   passive) and settle them with the Retold Ignatius fight; their draft passives stay in the table for then.
+3. **How a ring spell looks on someone other than Jian.** Jian's four Dragon Magic files show Jian himself
+   **[verify]**. Recommendation: the wearer's own cast pose, then the game's element effects that the party has
+   never used (224 burst, 225 geyser, 226 flame column, 227 shattering boulder, tinted) on each enemy, which also
+   answers "the same spell four times". Pictures before building.
+4. **The boss passive table (section 4).** Approve or adjust; the numbers are first drafts to tune in play.
+
+## 9. Test plan (emulator, both editions)
+
+- Watch on the new slot shorts (7.1) through equip, battle, leave and rejoin, the func_020186b8 reset, save, and
+  load; an old save with a ring in Jian's accessory slot.
+- Equip a ring and a card on each member from the Item page; the preview compares the right pair; move both to
+  another member; take both off. Save, reload, check.
+- Status page: seven rows, Up and Down scroll, arrow, L/R resets, both new icons.
+- Each ring on Lucia: listed, castable at 10 MP, +10 INT; Jian without it: not listed.
+- One paired card in each state: basic on a non-learner, upgraded on a learner, both charge 100 points and no MP;
+  0 points greyed and refused; first-win drop, +100 per later kill, cap; nothing after an escape.
+- A boss data passive (stat totals change on the Status page), Gideon 3's HP, Moran or Orcus on a forced roll,
+  Steal success, refusal, and fallbacks.
+- Field card from the Magic page on a member with no spell.
+- Plans and GIFs under `emu/plans/`; at most two emulator instances at once.
+
+## 10. Build order
+
+1. Watch and readers of the record slots, and the func_020555e8 fix (7.1); stop and re-plan if the shorts are in
+   use.
+2. Equipment code, equip routing, Item page preview, leaving members, old saves (7.2, 7.1, 2.2).
+3. Status page scroll and icons (2.3, 6).
+4. Ring spells for anyone (7.3), after question 3.
+5. Cards in the Special list and the field Magic page, points, no "Lost", Item menu without Cards (7.4).
+6. Drops and recharge (7.5).
+7. Boss passives: data first, then Gideon 3, Moran and Orcus, Steal (7.6, 5).
+8. Text (7.7), then the full test plan.
