@@ -1,0 +1,83 @@
+# cards: slot 5 and 6 markers (see test_card_slot_watch) through a won battle: the first temple battle.
+include boot_from_save
+wait 250
+poke u16 0x020B46A2 0x1234
+poke u16 0x020B46A4 0x5678
+poke u16 0x020B46B2 0x2468
+poke u16 0x020B46FE 0x1357
+poke u16 0x020B4700 0x9ABC
+trace 0x020B46A2 jian_slot5
+trace 0x020B46A4 jian_slot6
+trace 0x020B46B2 jian_5a
+trace 0x020B46FE lucia_slot5
+trace 0x020B4700 lucia_slot6
+include cheats_strong
+include warp6
+wait 300
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 20
+press A 3
+wait 400
+shot cw_after_battle
+peek u32 0x020B0010 state
+peek u16 0x020B46A2 jian_slot5_end
+peek u16 0x020B46A4 jian_slot6_end
+peek u16 0x020B46B2 jian_5a_end
+peek u16 0x020B46FE lucia_slot5_end
+peek u16 0x020B4700 lucia_slot6_end

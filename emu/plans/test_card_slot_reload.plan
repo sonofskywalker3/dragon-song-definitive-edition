@@ -1,0 +1,11 @@
+# cards: after test_card_slot_watch saved with marker values in slots 5 and 6 (record +0x4A, +0x4C), load
+# that save (run without --save, so the battery save of the last run stays) and read them back.
+# Expected: Jian 0x1234 and 0x5678, +0x5A 0x2468, Lucia 0x1357 and 0x9ABC.
+include boot_from_save
+wait 100
+peek u16 0x020B46A2 jian_slot5
+peek u16 0x020B46A4 jian_slot6
+peek u16 0x020B46B2 jian_5a
+peek u16 0x020B46FE lucia_slot5
+peek u16 0x020B4700 lucia_slot6
+shot cr_loaded

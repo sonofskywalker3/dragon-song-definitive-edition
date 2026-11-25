@@ -1,0 +1,54 @@
+# cards: are the record shorts +0x4A and +0x4C (equipment slots 5 and 6, docs/plan-cards.md 7.1) free?
+# Marker values go into Jian's and Lucia's two shorts and Jian's +0x5A, every write to them is traced, and
+# the run visits the Status page and saves (Select, album No.1); test_card_slot_battle wins a battle. Expected:
+# no trace line, and the markers unchanged at the end. test_card_slot_reload then loads the save made here.
+# Records are 0x5C each from 0x020B4658: Jian +0x4A = 0x020B46A2, +0x4C = 0x020B46A4, +0x5A = 0x020B46B2;
+# Lucia +0x4A = 0x020B46FE, +0x4C = 0x020B4700.
+include boot_from_save
+wait 250
+poke u16 0x020B46A2 0x1234
+poke u16 0x020B46A4 0x5678
+poke u16 0x020B46B2 0x2468
+poke u16 0x020B46FE 0x1357
+poke u16 0x020B4700 0x9ABC
+trace 0x020B46A2 jian_slot5
+trace 0x020B46A4 jian_slot6
+trace 0x020B46B2 jian_5a
+trace 0x020B46FE lucia_slot5
+trace 0x020B4700 lucia_slot6
+press X 3
+wait 80
+press A 3
+wait 60
+shot cw_status
+press Down 8
+wait 20
+press B 3
+wait 60
+press B 3
+wait 300
+press Select 3
+wait 150
+shot cw_album
+press A 3
+wait 60
+shot cw_s1
+press A 3
+wait 80
+shot cw_saved
+press B 3
+wait 100
+press B 3
+wait 100
+press B 3
+wait 300
+shot cw_field
+peek u16 0x020B46A2 jian_slot5_after_save
+peek u16 0x020B46A4 jian_slot6_after_save
+shot cw_end
+peek u32 0x020B0010 state
+peek u16 0x020B46A2 jian_slot5_end
+peek u16 0x020B46A4 jian_slot6_end
+peek u16 0x020B46B2 jian_5a_end
+peek u16 0x020B46FE lucia_slot5_end
+peek u16 0x020B4700 lucia_slot6_end

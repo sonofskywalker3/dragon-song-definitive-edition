@@ -369,3 +369,23 @@ The doc is approved, with each of these recommendations taken:
 6. Drops and recharge (7.5).
 7. Boss passives: data first, then Moran and Orcus, Steal (7.6, 5).
 8. Text (7.7), then the full test plan.
+
+## 11. Built
+
+### 11.1 The record slots are free (2026-11-25)
+
+- **Static.** Every ARM halfword load or store with an offset of 0x4A or 0x4C in arm9 (26 functions) was read:
+  the hits are battle records (0x6C each, where +0x4A is a stat stage), stack frames, and menu or save
+  structures (0x020A6438, 0x020B6BE4, the save header). None is a character record. Thumb code cannot reach
+  those offsets with an immediate. The only references to the record shorts by address are the two zeroing
+  loops: game init (func_02055760) and func_020555e8, which zeroes +0x4A to +0x58 of all five records and then
+  recomputes the stat totals at +0x4E to +0x58 (func_0206b4d8 adds into +0x4E onward; it never touches +0x4A
+  or +0x4C). func_020555e8 runs from func_020186b8: it stashes the character records and five other blocks,
+  reinitializes the game (func_0201881c), restores them, and puts back the card counts and each member's EXP
+  from a saved buffer. It is reached from field states 0xC and 0xD of func_0201e6a0 after a fade.
+- **Watched** (`test_card_slot_watch`, `test_card_slot_battle`, `test_card_slot_reload`): marker values in
+  Jian's and Lucia's +0x4A and +0x4C and Jian's +0x5A, a write trace on each, through the Status page, a save
+  to album No.1, a won battle (Jian to level 4), and a fresh boot that loads the save. No write was traced and
+  every marker came back unchanged, from the battery save too.
+- So slot 5 is +0x4A and slot 6 is +0x4C, and func_020555e8's two stores to them (0x0205567C, 0x02055680)
+  become no-ops.
