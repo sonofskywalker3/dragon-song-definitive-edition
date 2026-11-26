@@ -140,6 +140,15 @@ Weakness   (icons, as today)
   DEF x 6/5).
   The card's bar shows that level plus one, as the Status page counts. `test_bestiary_card`: Quetzalcoatl LV 23
   HP 422, Sasquatch LV 8 HP 241 (the fight's documented 241), Dark Jian; everything fits left of the card.
+- **Opening it** (Jeff, 2026-11-26: a fifth System plank would need new lettering art, B, r, and y are on no
+  plank; "that's perfect" to Y on the Cards equip page instead): Y there (func_0205747c, hooked after its
+  prologue) sets cave_card_list_once, hides the equip page's portrait (sprite 2 of 0x0213AC70), and asks for
+  state 0x17, whose page-kind cave then opens the game's card list page (the viewer) once, on the highlighted
+  card. B on that page leaves through the game's own viewer exit (0x59, which frees the card pictures; the
+  Cards equip page's B still goes to the categories), and 0x59 then goes to 0x17 with Cards kept, so B lands on
+  the equip page. `test_bestiary_open`: Y, Down, B, Y, B, B all clean. A on a non-field card does nothing
+  (`diag_bestiary_a`); A on a field card there was not tried. The hint line still reads "Select Card": a
+  "Y: Bestiary" hint needs a new menu message, not done yet.
 - **No enemy class.** The game has none: the 0x54-byte enemy record is fully accounted for (docs/re-enemies.md 1)
   and none of it is a class, so the class is dropped (Jeff, 2026-11-26: "if not, drop it").
 - **The stated level** (proposal): a regular enemy at the highest party level, which is the level the game itself

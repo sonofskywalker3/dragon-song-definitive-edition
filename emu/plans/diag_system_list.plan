@@ -1,0 +1,16 @@
+# Diagnostic: the System list as it is (for the bestiary entry mock-up): X, Right to System, A.
+include boot_from_save
+wait 250
+press X 3
+wait 90
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press A 3
+wait 60
+shot sys0

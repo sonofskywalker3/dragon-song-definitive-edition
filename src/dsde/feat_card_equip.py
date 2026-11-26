@@ -38,6 +38,8 @@ CATEGORY_ACCESSORY = 5
 LAST_EQUIP_CATEGORY = 5
 ITEM_PAGE = 0x02139FD4  # +0 the list cursor (1-based), +4 the category
 ITEM_PAGE_CATEGORY = 4
+ITEM_PAGE_KIND = 3  # 1 the list page, 2 the equip page
+LIST_PAGE = 1
 ITEM_LIST = 0x0213A008  # 8 bytes per entry: u32 item, u8 count
 ITEM_LIST_SHIFT = 3
 MENU_WORK = 0x0213B27C  # +0x644: the party slot shown
@@ -62,7 +64,6 @@ WORN_STATS = (
 WORN_STATS_END = 0x020653B8
 TAKE_OFF_STATS = 0x0206B7EC
 BACK_VIEWER_TEST = 0x02057DD4  # func_0205747c, B: `cmp r0, #7`, Cards leave through the card viewer's exit
-NO_CATEGORY = 0xFF
 LIST_WORN = (
     0x02063EC4  # func_02063e5c: `bl func_0206b880`, the worn count kept out of the list
 )
@@ -91,12 +92,34 @@ WORN_HIDE_LAST = 0xBAFFFFEA
 HIDE_SPRITE = 0x02027AE8
 MARK_TEST = 0x02063D88  # func_02063d44: `cmp r0, #8` / `bhs`: Tools and Cards get the "usable here" mark
 
-# r1 = the category -> the flags of `cmp r1, #5`, with Cards counted as an equipment category; r1 is
-# overwritten right after by the page kind, so it may change here.
+# r1 = the category -> the flags of `cmp r1, #5`, with Cards counted as an equipment category, unless
+# cave_card_list_once is set (the bestiary's Y, feat_bestiary.py): then Cards opens the game's card list page
+# once, and the flag is cleared. r1 is overwritten right after by the page kind, and r2 and r3 are reloaded,
+# so they may change here.
 PAGE_KIND_ASM = f"""
     cmp   r1, #{CATEGORY_CARDS}
+    bne   pk_test
+    ldr   r3, pk_once
+    ldrb  r2, [r3]
+    cmp   r2, #0
     moveq r1, #0
+    movne r2, #0
+    strbne r2, [r3]
+pk_test:
     cmp   r1, #{LAST_EQUIP_CATEGORY}
+    bx    lr
+pk_once:
+    .word ${{cave_card_list_once}}
+"""
+
+# B on the Item page, r0 = the category, r2 the Item page -> eq to leave through the card viewer's exit (state
+# 0x59): Cards on the list page only (which the bestiary opens, feat_bestiary.py); the Cards equip page goes
+# back to the categories as the equipment pages do. r3 is set before its next use on both paths.
+BACK_KIND_ASM = f"""
+    cmp   r0, #{CATEGORY_CARDS}
+    bxne  lr
+    ldrb  r3, [r2, #{ITEM_PAGE_KIND}]
+    cmp   r3, #{LIST_PAGE}
     bx    lr
 """
 
@@ -357,11 +380,21 @@ hide_done:
 
 def equip_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
     return (
-        Patch(
+        CaveCode(
+            "cave_card_back_kind",
+            BACK_KIND_ASM,
+            "B on the Cards equip page goes back to the categories, not through the card viewer's exit",
+        ),
+        hook(
             BACK_VIEWER_TEST,
             0xE3500007,
-            0xE3500000 | NO_CATEGORY,
+            "bl ${cave_card_back_kind}",
             "B on the Cards equip page goes back to the categories, not through the card viewer's exit",
+        ),
+        CaveCode(
+            "cave_card_list_once",
+            "    .word 0",
+            "set to open the Cards category's list page once instead of the equip page",
         ),
         CaveCode(
             "cave_card_page_kind",

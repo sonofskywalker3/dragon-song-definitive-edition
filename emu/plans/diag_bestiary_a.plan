@@ -1,0 +1,36 @@
+# Diagnostic: A inside the bestiary (the game's card list page; vanilla A uses a field card).
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA29 1
+poke u8 0x0213BA38 1
+poke u32 0x020B4664 22
+watch u32 0x020AFF84 menu
+watch u8 0x02139FD7 page_kind
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+press Y 6
+wait 60
+poke u8 0x0213BA07 1
+watch u16 0x020B4884 blob_points
+press A 6
+wait 60
+shot a_00
+press A 6
+wait 60
+shot a_01
+press B 6
+wait 60
+shot a_02

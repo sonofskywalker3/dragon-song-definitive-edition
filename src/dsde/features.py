@@ -392,6 +392,7 @@ REQUIRES = MappingProxyType(
         TITLE_SEAL_RETOLD.name: (TITLE_SEAL.name,),
         SKILLS_FEATURE.name: (MANUAL_TARGETING.name,),
         CARDS.name: (SKILLS_FEATURE.name,),
+        BESTIARY.name: (CARDS.name,),
         SKILL_ICONS.name: (SKILLS_FEATURE.name, MANUAL_TARGETING.name),
     }
 )
