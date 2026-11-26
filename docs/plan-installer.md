@@ -57,7 +57,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 10 | B in a town menu selects Leave town | town-menu-dpad |
 | 11 | The HUD stops pulsing | still-hud |
 
-**Proposed, for Jeff's review group by group**
+**Menus and text (12 to 19) approved, Jeff, 2026-11-26; the rest proposed, for review group by group**
 
 | # | Group | Switch | Today's feature |
 |---|---|---|---|
