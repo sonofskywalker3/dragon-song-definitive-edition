@@ -1,0 +1,22 @@
+# Test: Gabryel's Cards equip page names Shreeker's power-up: "Venom Claw poison: 2x damage". Gabryel (id 2) is
+# put in party slot 0 and given Shreeker; X, Items, Cards.
+include boot_from_save
+wait 100
+poke u8 0x0213BA09 1
+poke u16 0x020B464C 2
+poke u32 0x020B46CC 20
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot vc_00
