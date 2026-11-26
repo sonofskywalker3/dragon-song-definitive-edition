@@ -1,4 +1,4 @@
-"""What each card says on the Cards equip page (docs/plan-cards.md 7.7): DRAFT for Jeff's approval.
+"""What each card says on the Cards equip page (docs/plan-cards.md 7.7), approved by Jeff 2026-11-26.
 
 Item descriptions are sysmenupack entry 58 ("CMTX"): a header, a u16 table, then one fixed 61-byte record per item
 id from 0x346 (60 characters, the end byte, spaces after it). The equip page shows a record as two lines of 30

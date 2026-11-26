@@ -412,7 +412,7 @@ none of the wearer-only effects uses it.
   The four rings: "Grants <spell> to the wearer." Both editions.
 - New strings: "Steal", its description, "Stole <item>!", "Nothing to steal".
 
-- **Card text, draft (2026-11-26):** the bestiary shows no card text (removed with the stats panel); the equip
+- **Card text, approved (Jeff, 2026-11-26):** the bestiary shows no card text (removed with the stats panel); the equip
   page shows it, two lines of 30 from a fixed 61-byte record (sysmenupack 58); the font has no %, +, or
   parentheses. Jeff: short lines ("Doubles Weapon Break", "Halves fire damage"), and the skill named after what
   the member shown knows. card_text.py (part of `cards`): a card's own record is what it does for anyone; a card
