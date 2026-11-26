@@ -1,0 +1,68 @@
+# cards: a missed Steal (docs/plan-cards.md 5). As test_card_steal's first round, with the random state set to 5
+# at the steal's first roll (cave_skill_steal + 0x48): the roll is 55, not under 50. Expect: the target's robbed bit
+# set (on the attempt), nothing stolen (cave_skill_stolen 0x01FFBB64 stays 0), the MISS popup (shots sm_msg_*).
+# Run with --save.
+include party2_strong
+poke u8 0x0213ba33 1
+poke u16 0x020b46a2 260
+execpoke 0x01FFBC68 u32 0x020A0238 5
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+battlers
+watch u32 0x02282940 flags
+watch u16 0x01FFBB64 stolen
+watch u32 0x0228e878 jian_mp
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 60
+shot sm_list
+press A 8
+wait 60
+shot sm_grid
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+waituntil u32 0x020B0010 8 3000
+wait 20
+shot sm_msg_0
+wait 20
+shot sm_msg_1
+wait 20
+shot sm_msg_2
+wait 20
+shot sm_msg_3
+wait 20
+shot sm_msg_4
+wait 20
+shot sm_msg_5
+wait 20
+shot sm_msg_6
+wait 20
+shot sm_msg_7
+wait 20
+shot sm_msg_8
+wait 20
+shot sm_msg_9
+wait 20
+shot sm_msg_10
+wait 20
+shot sm_msg_11
+wait 20
+shot sm_msg_12
+wait 20
+shot sm_msg_13
+wait 20
+shot sm_msg_14
+wait 20
+shot sm_msg_15

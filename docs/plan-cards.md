@@ -941,8 +941,11 @@ item 371, the robbed bit 0x10000, MP 10 unchanged; round 2 with every monster ma
 grid stays). `test_card_yeti` (Lucia wearing Yeti: the grid, A, roll forced: points 1800 -> 1700, item 371, "Stole
 Light Feather!", the robbed bit 0x100000). A review found that a Steal and a Yeti aimed at the same monster in one
 round would rob it twice (the Yeti path had no recheck): the steal routine now runs the refusal test itself and leaves
-a robbed monster alone; both plans give the same results after the change. Not seen: a missed steal (the MISS popup), the fallback to the other
-slot, a monster with nothing to steal, silence stopping Steal.
+a robbed monster alone; both plans give the same results after the change. Seen 2026-11-26 (the game's random
+function is state * 0x41C64E6D + 0x3039, roll ((state >> 16) & 0x7FFF) mod 100): `test_card_steal_miss` (state 5:
+roll 55, the MISS popup, the robbed bit set on the attempt, nothing stolen); `test_card_steal_fallback` (state 2:
+rolls 8 and 17, the rarer slot, emptied in Bealzebub's drop row: Light Feather 371 from slot 0; with the slot left
+alone the same rolls steal its Wooden Box 361). Not seen: a monster with nothing to steal, silence stopping Steal.
 
 ### 11.17 Getting and recharging cards (approved list, point 7; 2026-11-25)
 
