@@ -1,0 +1,28 @@
+# Test: the card viewer's points box shows a plain bar and the party's highest level ("LV" and two digits).
+# Jian gets the Quetzalcoatl and Sasquatch cards; X, Items, Cards, A opens the viewer (on a build where the Cards
+# category still opens it); Down shows the next card. Jian is set to level index 22 and Lucia (if in the party) 9:
+# the box should read LV 23.
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA29 1
+poke u32 0x020B4664 22
+poke u32 0x020B46C0 9
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot bc_00
+press Down 6
+wait 30
+shot bc_01
