@@ -1,0 +1,132 @@
+# cards: a recharge stops at the card's full value (docs/plan-cards.md 2.6, point 7). As test_card_recharge, with
+# the Bealzebub card (227) at 800 of its 900 points (0x020B489A). Expect: after the win (three Bealzebubs killed)
+# its points are 900, not 1100, and the count stays 1. Run with --save.
+include party2_strong
+poke u8 0x0213ba12 1
+poke u16 0x020b489a 800
+wait 270
+watch u8 0x0213ba12 bealzebub_cards
+watch u16 0x020b489a bealzebub_points
+watch u8 0x0213ba25 thanatos_cards
+watch u16 0x020b48c0 thanatos_points
+watch u32 0x020B0010 state
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50

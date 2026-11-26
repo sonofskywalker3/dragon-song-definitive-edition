@@ -952,7 +952,10 @@ used twice.
 **Seen:** `test_card_first_win` (party2_strong wins the first temple battle with Fight: at the end, not before, the
 Bealzebub card 0 -> 1 at 900 and the Thanatos card 0 -> 1 at 1400); `test_card_recharge` (Bealzebub owned at 100:
 400 after the win, three Bealzebubs killed); `test_card_escape` (a round of Fight, then L and R held: the battle
-ends by escape and neither card is given). Not seen: a loss, a boss card drop, the cap.
+ends by escape and neither card is given). Seen 2026-11-26: `test_card_recharge_cap` (Bealzebub at 800 of 900:
+900 after the win, not 1100); `test_card_boss_drop` (Raft's fight: the Raft card 0 -> 1 on the win; vanilla 50%);
+`test_card_loss` (a round of Fight, then the party's HP pinned to 0: result 3, game over, neither card given; as in
+the escape test, the round's kills are assumed, not watched).
 
 Listed on the results (a review pointed out the end hook comes after the results are shown): the first kill of a
 species in a battle now drops its card through the game's own loot list (0x02069ED8: a kill count of 1 for that

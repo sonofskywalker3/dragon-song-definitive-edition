@@ -1,0 +1,172 @@
+# cards: a boss card always drops (docs/plan-cards.md 2.6, point 7; vanilla 50%). Raft's fight as boss_raft.plan,
+# with the Raft card's bag count (card 252, 0x0213BA2B) watched (boss cards are passives: no points). Expect: 0 -> 1
+# when the battle is won. Run with --save.
+watch u16 0x020B85BE event_battle_id
+watch u16 0x020B85C0 battle_mode
+watch u16 0x020B85C8 result_sub
+watch u32 0x020B8610 exp_pool
+watch u32 0x020B4824 silver
+watch u32 0x020B4694 jian_exp32
+watch u32 0x020B4664 jian_level
+include boot_from_save
+watch u8 0x0213BA2B raft_cards
+include cheats_strong
+pin u16 0x020B77EC 6
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+wait 30
+shot raft_field
+peek u32 0x020B4694 jian_exp_before
+peek u32 0x020B4664 jian_level_before
+peek u32 0x020B4824 silver_before
+poke u16 0x020B7838 1
+poke u16 0x020B783A 3
+poke u32 0x020B0010 0x73
+wait 240
+shot raft_intro
+battlers
+peek u32 0x020B85B8 area_group
+peek u16 0x020B85BC map
+peek u32 0x020B8620 stats_ptr
+dump 0x0228E860 0x5E8 stat_records
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a5
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a10
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a15
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a20
+battlers
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+press A 3
+wait 40
+shot raft_a25
+battlers
+wait 120
+shot raft_r1
+press A 3
+wait 120
+shot raft_r2
+press A 3
+wait 120
+shot raft_r3
+press A 3
+wait 120
+shot raft_r4
+press A 3
+wait 120
+shot raft_r5
+press A 3
+wait 120
+shot raft_r6
+press A 3
+wait 120
+shot raft_r7
+press A 3
+wait 120
+shot raft_r8
+press A 3
+wait 120
+shot raft_r9
+press A 3
+wait 120
+shot raft_r10
+press A 3
+wait 120
+shot raft_r11
+press A 3
+wait 120
+shot raft_r12
+press A 3
+wait 120
+shot raft_r13
+press A 3
+wait 120
+shot raft_r14
+press A 3
+wait 120
+shot raft_r15
+press A 3
+wait 120
+shot raft_r16
+press A 3
+wait 120
+shot raft_r17
+press A 3
+wait 120
+shot raft_r18
+press A 3
+wait 120
+shot raft_r19
+press A 3
+wait 120
+shot raft_r20
+press A 3
+wait 120
+shot raft_r21
+press A 3
+wait 120
+shot raft_r22
+press A 3
+wait 120
+shot raft_r23
+press A 3
+wait 120
+shot raft_r24
+press A 3
+wait 300
+shot raft_after
+peek u32 0x020B4694 jian_exp_final
+peek u32 0x020B4664 jian_level_final
+peek u32 0x020B4824 silver_final

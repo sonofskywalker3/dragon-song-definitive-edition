@@ -1,0 +1,34 @@
+# cards: a lost battle gives no card and no recharge (docs/plan-cards.md 2.6, point 7). First temple battle,
+# party2_strong: round 1 both Fight (some monsters die), then the party's battle HP (Jian 0x0228E874, Lucia
+# 0x0228E8E0) is pinned to 0 so the battle is lost. Expect: the Bealzebub (bag 0x0213BA12) and Thanatos (0x0213BA25)
+# cards stay at 0; the battle result (s16 at 0x020B85C4) shows a loss. Run with --save.
+include party2_strong
+wait 270
+watch u8 0x0213ba12 bealzebub_cards
+watch u8 0x0213ba25 thanatos_cards
+watch u32 0x020B0010 state
+watch u16 0x020B85C4 result
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+waituntil u32 0x020B0010 8 3000
+waituntil u32 0x020B0010 7 3000
+pin u32 0x0228E874 0
+pin u32 0x0228E8E0 0
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 900
+shot cl_end
