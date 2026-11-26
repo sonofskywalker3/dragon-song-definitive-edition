@@ -889,8 +889,10 @@ a card effect id, which maps every id below 0x100 to entry 0 (11.2), as before.
 **Seen:** `test_card_dragon_guard` (Lucia wearing Caucus: the regen byte is 3 when the block is hers; Jian wearing
 the Red Dragon card); `diag_dragon_swap` (the cards swapped: regen 3 when the block is Jian's); `diag_dragon_path`
 (a marker on the fire path's store is hit when Jian's block is made). The fire byte itself is not caught at 50: the
-block is made for several battlers in the same frame, and the game's own 25% guard is not caught either. Not seen:
-a dragon card's wearer taking less damage from its element.
+block is made for several battlers in the same frame, and the game's own 25% guard is not caught either. Correction
+(2026-11-26): that plan put card 262 (the White Dragon) on Jian; with 261, the Red Dragon, the fire byte is 50 when
+the block is Jian's. `test_card_dragon_fire_on` / `_off` (the Red Dragon's fight, the dragon's HP pinned, no strength
+cheat, the same inputs): every dragon hit on Jian does half with the card (26 -> 13, 28 -> 14, 27 -> 13, 48 -> 24).
 
 ### 11.15 Moran and Orcus (approved list, point 5; 2026-11-25)
 

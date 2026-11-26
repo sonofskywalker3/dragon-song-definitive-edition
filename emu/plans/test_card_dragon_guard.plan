@@ -1,11 +1,11 @@
 # cards: the dragons' and Caucus's new gear effects (docs/plan-cards.md 8, point 5). Jian wears the Red Dragon card
-# (262, his slot 0x020B46A2) and Lucia the Caucus card (258, her slot 0x020B46FE); first temple battle, the enemies
+# (261, his slot 0x020B46A2) and Lucia the Caucus card (258, her slot 0x020B46FE); first temple battle, the enemies
 # attack. func_0206ab6c totals a member's gear into 0x0213B908: expect the fire byte (+0x0E, 0x0213B916) at 50 when it
 # is Jian's (the game's 100 less 50) and the HP regen byte (+0x08, 0x0213B910) at 3 when it is Lucia's. Run with --save.
 include party2_strong
-poke u8 0x0213ba35 1
+poke u8 0x0213ba34 1
 poke u8 0x0213ba31 1
-poke u16 0x020b46a2 262
+poke u16 0x020b46a2 261
 poke u16 0x020b46fe 258
 wait 270
 watch u8 0x0213B916 fire
