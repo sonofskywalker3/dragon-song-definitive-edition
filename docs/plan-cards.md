@@ -164,6 +164,9 @@ Weakness   (icons, as today)
   brackets, and returns move one plank down. `test_bestiary_system` (Classic and Retold): the list, the plank,
   the bestiary, Down, B back, Quit's hint and prompt, B, and Music Hall. Not seen: the Save plank greyed out
   where saving is not allowed (state 0x33 edits it through 0x02060454, repointed to the new table).
+- **A in the bestiary does nothing** (Jeff, 2026-11-26): the game's card list page used a field card on A; field
+  cards are used from the field Magic page now. After the Item page's key lookup (0x020574C4) A becomes an
+  ignored code on the Cards list page. `test_bestiary_no_use`: no prompt, Blob keeps 800 points, B back to System.
 - **No enemy class.** The game has none: the 0x54-byte enemy record is fully accounted for (docs/re-enemies.md 1)
   and none of it is a class, so the class is dropped (Jeff, 2026-11-26: "if not, drop it").
 - **The stated level** (proposal): a regular enemy at the highest party level, which is the level the game itself

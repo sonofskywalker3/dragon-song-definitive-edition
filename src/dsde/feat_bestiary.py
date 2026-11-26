@@ -651,6 +651,34 @@ def _encode(text: str) -> str:
 WORDS_ASM = _encode(HINT_TEXT) + "\n    .align 2"
 
 
+# A on the Cards list page (the bestiary, which only the System list opens) does nothing (Jeff, 2026-11-26): the
+# game used a field card from there; field cards are used from the field Magic page now. func_0205747c, after the
+# key lookup: in place of `cmp r0, #0x18` (r0 = the key's code, 0 for A), A becomes a code its jump table ignores.
+ITEM_KEY = 0x020574C4
+ITEM_KEY_WORD = 0xE3500018
+KEY_A = 0
+KEY_IGNORED = 2
+LAST_ITEM_KEY = 0x18
+LIST_PAGE = 1
+
+NO_USE_ASM = f"""
+    cmp   r0, #{KEY_A}
+    bne   nu_done
+    ldr   ip, nu_page
+    ldrb  r0, [ip, #{ITEM_PAGE_KIND}]
+    cmp   r0, #{LIST_PAGE}
+    ldrbeq r0, [ip, #{ITEM_PAGE_CATEGORY}]
+    cmpeq r0, #{CATEGORY_CARDS}
+    moveq r0, #{KEY_IGNORED}
+    movne r0, #{KEY_A}
+nu_done:
+    cmp   r0, #{LAST_ITEM_KEY:#x}
+    bx    lr
+nu_page:
+    .word {ITEM_PAGE:#x}
+"""
+
+
 BESTIARY = Feature(
     "bestiary",
     (
@@ -804,5 +832,12 @@ BESTIARY = Feature(
             for addr, old, new in QUIT_RETURNS
         ),
         Patch(*QUIT_BRACKETS, "Quit Game's prompt keeps its brackets on Quit Game"),
+        CaveCode("cave_bestiary_no_use", NO_USE_ASM, "A in the bestiary uses no card"),
+        hook(
+            ITEM_KEY,
+            ITEM_KEY_WORD,
+            "bl ${cave_bestiary_no_use}",
+            "A in the bestiary uses no card",
+        ),
     ),
 )

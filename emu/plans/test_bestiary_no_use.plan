@@ -1,0 +1,45 @@
+# Test: A on a field card (Blob) in the bestiary, opened from the System list, does nothing (no "Are you sure?",
+# Blob keeps 800 points); B goes back to the System list.
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA07 1
+poke u16 0x020B4884 800
+poke u8 0x0213BA29 1
+poke u8 0x0213BA38 1
+poke u32 0x020B4664 22
+watch u32 0x020B0010 menu_state
+wait 150
+press X 3
+wait 90
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press A 3
+wait 60
+shot bs_00_list
+press Down 6
+wait 20
+press Down 6
+wait 20
+press Down 6
+wait 30
+shot bs_01_plank
+press A 6
+wait 90
+shot bs_02_bestiary
+watch u16 0x020B4884 blob_points
+press A 6
+wait 60
+shot fa_00
+press A 6
+wait 60
+shot fa_01
+press B 6
+wait 60
+shot fa_02
