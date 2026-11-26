@@ -736,3 +736,63 @@ picker, A on Jian: the flags gain 0x100, points 1000 -> 900); `test_skill_focus_
 30000: Jian misses every blow, casts Focus, then his blows land: 30000 -> 29867 -> 29726 -> 29585). The first build
 read the attacker from r6, which the roll has reused by then: Focus was cast and his blows still missed.
 
+### 11.12 Status rules (approved list, point 3; 2026-11-25)
+
+- **Poison 2 to 4 turns** (`feat_poison_turns.py`, its own feature `poison-turns`, both editions). A status's turn
+  counter is stat record +0x4C, filled by the setter func_0205511c (2 to 4 for statuses 1 to 5, 4 to 6 for stone)
+  and counted down by func_02055070 at the start of the battler's own turn, which clears the status at 0; the
+  poison tick at 0x0202E1E0 follows the count and only comes while the status is on. Poison's entry of the
+  setter's switch set 0 and its entry of the counter's switch returned at once. Now the setter gives poison 3 to 5
+  (`cave_poison_turns`) and the counter counts it: 2 to 4 ticks. The enhanced poison's 10% (11.10) needs this.
+- **Boss 80%** for the party's blind and poison: skills in the FX hook (a boss target rolls 80 whatever the
+  skill's chance, enhanced or not); cards in the status loop's boss switch (entries 2, 5, and 6 at 0x0206A538,
+  0x0206A544, 0x0206A548 go to `cave_card_boss_roll`, which reads the target's roll in r5).
+- **Phantom's silence.** Vanilla first: silence (5) gets the same 2 to 4 turns as the other statuses, and bosses were
+  immune. It keeps the turns; on a boss it lands 80% of the time (the switch entry above), and silence came off
+  `BOSS_IMMUNE` so the refusal test lets Phantom be used on a boss.
+- Kuntukapu's regen for 2 to 4 rounds: 11.13, with Insector and Ochu.
+
+**Seen:** `test_poison_turns` (Venom Claw with no card on battler 9: status 6 with 4 on the counter; it takes 4 HP
+on three of its turns as the counter goes 3, 2, 1, then the status is 0); `test_boss_venom_miss` (Sasquatch, the
+roll forced to 98: MP 50 -> 42, no poison). Not seen: a card's blind or poison missing a boss, Phantom on a boss.
+
+### 11.13 Changed cards (approved list, point 4; 2026-11-25)
+
+`feat_card_changes.py` (cards).
+- **Insector, Ochu, Kuntukapu: 2 to 4 rounds.** The round starts where func_020297d4's command input state (7) sets
+  state 8: `streq r1, [r0, #0x8c]` at 0x0202A3F8 (the usual hand-over, followed by `beq`) and `str` at 0x0202A4E0
+  (after a message's countdown); both call `cave_card_rounds`, which returns with Z set. For each of the bits 0x20,
+  0x40, 0x80 of the battle flags: the first round start that finds it set gives it 3 to 5 (two coin flips), each round
+  start takes one, and 0 clears the bit; a clear bit forgets its count. The first site was found with
+  `diag_round_start` (execpoke markers): the second alone never ran.
+- **Hellbird and Termite on one ally:** their effects' target bits (card effect table, flags word) are one ally, so
+  the Special list opens the ally picker. Hellbird fills that ally's MP (the game's effect, one target). Termite's
+  `orr r3, r3, #2` in func_0206a744 (0x0206A808) sets the picked ally's own guard bit, 0x800 << party slot (the
+  actor's +0x8C); the enemy attack's steal and break tests in func_02030b44 (0x02030C50, 0x02030C6C; r4 = the
+  target's battler index) also miss on the target's own bit. The refusal test refuses a Termite pick on a member
+  already guarded. The steal test still reads Yeti's party bit until Yeti changes (point 5, with Morus's Steal).
+- Insector, Ochu, and Hellbird are already common (four areas each, Insector and Hellbird from the first area), so
+  no encounter changes.
+
+**Seen:** `test_card_insector_rounds` (Lucia uses Insector in round 1: bit 0x40 set, points 1200 -> 1100; the bit is
+cleared at the start of round 5, after three full rounds); `test_card_hellbird_termite` (Hellbird: the picker, A on
+Jian at 0 MP: his MP 0 -> 10, Lucia's unchanged, points 1000 -> 900; Termite in round 2: the picker, A on Jian: the
+flags gain 0x800 only, points 1000 -> 900). Not seen: a break or steal missing a guarded member (no plan has an
+enemy that breaks or steals yet), Ochu and Kuntukapu (the same code as Insector).
+
+### 11.14 Boss cards: the dragons' guard and Caucus's regen (approved list, point 5; 2026-11-25)
+
+`feat_card_bosses.py` (cards). func_0206ab6c totals a member's gear effects into the byte block at 0x0213B908
+(+0x0B to +0x0E the percent of water, earth, wind, and fire damage taken, 100 less 25 for each of the game's guards
+0x1F to 0x22; +0x08 the HP regen percent each own turn). Every id 0 to 0x2D is in its switch and used by some item,
+so the boss cards get new ids past it, handled at the switch's default branch (0x0206AC20, `b 0x0206AEC8`):
+0x2E to 0x31 take 50 off water, earth, wind, or fire (Blue, Black, White, and Red Dragon), and 0x32 adds 3 to the
+regen (Caucus; the game's 0x1D adds 2). Gronk keeps the game's wind guard (25%). A boss card's +2 is also read as
+a card effect id, which maps every id below 0x100 to entry 0 (11.2), as before.
+
+**Seen:** `test_card_dragon_guard` (Lucia wearing Caucus: the regen byte is 3 when the block is hers; Jian wearing
+the Red Dragon card); `diag_dragon_swap` (the cards swapped: regen 3 when the block is Jian's); `diag_dragon_path`
+(a marker on the fire path's store is hit when Jian's block is made). The fire byte itself is not caught at 50: the
+block is made for several battlers in the same frame, and the game's own 25% guard is not caught either. Not seen:
+a dragon card's wearer taking less damage from its element.
+

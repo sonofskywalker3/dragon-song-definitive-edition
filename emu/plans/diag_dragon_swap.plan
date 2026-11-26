@@ -1,0 +1,23 @@
+# cards (diagnostic): test_card_dragon_guard with the cards swapped, Caucus on Jian and the Red Dragon on Lucia.
+include party2_strong
+poke u8 0x0213ba35 1
+poke u8 0x0213ba31 1
+poke u16 0x020b46a2 258
+poke u16 0x020b46fe 262
+wait 270
+watch u8 0x0213B916 fire
+watch u8 0x0213B910 regen
+watch u8 0x0213B913 water
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+waituntil u32 0x020B0010 8 3000
+waituntil u32 0x020B0010 7 3000
+wait 60

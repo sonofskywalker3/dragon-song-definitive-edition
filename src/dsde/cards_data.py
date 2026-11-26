@@ -75,6 +75,15 @@ GEAR_EARTH_GUARD = 0x20
 GEAR_WIND_GUARD = 0x21
 GEAR_FIRE_GUARD = 0x22
 GEAR_DOUBLE_CHANCE = 0x27
+# New gear effect ids past the game's last (0x2D), for the boss cards alone (feat_card_bosses.py): the dragons take
+# half damage from their element (the game's guards above take a quarter off), and Caucus regains 3% a turn
+(
+    GEAR_STRONG_WATER,
+    GEAR_STRONG_EARTH,
+    GEAR_STRONG_WIND,
+    GEAR_STRONG_FIRE,
+    GEAR_HP_REGEN_3,
+) = range(0x2E, 0x33)
 NO_GEAR_EFFECT = 0
 
 
@@ -209,13 +218,13 @@ BOSS_PASSIVES: tuple[BossPassive, ...] = (
     BossPassive(DEUCE, (0, 12, 0, 0, 0, 8)),
     BossPassive(GRONK, (0, 0, 0, 12, 0, 0), GEAR_WIND_GUARD),
     BossPassive(ZETHOS, (12, 0, 0, 0, 0, 10)),
-    BossPassive(CAUCUS, (0, 0, 0, 10, 0, 0), GEAR_HP_REGEN_2),
+    BossPassive(CAUCUS, (0, 0, 0, 10, 0, 0), GEAR_HP_REGEN_3),
     BossPassive(ORCUS, (0, 0, 0, 0, 0, 0), hook="orcus"),
     BossPassive(MORUS, (0, 0, 0, 0, 0, 0), hook="steal"),
-    BossPassive(RED_DRAGON, (12, 0, 0, 0, 0, 0), GEAR_FIRE_GUARD),
-    BossPassive(WHITE_DRAGON, (0, 0, 15, 0, 0, 0), GEAR_WIND_GUARD),
-    BossPassive(BLACK_DRAGON, (0, 15, 0, 0, 0, 0), GEAR_EARTH_GUARD),
-    BossPassive(BLUE_DRAGON, (0, 0, 0, 15, 0, 0), GEAR_WATER_GUARD),
+    BossPassive(RED_DRAGON, (12, 0, 0, 0, 0, 0), GEAR_STRONG_FIRE),
+    BossPassive(WHITE_DRAGON, (0, 0, 15, 0, 0, 0), GEAR_STRONG_WIND),
+    BossPassive(BLACK_DRAGON, (0, 15, 0, 0, 0, 0), GEAR_STRONG_EARTH),
+    BossPassive(BLUE_DRAGON, (0, 0, 0, 15, 0, 0), GEAR_STRONG_WATER),
     BossPassive(DARK_JIAN, (5, 5, 5, 5, 5, 5)),
     BossPassive(GIDEON, (15, 0, 0, 0, 10, 0)),
 )

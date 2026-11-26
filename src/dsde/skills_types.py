@@ -19,7 +19,9 @@ STATUS_BLIND = 2
 STATUS_PARALYSIS = 4  # no action; Gabryel's Howl calls it fear
 STATUS_POISON = 6
 # Statuses a boss row (enemy row flags bit 31) never takes; blind (2) and poison (6) land on bosses too
-BOSS_IMMUNE = frozenset({1, 3, 4, 5, 7})
+# (silence, 5, came off the list: the Phantom card's silence lands on a boss 80% of the time, feat_card_rules.py)
+BOSS_IMMUNE = frozenset({1, 3, 4, 7})
+BOSS_CHANCE = 80  # percent: the party's blind, poison, and silence on a boss
 STATUS_CHANCE = 70  # percent: the success roll of the statuses that stop a turn (the cards never miss)
 SURE = 100  # percent: no roll at all, so no random number is drawn
 
@@ -29,6 +31,10 @@ FLAG_SURE_HIT = 4  # the party's physical attacks always hit (the Bealzebub card
 # One member's physical attacks always hit: bit PERSONAL_SURE_HIT << party slot (0 to 2) of the same word, bits the
 # game leaves unused (Focus, and the Bealzebub card's one-ally version)
 PERSONAL_SURE_HIT = 0x100
+FLAG_GUARD = 2  # enemy breaks miss (the Termite card's bit)
+PERSONAL_GUARD = (
+    0x800  # one member's breaks and steals miss: PERSONAL_GUARD << party slot (Termite)
+)
 
 FIRST_SKILL = 38  # the blank row after the game's own 38 spell entries
 

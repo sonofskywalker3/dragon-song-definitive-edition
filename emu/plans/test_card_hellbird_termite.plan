@@ -1,0 +1,67 @@
+# cards: Hellbird fills one picked ally's MP, and Termite guards one picked ally (docs/plan-cards.md 8, point 4).
+# Lucia wears Hellbird (card 233, her slot 0x020B46FE) at 1000 points (0x020B48A6); Jian's battle MP (0x0228E878)
+# is poked to 0. Round 1: her card entry opens the ally picker (shot hb_picker); A on Jian: his MP to full, Lucia's
+# (0x0228E8E4) unchanged, points 1000 -> 900. Round 2: her slot is switched to Termite (card 224, 1000 points at
+# 0x020B4894): the picker, A on Jian: the battle flags (0x02282940) gain 0x800 (his guard), not
+# 0x02. Run with --save.
+include party2_strong
+poke u8 0x0213ba18 1
+poke u8 0x0213ba0f 1
+poke u16 0x020b48a6 1000
+poke u16 0x020b4894 1000
+poke u16 0x020b46fe 233
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+poke u32 0x0228e878 0
+watch u32 0x0228e878 jian_mp
+watch u32 0x0228e8e4 lucia_mp
+watch u16 0x020b48a6 hb_points
+watch u16 0x020b4894 tm_points
+watch u32 0x02282940 flags
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+shot hb_card
+press A 8
+wait 60
+shot hb_picker
+press A 8
+wait 60
+waituntil u32 0x020B0010 8 3000
+waituntil u32 0x020B0010 7 3000
+wait 110
+poke u16 0x020b46fe 224
+press A 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+shot tm_card
+press A 8
+wait 60
+shot tm_picker
+press A 8
+wait 60
+waituntil u32 0x020B0010 8 3000
+waituntil u32 0x020B0010 7 3000
+wait 60
+shot tm_end

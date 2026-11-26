@@ -145,7 +145,8 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
 - **Highlighting an enemy in the grid shows what ails it** on the name bar: ATK or DEF with a down arrow for a
   lowered stat, and three letters for its status (Psn, Bld, Slp, Par).
 - **Stat changes are one stage and last the battle.** Sleep, fear, and binding have a 70% chance and bosses
-  are immune; poison and blind always land, on bosses too.
+  are immune; poison and blind always land on regular monsters and 80% of the time on bosses.
+- **Poison wears off** after 2 to 4 turns, on monsters and on the party, instead of lasting the whole battle.
 - **All-enemy and all-ally versions replace the single-target ones** in the list when they are learned.
 - **Every box in the Special list has an icon**: each skill and spell its own picture, Dragon Magic its ring, and
   a worn card its card. Cure Squall is renamed Cure Water, and Jian's water Dragon Magic, Loud Call, is renamed
@@ -156,6 +157,12 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
   a regular monster; blind lasts 4 to 6 turns; poison takes 10% of max HP a turn instead of 5%; Tender Rain heals
   to full; Divine Rain restores 10% a turn instead of 5%; and Miracle Tears revives at full HP. Such a member is not
   offered the card itself; anyone else uses it on one picked target for 100 points.
+- **Changed cards.** Insector (party damage up), Ochu (party damage taken down), and Kuntukapu (MP regen) last 2 to 4
+  rounds instead of the whole battle. Hellbird fills one picked ally's MP instead of everyone's. Termite guards one
+  picked ally: breaks and steals aimed at that member miss for the rest of the battle. A card's blind, silence
+  (Phantom), or poison lands on a boss 80% of the time.
+- **Boss cards.** The four dragon cards halve the damage their wearer takes from the dragon's element, and the
+  Caucus card restores 3% of max HP each turn.
 
 | Who | Level | Skill | MP | What it does |
 |---|---|---|---|---|

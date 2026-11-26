@@ -5,7 +5,8 @@ The effect hook sits in func_020500dc, which runs once per target of a spell. By
 
 - STAGE: the stat moves one stage with the game's own routine and the target's stats are recomputed,
   choosing the recompute by the target's side as the debuff cards do;
-- STATUS: a success roll against the skill's chance (none, and no random number drawn, for a skill that
+- STATUS: on a boss, a roll of 80% (the statuses a boss is not immune to: poison and blind); otherwise a success
+  roll against the skill's chance (none, and no random number drawn, for a skill that
   always lands), then the status is queued the way the game's own
   status skills queue it (func_0202d1d4), so the flash, the mark over the battler, and the turn handling are
   the game's; a failed roll shows the game's MISS popup over the target with its sound;
@@ -31,6 +32,7 @@ from dsde.skills_common import (
     BATTLE_WORK_PTR,
     BATTLER_ENEMY,
     BATTLER_POSITION,
+    BATTLER_ROW,
     BATTLER_RECORD,
     BATTLER_SIZE,
     BATTLERS_PTR,
@@ -54,7 +56,8 @@ from dsde.skills_common import (
     hook,
 )
 from dsde.skills_data import SPELL_COUNT, SURE, Kind
-from dsde.skills_types import FLAG_SURE_HIT, PERSONAL_SURE_HIT
+from dsde.feat_skills_idle import ENEMY_ROW_SIZE, ENEMY_ROWS, ROW_BOSS
+from dsde.skills_types import BOSS_CHANCE, FLAG_SURE_HIT, PERSONAL_SURE_HIT
 
 FX_SITE = 0x020503A0  # func_020500dc: `ands r0, r5, #0x1000000`, the first buff test
 FX_WORD = 0xE2150401
@@ -153,9 +156,22 @@ fx_result:
     str   r1, [r0, #{RESULT_FLAG}]
     b     fx_out
 fx_status:
+    ldrb  r8, [sb, #{FX_CHANCE}]
+    ldr   r0, [r4]
+    tst   r0, #{BATTLER_ENEMY}
+    beq   fx_regular
+    ldr   r0, [r4, #{BATTLER_ROW:#x}]
+    ldr   r1, fx_rows
+    mov   r2, #{ENEMY_ROW_SIZE:#x}
+    mla   r0, r2, r0, r1
+    ldr   r0, [r0]
+    tst   r0, #{ROW_BOSS:#x}
+    movne r8, #{BOSS_CHANCE}
+    bne   fx_roll
+fx_regular:
     cmp   sl, #0
     bne   fx_lands
-    ldrb  r8, [sb, #{FX_CHANCE}]
+fx_roll:
     cmp   r8, #{SURE}
     bhs   fx_lands
     bl    {RANDOM:#x}
@@ -236,6 +252,8 @@ fx_work:
     .word {BATTLE_WORK_PTR:#x}
 fx_state:
     .word ${{cave_skill_boost}}
+fx_rows:
+    .word {ENEMY_ROWS:#x}
 """
 
 # Replaces `ands r1, r2, #1` in func_02044990 (b). A third message bit draws "No effect!" the way the
