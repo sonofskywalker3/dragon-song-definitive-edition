@@ -116,6 +116,8 @@ def layout_cave(features: list[Feature]) -> dict[str, int]:
     symbols: dict[str, int] = {}
     addr = ITCM_CAVE
     for cave in caves:
+        if cave.label in symbols:
+            raise PatchError(f"cave label {cave.label} is used twice")
         symbols[cave.label] = addr
         addr += len(assemble(substitute(cave.asm, placeholder), addr))
         addr = (addr + 3) & ~3

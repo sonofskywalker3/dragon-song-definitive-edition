@@ -63,6 +63,7 @@ Taken from the game:
 | (no file) | Escape, Inferno, Crashing Wave, Wind Cutter, Lunar Quake | the game's Boots and the four Dragon Ring item icons, unchanged |
 | (no file) | Quick, Grand Weapon, Grand Shell | the game's own spell sigil, colors moved by script to the nearest item icon palette colors |
 | (no file) | a worn monster card | that card's own item icon, unchanged |
+| (no file) | Steal | the Morus card's item icon, unchanged |
 
 ## Other changed art
 

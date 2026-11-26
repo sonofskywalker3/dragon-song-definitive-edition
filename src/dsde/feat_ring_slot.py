@@ -13,6 +13,7 @@ pillar, which does not come from that file, plays as it does for Jian (Jeff, 202
 """
 
 from dsde.cards_common import (
+    CARD_SLOT,
     CHAR_RECORD_SIZE,
     CHAR_RECORDS,
     EQUIP_OFFSET,
@@ -20,7 +21,8 @@ from dsde.cards_common import (
     RING_SLOT,
 )
 from dsde.patching import CaveCode
-from dsde.skills_cards import CARD_SPELL
+from dsde.cards_data import MORUS
+from dsde.skills_cards import CARD_SPELL, STEAL_SPELL
 from dsde.skills_common import RING_FLAGS, SPELL_ENTRY_SIZE, SPELL_TABLE, hook
 
 LIST_TAIL = 0x02050DDC  # func_02050c50: `cmp r6, #1`
@@ -33,11 +35,14 @@ OUT_OF_SWITCH = (
 )
 JIAN_FILES = 0x020953D4  # r4 = the caster's row of the character file table (0x12 each, Jian's first)  # the lowest ring bit, 0x100000, is the Blazing Ring's
 
-# In place of `cmp r6, #1`: the card spell is listed in battle for a member with a usable worn card
+# In place of `cmp r6, #1`: Steal is listed in battle for a member wearing the Morus card; the card spell is
+# listed in battle for a member with a usable worn card
 # (cave_card_usable); for a ring spell, r6 = 1 when the member (r5) wears that ring in the ring slot, else
 # 0; then the compare. Keeps every register but r6.
 LISTED_ASM = f"""
     push  {{r0-r3, lr}}
+    cmp   r8, #{STEAL_SPELL}
+    beq   rl_steal
     cmp   r8, #{CARD_SPELL}
     bne   rl_spell
     mov   r6, #0
@@ -47,6 +52,17 @@ LISTED_ASM = f"""
     bl    ${{cave_card_listable}}
     cmp   r0, #0
     movne r6, #1
+    b     rl_done
+rl_steal:
+    mov   r6, #0
+    cmp   r7, #0
+    beq   rl_done
+    ldr   r2, rl_slots
+    mov   r3, #{CHAR_RECORD_SIZE:#x}
+    mla   r2, r5, r3, r2
+    ldrh  r2, [r2, #{CARD_SLOT * 2}]
+    cmp   r2, #{MORUS}
+    moveq r6, #1
     b     rl_done
 rl_spell:
     ldr   r0, rl_table

@@ -814,3 +814,34 @@ the acting battler is still the wearer) would have lowered the wearer's own stat
 slot or 12 and r4 an enemy battler, 4 to 11 (`test_card_moran` gives the same result). Not seen: a missed roll, Orcus (the same code, ATK), an enemy hitting a party member wearing it (the
 hook returns at once: the actor is not a party member).
 
+### 11.16 Steal and the Yeti card (approved list, points 4 and 5; 2026-11-25)
+
+`feat_skills_steal.py` (skills: the routine, inert without a way to cast it), Steal in `skills_cards.py` (spell 64,
+Kind.STEAL, chance 50, arg 35 for the rarer slot, the ATTACK look, never learned by level), and the cards side in
+`feat_ring_slot.py` (listed in battle for a member wearing the Morus card), `feat_card_use.py` (castable 1 for the
+wearer, else -1; the name bar shows 0), `feat_card_boost.py` (the MP charge takes 0 for it), and
+`feat_card_changes.py` (Yeti). The spell list's sort key needed a seventh bit for the spell id (`KEY_ID_BITS`).
+
+- `cave_skill_steal(battler, chance, rare chance)`: marks the monster robbed (battle flags bit 0x10000 << (battler -
+  4), set on the attempt), rolls the chance, then the slot (slot 1 with the rare chance, else slot 0, the other one
+  if the first holds nothing stealable), item from func_02069dd0(row, slot) (drop row 0x02097588 + row * 12, items
+  at +8 and +0xA), adds it to the bag with func_0206b98c(0x0213B930, item, 1), and sets our message bit 8 with the
+  item in `cave_skill_stolen`. A miss shows the MISS popup. Stealable: not a card (216 to 269), not a dragon ring
+  (0xCB to 0xCE), below 387.
+- The message line (`cave_skill_msg`, func_02044990) draws "Stole " plain, the item's name highlighted as the game's
+  "<item> was stolen" does, and "!".
+- The refusal test (`cave_skill_idle`, kind STEAL) is `cave_skill_stealable`: "No effect!" for a monster robbed or
+  with nothing to steal; it is the grid's veto for Steal and for the Yeti card (its card record's kind is STEAL).
+- Yeti: its effect's target bits are one enemy; where it set the party's steal guard (func_0206a744, `orr r3, r3,
+  #1` at 0x0206A7E0) the hook steals from the actor's first target (+0x8C), 25% and 25%, and hands back the flags
+  word reloaded, since the game stores r3 right after (the first build lost the robbed bit there).
+
+**Seen:** `test_card_steal` (Jian at level 1 wearing Morus: his list is Steal with 0 on the name bar; the grid, A on the
+first back-row flyer with the roll forced to 3: he leaps up and swipes, the green ring, "Stole Light Feather!",
+item 371, the robbed bit 0x10000, MP 10 unchanged; round 2 with every monster marked robbed: "No effect!" and the
+grid stays). `test_card_yeti` (Lucia wearing Yeti: the grid, A, roll forced: points 1800 -> 1700, item 371, "Stole
+Light Feather!", the robbed bit 0x100000). A review found that a Steal and a Yeti aimed at the same monster in one
+round would rob it twice (the Yeti path had no recheck): the steal routine now runs the refusal test itself and leaves
+a robbed monster alone; both plans give the same results after the change. Not seen: a missed steal (the MISS popup), the fallback to the other
+slot, a monster with nothing to steal, silence stopping Steal.
+

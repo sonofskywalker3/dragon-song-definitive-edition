@@ -8,6 +8,7 @@ bar and no MP taken. What "nothing" means depends on the skill's kind (skills_da
 - STATUS: the target already has a status (a battler has one at a time), or it is a boss row and the
   status is one a boss never takes (the game's rule in func_020500dc: row flags bit 31 with status 1, 3, 4,
   5, or 7);
+- STEAL: the monster was already robbed, or has nothing that can be stolen (feat_skills_steal.py);
 - FLAG: the battle-wide flag is already set; for the sure-hit flag on a plain cast, also the member's own bit
   (Focus), and for the guard flag the member's own guard bit (Termite).
 
@@ -79,6 +80,8 @@ IDLE_ASM = f"""
     beq   idle_fine
     cmp   r3, #{Kind.FLAG}
     beq   idle_flag
+    cmp   r3, #{Kind.STEAL}
+    beq   ${{cave_skill_stealable}}
     ldr   ip, idle_battlers
     ldr   ip, [ip]
     mov   r1, #{BATTLER_SIZE:#x}

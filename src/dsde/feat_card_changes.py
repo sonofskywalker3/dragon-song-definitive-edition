@@ -11,8 +11,10 @@
   game's Termite made every enemy's break miss). Its effect's target bits are one ally; where the card sets the
   party's bit 0x02 (func_0206a744, 0x0206A808) it sets the picked ally's own guard bit instead (0x800 << party
   slot, bits the game leaves unused), and the enemy attack's steal and break tests (func_02030b44, 0x02030C50 and
-  0x02030C6C) also read the target's own bit. The steal test still reads the party's bit 0x01 (Yeti, until its
-  change in point 5).
+  0x02030C6C) also read the target's own bit.
+- **Yeti steals** (point 4): its effect's target bits are one enemy, and where it set the party's steal guard
+  (0x0206A7E0) the user steals from the picked monster: 25%, the rarer slot 25% (feat_skills_steal.py). Its
+  refusal test is the steal's: a monster already robbed or with nothing to steal.
 """
 
 import struct
@@ -20,7 +22,7 @@ import struct
 from dsde.feat_skills_boost import RANDOM
 from dsde.patching import CaveCode, Patch
 from dsde.skills_common import BATTLE_WORK_PTR, VANILLA_ARM9, hook
-from dsde.cards_data import HELLBIRD, TERMITE
+from dsde.cards_data import HELLBIRD, TERMITE, YETI
 from dsde.skills_types import FLAG_GUARD as GUARD_BIT
 from dsde.skills_types import PERSONAL_GUARD
 
@@ -33,6 +35,11 @@ CARD_EFFECT_SIZE = 12
 FIRST_EFFECT = 0x100
 TARGET_BITS = 0xC0000000
 ALLY_ONE = 0x80000000
+ENEMY_ONE = 0x00000000
+YETI_SITE = 0x0206A7E0  # func_0206a744: `orr r3, r3, #1`
+YETI_WORD = 0xE3833001
+YETI_CHANCE = 25
+YETI_RARE_CHANCE = 25
 
 TIMED_BITS = (
     0x20,
@@ -71,11 +78,33 @@ def _effect_flags_addr(card: int) -> int:
     return CARD_EFFECTS + (effect - FIRST_EFFECT) * CARD_EFFECT_SIZE
 
 
-def _one_ally(card: int, note: str) -> Patch:
-    """The card's effect flags with the target bits of one ally."""
+def _one_target(card: int, target: int, note: str) -> Patch:
+    """The card's effect flags with other target bits."""
     addr = _effect_flags_addr(card)
     old = struct.unpack_from("<I", VANILLA_ARM9.read_bytes(), addr - ARM9_BASE)[0]
-    return Patch(addr, old, (old & ~TARGET_BITS) | ALLY_ONE, note)
+    return Patch(addr, old, (old & ~TARGET_BITS) | target, note)
+
+
+# In place of `orr r3, r3, #1` in func_0206a744 (ip = the battle work), where the Yeti card set the party's
+# steal guard: the user steals from the monster they picked (the actor's first target), 25%, the rarer slot 25%.
+# r3 comes back as the flags word reloaded, since the game stores r3 next and the steal sets the robbed bit.
+YETI_ASM = f"""
+    push  {{r0-r2, ip, lr}}
+    ldrsh r0, [ip, #{BATTLE_ACTOR:#x}]
+    ldr   r1, ye_battlers
+    ldr   r1, [r1]
+    mov   r2, #{BATTLER_SIZE:#x}
+    mla   r0, r2, r0, r1
+    ldrsh r0, [r0, #{BATTLER_TARGET:#x}]
+    mov   r1, #{YETI_CHANCE}
+    mov   r2, #{YETI_RARE_CHANCE}
+    bl    ${{cave_skill_steal}}
+    ldr   ip, [sp, #12]
+    ldr   r3, [ip]
+    pop   {{r0-r2, ip, pc}}
+ye_battlers:
+    .word {BATTLERS_PTR:#x}
+"""
 
 
 TIMERS_ASM = f"""
@@ -197,8 +226,13 @@ def change_patches() -> tuple:
             "bl ${cave_card_rounds}",
             "Insector, Ochu, and Kuntukapu last 2 to 4 rounds",
         ),
-        _one_ally(HELLBIRD, "Hellbird fills one ally's MP"),
-        _one_ally(TERMITE, "Termite guards one ally"),
+        _one_target(HELLBIRD, ALLY_ONE, "Hellbird fills one ally's MP"),
+        _one_target(TERMITE, ALLY_ONE, "Termite guards one ally"),
+        _one_target(YETI, ENEMY_ONE, "Yeti steals from one monster"),
+        CaveCode("cave_card_yeti", YETI_ASM, "Yeti steals from one monster"),
+        hook(
+            YETI_SITE, YETI_WORD, "bl ${cave_card_yeti}", "Yeti steals from one monster"
+        ),
         CaveCode("cave_card_termite", TERMITE_ASM, "Termite guards one ally"),
         hook(
             TERMITE_SITE,

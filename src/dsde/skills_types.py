@@ -56,6 +56,7 @@ class Kind(IntEnum):
     STATUS = 2  # gives status `arg` (a roll if `chance` is under 100); never over another status
     FLAG = 3  # sets battle-wide flag `arg` for the rest of the battle
     HIT = 4  # the caster's own physical hit, dealt by the hit step of the look's script (no effect hook)
+    STEAL = 5  # takes an item from the target's drop row: `chance` to succeed, `arg` the rarer slot's chance
 
 
 class Look(IntEnum):

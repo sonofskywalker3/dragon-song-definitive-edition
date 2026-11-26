@@ -233,7 +233,6 @@ BOSS_HOOKS = frozenset({"moran", "orcus", "steal"})
 MONSTER_CARDS = frozenset(range(FIRST_CARD, FIRST_BOSS_CARD))
 PAIRED = frozenset(pair.card for pair in PAIRS)
 SLOTTABLE = MONSTER_CARDS | frozenset(passive.card for passive in BOSS_PASSIVES)
-STEAL_SPELL = 64
 
 
 def _check() -> None:
@@ -275,8 +274,6 @@ def _check() -> None:
     boosted = [spell for spells in BOOSTS.values() for spell in spells]
     if len(set(boosted)) != len(boosted):
         raise ValueError("a spell is enhanced by two cards")
-    if STEAL_SPELL in BY_SPELL:
-        raise ValueError("Steal's spell id is taken")
 
 
 _check()

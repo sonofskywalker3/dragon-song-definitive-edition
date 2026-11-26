@@ -10,6 +10,7 @@ The effect hook sits in func_020500dc, which runs once per target of a spell. By
   always lands), then the status is queued the way the game's own
   status skills queue it (func_0202d1d4), so the flash, the mark over the battler, and the turn handling are
   the game's; a failed roll shows the game's MISS popup over the target with its sound;
+- STEAL: a steal (feat_skills_steal.py);
 - FLAG: the battle-wide flag is set, with the result word the card of that flag leaves. The sure-hit flag cast on
   one ally (Focus) sets that member's own bit instead, unless a worn card enhances the cast (Bealzebub: the
   party's flag); the hit roll (0x020526FC) reads the attacker's own bit as the party's.
@@ -27,6 +28,7 @@ The cast's look is in feat_skills_look.py.
 from dsde import targeting_consts as T
 from dsde.patching import AsmPatch, CaveCode
 from dsde.feat_skills_boost import BOOST_LIMIT, STATE_PENDING
+from dsde.feat_skills_steal import MESSAGE_STOLE
 from dsde.skills_common import (
     ALL_TARGETS,
     BATTLE_WORK_PTR,
@@ -118,6 +120,8 @@ FX_ASM = f"""
     beq   fx_status
     cmp   r0, #{Kind.FLAG}
     beq   fx_flag
+    cmp   r0, #{Kind.STEAL}
+    beq   fx_steal
     ldr   r0, [r4, #{BATTLER_RECORD:#x}]
     ldr   r1, fx_records
     ldr   r1, [r1]
@@ -226,6 +230,12 @@ fx_flag_set:
     mov   r1, #{RESULT_SURE_HIT}
     str   r1, [r0, #{RESULT_FLAG}]
     b     fx_out
+fx_steal:
+    mov   r0, r7
+    ldrb  r1, [sb, #{FX_CHANCE}]
+    ldrb  r2, [sb, #{FX_ARG}]
+    bl    ${{cave_skill_steal}}
+    b     fx_out
 fx_none:
     tst   r5, #{ALL_TARGETS:#x}
     bne   fx_out
@@ -259,6 +269,8 @@ fx_rows:
 # Replaces `ands r1, r2, #1` in func_02044990 (b). A third message bit draws "No effect!" the way the
 # first draws "Escape failed!".
 MESSAGE_ASM = f"""
+    tst   r2, #{MESSAGE_STOLE}
+    bne   ${{cave_skill_steal_msg}}
     tst   r2, #{MESSAGE_NO_EFFECT}
     beq   message_vanilla
     mov   r2, #0

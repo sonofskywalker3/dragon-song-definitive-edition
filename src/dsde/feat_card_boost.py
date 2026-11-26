@@ -48,6 +48,7 @@ from dsde.skills_common import (
     byte_list,
     hook,
 )
+from dsde.skills_cards import STEAL_SPELL
 from dsde.skills_data import BY_SPELL, SPELL_COUNT
 
 ARM9_BASE = 0x02000000
@@ -127,7 +128,8 @@ bc_points:
 """
 
 # In place of `sub r1, r1, r0` where a Special's MP is taken (r4 = the battler, its +0x86 the spell): an enhanced
-# cast takes the card's points too and names its caster in the boost state; a plain one names nobody.
+# cast takes the card's points too and names its caster in the boost state; a plain one names nobody. Steal takes
+# no MP (its castable answer is 1 only so that the menu takes it).
 CHARGE_ASM = f"""
     push  {{r0, r2, r3, ip, lr}}
     push  {{r1}}
@@ -155,6 +157,11 @@ ch_plain:
 ch_done:
     pop   {{r1}}
     pop   {{r0, r2, r3, ip, lr}}
+    push  {{r2}}
+    ldrh  r2, [r4, #{BATTLER_ACTION_ID:#x}]
+    cmp   r2, #{STEAL_SPELL}
+    moveq r0, #0
+    pop   {{r2}}
     sub   r1, r1, r0
     bx    lr
 ch_state:

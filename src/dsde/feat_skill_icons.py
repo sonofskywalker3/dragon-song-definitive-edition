@@ -66,7 +66,8 @@ GAME_ICONS = {
     11: 204,
     12: 205,
     13: 206,
-}  # Escape: boots; Dragon Magic: the four rings
+    64: 260,
+}  # Escape: boots; Dragon Magic: the four rings; Steal: the Morus card
 
 # Spell id -> icon file name (art/icons/<name>.png)
 DRAWN: dict[int, str] = {

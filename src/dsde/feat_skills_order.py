@@ -53,7 +53,7 @@ FIELD_LIST_DONE = 0x02065070  # func_02064ff0 after its loop: `ldr r0, [pc, #0x2
 FIELD_LIST_DONE_WORD = 0xE59F0024
 FIELD_LIST_OUT = 0x0213A008  # what that load gives
 FIELD_STRIDE = 8
-KEY_ID_BITS = 6  # the sort key's low bits hold the spell id, for ties in learn level
+KEY_ID_BITS = 7  # the sort key's low bits hold the spell id, for ties in learn level
 PARTY = 0x020B464C  # s16 character id per party slot, 4 bytes apart (func_02050c50's field branch)
 PARTY_SLOT_SHIFT = 2
 

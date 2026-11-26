@@ -12,6 +12,7 @@ skills_flora.py, written in the terms of skills_types.py). This feature is put t
 - feat_skills_tags.py: the grid's name bar lists the highlighted enemy's ailments;
 - feat_skills_fx.py: the effect itself and the "No effect!" line;
 - feat_skills_boost.py: what a cast does when a worn card enhances it (the cards feature decides when);
+- feat_skills_steal.py: stealing from a monster (Steal, listed by the cards feature, and the Yeti card);
 - feat_skills_look.py: how the cast plays;
 - feat_skills_stone.py: the stone of Stone Throw, a sprite file made from Jian's unused throw;
 - feat_skills_order.py: the spell lists (Special in battle, Magic in the field) in learn order.
@@ -21,6 +22,7 @@ Needs manual-targeting (the enemy grid and its helpers).
 
 from dsde.feat_skills_allies import ALLY_PATCHES
 from dsde.feat_skills_boost import BOOST_PATCHES
+from dsde.feat_skills_steal import STEAL_PATCHES
 from dsde.feat_skills_fx import FX_PATCHES
 from dsde.feat_skills_idle import IDLE_PATCHES
 from dsde.feat_skills_look import LOOK_PATCHES
@@ -41,6 +43,7 @@ SKILLS_FEATURE = Feature(
         *TAG_PATCHES,
         *FX_PATCHES,
         *BOOST_PATCHES,
+        *STEAL_PATCHES,
         *LOOK_PATCHES,
         *ORDER_PATCHES,
         stone_patch(),

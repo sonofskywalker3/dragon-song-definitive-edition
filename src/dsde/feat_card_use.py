@@ -21,10 +21,10 @@ from dsde.cards_common import (
     FIRST_CARD,
     POINTS_PER_USE,
 )
-from dsde.cards_data import FIELD_CARDS
+from dsde.cards_data import FIELD_CARDS, MORUS
 from dsde.feat_card_targets import BASIC_LEARNER
 from dsde.patching import CaveCode, Patch
-from dsde.skills_cards import CARD_SPELL
+from dsde.skills_cards import CARD_SPELL, STEAL_SPELL
 from dsde.skills_common import hook
 
 CASTABLE = 0x02050A74  # func_02050a74 (member, spell, battle): `push {r4-sl, lr}`
@@ -130,8 +130,26 @@ LISTABLE_ASM = f"""
 CASTABLE_ASM = f"""
     cmp   r1, #{CARD_SPELL}
     beq   cc_card
+    cmp   r1, #{STEAL_SPELL}
+    beq   cc_steal
     push  {{r4-r10, lr}}
     b     {CASTABLE + 4:#x}
+@ Steal: 1 (no MP is taken for it, feat_card_boost.py) for a member wearing the Morus card, else -1 (not listed)
+cc_steal:
+    push  {{r1, r2, lr}}
+    ldr   r1, cc_battlers
+    ldr   r1, [r1]
+    mov   r2, #{BATTLER_SIZE:#x}
+    mla   r1, r0, r2, r1
+    ldr   r0, [r1, #{BATTLER_CHARACTER}]
+    ldr   r1, cc_slots
+    mov   r2, #{CHAR_RECORD_SIZE:#x}
+    mla   r1, r0, r2, r1
+    ldrh  r0, [r1, #{CARD_SLOT * 2}]
+    cmp   r0, #{MORUS}
+    moveq r0, #1
+    mvnne r0, #0
+    pop   {{r1, r2, pc}}
 cc_card:
     push  {{r1, r2, lr}}
     ldr   r1, cc_battlers
@@ -164,6 +182,8 @@ cc_battlers:
     .word {BATTLERS_PTR:#x}
 cc_records:
     .word {RECORDS_PTR:#x}
+cc_slots:
+    .word {CHAR_RECORDS + EQUIP_OFFSET:#x}
 """
 
 # In place of `ldrsh r0, [r4, #0x84]`, at the start of each party member's action: the Moran and Orcus cards'
@@ -199,12 +219,16 @@ cr_rolled:
 
 
 # In place of `mov r3, r5` in the name bar: for the card spell, the number is the card's uses left (its points
-# / 100) and is never shown as short of MP.
+# / 100) and is never shown as short of MP; for Steal it is 0 (its castable answer is 1 only for the menu).
 BAR_ASM = f"""
     mov   r3, r5
     push  {{r0-r2, lr}}
     ldr   r0, cb_menu
     ldr   r1, [r0, #{MENU_BAR_ID:#x}]
+    cmp   r1, #{STEAL_SPELL}
+    moveq r3, #0
+    moveq r4, #0
+    beq   cb_done
     cmp   r1, #{CARD_SPELL}
     bne   cb_done
     ldr   r0, [r0, #{MENU_BAR_MEMBER:#x}]

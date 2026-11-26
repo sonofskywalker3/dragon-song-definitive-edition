@@ -163,7 +163,10 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
   (Phantom), or poison lands on a boss 80% of the time.
 - **Boss cards.** The four dragon cards halve the damage their wearer takes from the dragon's element, and the
   Caucus card restores 3% of max HP each turn. With the Moran card, the wearer's attack has a 25% chance to lower
-  the enemy's defense one stage; with the Orcus card, its attack.
+  the enemy's defense one stage; with the Orcus card, its attack. The Morus card gives its wearer **Steal**: no MP,
+  one monster, a 50% chance to take one of the items it can drop (the rarer one 35% of the time), never a card,
+  ring, or key item, once per monster each battle; "Stole <item>!" shows on the message line.
+- **The Yeti card steals** from one picked monster (25%) instead of stopping enemy steals.
 
 | Who | Level | Skill | MP | What it does |
 |---|---|---|---|---|

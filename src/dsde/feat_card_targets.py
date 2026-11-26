@@ -30,7 +30,7 @@ from dsde.cards_common import (
     ITEM_SIZE,
     ITEM_TABLE,
 )
-from dsde.cards_data import GAME_SPELLS, PAIRS, TICK, CardPair
+from dsde.cards_data import GAME_SPELLS, PAIRS, TICK, YETI, CardPair
 from dsde.feat_spell_levels import SCHEDULE
 from dsde.patching import CaveCode
 from dsde.skills_cards import CARD_SPELL
@@ -148,7 +148,11 @@ def card_record(arm9: bytes, card: int, pair: CardPair | None) -> bytes:
         kind, arg = Kind.STATUS, _lowest_bit(mask)
     else:
         bits = [bit for flag, bit in CARD_BATTLE_BITS.items() if flags & flag]
-        if bits:
+        if card == YETI:
+            kind = (
+                Kind.STEAL
+            )  # it steals from the picked monster now (feat_card_changes.py)
+        elif bits:
             kind, arg = Kind.FLAG, bits[0]
     basic, basic_arg = NO_BASIC, arg
     if pair is not None and pair.basic_target == Target.ENEMY_ONE:
