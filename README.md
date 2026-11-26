@@ -143,6 +143,12 @@ you need your own copy of the game.
 New and changed artwork, and how each piece was made (some of it with AI, because I'm not an artist), is
 listed in [ART-SOURCES.md](ART-SOURCES.md). Replacements drawn by real artists are welcome, with full credit.
 
+**Artists wanted: the Special list icons.** I wanted every ability in the battle Special list to have its own
+icon, so the boxes are easy to tell apart at a glance, but I don't have the skill to make icons that look good.
+The ones in this release are placeholders. If you'd like to collaborate, each icon is a 16 x 16 PNG in
+[art/icons/](art/icons/), listed with what it should show in [ART-SOURCES.md](ART-SOURCES.md): replace one,
+several, or the whole set, and you'll be credited in full.
+
 ## Building it yourself
 
 You need your own copy of the game. This repo never contains the ROM or anything extracted from it.

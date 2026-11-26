@@ -84,5 +84,7 @@ changes each piece is linked so you can see what it does.
 
 ## Contributing art
 
-Replacements from artists are welcome and get full credit here and in the release notes. Open an issue or a
+Replacements from artists are welcome and get full credit here and in the release notes. The Special list
+icons above are the biggest want: the idea is that every ability's box is easy to tell apart at a glance, and the
+drawn ones are placeholders until someone who can draw makes better ones. Open an issue or a
 pull request, or reach out on GBAtemp. For an icon, a 16 x 16 PNG with the same file name is all it takes.
