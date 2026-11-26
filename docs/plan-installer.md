@@ -57,7 +57,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 10 | B in a town menu selects Leave town | town-menu-dpad |
 | 11 | The HUD stops pulsing | still-hud |
 
-**Menus and text (12 to 19) approved, Jeff, 2026-11-26; the rest proposed, for review group by group**
+**Menus and text (12 to 19) and Battles (20 to 36) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
 
 | # | Group | Switch | Today's feature |
 |---|---|---|---|
@@ -85,7 +85,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 33 | | Benched members gain experience | battle-end-rules |
 | 34 | | A leaving member drops their gear | leave-drops-gear |
 | 35 | | No curse penalty | no-curse-penalty |
-| 36 | | The curse blocks healing | curse-no-healing |
+| 36 | | Curse restricts healing (tooltip: while cursed, items don't heal Jian and healing magic heals him less; statues and revives still work) | curse-no-healing |
 | 37 | Spells and skills | Spells cost about 40% of their MP | mp-economy |
 | 38 | | MP items restore a flat amount | mp-economy |
 | 39 | | Healers learn spells by level | spell-levels |
