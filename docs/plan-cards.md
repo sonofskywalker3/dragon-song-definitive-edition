@@ -807,7 +807,8 @@ card enhances; the table in the cave gives, per spell id, the card and the uses 
 - Unchanged: `test_skill_weapon_break` (no card: stage -1, MP 10 -> 2) and `test_card_basic` (Lucia's basic
   Quetzalcoatl on one enemy, refused in round 2 with the points kept).
 
-Not seen: Miracle Tears revived at full (a knocked-out ally is still not set up by a plan), a stat skill refused
+Seen 2026-11-26: `test_boost_miracle_tears` (as test_skill_miracle_tears, Jian knocked out, Flora at 32 wearing
+Shaitan: the name bar's up arrow, Jian's HP 0 -> 28 of 28, MP 60 -> 40, points 1000 -> 900). Not seen: a stat skill refused
 at 2 stages (the round 2 part of `test_boost_weapon_break` missed the menu), Rufus's Stratagem and War Council
 (the same stage code as Weapon Break). Focus and Bealzebub: 11.11.
 
