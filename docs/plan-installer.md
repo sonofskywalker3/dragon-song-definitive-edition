@@ -58,7 +58,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 10 | B in a town menu selects Leave town | town-menu-dpad |
 | 11 | The HUD stops pulsing | still-hud |
 
-**Menus and text (12 to 19), Battles (20 to 36), Spells and skills (37 to 42), and Cards (43 to 45), and Fixes and extras (46, 47) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
+**Menus and text (12 to 19), Battles (20 to 36), Spells and skills (37 to 42), and Cards (43 to 45), Fixes and extras (46, 47), and the Retold story (48): every switch approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
 
 | # | Group | Switch | Today's feature |
 |---|---|---|---|
@@ -98,7 +98,17 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 45 | | The bestiary (the System list's Bestiary plank) (needs 44) | bestiary |
 | 46 | Fixes and extras | Gad's Express jobs grow with the journey | gad-express |
 | 47 | | Retold party chat on Y (default off; the original game's think-aloud is party chat too, so the name says which) | party-chat |
-| 48 | Story | Retold: text edits, the intro sending Jian straight to Lucia (opening-flags; Jeff, 2026-11-26: it changes the story path, so Retold only, and the Classic build drops it), the walk-out opening and narration, the blue seal (needs 15 or 16, as the opening needs text-speed today) | text-edits, opening-flags, opening-run, opening-text, title-seal-retold |
+| 48 | Story | Retold story: text edits, the intro sending Jian straight to Lucia (opening-flags; Jeff, 2026-11-26: it changes the story path, so Retold only, and the Classic build drops it), the walk-out opening and narration, the blue seal (needs 15 or 16, as the opening needs text-speed today) | text-edits, opening-flags, opening-run, opening-text, title-seal-retold |
+
+**The Retold story switch's details panel** (approved, Jeff, 2026-11-26; in Jeff's voice, and the same paragraph goes
+in the README's Story section; update it as the rewrite grows):
+
+> **Retold story**
+> I'm rewriting the game's dialogue to be truer to Lunar: The Silver Star and Lunar 2: Eternal Blue, the canon this
+> story leads into. The rewrite rests on research into every earlier script of both games and the original Japanese
+> of each, Dragon Song's included. It has only just begun: so far, a new opening narration retranslated from the
+> Japanese and a new wake-up scene. More arrives with each release.
+> Off: the original English dialogue, word for word.
 
 ## 4. Dependencies
 
