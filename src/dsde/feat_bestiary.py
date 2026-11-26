@@ -695,7 +695,7 @@ HINT_PICK_ASM = f"""
 HINT_DRAW = 0x02062000
 HINT_DRAW_WORD = 0xE0841001
 HELP = 0x02139EE8  # +2 the message shown (s8)
-HINT_TEXT = "Monsters beaten"
+HINT_TEXT = "Monster Data"
 
 HINT_DRAW_ASM = f"""
     ldr   ip, hd_help

@@ -157,7 +157,7 @@ Weakness   (icons, as today)
   looked "terrible"; "make it look like the others"; then, on the missing letters, "can you do the same?" as
   his Pokemon fork did): plank_word.py cuts e, s, t, i, a from Save, Quit Game, and Music Hall and builds the B,
   r, and y the game lacks in their colors, then adds the word as tiles to sysmenupack 48 and two frames (27,
-  28) to 36. Its hint "Monsters beaten" is a string of our own, drawn by the hint line's drawer (0x02062000) for
+  28) to 36. Its hint "Monster Data" (Jeff, 2026-11-26) is a string of our own, drawn by the hint line's drawer (0x02062000) for
   message -101. A on it goes in as the top menu's
   Items does (the Item page's screen block, state 0x53), and the categories (0x15) go straight on to the Cards
   list page; B leaves through the viewer exit (0x59), frees the Item page's three blocks as B on its categories
