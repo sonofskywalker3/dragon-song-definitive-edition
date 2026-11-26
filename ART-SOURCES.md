@@ -66,20 +66,21 @@ Taken from the game:
 
 ## Other changed art
 
-These are made by the build scripts from the game's own art or drawn in code. Their sources are being
-confirmed; this section will say how each was made.
+These are made at build time by scripts written with AI (Claude, by Anthropic), either drawn in code or
+changed from the game's own art. The game's art itself is not in this repository; the script that makes or
+changes each piece is linked so you can see what it does.
 
 | What you see | Where it is made | How |
 |---|---|---|
-| The red "Definitive Edition / Classic" seal on the title screen; the title art's palette merges close colors to make room | `src/dsde/feat_title_seal.py` | drawn in code; source unknown |
-| The blue "Retold" seal (Retold edition) | `src/dsde/feat_title_seal.py` | the Classic seal recolored by script; source unknown |
-| The battle's wooden sign reading "L+R" instead of "MIC" | `src/dsde/feat_mic_sign.py` | the game's sign with new letters drawn in code; source unknown |
-| The plank under the status bar reading NORMAL, FAST, or FASTER | `src/dsde/feat_battle_speed_label.py` | letters and shading drawn in code, in the sign's style; source unknown |
-| The "Bubble" icon for the Blue Dragon's summons in the target picker | `src/dsde/feat_targeting_names.py` | one frame of the bubbles' battle sprite, recolored by script to the icon palette |
-| The ring slot icon on the Status page, and its greyed copy | `src/dsde/feat_card_status.py` | the game's Ring item icon, recolored by script to the menu palette |
-| The flying stone of Stone Throw | `src/dsde/feat_skills_stone.py` | the stone from Jian's unused throw animation, moved into its own sprite file, unchanged |
-| The redone Adventure Guidebook pages: new text, headings, and heading pills | `src/dsde/feat_guidebook.py`, `src/dsde/guidebook_font.py` | letters cut from the guidebook's own pages; a few letters (E F H N O T 3 j M) and the pills drawn in code; source unknown |
-| A job's title shown in red in Gad's job list | `src/dsde/feat_gad_jobs.py` | a red copy of the title text palette, made by script |
+| The red "Definitive Edition / Classic" seal on the title screen; the title art's palette merges close colors to make room | [feat_title_seal.py](src/dsde/feat_title_seal.py) | drawn as pixel art in code by AI |
+| The blue "Retold" seal (Retold edition) | [feat_title_seal.py](src/dsde/feat_title_seal.py) | the Classic seal recolored by the AI-written script |
+| The battle's wooden sign reading "L+R" instead of "MIC" | [feat_mic_sign.py](src/dsde/feat_mic_sign.py) | the game's sign with new letters drawn in code by AI |
+| The plank under the status bar reading NORMAL, FAST, or FASTER | [feat_battle_speed_label.py](src/dsde/feat_battle_speed_label.py) | letters and shading drawn in code by AI, in the sign's style |
+| The "Bubble" icon for the Blue Dragon's summons in the target picker | [feat_targeting_names.py](src/dsde/feat_targeting_names.py) | one frame of the bubbles' battle sprite, recolored to the icon palette by the AI-written script |
+| The ring slot icon on the Status page, and its greyed copy | [feat_card_status.py](src/dsde/feat_card_status.py) | the game's Ring item icon, recolored to the menu palette by the AI-written script |
+| The flying stone of Stone Throw | [feat_skills_stone.py](src/dsde/feat_skills_stone.py) | the stone from Jian's unused throw animation, moved into its own sprite file by the AI-written script, unchanged |
+| The redone Adventure Guidebook pages: new text, headings, and heading pills | [feat_guidebook.py](src/dsde/feat_guidebook.py), [guidebook_font.py](src/dsde/guidebook_font.py) | letters cut from the guidebook's own pages by the AI-written script; a few letters (E F H N O T 3 j M) and the pills drawn in code by AI |
+| A job's title shown in red in Gad's job list | [feat_gad_jobs.py](src/dsde/feat_gad_jobs.py) | a red copy of the title text palette, made by the AI-written script |
 
 ## Contributing art
 
