@@ -11,6 +11,9 @@ The effect hook sits in func_020500dc, which runs once per target of a spell. By
   the game's; a failed roll shows the game's MISS popup over the target with its sound;
 - FLAG: the battle-wide flag is set, with the result word the card of that flag leaves.
 
+A cast a worn card enhances (feat_skills_boost.py) moves a stat 2 stages, and its status always lands and is
+marked as the strong kind.
+
 A target the skill would do nothing to (feat_skills_idle.py) is left alone. For a spell on one target the
 message line then says "No effect!" (the menu refuses such a pick, but the target can change after it); a
 spell on everyone just passes over that target.
@@ -20,6 +23,7 @@ The cast's look is in feat_skills_look.py.
 
 from dsde import targeting_consts as T
 from dsde.patching import AsmPatch, CaveCode
+from dsde.feat_skills_boost import BOOST_LIMIT, STATE_PENDING
 from dsde.skills_common import (
     ALL_TARGETS,
     BATTLE_WORK_PTR,
@@ -39,6 +43,7 @@ from dsde.skills_common import (
     MESSAGE_WINDOW,
     OPEN_WINDOW,
     RECORD_SIZE,
+    RECORD_STAGES,
     RECORDS_PTR,
     STRING_BASE,
     STRING_NO_EFFECT,
@@ -81,7 +86,7 @@ MESSAGE_DONE = 0x020449EC  # the function's epilogue
 # Replaces `ands r0, r5, #0x1000000` in func_020500dc (bl). r6 = spell, r7 = target battler, r5 = the
 # spell's flags. Leaves the flags of the replaced instruction.
 FX_ASM = f"""
-    push  {{r4, r8, sb, lr}}
+    push  {{r4, r8, sb, sl, lr}}
     cmp   r6, #{SPELL_COUNT}
     bhs   fx_out
     ldr   sb, fx_table
@@ -96,6 +101,8 @@ FX_ASM = f"""
     bl    ${{cave_skill_idle}}
     cmp   r0, #0
     bne   fx_none
+    bl    ${{cave_skill_boosted}}
+    mov   sl, r0
     ldr   r0, fx_battlers
     ldr   r0, [r0]
     mov   r1, #{BATTLER_SIZE:#x}
@@ -114,6 +121,20 @@ FX_ASM = f"""
     ldrb  r1, [sb, #{FX_ARG}]
     ldrsb r2, [sb, #{FX_DELTA}]
     bl    {ADD_STAGE:#x}
+    cmp   sl, #0
+    beq   fx_recompute
+    ldrb  r1, [sb, #{FX_ARG}]
+    add   r0, r8, r1, lsl #1
+    ldrsh r0, [r0, #{RECORD_STAGES:#x}]
+    ldrsb r2, [sb, #{FX_DELTA}]
+    cmp   r2, #0
+    rsblt r0, r0, #0
+    cmp   r0, #{BOOST_LIMIT}
+    bge   fx_recompute
+    mov   r0, r8
+    ldrb  r1, [sb, #{FX_ARG}]
+    bl    {ADD_STAGE:#x}
+fx_recompute:
     mov   r0, r8
     mov   r1, #1
     ldr   r2, [r4]
@@ -129,6 +150,8 @@ fx_result:
     str   r1, [r0, #{RESULT_FLAG}]
     b     fx_out
 fx_status:
+    cmp   sl, #0
+    bne   fx_lands
     ldrb  r8, [sb, #{FX_CHANCE}]
     cmp   r8, #{SURE}
     bhs   fx_lands
@@ -139,6 +162,15 @@ fx_status:
     cmp   r1, r8
     bhs   fx_miss
 fx_lands:
+    cmp   sl, #0
+    beq   fx_queue
+    mov   r0, r7
+    bl    ${{cave_skill_record_of}}
+    ldr   r1, fx_state
+    add   r1, r1, r0
+    mov   r0, #1
+    strb  r0, [r1, #{STATE_PENDING}]
+fx_queue:
     mov   r0, r7
     ldrb  r1, [sb, #{FX_ARG}]
     bl    {QUEUE_STATUS:#x}
@@ -180,7 +212,7 @@ fx_none:
     bl    {OPEN_WINDOW:#x}
 fx_out:
     ands  r0, r5, #0x1000000
-    pop   {{r4, r8, sb, pc}}
+    pop   {{r4, r8, sb, sl, pc}}
 fx_table:
     .word ${{cave_skill_fx}}
 fx_battlers:
@@ -191,6 +223,8 @@ fx_results:
     .word {RESULT_WORDS:#x}
 fx_work:
     .word {BATTLE_WORK_PTR:#x}
+fx_state:
+    .word ${{cave_skill_boost}}
 """
 
 # Replaces `ands r1, r2, #1` in func_02044990 (b). A third message bit draws "No effect!" the way the

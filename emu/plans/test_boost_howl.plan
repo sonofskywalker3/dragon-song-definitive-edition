@@ -1,0 +1,40 @@
+# cards: Gabryel at level 30 (Howl known) wears Tick (card 226, her slot 0x020B475A) with 1300 points (0x020B4898).
+# The roll is forced to 98, which misses a plain Howl (test_skill_howl_miss). Expect: the enhanced Howl lands
+# anyway: battler 9's status 0 -> 4, MP 50 -> 41, points 1300 -> 1200; the name bar shows the up arrow (bh_name).
+# Run with --save.
+include party_gabryel
+pin u32 0x020B471C 29
+pinptr u32 0x020B8620 0x18 50
+execpoke 0x020503A0 u32 0x020A0238 15
+poke u8 0x0213BA11 1
+poke u16 0x020B4898 1300
+poke u16 0x020B475A 226
+wait 270
+watch u32 0x0228e878 gabryel_mp
+watch u8 0x0228ec34 status9
+watch u16 0x020B4898 points
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 50
+press Right 8
+wait 50
+press Right 8
+wait 50
+shot bh_name
+press A 8
+wait 80
+press Down 8
+wait 30
+shot grid
+press A 8
+wait 30
+shot picked
+wait 210
+shot bh_cast
+wait 400
+shot bh_after

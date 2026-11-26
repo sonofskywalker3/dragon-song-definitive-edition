@@ -1,0 +1,37 @@
+# cards: Lucia at level 13 wears Namia (card 219, her slot 0x020B46FE) with 1300 points (0x020B488A). Right, Down
+# reaches Divine Rain (the up arrow on the name bar, shot bd_name); A casts on both allies. Expect the battle flags
+# (0x02282940) to gain the 10% regen bit 0x08, not Divine Rain's 0x10, and points 1300 -> 1100. Run with --save.
+include party2_strong
+poke u8 0x0213ba0a 1
+poke u16 0x020b488a 1300
+poke u16 0x020b46fe 219
+poke u32 0x020b46c0 12
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+watch u32 0x02282940 flags
+watch u32 0x0228e8e4 lucia_mp
+watch u16 0x020b488a points
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Right 8
+wait 30
+press Down 8
+wait 30
+shot bd_name
+press A 8
+wait 60
+wait 500
+shot bd_after

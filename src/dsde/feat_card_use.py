@@ -22,6 +22,7 @@ from dsde.cards_common import (
     POINTS_PER_USE,
 )
 from dsde.cards_data import FIELD_CARDS
+from dsde.feat_card_targets import BASIC_LEARNER
 from dsde.patching import CaveCode, Patch
 from dsde.skills_cards import CARD_SPELL
 from dsde.skills_common import hook
@@ -122,7 +123,8 @@ LISTABLE_ASM = f"""
     pop   {{r1, pc}}
 """
 
-# func_02050a74's first instruction, for the card spell: -1 (not listed) with no battle card worn, 0 (listed,
+# func_02050a74's first instruction, for the card spell: -1 (not listed) with no battle card worn or a card that
+# enhances a skill the wearer knows (feat_card_boost.py), 0 (listed,
 # greyed, refused) with fewer than 100 points, else 1, the "cost" the menu needs to accept a pick; no MP is ever
 # taken for it.
 CASTABLE_ASM = f"""
@@ -145,6 +147,11 @@ cc_card:
     mov   r2, r0
     bl    ${{cave_card_listable}}
     cmp   r0, #0
+    mvneq r0, #0
+    beq   cc_done
+    mov   r0, r2
+    bl    ${{cave_card_basic}}
+    cmp   r0, #{BASIC_LEARNER}
     mvneq r0, #0
     beq   cc_done
     mov   r0, r2

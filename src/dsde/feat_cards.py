@@ -7,11 +7,14 @@ Put together from:
 - feat_ring_slot.py: a ring's Dragon Magic for whoever wears the ring;
 - feat_card_use.py: a worn card used from the Special list;
 - feat_card_rules.py: one stage at most and a 70% roll for the statuses that take turns;
-- feat_card_targets.py: basic or upgraded by wearer, and the refusal of a use that would change nothing.
+- feat_card_targets.py: the basic version for a wearer who does not know the card's skill, and the refusal of a
+  use that would change nothing;
+- feat_card_boost.py: for a wearer who knows it, the card enhances the skill.
 
 Needs skills (the Special list, the learn levels, and the rules a card shares with the skills).
 """
 
+from dsde.feat_card_boost import boost_patches
 from dsde.feat_card_equip import equip_patches
 from dsde.feat_card_slots import slot_patches
 from dsde.feat_card_rules import rule_patches
@@ -31,5 +34,6 @@ CARDS = Feature(
         *use_patches(),
         *rule_patches(),
         *target_patches(),
+        *boost_patches(),
     ),
 )

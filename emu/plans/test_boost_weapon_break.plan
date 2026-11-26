@@ -1,0 +1,57 @@
+# cards: Jian at level 9 (Weapon Break known) wears Quetzalcoatl (card 236, his slot 0x020B46A2) with 2000 points
+# (0x020B48AC). His Special list has Stone Throw and Weapon Break and no card entry (shot bw_list); Down to Weapon
+# Break: the name bar reads "Weapon Break" with the up arrow (bw_name); A opens the grid, Right picks battler 5,
+# A casts. Expect: MP 10 -> 2, battler 5's ATK stage 0 -> -2 (0xFFFE), points 2000 -> 1900. Next round the same
+# pick still has a stage to go? No: it is at 2, so the pick is refused (bw_refused) and points stay 1900.
+# Run with --save.
+include boot_from_save
+include cheats_strong
+include warp6
+include cheats_strong
+pin u32 0x020B4664 8
+poke u8 0x0213BA1B 1
+poke u16 0x020B48AC 2000
+poke u16 0x020B46A2 236
+wait 270
+watch u32 0x0228E878 jian_mp
+watch u16 0x0228EABC stage5
+watch u16 0x0228EA50 stage4
+watch u16 0x0228EB28 stage6
+watch u16 0x020B48AC points
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 50
+shot bw_list
+press Down 8
+wait 30
+shot bw_name
+press A 8
+wait 70
+press Right 8
+wait 20
+shot bw_grid
+press A 8
+wait 120
+shot bw_cast
+wait 200
+shot bw_after
+wait 600
+shot bw_round2
+press A 8
+wait 50
+press Right 8
+wait 50
+press A 8
+wait 50
+press Down 8
+wait 30
+press A 8
+wait 70
+press Right 8
+wait 20
+press A 8
+wait 30
+shot bw_refused

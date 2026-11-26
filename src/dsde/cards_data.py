@@ -54,9 +54,16 @@ DEFERRED_BOSS_CARDS = frozenset(
 
 # Spells a pair's learners are tested on: the game's own ids, and the skills' (skills_*.py)
 TENDER_RAIN, DIVINE_RAIN, MIRACLE_TEARS = 2, 4, 5
-WEAPON_BREAK, ARMOR_BREAK, KNOCKOUT_KICK = 38, 39, 41
-VENOM_CLAW, BLINDING_SWIPE, HOWL = 44, 45, 47
-STRATAGEM, WATER_BIND = 54, 59
+WEAPON_BREAK, ARMOR_BREAK, KNOCKOUT_KICK, WAR_BREAKER, WALL_BREAKER = 38, 39, 41, 42, 43
+VENOM_CLAW, BLINDING_SWIPE, HOWL, VENOM_RAIN, BLINDING_GALE, DREAD_ROAR = (
+    44,
+    45,
+    47,
+    48,
+    49,
+    50,
+)
+STRATAGEM, WAR_COUNCIL, WATER_BIND, BINDING_RAIN = 54, 58, 59, 60
 GAME_SPELLS = frozenset({TENDER_RAIN, DIVINE_RAIN, MIRACLE_TEARS})
 
 # Gear effect ids (item +2; the switch in func_0206ab6c)
@@ -149,6 +156,20 @@ PAIRS: tuple[CardPair, ...] = (
         VITRA, ((LUCIA, TENDER_RAIN), (FLORA, TENDER_RAIN)), Target.ALLY_ONE, Kind.NONE
     ),
 )
+# The skills and spells a worn card enhances (docs/plan-cards.md 8): a wearer who knows one of them casts it
+# enhanced for the MP and 100 points (one target) or 200 (all targets), and is not offered the card itself.
+BOOSTS: dict[int, tuple[int, ...]] = {
+    QUETZALCOATL: (WEAPON_BREAK, WAR_BREAKER),
+    ABADON: (ARMOR_BREAK, WALL_BREAKER),
+    IKONTABIPU: (KNOCKOUT_KICK,),
+    SHREEKER: (VENOM_CLAW, VENOM_RAIN),
+    ASMODEE: (BLINDING_SWIPE, BLINDING_GALE),
+    TICK: (WATER_BIND, BINDING_RAIN, HOWL, DREAD_ROAR),
+    COMET: (STRATAGEM, WAR_COUNCIL),
+    NAMIA: (DIVINE_RAIN,),
+    SHAITAN: (MIRACLE_TEARS,),
+    VITRA: (TENDER_RAIN,),
+}
 NAMIA_BASIC_REGEN = (
     5  # percent of max HP a turn: Divine Rain's, for a wearer who has not learned it
 )
@@ -234,6 +255,15 @@ def _check() -> None:
                 raise ValueError(
                     f"card {pair.card}: spell {spell} is not member {owner}'s"
                 )
+    for card, spells in BOOSTS.items():
+        pair = next((pair for pair in PAIRS if pair.card == card), None)
+        if pair is None or any(spell not in spells for _owner, spell in pair.learners):
+            raise ValueError(
+                f"card {card}: an enhancing card must be paired, and enhance its pair's skills"
+            )
+    boosted = [spell for spells in BOOSTS.values() for spell in spells]
+    if len(set(boosted)) != len(boosted):
+        raise ValueError("a spell is enhanced by two cards")
     if STEAL_SPELL in BY_SPELL:
         raise ValueError("Steal's spell id is taken")
 

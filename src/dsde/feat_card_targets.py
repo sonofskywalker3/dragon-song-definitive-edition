@@ -75,7 +75,7 @@ NO_LEARNER = 0xFF
 LEARNERS = 2  # learner slots per card
 LEARNER_SHIFT = 2  # 2 bytes per learner, 4 per card
 CARD_FLAGS = 0x0206AA68  # (item) -> the item's card effect flags
-NO_BASIC, BASIC_ENEMY, BASIC_ALLY, BASIC_REGEN = 0, 1, 2, 3
+NO_BASIC, BASIC_ENEMY, BASIC_ALLY, BASIC_REGEN, BASIC_LEARNER = 0, 1, 2, 3, 4
 BASIC_FLAG = (
     0x100  # with a card index: the wearer gets the basic version (cave_card_idle)
 )
@@ -203,7 +203,7 @@ def _learners_asm() -> str:
 
 
 # r0 = character id -> r0 = the basic version the wearer gets of their worn card (BASIC_*; NO_BASIC for a card
-# with one version or a wearer who has learned its skill), r1 = card - FIRST_CARD, or -1 with no battle card
+# with one version, BASIC_LEARNER for a wearer who has learned its skill: the card enhances that skill instead), r1 = card - FIRST_CARD, or -1 with no battle card
 # worn. Keeps r2 to r11.
 BASIC_ASM = f"""
     push  {{r2-r5, lr}}
@@ -232,7 +232,7 @@ cb_learner:
     cmp   r1, r4
     bne   cb_next
     cmp   ip, lr
-    movhs r0, #{NO_BASIC}
+    movhs r0, #{BASIC_LEARNER}
     bhs   cb_done
 cb_next:
     add   r3, r3, #1
@@ -361,6 +361,9 @@ ci_fx:
 # a one-target use writes the card's test into the card spell's effect record for the grid and the picker. Tick
 # with no living front-row enemy is never refused: the game turns it into a plain attack (func_020514ec).
 MENU_ASM = f"""
+    push  {{lr}}
+    bl    ${{cave_card_boost_menu}}
+    pop   {{lr}}
     cmp   r0, #{CARD_SPELL}
     bne   {SPELL_FLAGS:#x}
     push  {{r4-r7, lr}}

@@ -150,6 +150,12 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
 - **Every box in the Special list has an icon**: each skill and spell its own picture, Dragon Magic its ring, and
   a worn card its card. Cure Squall is renamed Cure Water, and Jian's water Dragon Magic, Loud Call, is renamed
   Crashing Wave. Where the icons come from is in [ART-SOURCES.md](ART-SOURCES.md).
+- **A worn card enhances the skill it matches.** A member who knows the skill casts it enhanced while the card has
+  the points: the MP plus 100 of the card's points (one target) or 200 (all targets), and an up arrow after the
+  name on the name bar. Enhanced, a stat skill moves the stat two stages; sleep, fear, and binding always land on
+  a regular monster; blind lasts 4 to 6 turns; poison takes 10% of max HP a turn instead of 5%; Tender Rain heals
+  to full; Divine Rain restores 10% a turn instead of 5%; and Miracle Tears revives at full HP. Such a member is not
+  offered the card itself; anyone else uses it on one picked target for 100 points.
 
 | Who | Level | Skill | MP | What it does |
 |---|---|---|---|---|

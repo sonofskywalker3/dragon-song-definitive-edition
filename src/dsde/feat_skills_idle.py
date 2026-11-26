@@ -3,7 +3,8 @@
 Jeff's rule: a cast that would change nothing is refused before it is made, with "No effect!" on the name
 bar and no MP taken. What "nothing" means depends on the skill's kind (skills_data.Kind):
 
-- STAGE: the stat is already a stage past 0 in the skill's direction;
+- STAGE: the stat is already a stage past 0 in the skill's direction (2 stages for a cast a worn card
+  enhances: the boost state's limit, feat_skills_boost.py);
 - STATUS: the target already has a status (a battler has one at a time), or it is a boss row and the
   status is one a boss never takes (the game's rule in func_020500dc: row flags bit 31 with status 1, 3, 4,
   5, or 7);
@@ -17,6 +18,7 @@ refusal the Special list's handlers end in.
 """
 
 from dsde import targeting_consts as T
+from dsde.feat_skills_boost import STATE_LIMIT
 from dsde.patching import AsmPatch, CaveCode
 from dsde.skills_common import (
     ALL_TARGETS,
@@ -87,8 +89,10 @@ IDLE_ASM = f"""
     ldrsb r3, [r2, #{FX_DELTA}]
     cmp   r3, #0
     rsblt r0, r0, #0
-    cmp   r0, #0
-    bgt   idle_none
+    ldr   ip, idle_state
+    ldrb  ip, [ip, #{STATE_LIMIT}]
+    cmp   r0, ip
+    bge   idle_none
 idle_fine:
     mov   r0, #0
     bx    lr
@@ -137,6 +141,8 @@ idle_rows:
     .word {ENEMY_ROWS:#x}
 idle_work:
     .word {BATTLE_WORK_PTR:#x}
+idle_state:
+    .word ${{cave_skill_boost}}
 """
 
 # r0 = the caster's battler index, r1 = spell -> r0 as cave_skill_idle, for a spell cast with no picker.

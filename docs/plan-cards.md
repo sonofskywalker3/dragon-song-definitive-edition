@@ -675,3 +675,47 @@ Rage on the name bar. The first build reached Crashing Wave's string with an `ad
 prints the error and still returns a broken instruction, so highlighting the ring broke the list. It loads a
 pointer now. To do: make the build fail on Keystone's printed errors (they bypass Python's stderr on
 Windows; a check in a child process).
+
+### 11.10 Cards enhance matching skills (approved list, point 2; 2026-11-25)
+
+`feat_card_boost.py` (cards) decides when a cast is enhanced; `feat_skills_boost.py` (skills) holds what an
+enhanced cast does, and is inert without the cards feature. `cards_data.BOOSTS` lists the skills and spells each
+card enhances; the table in the cave gives, per spell id, the card and the uses (2 for a spell on all targets).
+
+- The resolver's MP charge (0x02051A98, `sub r1, r1, r0`) asks `cave_card_boost_cost` for the caster's worn card
+  and points: an enhanced cast takes the points and writes the caster's battler index and a stage limit of 2 into
+  the boost state (`cave_skill_boost`); a plain one writes no caster and limit 1. The FX hook reads the caster from
+  battle work +0x32, so only that action is enhanced.
+- The Special list's OK (`cave_card_menu`, first thing) writes the limit for the member and spell picked, so the
+  refusal test (`cave_skill_idle`, STAGE: refused at the limit) lets an enemy one stage down be picked.
+- The name bar's draw of a spell name (0x02044E80) appends the font's up arrow (code 0x57) for a cast that will be
+  enhanced. The battle font has no "+" (codes probed in `probe_glyphs_*`: 0x1C to 0x2F, 0x55 to 0x6A).
+- `cave_card_basic` answers `BASIC_LEARNER` for a wearer who knows the card's skill, and the card spell's castable
+  answer is then -1: the card entry is not listed.
+- Effects (`feat_skills_fx.py`, `feat_skills_boost.py`): a stage moves twice, up to 2 past 0; a status skips its
+  roll and marks the target's stat record as pending; the status setter's common exit (0x0205520C) reads and clears
+  the mark: blind gets 4 to 6 turns (record +0x4C, which func_02055070 counts down), poison is marked strong, and the
+  poison tick's percent (0x0202E25C, `mov r1, #5`) is 10 for a strong poison. Tender Rain: the heal amount
+  (`bl func_02050850` at 0x020501D0) becomes the target's max HP. Miracle Tears: the revive HP (0x02050188) becomes
+  max HP. Divine Rain: the regen bit (0x02050394) is Namia's 0x08 (10%) instead of 0x10 (5%).
+
+**Seen** (Classic build):
+- `test_boost_weapon_break`: Jian at 9 with Quetzalcoatl at 2000: the list is Stone Throw and Weapon Break, no card
+  entry; the name bar reads "Weapon Break" with the arrow; the cast takes MP 10 -> 2 and points 2000 -> 1900, and
+  battler 5's ATK stage goes 0 -> -2.
+- `test_boost_tender_rain`: Lucia at 13 with Vitra at 1300, five spells and no card entry; both allies at 100 HP go
+  to 999; MP 18 -> 6; points 1300 -> 1100.
+- `test_boost_howl`: Gabryel at 30 with Tick, the roll forced to 98 (a plain Howl misses): status 0 -> 4, MP 50 ->
+  41, points 1300 -> 1200.
+- `test_boost_venom`: Venom Claw with Shreeker: status 6, points 1200 -> 1100; the tick on the 97 HP enemy takes 9
+  (5% would be 4).
+- `test_boost_blind`: Blinding Swipe with Asmodee: status 2 with 4 turns on the counter.
+- `test_boost_divine_rain`: Lucia with Namia: the battle flags get 0x08; MP 18 -> 2; points 1300 -> 1100.
+- Unchanged: `test_skill_weapon_break` (no card: stage -1, MP 10 -> 2) and `test_card_basic` (Lucia's basic
+  Quetzalcoatl on one enemy, refused in round 2 with the points kept).
+
+Not seen: Miracle Tears revived at full (a knocked-out ally is still not set up by a plan), a stat skill refused
+at 2 stages (the round 2 part of `test_boost_weapon_break` missed the menu), Rufus's Stratagem and War Council
+(the same stage code as Weapon Break). Still to build for point 2: Focus on Jian alone, and Bealzebub making it
+party-wide.
+
