@@ -904,7 +904,8 @@ the start of each party action, in the resolver hook (feat_card_use.py, 0x02051A
 battler 9 takes its DEF stage 0 -> -1, and nothing else changes). The first build read the attacker from r7 and
 never rolled. A review then found that an enemy's counter (attacker 13, target the wearer's scratch copy 12, while
 the acting battler is still the wearer) would have lowered the wearer's own stat: the roll now needs r7 to be a party
-slot or 12 and r4 an enemy battler, 4 to 11 (`test_card_moran` gives the same result). Not seen: a missed roll, Orcus (the same code, ATK), an enemy hitting a party member wearing it (the
+slot or 12 and r4 an enemy battler, 4 to 11 (`test_card_moran` gives the same result). Seen 2026-11-26: `test_card_orcus` (Jian wearing Orcus, the same roll:
+battler 9's ATK stage 0 -> -1, nothing else). Not seen: a missed roll, an enemy hitting a party member wearing it (the
 hook returns at once: the actor is not a party member).
 
 ### 11.16 Steal and the Yeti card (approved list, points 4 and 5; 2026-11-25)

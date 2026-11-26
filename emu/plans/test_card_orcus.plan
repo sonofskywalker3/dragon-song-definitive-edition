@@ -1,0 +1,35 @@
+# cards: the Orcus card (docs/plan-cards.md 4 and 8, point 5), as test_card_moran with ATK. Jian wears it (259, his
+# slot 0x020B46A2); first temple battle, the enemies' HP pinned. The random state is set to 24 (roll 3, under 25)
+# where the card's roll is made (cave_card_on_hit + 0x8C: the address moves with the cave). Round 1: Jian Fights the
+# first enemy: its ATK stage goes 0 -> -1 on his first landed hit, once for the action (watches atk_*). Run with --save.
+include party2_strong
+poke u8 0x0213ba32 1
+poke u16 0x020b46a2 259
+execpoke 0x1ffdc28 u32 0x020A0238 24
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+watch u16 0x0228ea50 atk_4
+watch u16 0x0228eabc atk_5
+watch u16 0x0228eb28 atk_6
+watch u16 0x0228ec00 atk_8
+watch u16 0x0228ec6c atk_9
+watch u16 0x0228ecd8 atk_10
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+press A 8
+wait 60
+waituntil u32 0x020B0010 8 3000
+waituntil u32 0x020B0010 7 3000
+wait 60
+shot mo_end
