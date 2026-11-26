@@ -2,10 +2,13 @@
 
 - Kills are counted per species during a battle: the normal drop routine func_02069f34 calls the roll
   func_02069e00(row, tier) once for each regular monster that dies (0x0206A008), and the species is row >> 2.
-- The roll never lands on the card slot: a roll that would gives slot 0, as the game does once the card is owned.
+- The first kill of a species in a battle drops its card through the game's own loot list (so the results show it
+  and a win puts it in the bag), unless a copy is owned; any other roll on the card slot gives slot 0, as the game
+  does once the card is owned.
 - When the battle ends (0x0202AC58, right after the results are copied back, for every outcome), a won battle
-  (result 0x020B85C4 at most 1) gives each species killed its card, at full points, if no copy is owned (the bag
-  count includes a worn card), and otherwise adds 100 points per kill, capped at the card's full value. Escaping
+  (result 0x020B85C4 at most 1) gives each species killed its card, at full points, if no copy is owned (a backstop
+  for a card drop the loot list lost: full, or cancelled by an area's drop rule), and otherwise adds 100 points per
+  kill, capped at the card's full value (a card that came in the loot this battle is already full). Escaping
   or losing gives nothing. The counts are cleared either way.
 - Boss cards always drop: in the boss branch the card slot's roll always passes (a slot whose chance is 0 stays
   0: Gideon 2, Gideon 3, and Ignatius, which have no source yet).
@@ -65,12 +68,26 @@ ck_kills:
     .word ${{cave_card_kills}}
 """
 
-# In place of `cmp r4, #2`: the card slot gives slot 0, then the compare.
+# In place of `cmp r4, #2` (r4 = the slot rolled, r5 = the row): the first kill of a species this battle drops its
+# card (the game's own owned test after this gives slot 0 if a copy is owned), so the results list it and a win puts
+# it in the bag; any other roll on the card slot gives slot 0. Then the compare. r0 to r3 are free here.
 SLOT_ASM = f"""
+    lsr   r0, r5, #{ROW_SPECIES_SHIFT}
+    cmp   r0, #{SPECIES}
+    bhs   sl_plain
+    ldr   r1, sl_kills
+    ldrb  r1, [r1, r0]
+    cmp   r1, #1
+    moveq r4, #{CARD_DROP_SLOT}
+    beq   sl_done
+sl_plain:
     cmp   r4, #{CARD_DROP_SLOT}
     moveq r4, #0
+sl_done:
     cmp   r4, #{CARD_DROP_SLOT}
     bx    lr
+sl_kills:
+    .word ${{cave_card_kills}}
 """
 
 # In place of `cmp r2, r0, lsr #16` in the boss branch (sb = the slot): the card slot always passes unless its chance
@@ -154,14 +171,12 @@ def drop_patches() -> tuple:
         CaveCode("cave_card_kills", KILLS_ASM, "kills per species this battle"),
         CaveCode("cave_card_kill_count", COUNT_ASM, "count a kill"),
         hook(ROLL_CALL, ROLL_CALL_WORD, "bl ${cave_card_kill_count}", "count a kill"),
-        CaveCode(
-            "cave_card_no_card_roll", SLOT_ASM, "the drop roll never gives a card"
-        ),
+        CaveCode("cave_card_no_card_roll", SLOT_ASM, "the first kill drops the card"),
         hook(
             CARD_SLOT_TEST,
             CARD_SLOT_TEST_WORD,
             "bl ${cave_card_no_card_roll}",
-            "the drop roll never gives a card",
+            "the first kill drops the card",
         ),
         CaveCode("cave_card_boss_drop", BOSS_ASM, "boss cards always drop"),
         hook(
