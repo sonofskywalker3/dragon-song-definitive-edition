@@ -12,11 +12,13 @@ Put together from:
 - feat_card_boost.py: for a wearer who knows it, the card enhances the skill;
 - feat_card_changes.py: Insector, Ochu, and Kuntukapu last 2 to 4 rounds; Hellbird and Termite on one ally;
 - feat_card_bosses.py: the boss card passives that need code;
-- feat_card_drops.py: a species' first won battle gives its card, later kills recharge it, boss cards always drop.
+- feat_card_drops.py: a species' first won battle gives its card, later kills recharge it, boss cards always drop;
+- card_text.py: what each card says on the Cards equip page.
 
 Needs skills (the Special list, the learn levels, and the rules a card shares with the skills).
 """
 
+from dsde.card_text import card_text_patches
 from dsde.feat_card_bosses import boss_patches
 from dsde.feat_card_boost import boost_patches
 from dsde.feat_card_changes import change_patches
@@ -44,5 +46,6 @@ CARDS = Feature(
         *change_patches(),
         *boss_patches(),
         *drop_patches(),
+        *card_text_patches(),
     ),
 )

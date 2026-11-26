@@ -1,0 +1,46 @@
+# Diagnostic: card text on the Cards equip page: several cards in the bag (through the bag pokes), X, Items,
+# Cards, then a shot of each card highlighted in turn.
+include boot_from_save
+wait 100
+poke u8 0x0213BA0F 1
+poke u8 0x0213BA11 1
+poke u8 0x0213BA12 1
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA29 1
+poke u8 0x0213BA38 1
+poke u8 0x0213BA2A 1
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot ct_00
+press Up 6
+wait 25
+press Right 6
+wait 25
+shot ct_01
+press Right 6
+wait 25
+shot ct_02
+press Right 6
+wait 25
+shot ct_03
+press Right 6
+wait 25
+shot ct_04
+press Right 6
+wait 25
+shot ct_05
+press Right 6
+wait 25
+shot ct_06

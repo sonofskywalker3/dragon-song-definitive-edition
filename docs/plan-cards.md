@@ -412,6 +412,12 @@ none of the wearer-only effects uses it.
   The four rings: "Grants <spell> to the wearer." Both editions.
 - New strings: "Steal", its description, "Stole <item>!", "Nothing to steal".
 
+- **Card text, draft (2026-11-26):** the bestiary shows no card text (removed with the stats panel); the equip
+  page shows it. Jeff: the first line says what the card does for any wearer, the second names the skill it powers
+  up and how (not a "users" line). Records are 61 bytes, shown as two lines of 30; the font has no %, +, or
+  parentheses. The draft is in card_text.py (part of `cards`), checked in the game (`diag_card_text`: Termite,
+  Bealzebub, Sasquatch, Dark Jian); waiting for Jeff's approval of the wording.
+
 ### 7.8 Modules
 
 New feature `cards` (both editions), split under 400 lines a file: `cards_data.py` (pairs, boss passives, item
