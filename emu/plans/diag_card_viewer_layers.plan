@@ -21,6 +21,13 @@ press A 8
 wait 60
 wait 60
 shot base
+peek u16 0x04001008 bg0cnt
+peek u16 0x0400100A bg1cnt
+peek u16 0x0400100C bg2cnt
+peek u16 0x0400100E bg3cnt
+peek u32 0x04001000 dispcnt_b
+peek u32 0x04000000 dispcnt_a
+save viewer
 pin u8 0x04001001 0x0F
 wait 4
 shot top_no_obj
