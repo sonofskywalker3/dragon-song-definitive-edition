@@ -149,6 +149,12 @@ The ones in this release are placeholders. If you'd like to collaborate, each ic
 [art/icons/](art/icons/), listed with what it should show in [ART-SOURCES.md](ART-SOURCES.md): replace one,
 several, or the whole set, and you'll be credited in full.
 
+## License
+
+The code in this repository is released under the [MIT License](LICENSE): use it, change it, and share it, keeping
+the copyright notice. Lunar: Dragon Song and everything in it belong to their owners; that includes the game's own
+art in the edited icons listed in [ART-SOURCES.md](ART-SOURCES.md), which the license does not cover.
+
 ## Building it yourself
 
 You need your own copy of the game. This repo never contains the ROM or anything extracted from it.

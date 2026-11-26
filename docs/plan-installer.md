@@ -6,6 +6,10 @@ its own switch, as fine as Jeff's examples (HP drain while running; B in a town 
 dependencies switch on or grey out; the defaults equal the full release. Jeff hopes it replaces the two edition
 patches in time. Nothing here is built.
 
+**Decided (Jeff, 2026-11-26): the linker route, and the project is MIT licensed** (LICENSE added). Keystone stays
+a build tool on our side only; the installer ships no Keystone, so nothing in it is GPL. Questions 2 and 3 in
+section 5 are still open.
+
 ## 1. Why the installer has to build, not combine
 
 A patch cannot be cut into one piece per switch. The new code lives in one shared space (the ITCM cave), and each
