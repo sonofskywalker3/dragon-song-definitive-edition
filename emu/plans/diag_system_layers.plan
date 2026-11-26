@@ -1,0 +1,47 @@
+# Diagnostic: the System list's layers (bottom screen, engine A): sprites off, then each BG; BG control registers.
+include boot_from_save
+wait 250
+press X 3
+wait 90
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press A 3
+wait 60
+shot sys0
+pin u8 0x04000001 0x0F
+wait 4
+shot s_no_obj
+unpin
+wait 4
+pin u8 0x04000001 0x1E
+wait 4
+shot s_no_bg0
+unpin
+wait 4
+pin u8 0x04000001 0x1D
+wait 4
+shot s_no_bg1
+unpin
+wait 4
+pin u8 0x04000001 0x1B
+wait 4
+shot s_no_bg2
+unpin
+wait 4
+pin u8 0x04000001 0x17
+wait 4
+shot s_no_bg3
+unpin
+wait 4
+peek u16 0x04000008 bg_08
+peek u16 0x0400000A bg_0A
+peek u16 0x0400000C bg_0C
+peek u16 0x0400000E bg_0E
+peek u32 0x04000000 dispcnt_a
+save system

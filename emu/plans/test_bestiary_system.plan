@@ -1,0 +1,58 @@
+# Test: the System list's Bestiary plank. X, Right to System, A; shots of the list, Down to the Bestiary plank
+# (between Music Hall and Quit Game), A opens the bestiary on the first card, Down moves, B goes back to the
+# System list with the cursor on the plank; Down to Quit Game shows its hint. Jian gets the Quetzalcoatl,
+# Sasquatch, and Dark Jian cards and is level index 22 (LV 23).
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA29 1
+poke u8 0x0213BA38 1
+poke u32 0x020B4664 22
+watch u32 0x020B0010 menu_state
+wait 150
+press X 3
+wait 90
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press A 3
+wait 60
+shot bs_00_list
+press Down 6
+wait 20
+press Down 6
+wait 20
+press Down 6
+wait 30
+shot bs_01_plank
+press A 6
+wait 90
+shot bs_02_bestiary
+press Down 6
+wait 30
+shot bs_03_next
+press B 6
+wait 90
+shot bs_04_back
+press Down 6
+wait 30
+shot bs_05_quit
+press A 6
+wait 60
+shot bs_06_quit_prompt
+press B 6
+wait 60
+peek u8 0x02139F40 cursor_after_quit_b
+shot bs_065_after_b
+press Up 6
+wait 20
+press Up 6
+wait 30
+press A 6
+wait 90
+shot bs_07_music_hall

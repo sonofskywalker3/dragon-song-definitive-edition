@@ -149,6 +149,19 @@ Weakness   (icons, as today)
   the equip page. `test_bestiary_open`: Y, Down, B, Y, B, B all clean. A on a non-field card does nothing
   (`diag_bestiary_a`); A on a field card there was not tried. The hint line still reads "Select Card": a
   "Y: Bestiary" hint needs a new menu message, not done yet.
+- **The System list's Bestiary plank** (Jeff, 2026-11-26: "Build it the best you can in the menu, stub out the y
+  path for deletion once we prove the menu path works"; the Y path stays, marked TEMPORARY in feat_bestiary.py,
+  until he approves the plank). Each plank is two sprites: the game's blank plank (bank 5, cell 0) and its
+  lettering. The menu table at 0x020A5968 is repointed to five planks in the cave (y 26 to 142, 29 apart); the
+  Bestiary plank is the blank plank, its word "Bestiary" written in the menu font on the bottom text layer by
+  the hint line's drawer (0x02062000) while the System list or Quit Game's prompts are up, and its hint
+  "Monsters beaten" is a string of our own drawn there too (message -101). A on it goes in as the top menu's
+  Items does (the Item page's screen block, state 0x53), and the categories (0x15) go straight on to the Cards
+  list page; B leaves through the viewer exit (0x59), frees the Item page's three blocks as B on its categories
+  does, shows the top panel, and returns to the System list on the plank. Quit Game's key code, hint, prompt
+  brackets, and returns move one plank down. `test_bestiary_system` (Classic and Retold): the list, the plank,
+  the bestiary, Down, B back, Quit's hint and prompt, B, and Music Hall. Not seen: the Save plank greyed out
+  where saving is not allowed (state 0x33 edits it through 0x02060454, repointed to the new table).
 - **No enemy class.** The game has none: the 0x54-byte enemy record is fully accounted for (docs/re-enemies.md 1)
   and none of it is a class, so the class is dropped (Jeff, 2026-11-26: "if not, drop it").
 - **The stated level** (proposal): a regular enemy at the highest party level, which is the level the game itself
