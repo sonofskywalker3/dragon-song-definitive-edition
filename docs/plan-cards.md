@@ -200,7 +200,7 @@ Uses = full value / 100 (docs/re-cards.md 1). Flags read from the card effect ta
 | Ikontabipu (13) | sleep, all enemies, never misses | Knockout Kick (Jian 25) | sleep one enemy, 70% | all enemies, each 70% (decision 1) |
 | Shreeker (12) | poison, all enemies | Venom Claw (Gabryel 13) | poison one enemy | all enemies |
 | Asmodee (18) | blind, all enemies | Blinding Swipe (Gabryel 17) | blind one enemy | all enemies |
-| Tick (13) | paralysis, all enemies | Water Bind (Flora 16), Howl (Gabryel 26; fear is the same status) | paralysis on one enemy, 70% | all enemies, each 70% |
+| Tick (13) | paralysis, all enemies | Howl (Gabryel 26; fear is the same status). Water Bind (Flora 16) unpaired (Jeff, 2026-11-26: one skill per card, Gabryel stays longest) | paralysis on one enemy, 70% | all enemies, each 70% |
 | Comet (12) | INT up, all allies | Stratagem (Rufus 19) | INT up, one ally | all allies |
 | Namia (13) | regen 10% of max HP a turn, party | Divine Rain (Lucia 11, Flora 20) | Divine Rain's 5% regen | Namia's 10% (stacks with Divine Rain: 15%) |
 | Shaitan (10) | revive all allies, full HP | Miracle Tears (Lucia 13, Flora 32) | revive one ally, full HP | revive all allies |
@@ -419,8 +419,8 @@ none of the wearer-only effects uses it.
   that powers up a skill gets, for a member with that skill in their kit, an extra record (after the game's 417)
   naming the highest of its skills they have learned (the lowest named before they learn it), picked by
   cave_card_text at the equip page's two description draws. `test_card_text_skill`: Jian at 23 sees "Doubles
-  Weapon Break", at 30 "Doubles War Breaker"; Tick (no Jian skill) one line. Waiting for Jeff's approval of the
-  wording.
+  Weapon Break", at 30 "Doubles War Breaker"; Tick (no Jian skill) one line. Jeff: "Venom Claw poison: 2x
+  damage"; no member names (spoilers, and Lucia leaves); Tick powers up Howl and Dread Roar only.
 
 ### 7.8 Modules
 

@@ -1,0 +1,21 @@
+# Test: Tick's text on Flora's Cards equip page (Tick powers up Howl only): put in party slot 0 at level 30.
+include boot_from_save
+wait 100
+poke u8 0x0213BA11 1
+poke u16 0x020B464C 3
+poke u32 0x020B4778 29
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot tick_flora

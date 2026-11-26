@@ -145,7 +145,7 @@ PAIRS: tuple[CardPair, ...] = (
     ),
     CardPair(
         TICK,
-        ((FLORA, WATER_BIND), (GABRYEL, HOWL)),
+        ((GABRYEL, HOWL),),  # Howl only (Jeff, 2026-11-26): Flora's Water Bind is not paired
         Target.ENEMY_ONE,
         Kind.STATUS,
         STATUS_PARALYSIS,
@@ -175,7 +175,7 @@ BOOSTS: dict[int, tuple[int, ...]] = {
     IKONTABIPU: (KNOCKOUT_KICK,),
     SHREEKER: (VENOM_CLAW, VENOM_RAIN),
     ASMODEE: (BLINDING_SWIPE, BLINDING_GALE),
-    TICK: (WATER_BIND, BINDING_RAIN, HOWL, DREAD_ROAR),
+    TICK: (HOWL, DREAD_ROAR),
     COMET: (STRATAGEM, WAR_COUNCIL),
     NAMIA: (DIVINE_RAIN,),
     SHAITAN: (MIRACLE_TEARS,),

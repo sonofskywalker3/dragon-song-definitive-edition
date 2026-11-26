@@ -111,8 +111,6 @@ POWER_UP: dict[int, str] = {
     48: "Venom Rain poison: 2x damage",
     45: "Blinding Swipe lasts longer",
     49: "Blinding Gale lasts longer",
-    59: "Water Bind always lands",
-    60: "Binding Rain always lands",
     47: "Howl always lands",
     50: "Dread Roar always lands",
     54: "Doubles Stratagem",
