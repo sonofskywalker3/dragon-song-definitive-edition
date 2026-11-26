@@ -871,8 +871,10 @@ roll forced to 98: MP 50 -> 42, no poison). Not seen: a card's blind or poison m
 **Seen:** `test_card_insector_rounds` (Lucia uses Insector in round 1: bit 0x40 set, points 1200 -> 1100; the bit is
 cleared at the start of round 5, after three full rounds); `test_card_hellbird_termite` (Hellbird: the picker, A on
 Jian at 0 MP: his MP 0 -> 10, Lucia's unchanged, points 1000 -> 900; Termite in round 2: the picker, A on Jian: the
-flags gain 0x800 only, points 1000 -> 900). Not seen: a break or steal missing a guarded member (no plan has an
-enemy that breaks or steals yet). Ochu and Kuntukapu, seen 2026-11-26: `test_card_ochu_rounds` (Lucia uses Ochu
+flags gain 0x800 only, points 1000 -> 900). Seen 2026-11-26 (a lone enemy forced as enemy_force.plan, always its
+steal or break action, no strength cheat): `test_card_termite_steal_open` (an Ice Mongrel steals Clay three times,
+5 -> 2, item 287) and `_guarded` (Jian's own guard bit 0x800 pinned: nothing stolen); `test_card_termite_break_open`
+(an Abadon breaks Leather Jacket 47 -> 45 and the headgear 134 -> 133) and `_guarded` (nothing breaks). Ochu and Kuntukapu, seen 2026-11-26: `test_card_ochu_rounds` (Lucia uses Ochu
 in round 1: bit 0x80 set, points 1300 -> 1200; cleared at the start of round 6, after four rounds) and
 `test_card_kuntukapu_rounds` (bit 0x20, points 1100 -> 1000; cleared at the start of round 5, after three).
 
