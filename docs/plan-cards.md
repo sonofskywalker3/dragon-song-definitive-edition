@@ -945,7 +945,10 @@ a robbed monster alone; both plans give the same results after the change. Seen 
 function is state * 0x41C64E6D + 0x3039, roll ((state >> 16) & 0x7FFF) mod 100): `test_card_steal_miss` (state 5:
 roll 55, the MISS popup, the robbed bit set on the attempt, nothing stolen); `test_card_steal_fallback` (state 2:
 rolls 8 and 17, the rarer slot, emptied in Bealzebub's drop row: Light Feather 371 from slot 0; with the slot left
-alone the same rolls steal its Wooden Box 361). Not seen: a monster with nothing to steal, silence stopping Steal.
+alone the same rolls steal its Wooden Box 361). `test_card_steal_nothing` (both of the Bealzebubs' slots emptied: A
+on the target is refused, the grid stays, no robbed bit, nothing stolen); `test_card_steal_silenced` (Jian's status 5,
+silence: Steal can be picked, but on his turn he attacks instead, 148 damage; no robbed bit, nothing stolen; not
+compared with another skill under silence).
 
 ### 11.17 Getting and recharging cards (approved list, point 7; 2026-11-25)
 
