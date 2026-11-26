@@ -162,7 +162,8 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
   picked ally: breaks and steals aimed at that member miss for the rest of the battle. A card's blind, silence
   (Phantom), or poison lands on a boss 80% of the time.
 - **Boss cards.** The four dragon cards halve the damage their wearer takes from the dragon's element, and the
-  Caucus card restores 3% of max HP each turn.
+  Caucus card restores 3% of max HP each turn. With the Moran card, the wearer's attack has a 25% chance to lower
+  the enemy's defense one stage; with the Orcus card, its attack.
 
 | Who | Level | Skill | MP | What it does |
 |---|---|---|---|---|

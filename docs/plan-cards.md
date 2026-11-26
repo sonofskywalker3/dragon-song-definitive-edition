@@ -796,3 +796,19 @@ the Red Dragon card); `diag_dragon_swap` (the cards swapped: regen 3 when the bl
 block is made for several battlers in the same frame, and the game's own 25% guard is not caught either. Not seen:
 a dragon card's wearer taking less damage from its element.
 
+### 11.15 Moran and Orcus (approved list, point 5; 2026-11-25)
+
+`feat_card_bosses.py`. After a landed hit's damage is worked out in func_02030b44 (`ldr r1, [r5]` at 0x02030DA8, r4
+= the target's battler index), `cave_card_on_hit` checks the acting battler (battle work +0x32; the attack's own r7
+is the scratch copy, battler 12, during a party attack): a party member wearing the Moran (Orcus) card, hitting an
+enemy, rolls once per action; under 25 the target's DEF (ATK) stage drops one through func_02054dec and the enemy's
+stats are recomputed (func_02069ad8), unless the stage is already below 0. The once-per-action flag is cleared at
+the start of each party action, in the resolver hook (feat_card_use.py, 0x02051A08).
+
+**Seen:** `test_card_moran` (Jian wearing Moran, the random state set to 24 at the roll: his first landed hit on
+battler 9 takes its DEF stage 0 -> -1, and nothing else changes). The first build read the attacker from r7 and
+never rolled. A review then found that an enemy's counter (attacker 13, target the wearer's scratch copy 12, while
+the acting battler is still the wearer) would have lowered the wearer's own stat: the roll now needs r7 to be a party
+slot or 12 and r4 an enemy battler, 4 to 11 (`test_card_moran` gives the same result). Not seen: a missed roll, Orcus (the same code, ATK), an enemy hitting a party member wearing it (the
+hook returns at once: the actor is not a party member).
+

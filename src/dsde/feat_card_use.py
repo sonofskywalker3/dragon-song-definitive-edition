@@ -166,8 +166,15 @@ cc_records:
     .word {RECORDS_PTR:#x}
 """
 
-# In place of `ldrsh r0, [r4, #0x84]`: a Special with the card spell becomes the item command with the worn card.
+# In place of `ldrsh r0, [r4, #0x84]`, at the start of each party member's action: the Moran and Orcus cards'
+# roll is not yet made this action (feat_card_bosses.py), and a Special with the card spell becomes the item
+# command with the worn card.
 RESOLVE_ASM = f"""
+    push  {{r1}}
+    ldr   r0, cr_rolled
+    mov   r1, #0
+    strb  r1, [r0]
+    pop   {{r1}}
     ldrsh r0, [r4, #{BATTLER_COMMAND:#x}]
     cmp   r0, #{COMMAND_SPECIAL}
     bxne  lr
@@ -186,6 +193,8 @@ RESOLVE_ASM = f"""
 cr_keep:
     mov   r0, #{COMMAND_SPECIAL}
     pop   {{r1, pc}}
+cr_rolled:
+    .word ${{cave_card_hit_rolled}}
 """
 
 
