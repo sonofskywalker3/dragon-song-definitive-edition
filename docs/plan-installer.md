@@ -38,7 +38,8 @@ combination is out of the question with about 60 switches.
 The story is one switch: Retold's text edits, the walk-out opening and its narration, and the blue seal (with it
 off, the seal is Classic's red). Everything else is engine and gameplay, one switch per change Jeff can name, built
 into both editions alike. Defaults: all on (the full release), except party chat (off, as now). The title seal is
-always on (it says which build this is). Where a switch below needs a feature split, the split is real work; the
+always on (it says which build this is), and so is the save glitch fix (fix-save-glitch: talking to Flora in the
+Underground Tunnel after she leaves no longer locks Save for the rest of the game; Jeff, 2026-11-26: "just fix it"). Where a switch below needs a feature split, the split is real work; the
 builder reports any line that cannot be separated cleanly instead of forcing it.
 
 **Exploring (approved, Jeff, 2026-11-26)**
@@ -57,7 +58,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 10 | B in a town menu selects Leave town | town-menu-dpad |
 | 11 | The HUD stops pulsing | still-hud |
 
-**Menus and text (12 to 19), Battles (20 to 36), Spells and skills (37 to 42), and Cards (43 to 45), and Gad's Express (47) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
+**Menus and text (12 to 19), Battles (20 to 36), Spells and skills (37 to 42), and Cards (43 to 45), and Fixes and extras (46, 47) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
 
 | # | Group | Switch | Today's feature |
 |---|---|---|---|
@@ -95,10 +96,9 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 43 | Cards | Dragon ring slot: a ring slot for every member, and a ring's Dragon Magic for whoever wears it | cards (feat_card_slots ring slot, feat_ring_slot) |
 | 44 | | Card system overhaul (tooltip, short: equip monster cards to use them in battle or power up skills; they recharge as you fight). The card slot, cards used from the Special list, power-ups, changed cards, boss passives and Morus's Steal, drops and recharge, and what each card does on the equip page; one switch (Jeff, 2026-11-26: too granular otherwise; nobody wants to equip a card without its text). Needs 40 | cards |
 | 45 | | The bestiary (the System list's Bestiary plank) (needs 44) | bestiary |
-| 46 | Fixes and extras | Save glitch fix (tooltip: talking to Flora in the Underground Tunnel after she leaves no longer locks Save for the rest of the game) | fix-save-glitch |
-| 47 | | Gad's Express jobs grow with the journey | gad-express |
-| 48 | | Party chat on Y (default off) | party-chat |
-| 49 | Story | Retold: text edits, the intro sending Jian straight to Lucia (opening-flags; Jeff, 2026-11-26: it changes the story path, so Retold only, and the Classic build drops it), the walk-out opening and narration, the blue seal (needs 15 or 16, as the opening needs text-speed today) | text-edits, opening-flags, opening-run, opening-text, title-seal-retold |
+| 46 | Fixes and extras | Gad's Express jobs grow with the journey | gad-express |
+| 47 | | Retold party chat on Y (default off; the original game's think-aloud is party chat too, so the name says which) | party-chat |
+| 48 | Story | Retold: text edits, the intro sending Jian straight to Lucia (opening-flags; Jeff, 2026-11-26: it changes the story path, so Retold only, and the Classic build drops it), the walk-out opening and narration, the blue seal (needs 15 or 16, as the opening needs text-speed today) | text-edits, opening-flags, opening-run, opening-text, title-seal-retold |
 
 ## 4. Dependencies
 
