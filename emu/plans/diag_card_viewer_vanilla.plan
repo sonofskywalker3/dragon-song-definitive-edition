@@ -1,0 +1,29 @@
+# Diagnostic: the vanilla Cards viewer. Jian gets the Quetzalcoatl and Sasquatch cards; X, Items, Cards,
+# A on the first card, shots of the viewer.
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA29 1
+watch u32 0x020B0010 state
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+shot cv_00
+press A 8
+wait 60
+shot cv_01
+press A 8
+wait 60
+shot cv_02
+press Right 8
+wait 40
+shot cv_03

@@ -1,0 +1,312 @@
+# Diagnostic: every card in the vanilla Cards viewer, one shot each (card art for the bestiary class table).
+# The album is 5 columns by 2 rows: each column is shot on both rows, then Right.
+include boot_from_save
+wait 100
+poke u8 0x0213BA07 1
+poke u8 0x0213BA08 1
+poke u8 0x0213BA09 1
+poke u8 0x0213BA0A 1
+poke u8 0x0213BA0B 1
+poke u8 0x0213BA0C 1
+poke u8 0x0213BA0D 1
+poke u8 0x0213BA0E 1
+poke u8 0x0213BA0F 1
+poke u8 0x0213BA10 1
+poke u8 0x0213BA11 1
+poke u8 0x0213BA12 1
+poke u8 0x0213BA13 1
+poke u8 0x0213BA14 1
+poke u8 0x0213BA15 1
+poke u8 0x0213BA16 1
+poke u8 0x0213BA17 1
+poke u8 0x0213BA18 1
+poke u8 0x0213BA19 1
+poke u8 0x0213BA1A 1
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA1C 1
+poke u8 0x0213BA1D 1
+poke u8 0x0213BA1E 1
+poke u8 0x0213BA1F 1
+poke u8 0x0213BA20 1
+poke u8 0x0213BA21 1
+poke u8 0x0213BA22 1
+poke u8 0x0213BA23 1
+poke u8 0x0213BA24 1
+poke u8 0x0213BA25 1
+poke u8 0x0213BA26 1
+poke u8 0x0213BA27 1
+poke u8 0x0213BA28 1
+poke u8 0x0213BA29 1
+poke u8 0x0213BA2A 1
+poke u8 0x0213BA2B 1
+poke u8 0x0213BA2C 1
+poke u8 0x0213BA2D 1
+poke u8 0x0213BA2E 1
+poke u8 0x0213BA2F 1
+poke u8 0x0213BA30 1
+poke u8 0x0213BA31 1
+poke u8 0x0213BA32 1
+poke u8 0x0213BA33 1
+poke u8 0x0213BA34 1
+poke u8 0x0213BA35 1
+poke u8 0x0213BA36 1
+poke u8 0x0213BA37 1
+poke u8 0x0213BA38 1
+poke u8 0x0213BA39 1
+poke u8 0x0213BA3A 1
+poke u8 0x0213BA3B 1
+poke u8 0x0213BA3C 1
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot c00a
+press Down 6
+wait 25
+shot c00b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c01a
+press Down 6
+wait 25
+shot c01b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c02a
+press Down 6
+wait 25
+shot c02b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c03a
+press Down 6
+wait 25
+shot c03b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c04a
+press Down 6
+wait 25
+shot c04b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c05a
+press Down 6
+wait 25
+shot c05b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c06a
+press Down 6
+wait 25
+shot c06b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c07a
+press Down 6
+wait 25
+shot c07b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c08a
+press Down 6
+wait 25
+shot c08b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c09a
+press Down 6
+wait 25
+shot c09b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c10a
+press Down 6
+wait 25
+shot c10b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c11a
+press Down 6
+wait 25
+shot c11b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c12a
+press Down 6
+wait 25
+shot c12b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c13a
+press Down 6
+wait 25
+shot c13b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c14a
+press Down 6
+wait 25
+shot c14b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c15a
+press Down 6
+wait 25
+shot c15b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c16a
+press Down 6
+wait 25
+shot c16b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c17a
+press Down 6
+wait 25
+shot c17b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c18a
+press Down 6
+wait 25
+shot c18b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c19a
+press Down 6
+wait 25
+shot c19b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c20a
+press Down 6
+wait 25
+shot c20b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c21a
+press Down 6
+wait 25
+shot c21b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c22a
+press Down 6
+wait 25
+shot c22b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c23a
+press Down 6
+wait 25
+shot c23b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c24a
+press Down 6
+wait 25
+shot c24b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c25a
+press Down 6
+wait 25
+shot c25b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c26a
+press Down 6
+wait 25
+shot c26b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c27a
+press Down 6
+wait 25
+shot c27b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c28a
+press Down 6
+wait 25
+shot c28b
+press Up 6
+wait 25
+press Right 6
+wait 30
+shot c29a
+press Down 6
+wait 25
+shot c29b
+press Up 6
+wait 25
+press Right 6
+wait 30

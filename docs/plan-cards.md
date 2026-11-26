@@ -97,6 +97,55 @@ class (beast, slime, human, beastman, Vile Tribe, boss, and so on: a table to dr
 ATK, DEF, AGI, INT, DEX, LUCK at a stated level), and its attribute and weakness. Placement: an entry in the
 System list beside Music Hall, another collection viewer (a proposal, open to change).
 
+#### 2.7.1 Draft for approval (2026-11-26)
+
+**What the viewer is today** (vanilla, `emu/plans/diag_card_viewer_all.plan`, shots in
+`build/diag_card_viewer_all/`): the top screen shows the name and "1 Card", MAX Point, Attribute and Weakness
+icons, and the card's description on the left, the card art on the right; the bottom screen is an album of the
+cards in the bag, 5 columns by 2 rows a page. Cards are no longer lost at 0 points (7.4), so the bag is the
+collection: the album already lists every species beaten at least once.
+
+**Layout** (mock-up: `build/bestiary_mock.png`; the real one uses the game's font):
+
+```
+Quetzalcoatl              Winged      <- the class where "1 Card" was
+Lv 23    HP  440
+ATK  97  DEF  83
+AGI  37  INT  47
+DEX  35  LUCK 63
+Attribute  (icons, as today)
+Weakness   (icons, as today)
+```
+
+- MAX Point and the description go. The description stays on the Item page, where the card is equipped.
+- **The stated level** (proposal): a regular enemy at the highest party level, which is the level the game itself
+  rolls around (docs/re-enemies.md 2); a boss at its fight's minimum level (Sasquatch 7, Coliseum and Zethos 10,
+  Gideon 40, and so on: docs/boss-exp.md). Stats from the species' first row: the four rows of a species start
+  from the same level 0 stats and differ little at the levels the player meets them.
+- Dark Jian shows Jian's stats as the fight copies them (HP x 6, ATK x 4/5, DEF x 6/5). Ignatius shows 9999 HP.
+
+**Classes** (from the card art; bosses marked ? are guesses for Jeff to settle from the story):
+
+| Class | Regular enemies | Bosses |
+|---|---|---|
+| Slime | Blob | |
+| Plant | Shreeker, Namia, Treant, Evil Earth | |
+| Beast | Ice Mongrel, Mad Fang, Yeti, Chupacabra | Sasquatch, Armored Boar |
+| Insect | Termite, Abadon, Tick, Bealzebub, Insector, Gloomwing | |
+| Sea creature | Kuntukapu, Ikontabipu, Dagon, Ochu | |
+| Winged | Hellbird, Sturge, Vitra, Quetzalcoatl, Enigma | |
+| Mineral | Comet, Ohainkaru | |
+| Spirit | Onlooker, Druid | |
+| Undead | Phantom, Ghoula, Thanatos, Duager | |
+| Demon | Shaitan, Asmodee | Gronk ? |
+| Beastman | | Zethos, Raft ?, Sharif ?, Moran ?, Deuce ? |
+| Vile Tribe | | Caucus ?, Orcus ?, Morus ?, Gideon ?, Gideon 2 ?, Gideon 3 ?, Ignatius ? |
+| Dragon | | Red, White, Black, and Blue Dragon |
+| Human | | Dark Jian (a shadow of Jian) |
+
+Bosses show only their class (proposal): "Beast, Boss" would not fit beside the name, and the album already sets
+boss cards apart by their checkered backs.
+
 ## 3. Monster cards: basic or upgraded by wearer
 
 Rule (decided): a card whose effect overlaps a kit skill gives the **basic** version to a wearer who has not
