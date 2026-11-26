@@ -859,5 +859,13 @@ used twice.
 **Seen:** `test_card_first_win` (party2_strong wins the first temple battle with Fight: at the end, not before, the
 Bealzebub card 0 -> 1 at 900 and the Thanatos card 0 -> 1 at 1400); `test_card_recharge` (Bealzebub owned at 100:
 400 after the win, three Bealzebubs killed); `test_card_escape` (a round of Fight, then L and R held: the battle
-ends by escape and neither card is given). Not seen: a loss, a boss card drop, the cap. The results screen does not list the new card; the bestiary (2.7) is still to build.
+ends by escape and neither card is given). Not seen: a loss, a boss card drop, the cap.
+
+Listed on the results (a review pointed out the end hook comes after the results are shown): the first kill of a
+species in a battle now drops its card through the game's own loot list (0x02069ED8: a kill count of 1 for that
+species forces the card slot; the game's owned test after it gives slot 0 if a copy is owned). The end hook stays as
+the backstop for a card drop the loot list lost (full, or cancelled by an area's drop rule) and does the recharges;
+a card that came in the loot is already full. `test_card_first_win` again: "Items received!" lists Thanatos 1, Tick
+1, Bealzebub 1, and Light Feather 2, and the cards arrive with the loot (frame 3763, not at the end). The bestiary
+(2.7) is still to build.
 
