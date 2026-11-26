@@ -421,7 +421,9 @@ none of the wearer-only effects uses it.
   cave_card_text at the equip page's two description draws. `test_card_text_skill`: Jian at 23 sees "Doubles
   Weapon Break", at 30 "Doubles War Breaker"; Tick (no Jian skill) one line. Jeff: "Venom Claw poison: 2x
   damage"; no member names (spoilers, and Lucia leaves); Tick powers up Howl and Dread Roar only; a member
-  without the skill sees "Powers up" and the move (Flora: "Powers up Howl").
+  without the skill sees "Powers up" and the move (Flora: "Powers up Howl"). First lines have no apostrophe: the
+  font's apostrophe is tall and pokes up into the name line above (it looked like a comma after the name;
+  `diag_card_name_comma`), so "Lowers ATK of one enemy" and the like (Jeff, 2026-11-26).
 
 ### 7.8 Modules
 

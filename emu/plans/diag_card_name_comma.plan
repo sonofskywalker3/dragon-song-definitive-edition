@@ -1,0 +1,28 @@
+# Diagnostic: the mark after a card's name on the Cards equip page (the font's tall apostrophe in the line below
+# pokes up into the name line): Ice Mongrel, Quetzalcoatl, Armored Boar.
+include boot_from_save
+wait 100
+poke u8 0x0213BA0C 1
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA2A 1
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot cm_00
+press Down 6
+wait 30
+shot cm_01
+press Down 6
+wait 30
+shot cm_02
