@@ -411,6 +411,8 @@ goes):
    one switch (all or none); every engine and gameplay change is its own switch (for example HP drain while
    running, B in a town menu selecting Leave town); dependencies are switched on or greyed out; defaults match
    the full release. A design (switch list, dependencies, Windows app or web page) goes to Jeff first.
+   Jeff (2026-11-25): the Special list icons (feature `skill-icons`) ship on by default and are one of the
+   switches, so a player who dislikes them can go back to the blank boxes.
 
 **To do, later (Jeff, 2026-11-25):**
 - Gideon 2, Gideon 3, and Ignatius cards: the vanilla unwinnable Ignatius fight stays, then the Gideon fights;
