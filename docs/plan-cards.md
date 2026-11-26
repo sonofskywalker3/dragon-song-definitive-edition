@@ -130,6 +130,16 @@ Weakness   (icons, as today)
   party's highest level (record +0xC is the level index, so one more is shown) over it on the text layer.
   `test_bestiary_card` (on a build with only this feature, where Items, Cards still opens the viewer): LV 23 on
   Quetzalcoatl and Sasquatch. Battle card pictures keep their points (mode 5 only).
+- **The left side, built** (Jeff, 2026-11-26: "the mock up was the right idea", in the game's font, nothing
+  drawn): in place of the count, "Card", and MAX Point (0x0205D098 skips to the Attribute label) the viewer prints
+  HP on row 7 and ATK / DEF, AGI / INT, DEX / LUK on rows 13, 15, and 17 with the menu's own short strings (23 to
+  30; the game spells LUK), values right-aligned; Attribute and Weakness keep rows 9 and 11 and their icons; the
+  description is no longer drawn (0x0205D42C). Stats come from the game's own func_02069d7c (the battle's stat
+  from level): a regular enemy's first row at the party's highest level index, a boss's row at its fight level
+  (docs/boss-exp.md), Dark Jian from Jian's stats with his gear, as the fight copies them (func_0206b030, then HP x 6, ATK x 4/5,
+  DEF x 6/5).
+  The card's bar shows that level plus one, as the Status page counts. `test_bestiary_card`: Quetzalcoatl LV 23
+  HP 422, Sasquatch LV 8 HP 241 (the fight's documented 241), Dark Jian; everything fits left of the card.
 - **No enemy class.** The game has none: the 0x54-byte enemy record is fully accounted for (docs/re-enemies.md 1)
   and none of it is a class, so the class is dropped (Jeff, 2026-11-26: "if not, drop it").
 - **The stated level** (proposal): a regular enemy at the highest party level, which is the level the game itself

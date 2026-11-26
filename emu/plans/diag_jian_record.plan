@@ -1,0 +1,9 @@
+# Diagnostic: Jian's character record (where his stats sit, for the bestiary's Dark Jian), then his Status page.
+include boot_from_save
+wait 60
+dump 0x020B4658 0x5C jian
+press X 3
+wait 80
+press A 8
+wait 60
+shot status
