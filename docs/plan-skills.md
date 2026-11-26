@@ -50,7 +50,7 @@ Red, White, Black Dragons 23 to 28; Blue Dragon 36; final fights 40 to 42. Late 
 | Stone Throw | 61, built | 4 | 3 | one enemy, any row | his ordinary physical hit at range (it can miss) | he stays where he stands and plays his unused throw (btldata 15): tosses the stone and bats it; the stone (its own file, btldata 17) flies on Flora's arrow path |
 | Weapon Break | 38, built | 9 | 8 | one enemy | ATK down one stage | his attack with no hits, then the ATK DOWN banner |
 | Armor Break | 39, built | 14 | 6 | one enemy | DEF down one stage | his attack with no hits, then the DEF DOWN banner |
-| Focus | 40, built | 19 | 6 | all allies (the engine's flag is party-wide) | physical attacks never miss this battle | fist raise, HIT banner on each ally |
+| Focus | 40, built | 19 | 6 | Jian alone (his own bit of the battle flags; the party's with Bealzebub, docs/plan-cards.md 11.11) | physical attacks never miss this battle | fist raise, HIT banner |
 | Knockout Kick | 41, built | 25 | 9 | one enemy | sleep 2 to 4 turns, damage wakes; 70 percent; bosses immune | his attack with no hits, then the green ring |
 | War Breaker | 42, built | 30 | 12 | all enemies | Weapon Break on all, skipping those already lowered | fist raise, ATK DOWN banner on each |
 | Wall Breaker | 43, built | 36 | 9 | all enemies | Armor Break on all, skipping those already lowered | fist raise, DEF DOWN banner on each |

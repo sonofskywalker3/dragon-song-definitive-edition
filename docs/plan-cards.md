@@ -716,6 +716,23 @@ card enhances; the table in the cave gives, per spell id, the card and the uses 
 
 Not seen: Miracle Tears revived at full (a knocked-out ally is still not set up by a plan), a stat skill refused
 at 2 stages (the round 2 part of `test_boost_weapon_break` missed the menu), Rufus's Stratagem and War Council
-(the same stage code as Weapon Break). Still to build for point 2: Focus on Jian alone, and Bealzebub making it
-party-wide.
+(the same stage code as Weapon Break). Focus and Bealzebub: 11.11.
+
+### 11.11 Focus on Jian alone; Bealzebub makes it the party's (approved list, point 2; 2026-11-25)
+
+Focus is a self-only skill on one ally now. A sure hit for one member is bit 0x100 << party slot of the battle
+flags word (`PERSONAL_SURE_HIT`; bits 0x100 to 0x400 have no reader in the game, and the word is zeroed each
+battle). The hit roll (func_0205265c, `ldr r0, [r0]` at 0x020526FC) adds the party's bit 4 for an attacker whose own
+bit is set; it finds the attacker's party slot by matching its stat record (r4; r6 is reused by then) against the
+battlers' records. The FX hook sets the caster's own bit for a plain Focus and the party's bit 4 for one Bealzebub
+enhances; the refusal test also refuses a plain Focus on a member whose own bit is set. Bealzebub is a paired card
+now (`PAIRS`, `BOOSTS`): Jian at 19 or more is not offered it, and anyone else gets the ally picker, and the card's
+effect (func_0206a744, `orr r3, r3, #4` at 0x0206A830) sets the picked ally's own bit (the actor's +0x8C) instead
+of the party's.
+
+**Seen:** `test_skill_focus` (no card: MP 50 -> 44, the flags gain 0x100, not 4); `test_boost_focus` (Jian wearing
+Bealzebub at 1000: the flags gain 4, points 1000 -> 900); `test_card_bealzebub_basic` (Lucia wearing it: the ally
+picker, A on Jian: the flags gain 0x100, points 1000 -> 900); `test_skill_focus_hit` (against an enemy with AGI
+30000: Jian misses every blow, casts Focus, then his blows land: 30000 -> 29867 -> 29726 -> 29585). The first build
+read the attacker from r6, which the roll has reused by then: Focus was cast and his blows still missed.
 

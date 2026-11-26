@@ -50,7 +50,7 @@ from dsde.skills_common import (
     hook,
 )
 from dsde.skills_data import BY_SPELL
-from dsde.skills_types import LUCIA, Kind, Target
+from dsde.skills_types import FLAG_SURE_HIT, LUCIA, PERSONAL_SURE_HIT, Kind, Target
 
 ARM9_BASE = 0x02000000
 CARD_EFFECTS = 0x0209D124  # 12 bytes per effect id from 0x100: u32 flags, u32 amount, u16 mask, u16 row
@@ -82,6 +82,10 @@ BASIC_FLAG = (
 NAMIA_REGEN = 0x0206A790  # func_0206a744: `orr r3, r3, #8`, Namia's 10% regen bit
 NAMIA_REGEN_WORD = 0xE3833008
 NAMIA_BIT = 0x08
+BEALZEBUB_SURE_HIT = (
+    0x0206A830  # func_0206a744: `orr r3, r3, #4`, Bealzebub's sure-hit bit
+)
+BEALZEBUB_SURE_HIT_WORD = 0xE3833004
 DIVINE_RAIN_BIT = 0x10  # Divine Rain's 5% regen
 BATTLE_ACTOR = 0x32  # battle work: the acting battler
 FIRST_FRONT = 8  # enemy battlers 8 to 11: the front row
@@ -287,6 +291,28 @@ NAMIA_ASM = f"""
     orreq r3, r3, #{DIVINE_RAIN_BIT:#x}
     bx    lr
 cn_battlers:
+    .word {T.BATTLERS_PTR:#x}
+"""
+
+# In place of `orr r3, r3, #4` in func_0206a744, where Bealzebub's effect sets the party's sure-hit bit (ip = the
+# battle work): a wearer who does not know Focus gives the ally they picked (the actor's +0x8C) that member's own bit.
+BEALZEBUB_ASM = f"""
+    push  {{r0-r2, ip, lr}}
+    ldrsh r0, [ip, #{BATTLE_ACTOR:#x}]
+    ldr   r1, cz_battlers
+    ldr   r1, [r1]
+    mov   r2, #{T.BATTLER_SIZE:#x}
+    mla   r2, r0, r2, r1
+    ldr   r0, [r2, #{BATTLER_CHARACTER}]
+    bl    ${{cave_card_basic}}
+    cmp   r0, #{BASIC_ALLY}
+    orrne r3, r3, #{FLAG_SURE_HIT}
+    ldrsheq r0, [r2, #{T.TARGETS:#x}]
+    moveq r1, #{PERSONAL_SURE_HIT:#x}
+    orreq r3, r3, r1, lsl r0
+    pop   {{r0-r2, ip, lr}}
+    bx    lr
+cz_battlers:
     .word {T.BATTLERS_PTR:#x}
 """
 
@@ -509,6 +535,15 @@ def target_patches() -> tuple:
             NAMIA_REGEN_WORD,
             "bl ${cave_card_namia}",
             "Namia's basic version: 5% regen",
+        ),
+        CaveCode(
+            "cave_card_bealzebub", BEALZEBUB_ASM, "Bealzebub's basic version: one ally"
+        ),
+        hook(
+            BEALZEBUB_SURE_HIT,
+            BEALZEBUB_SURE_HIT_WORD,
+            "bl ${cave_card_bealzebub}",
+            "Bealzebub's basic version: one ally",
         ),
         CaveCode("cave_card_idle", IDLE_ASM, "would a card change nothing"),
         CaveCode("cave_card_menu", MENU_ASM, "the card spell's targets in the list"),

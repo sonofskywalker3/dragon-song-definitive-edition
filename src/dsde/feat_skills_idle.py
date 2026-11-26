@@ -8,7 +8,8 @@ bar and no MP taken. What "nothing" means depends on the skill's kind (skills_da
 - STATUS: the target already has a status (a battler has one at a time), or it is a boss row and the
   status is one a boss never takes (the game's rule in func_020500dc: row flags bit 31 with status 1, 3, 4,
   5, or 7);
-- FLAG: the battle-wide flag is already set.
+- FLAG: the battle-wide flag is already set; for the sure-hit flag on a plain cast, also the member's own bit
+  (Focus).
 
 `cave_skill_idle` answers for one battler; the enemy grid calls it as its veto, the one-enemy path, the
 ally picker, and the effect hooks call it directly. `cave_skill_idle_all` answers for a spell with no
@@ -18,7 +19,7 @@ refusal the Special list's handlers end in.
 """
 
 from dsde import targeting_consts as T
-from dsde.feat_skills_boost import STATE_LIMIT
+from dsde.feat_skills_boost import PLAIN_LIMIT, STATE_LIMIT
 from dsde.patching import AsmPatch, CaveCode
 from dsde.skills_common import (
     ALL_TARGETS,
@@ -45,6 +46,7 @@ from dsde.skills_common import (
     hook,
 )
 from dsde.skills_data import BOSS_IMMUNE, SPELL_COUNT, Kind
+from dsde.skills_types import FLAG_SURE_HIT, PERSONAL_SURE_HIT
 
 ENEMY_ROWS = 0x02097CE4  # enemy table, 0x54 per row; the first word is the row's flags
 ENEMY_ROW_SIZE = 0x54
@@ -124,11 +126,22 @@ idle_none:
     mov   r0, #{STRING_NO_EFFECT}
     bx    lr
 idle_flag:
-    ldr   r0, idle_work
-    ldr   r0, [r0]
-    ldr   r0, [r0]
-    ldrb  r3, [r2, #{FX_ARG}]
-    tst   r0, r3
+    ldr   ip, idle_work
+    ldr   ip, [ip]
+    ldr   ip, [ip]
+    ldrb  r1, [r2, #{FX_ARG}]
+    tst   ip, r1
+    bne   idle_none
+    cmp   r1, #{FLAG_SURE_HIT}
+    bne   idle_fine
+    ldr   r3, idle_state
+    ldrb  r3, [r3, #{STATE_LIMIT}]
+    cmp   r3, #{PLAIN_LIMIT}
+    bne   idle_fine
+    cmp   r0, #{PARTY_SLOTS}
+    bhs   idle_fine
+    mov   r3, #{PERSONAL_SURE_HIT:#x}
+    tst   ip, r3, lsl r0
     bne   idle_none
     b     idle_fine
 idle_fx:

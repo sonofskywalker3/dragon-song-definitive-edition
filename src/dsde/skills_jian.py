@@ -48,20 +48,21 @@ JIAN_SKILLS: tuple[Skill, ...] = (
         ROW_DEF_DOWN,
         Look.ATTACK,
     ),
-    # The engine's flag covers the whole party, so the skill is cast on all allies: the banner shows on each
+    # Jian's own attacks: his bit of the battle flags (feat_skills_fx.py); the Bealzebub card makes it the party's
     Skill(
         40,
         "Focus",
-        "Attacks will not miss",
+        "Your attacks will not miss",
         6,
         JIAN,
         19,
-        Target.ALLY_ALL,
+        Target.ALLY_ONE,
         Kind.FLAG,
         FLAG_SURE_HIT,
         0,
         ROW_SURE_HIT,
         Look.ROW,
+        self_only=True,
     ),
     Skill(
         41,

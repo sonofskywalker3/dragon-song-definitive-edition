@@ -9,7 +9,9 @@ The effect hook sits in func_020500dc, which runs once per target of a spell. By
   always lands), then the status is queued the way the game's own
   status skills queue it (func_0202d1d4), so the flash, the mark over the battler, and the turn handling are
   the game's; a failed roll shows the game's MISS popup over the target with its sound;
-- FLAG: the battle-wide flag is set, with the result word the card of that flag leaves.
+- FLAG: the battle-wide flag is set, with the result word the card of that flag leaves. The sure-hit flag cast on
+  one ally (Focus) sets that member's own bit instead, unless a worn card enhances the cast (Bealzebub: the
+  party's flag); the hit roll (0x020526FC) reads the attacker's own bit as the party's.
 
 A cast a worn card enhances (feat_skills_boost.py) moves a stat 2 stages, and its status always lands and is
 marked as the strong kind.
@@ -52,6 +54,7 @@ from dsde.skills_common import (
     hook,
 )
 from dsde.skills_data import SPELL_COUNT, SURE, Kind
+from dsde.skills_types import FLAG_SURE_HIT, PERSONAL_SURE_HIT
 
 FX_SITE = 0x020503A0  # func_020500dc: `ands r0, r5, #0x1000000`, the first buff test
 FX_WORD = 0xE2150401
@@ -193,6 +196,14 @@ fx_flag:
     ldr   r0, [r0]
     ldr   r1, [r0]
     ldrb  r2, [sb, #{FX_ARG}]
+    cmp   r2, #{FLAG_SURE_HIT}
+    bne   fx_flag_set
+    tst   r5, #{ALL_TARGETS:#x}
+    bne   fx_flag_set
+    cmp   sl, #0
+    moveq r2, #{PERSONAL_SURE_HIT:#x}
+    lsleq r2, r2, r7
+fx_flag_set:
     orr   r1, r1, r2
     str   r1, [r0]
     ldr   r0, fx_results
@@ -252,7 +263,57 @@ message_base:
     .word {STRING_BASE:#x}
 """
 
+# func_0205265c (the hit roll; r4 = the attacker's stat record, r6 is reused by then): `ldr r0, [r0]`, the battle
+# flags word it tests for the party's sure hit
+SURE_HIT_SITE = 0x020526FC
+SURE_HIT_WORD = 0xE5900000
+PARTY_SLOTS = 3
+
+# In place of `ldr r0, [r0]`: the flags word, with the party's sure-hit bit added when the attacker is the party
+# member in slot n (their battler's stat record is r4) and bit PERSONAL_SURE_HIT << n is set. Keeps r1 to r3.
+SURE_HIT_ASM = f"""
+    ldr   r0, [r0]
+    push  {{r1-r3, lr}}
+    ldr   r1, sh_records
+    ldr   r1, [r1]
+    sub   r2, r4, r1
+    mov   r1, #0
+sh_index:
+    cmp   r2, #{RECORD_SIZE:#x}
+    subhs r2, r2, #{RECORD_SIZE:#x}
+    addhs r1, r1, #1
+    bhs   sh_index
+    ldr   r2, sh_battlers
+    ldr   r2, [r2]
+    mov   r3, #0
+sh_slot:
+    ldr   lr, [r2, #{BATTLER_RECORD:#x}]
+    cmp   lr, r1
+    beq   sh_found
+    add   r2, r2, #{BATTLER_SIZE:#x}
+    add   r3, r3, #1
+    cmp   r3, #{PARTY_SLOTS}
+    blt   sh_slot
+    pop   {{r1-r3, pc}}
+sh_found:
+    mov   r1, #{PERSONAL_SURE_HIT:#x}
+    tst   r0, r1, lsl r3
+    orrne r0, r0, #{FLAG_SURE_HIT}
+    pop   {{r1-r3, pc}}
+sh_records:
+    .word {RECORDS_PTR:#x}
+sh_battlers:
+    .word {BATTLERS_PTR:#x}
+"""
+
 FX_PATCHES: tuple[CaveCode | AsmPatch, ...] = (
+    CaveCode("cave_skill_sure_hit", SURE_HIT_ASM, "a member's own sure hit"),
+    hook(
+        SURE_HIT_SITE,
+        SURE_HIT_WORD,
+        "bl ${cave_skill_sure_hit}",
+        "a member's own sure hit",
+    ),
     CaveCode("cave_skill_effect", FX_ASM, "what a skill does to its target"),
     hook(
         FX_SITE,

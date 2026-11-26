@@ -26,6 +26,9 @@ SURE = 100  # percent: no roll at all, so no random number is drawn
 # Battle-wide flags in the first word of the battle work area, set by the cards and cleared with it at the
 # start of each battle
 FLAG_SURE_HIT = 4  # the party's physical attacks always hit (the Bealzebub card)
+# One member's physical attacks always hit: bit PERSONAL_SURE_HIT << party slot (0 to 2) of the same word, bits the
+# game leaves unused (Focus, and the Bealzebub card's one-ally version)
+PERSONAL_SURE_HIT = 0x100
 
 FIRST_SKILL = 38  # the blank row after the game's own 38 spell entries
 

@@ -162,7 +162,7 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
 | Jian | 4 | Stone Throw | 3 | Throws a stone at one enemy in either row, from where he stands, for his normal attack damage |
 | Jian | 9 | Weapon Break | 8 | Lowers one enemy's attack |
 | Jian | 14 | Armor Break | 6 | Lowers one enemy's defense |
-| Jian | 19 | Focus | 6 | The party's attacks never miss for the rest of the battle |
+| Jian | 19 | Focus | 6 | His attacks never miss for the rest of the battle (the whole party's with the Bealzebub card) |
 | Jian | 25 | Knockout Kick | 9 | Puts one enemy to sleep |
 | Jian | 30 | War Breaker | 12 | Weapon Break on every enemy |
 | Jian | 36 | Wall Breaker | 9 | Armor Break on every enemy |

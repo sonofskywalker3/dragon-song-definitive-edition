@@ -55,6 +55,7 @@ DEFERRED_BOSS_CARDS = frozenset(
 # Spells a pair's learners are tested on: the game's own ids, and the skills' (skills_*.py)
 TENDER_RAIN, DIVINE_RAIN, MIRACLE_TEARS = 2, 4, 5
 WEAPON_BREAK, ARMOR_BREAK, KNOCKOUT_KICK, WAR_BREAKER, WALL_BREAKER = 38, 39, 41, 42, 43
+FOCUS = 40
 VENOM_CLAW, BLINDING_SWIPE, HOWL, VENOM_RAIN, BLINDING_GALE, DREAD_ROAR = (
     44,
     45,
@@ -155,6 +156,7 @@ PAIRS: tuple[CardPair, ...] = (
     CardPair(
         VITRA, ((LUCIA, TENDER_RAIN), (FLORA, TENDER_RAIN)), Target.ALLY_ONE, Kind.NONE
     ),
+    CardPair(BEALZEBUB, ((JIAN, FOCUS),), Target.ALLY_ONE, Kind.NONE),
 )
 # The skills and spells a worn card enhances (docs/plan-cards.md 8): a wearer who knows one of them casts it
 # enhanced for the MP and 100 points (one target) or 200 (all targets), and is not offered the card itself.
@@ -169,6 +171,7 @@ BOOSTS: dict[int, tuple[int, ...]] = {
     NAMIA: (DIVINE_RAIN,),
     SHAITAN: (MIRACLE_TEARS,),
     VITRA: (TENDER_RAIN,),
+    BEALZEBUB: (FOCUS,),
 }
 NAMIA_BASIC_REGEN = (
     5  # percent of max HP a turn: Divine Rain's, for a wearer who has not learned it
@@ -193,7 +196,6 @@ ONE_VERSION = frozenset(
         YETI,
         TERMITE,
         ICE_MONGREL,
-        BEALZEBUB,
     }
 )
 FIELD_CARDS = frozenset({BLOB, OHAINKARU, MAD_FANG, GHOULA, TREANT, GLOOMWING})
