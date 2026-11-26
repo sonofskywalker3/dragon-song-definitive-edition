@@ -1,0 +1,131 @@
+# cards: the first won battle against a species gives its card (docs/plan-cards.md 2.6, point 7). First temple
+# battle (Bealzebubs, a Thanatos, ...), party2_strong, A pressed through the fight and the results. Expect: at the end,
+# the Bealzebub card (227, bag 0x0213BA12) and the Thanatos card (246, bag 0x0213BA25) counts 0 -> 1 with full points,
+# not before the battle is won. Run with --save.
+include party2_strong
+wait 270
+watch u8 0x0213ba12 bealzebub_cards
+watch u16 0x020b489a bealzebub_points
+watch u8 0x0213ba25 thanatos_cards
+watch u16 0x020b48c0 thanatos_points
+watch u32 0x020B0010 state
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50
+press A 8
+wait 50

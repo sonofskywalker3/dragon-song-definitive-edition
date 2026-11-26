@@ -845,3 +845,19 @@ round would rob it twice (the Yeti path had no recheck): the steal routine now r
 a robbed monster alone; both plans give the same results after the change. Not seen: a missed steal (the MISS popup), the fallback to the other
 slot, a monster with nothing to steal, silence stopping Steal.
 
+### 11.17 Getting and recharging cards (approved list, point 7; 2026-11-25)
+
+`feat_card_drops.py`. Kills are counted per species (row >> 2) in `cave_card_kills` where func_02069f34 calls the
+roll func_02069e00 for a dying regular monster (0x0206A008); the roll never yields the card slot (0x02069ED8, slot 2
+gives slot 0); the boss branch's card slot always passes unless its chance is 0 (0x0206A170). At the battle's end
+(0x0202AC58, after func_02052888 copies the results back, every outcome) a win (s16 at 0x020B85C4 at most 1) gives
+each killed species' card at its full value (u32 at 0x0209EA14 + 8 * index) when func_0206ba54 counts none, and
+otherwise adds 100 per kill, capped; the counts are cleared either way. A duplicate cave label (`cave_card_count`,
+already the equip page's) first gave a "negative count" error in the ITCM layout; `layout_cave` now names a label
+used twice.
+
+**Seen:** `test_card_first_win` (party2_strong wins the first temple battle with Fight: at the end, not before, the
+Bealzebub card 0 -> 1 at 900 and the Thanatos card 0 -> 1 at 1400); `test_card_recharge` (Bealzebub owned at 100:
+400 after the win, three Bealzebubs killed); `test_card_escape` (a round of Fight, then L and R held: the battle
+ends by escape and neither card is given). Not seen: a loss, a boss card drop, the cap. The results screen does not list the new card; the bestiary (2.7) is still to build.
+

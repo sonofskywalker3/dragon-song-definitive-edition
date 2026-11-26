@@ -167,6 +167,10 @@ spells; everyone's Special now opens a list. A skill on one enemy is aimed on th
   one monster, a 50% chance to take one of the items it can drop (the rarer one 35% of the time), never a card,
   ring, or key item, once per monster each battle; "Stole <item>!" shows on the message line.
 - **The Yeti card steals** from one picked monster (25%) instead of stopping enemy steals.
+- **Getting and recharging cards.** The first battle you win against a kind of monster gives its card at full
+  points, every time, no roll; each later kill recharges that card by 100 points (up to its full value), whether it
+  is worn or in the bag. Nothing is given for a battle you escape or lose. A monster's normal drop never lands on its
+  card any more. Boss cards always drop.
 
 | Who | Level | Skill | MP | What it does |
 |---|---|---|---|---|
