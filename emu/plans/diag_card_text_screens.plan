@@ -1,0 +1,23 @@
+# Diagnostic: the Cards equip page, whole screens, with Quetzalcoatl and the Red Dragon card highlighted.
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA34 1
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot cs_00
+press Down 6
+wait 30
+shot cs_01

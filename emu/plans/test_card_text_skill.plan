@@ -1,0 +1,32 @@
+# Test: the Cards equip page names the skill a card powers up for the member shown: Jian at level 23 sees
+# Quetzalcoatl's "Doubles Weapon Break", at level 30 "Doubles War Breaker"; Tick (no Jian skill) has one line.
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA11 1
+poke u32 0x020B4664 22
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+shot tp_00
+press Down 6
+wait 30
+shot tp_01
+poke u32 0x020B4664 29
+press Up 6
+wait 30
+shot tp_02
+press Down 6
+wait 30
+shot tp_03

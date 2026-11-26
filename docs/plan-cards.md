@@ -413,10 +413,14 @@ none of the wearer-only effects uses it.
 - New strings: "Steal", its description, "Stole <item>!", "Nothing to steal".
 
 - **Card text, draft (2026-11-26):** the bestiary shows no card text (removed with the stats panel); the equip
-  page shows it. Jeff: the first line says what the card does for any wearer, the second names the skill it powers
-  up and how (not a "users" line). Records are 61 bytes, shown as two lines of 30; the font has no %, +, or
-  parentheses. The draft is in card_text.py (part of `cards`), checked in the game (`diag_card_text`: Termite,
-  Bealzebub, Sasquatch, Dark Jian); waiting for Jeff's approval of the wording.
+  page shows it, two lines of 30 from a fixed 61-byte record (sysmenupack 58); the font has no %, +, or
+  parentheses. Jeff: short lines ("Doubles Weapon Break", "Halves fire damage"), and the skill named after what
+  the member shown knows. card_text.py (part of `cards`): a card's own record is what it does for anyone; a card
+  that powers up a skill gets, for a member with that skill in their kit, an extra record (after the game's 417)
+  naming the highest of its skills they have learned (the lowest named before they learn it), picked by
+  cave_card_text at the equip page's two description draws. `test_card_text_skill`: Jian at 23 sees "Doubles
+  Weapon Break", at 30 "Doubles War Breaker"; Tick (no Jian skill) one line. Waiting for Jeff's approval of the
+  wording.
 
 ### 7.8 Modules
 
