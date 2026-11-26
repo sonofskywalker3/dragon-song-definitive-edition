@@ -350,7 +350,7 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     SPELL_LEVELS_FEATURE.name,
     SKILLS_FEATURE.name,
     CARDS.name,  # ring and card slots (docs/plan-cards.md)
-    BESTIARY.name,  # Y on the Cards equip page: the card viewer as a bestiary
+    BESTIARY.name,  # the System list's Bestiary plank: the card viewer as a bestiary
     SKILL_ICONS.name,  # a picture in each Special list box
     POISON_TURNS_FEATURE.name,  # poison wears off after 2 to 4 turns
     WALK_SPEED.name,

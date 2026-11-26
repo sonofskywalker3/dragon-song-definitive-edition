@@ -93,7 +93,7 @@ HIDE_SPRITE = 0x02027AE8
 MARK_TEST = 0x02063D88  # func_02063d44: `cmp r0, #8` / `bhs`: Tools and Cards get the "usable here" mark
 
 # r1 = the category -> the flags of `cmp r1, #5`, with Cards counted as an equipment category, unless
-# cave_card_list_once is set (the bestiary's Y, feat_bestiary.py): then Cards opens the game's card list page
+# cave_card_list_once is set (the System list's Bestiary plank, feat_bestiary.py): then Cards opens the game's card list page
 # once, and the flag is cleared. r1 is overwritten right after by the page kind, and r2 and r3 are reloaded,
 # so they may change here.
 PAGE_KIND_ASM = f"""

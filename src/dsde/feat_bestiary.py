@@ -366,94 +366,23 @@ TABLES_ASM = f"""
     .align 2
 """
 
-# TEMPORARY (Jeff, 2026-11-26): delete the Y path (Y_ASM, cave_bestiary_y and its hook) once the System list's
-# Bestiary plank is approved.
-# Y on the Cards equip page opens the bestiary: the game's own card list page (the viewer), on the same card.
-# func_0205747c (the Item page's input) after its prologue: in place of `ldrh r1, [sp, #0x10]`. On Y it sets
-# cave_card_list_once (feat_card_equip.py), asks for state 0x17 (which picks the page again) through the
-# change state 0x4F, plays the menu's confirm sound, and leaves the function by its own epilogue; otherwise it
-# puts back r2 and r3 (the arguments, still on the stack) and does the replaced load.
-ITEM_INPUT = 0x02057484
-ITEM_INPUT_WORD = 0xE1DD11B0
-PAD = 0x020AFF74  # +6 the buttons pressed this frame
-PAD_NEW = 6
-BUTTON_Y = 0x800
+# The Item page and field menu state the System list's way in and out uses.
 ITEM_PAGE_NEXT = 1  # the state to go to through 0x4F
 ITEM_PAGE_KIND = 3  # 1 the list page, 2 the equip page
 ITEM_PAGE_CATEGORY = 4
 CATEGORY_CARDS = 7
-EQUIP_PAGE = 2
-LIST_PAGE = 1
 PICK_PAGE_STATE = 0x17
 MENU_STATE = 0x020AFF84  # +0x8c the field menu's state
 MENU_STATE_OFFSET = 0x8C
 CHANGE_STATE = 0x4F
-MENU_WORK = 0x0213B27C  # +0x610 set by the function's own epilogue
-MENU_REFRESH = 0x610
-# The equip page's portrait of the member (state 0x24: func_020275b4(0x0213AC70, 2, 2 * character, 0)); the
-# list page does not use it, so Y hides it (func_02027ae8(set, 2, -1)).
-HIDE_SPRITE = 0x02027AE8
-SPRITES = 0x0213AC70
-PORTRAIT_SPRITE = 2
 PLAY_SOUND = 0x02043FD8  # (0, 1) the confirm sound
 CONFIRM_SOUND = 1
 
-Y_ASM = f"""
-    ldr   r0, by_pad
-    ldrh  r0, [r0, #{PAD_NEW}]
-    tst   r0, #{BUTTON_Y:#x}
-    beq   by_no
-    ldr   r0, by_page
-    ldrb  r1, [r0, #{ITEM_PAGE_CATEGORY}]
-    cmp   r1, #{CATEGORY_CARDS}
-    bne   by_no
-    ldrb  r1, [r0, #{ITEM_PAGE_KIND}]
-    cmp   r1, #{EQUIP_PAGE}
-    bne   by_no
-    ldr   r1, by_once
-    mov   r2, #1
-    strb  r2, [r1]
-    mov   r2, #{PICK_PAGE_STATE:#x}
-    strb  r2, [r0, #{ITEM_PAGE_NEXT}]
-    ldr   r1, by_state
-    mov   r2, #{CHANGE_STATE:#x}
-    str   r2, [r1, #{MENU_STATE_OFFSET:#x}]
-    mov   r0, #0
-    mov   r1, #{CONFIRM_SOUND}
-    bl    {PLAY_SOUND:#x}
-    ldr   r0, by_sprites
-    mov   r1, #{PORTRAIT_SPRITE}
-    mvn   r2, #0
-    bl    {HIDE_SPRITE:#x}
-    ldr   r0, by_work
-    mov   r1, #1
-    str   r1, [r0, #{MENU_REFRESH:#x}]
-    pop   {{r4, r5, r6, lr}}
-    add   sp, sp, #0x10
-    bx    lr
-by_no:
-    ldr   r2, [sp, #0x18]
-    ldr   r3, [sp, #0x1c]
-    ldrh  r1, [sp, #0x10]
-    bx    lr
-by_pad:
-    .word {PAD:#x}
-by_page:
-    .word {ITEM_PAGE:#x}
-by_once:
-    .word ${{cave_card_list_once}}
-by_state:
-    .word {MENU_STATE:#x}
-by_work:
-    .word {MENU_WORK:#x}
-by_sprites:
-    .word {SPRITES:#x}
-"""
 
 # The card viewer's exit (state 0x59) frees the card pictures and goes to the categories with the category
-# cleared. Leaving the bestiary (Cards), it goes back to the Cards equip page instead: in place of
-# `strb r1, [r2, #4]` (r1 = 0, r2 the Item page, r4 the old category, r3 the next state, 0x14; r0 is live).
-# Opened from the System list, it goes back there instead (state 0x33, the cursor on the Bestiary plank).
+# cleared: in place of `strb r1, [r2, #4]` (r1 = 0, r2 the Item page, r4 the old category, r3 the next state,
+# 0x14; r0 is live). Opened from the System list, the bestiary goes back there instead (state 0x5A, then 0x33,
+# the cursor on the Bestiary plank).
 VIEWER_EXIT = 0x02061DC4
 VIEWER_EXIT_WORD = 0xE5C21004
 
@@ -514,9 +443,7 @@ EXIT_ASM = f"""
     mov   r4, #{SYSTEM_RETURN_CURSOR // 2 + 1}
     bx    lr
 ex_cards:
-    cmp   r4, #{CATEGORY_CARDS}
-    moveq r3, #{PICK_PAGE_STATE:#x}
-    strbne r1, [r2, #{ITEM_PAGE_CATEGORY}]
+    strb  r1, [r2, #{ITEM_PAGE_CATEGORY}]
     bx    lr
 ex_from_system:
     .word ${{cave_bestiary_from_system}}
@@ -584,7 +511,8 @@ LAST_KEY = 0xC
 
 # State 0x35 dispatches the key code with `cmp r0, #0xc` / `addls pc, pc, r0, lsl #2` (0x0205FE78). Quit Game's
 # code moves from 12 to 14 and is turned back into 12; 12 is now the Bestiary plank: it opens the game's card list
-# page as Y does, notes that it came from here, and hands the jump table a code it ignores.
+# page (through the Item page's own way in), notes that it came from here, and hands the jump table a code it
+# ignores.
 SYSTEM_KEY = 0x0205FE78
 SYSTEM_KEY_WORD = 0xE350000C
 MENU_CURSOR = 0x02139F40  # the shown list's cursor; state 0x18 opens the card list at cursor / 2 + 1
@@ -762,24 +690,15 @@ BESTIARY = Feature(
             "the card viewer shows no description",
         ),
         CaveCode(
-            "cave_bestiary_y", Y_ASM, "Y on the Cards equip page opens the bestiary"
-        ),
-        hook(
-            ITEM_INPUT,
-            ITEM_INPUT_WORD,
-            "bl ${cave_bestiary_y}",
-            "Y on the Cards equip page opens the bestiary",
-        ),
-        CaveCode(
             "cave_bestiary_exit",
             EXIT_ASM,
-            "B in the bestiary goes back to the Cards equip page",
+            "B in the bestiary goes back to the System list",
         ),
         hook(
             VIEWER_EXIT,
             VIEWER_EXIT_WORD,
             "bl ${cave_bestiary_exit}",
-            "B in the bestiary goes back to the Cards equip page",
+            "B in the bestiary goes back to the System list",
         ),
         DataPatch(
             PLANK_ARCHIVE,

@@ -140,8 +140,7 @@ Weakness   (icons, as today)
   DEF x 6/5).
   The card's bar shows that level plus one, as the Status page counts. `test_bestiary_card`: Quetzalcoatl LV 23
   HP 422, Sasquatch LV 8 HP 241 (the fight's documented 241), Dark Jian; everything fits left of the card.
-- **Opening it** (Jeff, 2026-11-26: a fifth System plank would need new lettering art, B, r, and y are on no
-  plank; "that's perfect" to Y on the Cards equip page instead): Y there (func_0205747c, hooked after its
+- **Opening it with Y (built, then removed for the System plank below)** (2026-11-26): Y there (func_0205747c, hooked after its
   prologue) sets cave_card_list_once, hides the equip page's portrait (sprite 2 of 0x0213AC70), and asks for
   state 0x17, whose page-kind cave then opens the game's card list page (the viewer) once, on the highlighted
   card. B on that page leaves through the game's own viewer exit (0x59, which frees the card pictures; the
@@ -150,8 +149,8 @@ Weakness   (icons, as today)
   (`diag_bestiary_a`); A on a field card there was not tried. The hint line still reads "Select Card": a
   "Y: Bestiary" hint needs a new menu message, not done yet.
 - **The System list's Bestiary plank** (Jeff, 2026-11-26: "Build it the best you can in the menu, stub out the y
-  path for deletion once we prove the menu path works"; the Y path stays, marked TEMPORARY in feat_bestiary.py,
-  until he approves the plank). Each plank is two sprites: the game's blank plank (bank 5, cell 0) and its
+  path for deletion once we prove the menu path works"; approved 2026-11-26, "that looks like it belongs there",
+  and the Y path deleted). Each plank is two sprites: the game's blank plank (bank 5, cell 0) and its
   lettering. The menu table at 0x020A5968 is repointed to five planks in the cave (y 26 to 142, 29 apart); the
   Bestiary plank is the blank plank with its word in the planks' own lettering (Jeff, 2026-11-26: the menu font
   looked "terrible"; "make it look like the others"; then, on the missing letters, "can you do the same?" as
