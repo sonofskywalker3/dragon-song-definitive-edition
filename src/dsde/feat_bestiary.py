@@ -15,7 +15,11 @@ text layer (BG1, drawn above BG2) with the menu's own short strings: "LV" (strin
 
 from dsde.jp_hint_pairs import USA_TABLE
 from dsde.cards_common import CHAR_RECORD_SIZE, CHAR_RECORDS, CHARACTERS
-from dsde.patching import AsmPatch, CaveCode, Feature, Patch
+from dsde.patching import AsmPatch, CaveCode, DataPatch, Feature, Patch
+from dsde.plank_word import ARCHIVE as PLANK_ARCHIVE
+from dsde.plank_word import CELLS as PLANK_CELLS
+from dsde.plank_word import TILES as PLANK_TILES
+from dsde.plank_word import plank_word_patch
 from dsde.skills_common import hook
 
 GAME_MODE = 0x020B000C
@@ -528,9 +532,8 @@ ex_panels:
 # list is the menu table at 0x020A5968 (u16 6, u16 entry count, pointer to 0x10-byte entries): two sprites a
 # plank, the blank plank (sprite bank 5, cell 0, selected 1) and its lettering (cells 4 and 5 Message Speed, 2 and
 # 3 Save, 16 and 17 Music Hall, 6 and 7 Quit Game), at x 128 and y 24, 60, 96, 132. The cursor steps by 2 and
-# stops at count - 2. The new table in the cave has five planks 29 pixels apart; the Bestiary plank's second
-# entry is the blank plank again, and its word is written in the menu font (text handle 0, the bottom screen's
-# text layer) by the hint line's drawer, so it is redrawn whenever that line is.
+# stops at count - 2. The new table in the cave has five planks 29 pixels apart; the Bestiary plank's word is
+# two frames added to the planks' own sprites (plank_word.py).
 SYSTEM_LIST = 0x020A5968
 SYSTEM_LIST_HEAD = 0x00080006  # u16 6, u16 8 entries
 SYSTEM_LIST_HEAD_NEW = 0x000A0006
@@ -538,25 +541,29 @@ SYSTEM_LIST_ENTRIES = 0x020A596C
 SYSTEM_LIST_ENTRIES_OLD = 0x020A5E68
 # State 0x33 greys the Save plank out when saving is not allowed, through its own pointer to the entries.
 SAVE_PLANK_POOL = 0x02060454
-PLANK_YS = (26, 55, 84, 113, 142)  # the word's text row 13 sits on the Bestiary plank
+PLANK_TEXT = "Bestiary"  # in the planks' own lettering, plank_word.py
+PLANK_YS = (26, 55, 84, 113, 142)  # 29 apart, so five fit above the hint line
 PLANK_BASE = "0x05, 0x00, 0x01, 0x05"
 PLANK_BASE_TAIL = "0x0001, 0x8000, 0x0009, 0x0000"
 LETTERING_TAIL = "0x0000, 0xA027, 0x0009, 0x0000"
-PLANK_LETTERING = ((0x04, 0x05), (0x02, 0x03), (0x10, 0x11), None, (0x06, 0x07))
+_, _, _, _, BESTIARY_FRAME = plank_word_patch(PLANK_TEXT)
+PLANK_LETTERING = (
+    (0x04, 0x05),
+    (0x02, 0x03),
+    (0x10, 0x11),
+    (BESTIARY_FRAME, BESTIARY_FRAME + 1),
+    (0x06, 0x07),
+)
 
 
 def _plank_rows() -> str:
     rows = []
     for y, letters in zip(PLANK_YS, PLANK_LETTERING, strict=True):
         rows.append(f"    .byte {PLANK_BASE}\n    .short 128, {y}, {PLANK_BASE_TAIL}")
-        if letters is None:
-            rows.append(
-                f"    .byte {PLANK_BASE}\n    .short 128, {y}, {PLANK_BASE_TAIL}"
-            )
-        else:
-            rows.append(
-                f"    .byte 0x05, {letters[0]:#x}, {letters[1]:#x}, 0xff\n    .short 128, {y}, {LETTERING_TAIL}"
-            )
+        rows.append(
+            f"    .byte 0x05, {letters[0]:#x}, {letters[1]:#x}, 0xff\n"
+            f"    .short 128, {y}, {LETTERING_TAIL}"
+        )
     return "\n".join(rows)
 
 
@@ -683,74 +690,24 @@ HINT_PICK_ASM = f"""
     bx    lr
 """
 
-# The hint line's drawer (0x02062000, `add r1, r4, r1`: r4 the strings, r1 the message's offset; r0 the text
-# handle, r2 column 4, r3 row 0x15): our message's text instead, and while the hint is one of the System list's,
-# the Bestiary plank's word as well.
+# The hint line's drawer (0x02062000, `add r1, r4, r1`: r4 the strings, r1 the message's offset): for the
+# Bestiary plank's message, our own text.
 HINT_DRAW = 0x02062000
 HINT_DRAW_WORD = 0xE0841001
 HELP = 0x02139EE8  # +2 the message shown (s8)
-LAST_SYSTEM_HINT = 0x18
-SYSTEM_IDLE_STATE = (
-    0x35  # the plank's word only while the System list is up (states 0x33 to 0x35)
-)
-PLANK_TEXT_COLUMN = 12
-PLANK_TEXT_ROW = 13
 HINT_TEXT = "Monsters beaten"
-PLANK_TEXT = "Bestiary"
-
-QUIT_PROMPT_STATE = 0x43  # the word also stays under Quit Game's two prompts (0x43, 0x44 and 0x47, 0x48)
-QUIT_PROMPT_IDLE = 0x44
-QUIT_SURE_STATE = 0x47
-QUIT_SURE_IDLE = 0x48
 
 HINT_DRAW_ASM = f"""
-    push  {{r0-r6, lr}}
-    mov   r5, r0
-    ldr   r6, hd_help
-    ldrsb r6, [r6, #2]
-    ldr   r0, hd_state
-    ldr   r0, [r0, #{MENU_STATE_OFFSET:#x}]
-    cmp   r0, #{SYSTEM_SETUP_STATE:#x}
-    blt   hd_no_plank
-    cmp   r0, #{SYSTEM_IDLE_STATE:#x}
-    ble   hd_plank
-    sub   r0, r0, #{QUIT_PROMPT_STATE:#x}
-    cmp   r0, #{QUIT_PROMPT_IDLE - QUIT_PROMPT_STATE}
-    bls   hd_plank
-    sub   r0, r0, #{QUIT_SURE_STATE - QUIT_PROMPT_STATE}
-    cmp   r0, #{QUIT_SURE_IDLE - QUIT_SURE_STATE}
-    bhi   hd_no_plank
-hd_plank:
-    sub   sp, sp, #12
-    mov   r0, #0
-    str   r0, [sp]
-    str   r0, [sp, #4]
-    mov   r0, #10
-    str   r0, [sp, #8]
-    mov   r0, r5
-    ldr   r1, hd_plank_text
-    mov   r2, #{PLANK_TEXT_COLUMN}
-    mov   r3, #{PLANK_TEXT_ROW}
-    bl    {DRAW_STRING:#x}
-    add   sp, sp, #12
-hd_no_plank:
-    cmn   r6, #{-BESTIARY_HINT}
-    bne   hd_game
-    pop   {{r0-r6, lr}}
-    ldr   r1, hd_hint_text
-    bx    lr
-hd_game:
-    pop   {{r0-r6, lr}}
-    add   r1, r4, r1
+    ldr   ip, hd_help
+    ldrsb ip, [ip, #2]
+    cmn   ip, #{-BESTIARY_HINT}
+    ldreq r1, hd_hint_text
+    addne r1, r4, r1
     bx    lr
 hd_help:
     .word {HELP:#x}
-hd_state:
-    .word {MENU_STATE:#x}
-hd_plank_text:
-    .word ${{cave_bestiary_words}}
 hd_hint_text:
-    .word ${{cave_bestiary_words}} + {len(PLANK_TEXT) + 1}
+    .word ${{cave_bestiary_words}}
 """
 
 _CODES = {char: code for code, char in USA_TABLE.items()}
@@ -763,7 +720,7 @@ def _encode(text: str) -> str:
     )
 
 
-WORDS_ASM = _encode(PLANK_TEXT) + "\n" + _encode(HINT_TEXT) + "\n    .align 2"
+WORDS_ASM = _encode(HINT_TEXT) + "\n    .align 2"
 
 
 BESTIARY = Feature(
@@ -823,6 +780,24 @@ BESTIARY = Feature(
             VIEWER_EXIT_WORD,
             "bl ${cave_bestiary_exit}",
             "B in the bestiary goes back to the Cards equip page",
+        ),
+        DataPatch(
+            PLANK_ARCHIVE,
+            PLANK_TILES,
+            0,
+            plank_word_patch(PLANK_TEXT)[0],
+            plank_word_patch(PLANK_TEXT)[1],
+            "the Bestiary plank's word, in the planks' lettering",
+            whole=True,
+        ),
+        DataPatch(
+            PLANK_ARCHIVE,
+            PLANK_CELLS,
+            0,
+            plank_word_patch(PLANK_TEXT)[2],
+            plank_word_patch(PLANK_TEXT)[3],
+            "the Bestiary plank's word: its two frames",
+            whole=True,
         ),
         CaveCode(
             "cave_bestiary_from_system",
@@ -888,19 +863,17 @@ BESTIARY = Feature(
             )
             for addr in SYSTEM_HINTS
         ),
-        CaveCode(
-            "cave_bestiary_words", WORDS_ASM, "the Bestiary plank's word and hint"
-        ),
+        CaveCode("cave_bestiary_words", WORDS_ASM, "the Bestiary plank's hint"),
         CaveCode(
             "cave_hint_draw",
             HINT_DRAW_ASM,
-            "the Bestiary plank's word and hint drawn on the bottom screen",
+            "the Bestiary plank's hint",
         ),
         hook(
             HINT_DRAW,
             HINT_DRAW_WORD,
             "bl ${cave_hint_draw}",
-            "the Bestiary plank's word and hint",
+            "the Bestiary plank's hint",
         ),
         *(
             Patch(

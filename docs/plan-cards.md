@@ -153,9 +153,12 @@ Weakness   (icons, as today)
   path for deletion once we prove the menu path works"; the Y path stays, marked TEMPORARY in feat_bestiary.py,
   until he approves the plank). Each plank is two sprites: the game's blank plank (bank 5, cell 0) and its
   lettering. The menu table at 0x020A5968 is repointed to five planks in the cave (y 26 to 142, 29 apart); the
-  Bestiary plank is the blank plank, its word "Bestiary" written in the menu font on the bottom text layer by
-  the hint line's drawer (0x02062000) while the System list or Quit Game's prompts are up, and its hint
-  "Monsters beaten" is a string of our own drawn there too (message -101). A on it goes in as the top menu's
+  Bestiary plank is the blank plank with its word in the planks' own lettering (Jeff, 2026-11-26: the menu font
+  looked "terrible"; "make it look like the others"; then, on the missing letters, "can you do the same?" as
+  his Pokemon fork did): plank_word.py cuts e, s, t, i, a from Save, Quit Game, and Music Hall and builds the B,
+  r, and y the game lacks in their colors, then adds the word as tiles to sysmenupack 48 and two frames (27,
+  28) to 36. Its hint "Monsters beaten" is a string of our own, drawn by the hint line's drawer (0x02062000) for
+  message -101. A on it goes in as the top menu's
   Items does (the Item page's screen block, state 0x53), and the categories (0x15) go straight on to the Cards
   list page; B leaves through the viewer exit (0x59), frees the Item page's three blocks as B on its categories
   does, shows the top panel, and returns to the System list on the plank. Quit Game's key code, hint, prompt
