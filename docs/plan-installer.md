@@ -57,7 +57,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 10 | B in a town menu selects Leave town | town-menu-dpad |
 | 11 | The HUD stops pulsing | still-hud |
 
-**Menus and text (12 to 19), Battles (20 to 36), Spells and skills (37 to 42), and Cards (43 to 45) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
+**Menus and text (12 to 19), Battles (20 to 36), Spells and skills (37 to 42), and Cards (43 to 45), and Gad's Express (47) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
 
 | # | Group | Switch | Today's feature |
 |---|---|---|---|
@@ -95,11 +95,10 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 43 | Cards | Dragon ring slot: a ring slot for every member, and a ring's Dragon Magic for whoever wears it | cards (feat_card_slots ring slot, feat_ring_slot) |
 | 44 | | Card system overhaul (tooltip, short: equip monster cards to use them in battle or power up skills; they recharge as you fight). The card slot, cards used from the Special list, power-ups, changed cards, boss passives and Morus's Steal, drops and recharge, and what each card does on the equip page; one switch (Jeff, 2026-11-26: too granular otherwise; nobody wants to equip a card without its text). Needs 40 | cards |
 | 45 | | The bestiary (the System list's Bestiary plank) (needs 44) | bestiary |
-| 46 | Fixes and extras | Flora's tunnel save lock fix | fix-save-glitch |
+| 46 | Fixes and extras | Save glitch fix (tooltip: talking to Flora in the Underground Tunnel after she leaves no longer locks Save for the rest of the game) | fix-save-glitch |
 | 47 | | Gad's Express jobs grow with the journey | gad-express |
-| 48 | | The intro sends Jian straight to Lucia | opening-flags |
-| 49 | | Party chat on Y (default off) | party-chat |
-| 50 | Story | Retold: text edits, the walk-out opening and narration, the blue seal (needs 15 or 16 and 48, as the opening needs text-speed and opening-flags today) | text-edits, opening-run, opening-text, title-seal-retold |
+| 48 | | Party chat on Y (default off) | party-chat |
+| 49 | Story | Retold: text edits, the intro sending Jian straight to Lucia (opening-flags; Jeff, 2026-11-26: it changes the story path, so Retold only, and the Classic build drops it), the walk-out opening and narration, the blue seal (needs 15 or 16, as the opening needs text-speed today) | text-edits, opening-flags, opening-run, opening-text, title-seal-retold |
 
 ## 4. Dependencies
 
