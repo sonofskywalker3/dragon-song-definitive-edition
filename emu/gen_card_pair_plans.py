@@ -150,6 +150,16 @@ CASES = (
         "Lucia: paralysis (4) on one enemy, 70%",
     ),
     Case(
+        "tick_basic_flora",
+        226,
+        FLORA,
+        19,
+        "sixth",
+        1,
+        "status",
+        "Flora at 20 (Water Bind, which Tick does not power up): the card entry, paralysis on one enemy, 70%",
+    ),
+    Case(
         "tick_upgraded_gabryel",
         226,
         GABRYEL,
