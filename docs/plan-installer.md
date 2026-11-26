@@ -57,7 +57,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 10 | B in a town menu selects Leave town | town-menu-dpad |
 | 11 | The HUD stops pulsing | still-hud |
 
-**Menus and text (12 to 19) and Battles (20 to 36) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
+**Menus and text (12 to 19), Battles (20 to 36), and Spells and skills (37 to 42) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
 
 | # | Group | Switch | Today's feature |
 |---|---|---|---|
@@ -90,7 +90,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 38 | | MP items restore a flat amount | mp-economy |
 | 39 | | Healers learn spells by level | spell-levels |
 | 40 | | Level-learned skills for Jian, Gabryel, Rufus, and Flora (needs 24) | skills |
-| 41 | | Special list icons (off: the blank boxes) (needs 40) | skill-icons |
+| 41 | | Special list icons for every spell and skill (off: the blank boxes). Needs nothing: the icons are data; only the card entry's icon hook needs 43, and the build's REQUIRES entry naming skills goes | skill-icons |
 | 42 | | Poison wears off after 2 to 4 turns | poison-turns |
 | 43 | Cards | Ring and card slots; cards used from the Special list (needs 40) | cards |
 | 44 | | Cards power up matching skills (needs 43; its poison power-up needs 42) | cards (feat_card_boost, feat_skills_boost) |
