@@ -420,7 +420,8 @@ none of the wearer-only effects uses it.
   naming the highest of its skills they have learned (the lowest named before they learn it), picked by
   cave_card_text at the equip page's two description draws. `test_card_text_skill`: Jian at 23 sees "Doubles
   Weapon Break", at 30 "Doubles War Breaker"; Tick (no Jian skill) one line. Jeff: "Venom Claw poison: 2x
-  damage"; no member names (spoilers, and Lucia leaves); Tick powers up Howl and Dread Roar only.
+  damage"; no member names (spoilers, and Lucia leaves); Tick powers up Howl and Dread Roar only; a member
+  without the skill sees "Powers up" and the move (Flora: "Powers up Howl").
 
 ### 7.8 Modules
 

@@ -5,8 +5,9 @@ id from 0x346 (60 characters, the end byte, spaces after it). The equip page sho
 characters, so a line is padded to 30 to start the next. The menu font has no %, +, or parentheses.
 
 A card's own record says what it does for anyone who wears it. A card that powers up a skill (cards_data.BOOSTS)
-has a second line for a member who has that skill in their kit: it names the highest of the card's skills the
-member has learned by now (War Breaker once Jian has it, Weapon Break before), and what the card does to it. Those
+has a second line: for a member who has that skill in their kit, it names the highest of the card's skills the
+member has learned by now (War Breaker once Jian has it, Weapon Break before) and what the card does to it; for
+anyone else, "Powers up" and the card's first skill. Those
 two-line texts are extra records after the game's 417 (the game loads the whole file, so they cost no cave
 space), and the equip page's two description draws (states 0x18 and 0x19, `bl func_02066c44` with the item id in
 r1) ask cave_card_text, which swaps in the record for the shown member and goes on to func_02066c44.
@@ -157,7 +158,8 @@ def _learns(member: int, spell: int) -> int | None:
 @cache
 def _power_ups() -> tuple[list[tuple[int, int, int, int]], list[bytes]]:
     """(table entries, extra records): per card and member, the card's skills in their kit, highest first; the
-    lowest shows from level index 0, so a member who will learn the skill sees it named before they do."""
+    lowest shows from level index 0, so a member who will learn the skill sees it named before they do. A member
+    without any of them sees "Powers up" and the card's first skill (Jeff, 2026-11-26: no member names)."""
     names = list(LINES)
     entries: list[tuple[int, int, int, int]] = []
     extra: list[bytes] = []
@@ -172,11 +174,21 @@ def _power_ups() -> tuple[list[tuple[int, int, int, int]], list[bytes]]:
                 ),
                 reverse=True,
             )
+            if not kit:
+                entries.append((card - FIRST_CARD, member, 0, len(extra)))
+                extra.append(
+                    record((first_line, f"Powers up {_spell_name(spells[0])}"))
+                )
+                continue
             for k, (level, spell) in enumerate(kit):
                 shown_from = 0 if k == len(kit) - 1 else level
                 entries.append((card - FIRST_CARD, member, shown_from, len(extra)))
                 extra.append(record((first_line, POWER_UP[spell])))
     return entries, extra
+
+
+def _spell_name(spell: int) -> str:
+    return SCHEDULE[spell][0] if spell in GAME_SPELLS else BY_SPELL[spell].name
 
 
 @cache
