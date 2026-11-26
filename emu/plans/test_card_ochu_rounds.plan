@@ -1,0 +1,94 @@
+# cards: Ochu lasts 2 to 4 rounds (docs/plan-cards.md 8, point 4). Lucia wears Ochu (card 241, her slot
+# 0x020B46FE) at 1300 points (0x020B48B6) and uses it in round 1 (all allies, no picker): the battle flags
+# (0x02282940) gain 0x80; then both Fight each round (the enemies' HP pinned). Expect bit 0x80 cleared at the start
+# of round 4, 5, or 6, and the points 1300 -> 1200. Run with --save.
+include party2_strong
+poke u8 0x0213ba20 1
+poke u16 0x020b48b6 1300
+poke u16 0x020b46fe 241
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+watch u32 0x02282940 flags
+watch u16 0x020b48b6 points
+watch u32 0x020B0010 state
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+shot oc_card
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+shot oc_end

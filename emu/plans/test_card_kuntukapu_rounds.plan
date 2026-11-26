@@ -1,0 +1,94 @@
+# cards: Kuntukapu lasts 2 to 4 rounds (docs/plan-cards.md 8, point 4). Lucia wears Kuntukapu (card 230, her slot
+# 0x020B46FE) at 1100 points (0x020B48A0) and uses it in round 1 (all allies, no picker): the battle flags
+# (0x02282940) gain 0x20; then both Fight each round (the enemies' HP pinned). Expect bit 0x20 cleared at the start
+# of round 4, 5, or 6, and the points 1100 -> 1000. Run with --save.
+include party2_strong
+poke u8 0x0213ba15 1
+poke u16 0x020b48a0 1100
+poke u16 0x020b46fe 230
+pin u32 0x0228ea24 500
+pin u32 0x0228ea90 500
+pin u32 0x0228eafc 500
+pin u32 0x0228ebd4 500
+pin u32 0x0228ec40 500
+pin u32 0x0228ecac 500
+wait 270
+watch u32 0x02282940 flags
+watch u16 0x020b48a0 points
+watch u32 0x020B0010 state
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 60
+press Right 8
+wait 50
+press A 8
+wait 60
+press Down 8
+wait 30
+shot ku_card
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+waituntil u32 0x020B0010 7 3000
+wait 110
+press A 8
+wait 50
+press A 8
+wait 60
+press A 8
+wait 50
+press A 8
+wait 60
+shot ku_end
