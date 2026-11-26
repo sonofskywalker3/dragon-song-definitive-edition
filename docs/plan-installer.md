@@ -57,7 +57,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 10 | B in a town menu selects Leave town | town-menu-dpad |
 | 11 | The HUD stops pulsing | still-hud |
 
-**Menus and text (12 to 19), Battles (20 to 36), and Spells and skills (37 to 42) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
+**Menus and text (12 to 19), Battles (20 to 36), Spells and skills (37 to 42), and Cards (43 to 45) approved, Jeff, 2026-11-26; the rest proposed, for review group by group. Every switch gets a tooltip saying exactly what it does (Jeff).**
 
 | # | Group | Switch | Today's feature |
 |---|---|---|---|
@@ -92,18 +92,14 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 40 | | Level-learned skills for Jian, Gabryel, Rufus, and Flora (needs 24) | skills |
 | 41 | | Special list icons for every spell and skill (off: the blank boxes). Needs nothing: the icons are data; only the card entry's icon hook needs 43, and the build's REQUIRES entry naming skills goes | skill-icons |
 | 42 | | Poison wears off after 2 to 4 turns | poison-turns |
-| 43 | Cards | Ring and card slots; cards used from the Special list (needs 40) | cards |
-| 44 | | Cards power up matching skills (needs 43; its poison power-up needs 42) | cards (feat_card_boost, feat_skills_boost) |
-| 45 | | Changed cards: Insector, Ochu, Kuntukapu 2 to 4 rounds; Hellbird, Termite on one ally; Yeti steals | cards (feat_card_changes) |
-| 46 | | Boss card passives, Moran, Orcus, and Morus's Steal | cards (feat_card_bosses, steal) |
-| 47 | | Card drops and recharge; boss cards always drop | cards (feat_card_drops) |
-| 48 | | What each card does, on the equip page | cards (card_text) |
-| 49 | | The bestiary (the System list's Bestiary plank) (needs 43) | bestiary |
-| 50 | Fixes and extras | Flora's tunnel save lock fix | fix-save-glitch |
-| 51 | | Gad's Express jobs grow with the journey | gad-express |
-| 52 | | The intro sends Jian straight to Lucia | opening-flags |
-| 53 | | Party chat on Y (default off) | party-chat |
-| 54 | Story | Retold: text edits, the walk-out opening and narration, the blue seal (needs 15 or 16 and 52, as the opening needs text-speed and opening-flags today) | text-edits, opening-run, opening-text, title-seal-retold |
+| 43 | Cards | Dragon ring slot: a ring slot for every member, and a ring's Dragon Magic for whoever wears it | cards (feat_card_slots ring slot, feat_ring_slot) |
+| 44 | | Card system overhaul (tooltip, short: equip monster cards to use them in battle or power up skills; they recharge as you fight). The card slot, cards used from the Special list, power-ups, changed cards, boss passives and Morus's Steal, drops and recharge, and what each card does on the equip page; one switch (Jeff, 2026-11-26: too granular otherwise; nobody wants to equip a card without its text). Needs 40 | cards |
+| 45 | | The bestiary (the System list's Bestiary plank) (needs 44) | bestiary |
+| 46 | Fixes and extras | Flora's tunnel save lock fix | fix-save-glitch |
+| 47 | | Gad's Express jobs grow with the journey | gad-express |
+| 48 | | The intro sends Jian straight to Lucia | opening-flags |
+| 49 | | Party chat on Y (default off) | party-chat |
+| 50 | Story | Retold: text edits, the walk-out opening and narration, the blue seal (needs 15 or 16 and 48, as the opening needs text-speed and opening-flags today) | text-edits, opening-run, opening-text, title-seal-retold |
 
 ## 4. Dependencies
 
