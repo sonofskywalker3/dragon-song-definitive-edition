@@ -1,0 +1,48 @@
+# Diagnostic: which top-screen layer holds the card viewer's P 0000 box: opens the viewer, then one shot with
+# sprites off and one with each background off (engine B, the top screen, DISPCNT bits 8 to 12).
+include boot_from_save
+wait 100
+poke u8 0x0213BA1B 1
+poke u8 0x0213BA29 1
+watch u32 0x020B0010 state
+press X 3
+wait 80
+press Down 8
+wait 20
+press Down 8
+wait 30
+press A 8
+wait 60
+press Down 8
+wait 30
+press Right 8
+wait 30
+press A 8
+wait 60
+wait 60
+shot base
+pin u8 0x04001001 0x0F
+wait 4
+shot top_no_obj
+unpin
+wait 4
+pin u8 0x04001001 0x1E
+wait 4
+shot top_no_bg0
+unpin
+wait 4
+pin u8 0x04001001 0x1D
+wait 4
+shot top_no_bg1
+unpin
+wait 4
+pin u8 0x04001001 0x1B
+wait 4
+shot top_no_bg2
+unpin
+wait 4
+pin u8 0x04001001 0x17
+wait 4
+shot top_no_bg3
+unpin
+wait 4

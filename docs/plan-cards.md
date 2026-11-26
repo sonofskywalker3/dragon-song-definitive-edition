@@ -119,6 +119,10 @@ Weakness   (icons, as today)
 
 - MAX Point, "1 Card", and the description go. The description stays on the Item page, where the card is equipped.
 - The "P 0000" box at the bottom of the card art goes too (Jeff). What fills its place: open.
+- **No border under the box** (`emu/plans/diag_card_viewer_layers.plan`, each top-screen layer switched off in turn):
+  the whole card, frame, art, and the P 0000 box, is one background layer (BG2); with it off the brown panel
+  shows. Sprites hold only the element icons and the header; BG0 is the panel, BG1 the text. So removing the box
+  leaves a hole; Jeff does not want new art drawn (2026-11-26): the box shows the level or stays blank.
 - **No enemy class.** The game has none: the 0x54-byte enemy record is fully accounted for (docs/re-enemies.md 1)
   and none of it is a class, so the class is dropped (Jeff, 2026-11-26: "if not, drop it").
 - **The stated level** (proposal): a regular enemy at the highest party level, which is the level the game itself
