@@ -123,7 +123,7 @@ Weakness   (icons, as today)
   the whole card, frame, art, and the P 0000 box, is one background layer (BG2); with it off the brown panel
   shows. Sprites hold only the element icons and the header; BG0 is the panel, BG1 the text. So removing the box
   leaves a hole; Jeff does not want new art drawn (2026-11-26): the box shows the level or stays blank.
-- **Trial built** (feat_bestiary.py, feature `bestiary`, not yet in the editions' sets; Jeff, 2026-11-26: "give it a
+- **Trial built** (feat_bestiary.py, feature `bestiary`, in both editions since Y opens it; Jeff, 2026-11-26: "give it a
   try, if it looks terrible we'll just leave it alone"): in the field menu the box is cleared with the card frame's
   own bar tiles (the template, btldata entry 0xEC, runs 0xD2.. on row 13 and 0xDB.. on row 14; its "P" is 0xF0 /
   0xF1 at column 1, replaced by the unused 0xD3 / 0xDC), and the viewer prints the menu's own "LV" string and the
