@@ -36,39 +36,74 @@ combination is out of the question with about 60 switches.
 ## 3. The switches
 
 The story is one switch: Retold's text edits, the walk-out opening and its narration, and the blue seal (with it
-off, the seal is Classic's red). The rest are engine and gameplay switches, grouped as the README groups them.
-Today's features are coarser than Jeff's examples, so several become two or more switches; the split is real work,
-listed per feature in the table. Defaults: all on (the full release), except party chat (off, as now).
+off, the seal is Classic's red). Everything else is engine and gameplay, one switch per change Jeff can name, built
+into both editions alike. Defaults: all on (the full release), except party chat (off, as now). The title seal is
+always on (it says which build this is). Where a switch below needs a feature split, the split is real work; the
+builder reports any line that cannot be separated cleanly instead of forcing it.
 
-| Group | Today's feature | Switches it becomes |
+**Exploring (approved, Jeff, 2026-11-26)**
+
+| # | Switch | Today's feature |
 |---|---|---|
-| Exploring | timed-run | no HP drain while running; timed dash with cooldown (needs the first); run gauge in the pocketwatch (pocketwatch) |
-| | walk-speed | walking and running 50% faster; no slowdown on ramps and stairs |
-| | restock-on-entry, no-virtue-clock | enemies return on entering an area, not on a timer |
-| | no-clear-refill | clearing an area no longer refills HP and MP |
-| | statue-any-side | healing statues work from any side, heal faster, and cure status |
-| | town-menu-dpad | D-pad in town and world map menus; B selects Leave town |
-| | still-hud | the HUD stops pulsing |
-| Menus and text | field-menu | Select opens Save; Select leaves the menu from any screen; faster menus |
-| | text-speed | hold A for fast text; hold B for fast text and auto-advance |
-| | guidebook | the guidebook explains this version's rules |
-| | experience-name | Althena Conduct is called Experience |
-| | text-fixes | name and typo fixes in the job menu and messages |
-| Battles | one-battle-mode, silver-drops, boss-exp, result-screens | experience, items, and silver from every battle; bosses give experience |
-| | manual-targeting | pick your own targets |
-| | battle-speed, battle-pace, battle-flow, kill-on-hit, enemy-sprite-speed, enemy-spell-speed, enemy-quick-steps | battle speeds with R; each pacing change on its own (faster party actions, enemies die on their killing hit, faster enemy animations, shorter enemy steps) |
-| | hold-lr-to-run, mic-sign | hold L and R to run instead of the microphone (the sign follows) |
-| | battle-end-rules, leave-drops-gear | broken and stolen gear returned after a win; benched members gain EXP; a leaving member drops their gear |
-| | no-curse-penalty, curse-no-healing | the curse rework |
-| Spells and skills | mp-economy | spells cost about 40% of their MP; MP items restore a flat amount |
-| | spell-levels | healers learn by level |
-| | skills | level-learned skills for Jian, Gabryel, Rufus, and Flora |
-| | skill-icons | Special list icons (off: the blank boxes) |
-| | poison-turns | poison wears off after 2 to 4 turns |
-| Cards | cards | ring and card slots; cards used from the Special list; boss card passives; Steal; drops and recharge (each a switch where the code allows: enhancements, changed cards, boss passives, card drops) |
-| Fixes | fix-save-glitch | Flora's tunnel save lock fix |
-| | gad-express | Gad's Express jobs grow with the journey |
-| | title-seal | the title seal (always on: it says which build this is) |
+| 1 | No HP drain while running | timed-run |
+| 2 | Timed dash with cooldown (needs 1) | timed-run |
+| 3 | Run gauge in the pocketwatch (needs 2) | timed-run, pocketwatch |
+| 4 | Walking and running 50% faster | walk-speed |
+| 5 | No slowdown on ramps and stairs | walk-speed |
+| 6 | Enemies return when you enter an area, not on a timer | restock-on-entry, no-virtue-clock |
+| 7 | Clearing an area no longer refills HP and MP | no-clear-refill |
+| 8 | Healing statues work from any side, heal faster, and cure status | statue-any-side |
+| 9 | D-pad in town and world map menus | town-menu-dpad |
+| 10 | B in a town menu selects Leave town | town-menu-dpad |
+| 11 | The HUD stops pulsing | still-hud |
+
+**Proposed, for Jeff's review group by group**
+
+| # | Group | Switch | Today's feature |
+|---|---|---|---|
+| 12 | Menus and text | Select opens Save | field-menu |
+| 13 | | Select leaves the menu from any screen | field-menu |
+| 14 | | Faster menus (shorter waits, fades, and key repeat) | field-menu |
+| 15 | | Hold A for fast text | text-speed |
+| 16 | | Hold B for fast text and auto-advance | text-speed |
+| 17 | | The guidebook explains this version's rules | guidebook |
+| 18 | | "Experience" in place of "Althena Conduct" | experience-name |
+| 19 | | Name and typo fixes in the job menu and messages | text-fixes |
+| 20 | Battles | Experience and items from every battle (one battle mode) | one-battle-mode |
+| 21 | | Silver from battles | silver-drops |
+| 22 | | Bosses give experience | boss-exp |
+| 23 | | The reworked result screens | result-screens |
+| 24 | | Pick your own targets | manual-targeting |
+| 25 | | Battle speeds with R (and their sign) | battle-speed |
+| 26 | | Faster party actions | battle-pace, battle-flow |
+| 27 | | Enemies die on their killing hit | kill-on-hit |
+| 28 | | Faster enemy animations | enemy-sprite-speed |
+| 29 | | Faster enemy spells | enemy-spell-speed |
+| 30 | | Shorter enemy steps | enemy-quick-steps |
+| 31 | | Hold L and R to run instead of the microphone (the sign follows) | hold-lr-to-run, mic-sign |
+| 32 | | Broken and stolen gear returned after a win | battle-end-rules |
+| 33 | | Benched members gain experience | battle-end-rules |
+| 34 | | A leaving member drops their gear | leave-drops-gear |
+| 35 | | No curse penalty | no-curse-penalty |
+| 36 | | The curse blocks healing | curse-no-healing |
+| 37 | Spells and skills | Spells cost about 40% of their MP | mp-economy |
+| 38 | | MP items restore a flat amount | mp-economy |
+| 39 | | Healers learn spells by level | spell-levels |
+| 40 | | Level-learned skills for Jian, Gabryel, Rufus, and Flora (needs 24) | skills |
+| 41 | | Special list icons (off: the blank boxes) (needs 40) | skill-icons |
+| 42 | | Poison wears off after 2 to 4 turns | poison-turns |
+| 43 | Cards | Ring and card slots; cards used from the Special list (needs 40) | cards |
+| 44 | | Cards power up matching skills (needs 43; its poison power-up needs 42) | cards (feat_card_boost, feat_skills_boost) |
+| 45 | | Changed cards: Insector, Ochu, Kuntukapu 2 to 4 rounds; Hellbird, Termite on one ally; Yeti steals | cards (feat_card_changes) |
+| 46 | | Boss card passives, Moran, Orcus, and Morus's Steal | cards (feat_card_bosses, steal) |
+| 47 | | Card drops and recharge; boss cards always drop | cards (feat_card_drops) |
+| 48 | | What each card does, on the equip page | cards (card_text) |
+| 49 | | The bestiary (the System list's Bestiary plank) (needs 43) | bestiary |
+| 50 | Fixes and extras | Flora's tunnel save lock fix | fix-save-glitch |
+| 51 | | Gad's Express jobs grow with the journey | gad-express |
+| 52 | | The intro sends Jian straight to Lucia | opening-flags |
+| 53 | | Party chat on Y (default off) | party-chat |
+| 54 | Story | Retold: text edits, the walk-out opening and narration, the blue seal (needs 15 or 16 and 52, as the opening needs text-speed and opening-flags today) | text-edits, opening-run, opening-text, title-seal-retold |
 
 ## 4. Dependencies
 
