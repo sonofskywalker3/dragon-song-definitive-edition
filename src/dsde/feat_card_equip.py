@@ -123,19 +123,21 @@ BACK_KIND_ASM = f"""
     bx    lr
 """
 
+
 # -> r0 = the item the shown member wears in the slot the Item page's category compares with, 0 if none or if
 # the category is not an equipment one. Keeps every other register.
-WORN_ASM = f"""
-    push  {{r1-r3, lr}}
-    ldr   r1, worn_page
-    ldrb  r2, [r1, #{ITEM_PAGE_CATEGORY}]
-    cmp   r2, #{CATEGORY_CARDS}
+def worn_asm(rings: bool, cards: bool) -> str:
+    """The worn item lookup for a mix: Cards compares with the card slot, a highlighted ring with the ring slot."""
+    card = (
+        f"""    cmp   r2, #{CATEGORY_CARDS}
     moveq r2, #{CARD_SLOT}
     beq   worn_slot
-    sub   r2, r2, #1
-    cmp   r2, #{CATEGORY_ACCESSORY - 1}
-    bhi   worn_none
-    bne   worn_slot
+"""
+        if cards
+        else ""
+    )
+    ring = (
+        f"""    bne   worn_slot
     ldrb  r3, [r1]
     subs  r3, r3, #1
     bmi   worn_slot
@@ -145,7 +147,18 @@ WORN_ASM = f"""
     sub   r0, r0, #{FIRST_RING:#x}
     cmp   r0, #{RING_SPAN}
     movls r2, #{RING_SLOT}
-worn_slot:
+"""
+        if rings
+        else ""
+    )
+    return f"""
+    push  {{r1-r3, lr}}
+    ldr   r1, worn_page
+    ldrb  r2, [r1, #{ITEM_PAGE_CATEGORY}]
+{card}    sub   r2, r2, #1
+    cmp   r2, #{CATEGORY_ACCESSORY - 1}
+    bhi   worn_none
+{ring}worn_slot:
     ldr   r0, worn_work
     ldr   r0, [r0, #{MENU_WORK_MEMBER:#x}]
     ldr   r1, worn_party
@@ -173,14 +186,22 @@ worn_slots:
     .word {CHAR_RECORDS + EQUIP_OFFSET:#x}
 """
 
+
 # Called in place of the list builder's `bl func_0206b880` (r0 = the item -> r0 = how many are worn): a dragon
 # ring or a card anyone may wear counts as none worn, so it stays listed while someone wears it and can be moved
 # or taken off from the list.
-LIST_WORN_ASM = f"""
-    sub   r1, r0, #{FIRST_RING:#x}
+def list_worn_asm(rings: bool, cards: bool) -> str:
+    """The list's worn count for a mix: a dragon ring, or a card anyone may wear, counts as none worn."""
+    ring = (
+        f"""    sub   r1, r0, #{FIRST_RING:#x}
     cmp   r1, #{RING_SPAN}
     bls   list_none
-    ldr   r1, list_items
+"""
+        if rings
+        else ""
+    )
+    card = (
+        f"""    ldr   r1, list_items
     mov   r2, #{ITEM_SIZE:#x}
     mla   r1, r0, r2, r1
     ldrh  r1, [r1]
@@ -189,7 +210,12 @@ LIST_WORN_ASM = f"""
     bne   list_count
     tst   r1, #{WHO_BITS:#x}
     bne   list_none
-list_count:
+"""
+        if cards
+        else ""
+    )
+    return f"""
+{ring}{card}list_count:
     b     {WEARERS:#x}
 list_none:
     mov   r0, #0
@@ -197,6 +223,7 @@ list_none:
 list_items:
     .word {ITEM_TABLE:#x}
 """
+
 
 # r0 = the text handle, r1 = the row: the highlighted entry's count on the equip page. A monster card shows its
 # points as current/max; a boss card shows nothing; anything else "x" and two digits, as the game does.
@@ -354,14 +381,19 @@ WORN_STATS_ASM = f"""
 """
 
 
-def _worn_hide_asm(end: int) -> str:
+def _worn_hide_asm(end: int, cards: bool) -> str:
     """In place of a loop over slots 0 to 4 that hides the worn icon (r6 = the Item page, fp the sprite set,
     r8 = 10, r7 = -1): hide it on an equipment page, Cards included, when cave_card_worn finds nothing."""
+    card = (
+        f"""    cmp   r1, #{CATEGORY_CARDS}
+    beq   hide_check
+"""
+        if cards
+        else ""
+    )
     return f"""
     ldrb  r1, [r6, #{ITEM_PAGE_CATEGORY}]
-    cmp   r1, #{CATEGORY_CARDS}
-    beq   hide_check
-    sub   r1, r1, #1
+{card}    sub   r1, r1, #1
     cmp   r1, #{LAST_EQUIP_CATEGORY - 1}
     bhi   hide_done
 hide_check:
@@ -379,6 +411,7 @@ hide_done:
 
 
 def equip_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
+    """The Cards category's own patches on the Item page."""
     return (
         CaveCode(
             "cave_card_back_kind",
@@ -407,17 +440,6 @@ def equip_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
             "bl ${cave_card_page_kind}",
             "the Cards category opens an equip page",
         ),
-        CaveCode(
-            "cave_card_list_worn",
-            LIST_WORN_ASM,
-            "worn cards and dragon rings stay listed",
-        ),
-        hook(
-            LIST_WORN,
-            LIST_WORN_WORD,
-            "bl ${cave_card_list_worn}",
-            "worn cards and dragon rings stay listed",
-        ),
         Patch(
             MARK_TEST,
             0xE3500008,
@@ -437,8 +459,28 @@ def equip_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
             COUNT_BLOCK_ASM,
             "equip page: a card's points",
         ),
+    )
+
+
+def shared_equip_patches(rings: bool, cards: bool) -> tuple[CaveCode | AsmPatch, ...]:
+    """The equip page for a mix of the ring slot and the card overhaul: the worn item it compares with, and the
+    worn rings and cards kept listed."""
+    return (
         CaveCode(
-            "cave_card_worn", WORN_ASM, "the worn item an equip page compares with"
+            "cave_card_list_worn",
+            list_worn_asm(rings, cards),
+            "worn cards and dragon rings stay listed",
+        ),
+        hook(
+            LIST_WORN,
+            LIST_WORN_WORD,
+            "bl ${cave_card_list_worn}",
+            "worn cards and dragon rings stay listed",
+        ),
+        CaveCode(
+            "cave_card_worn",
+            worn_asm(rings, cards),
+            "the worn item an equip page compares with",
         ),
         *(
             AsmPatch(
@@ -446,7 +488,7 @@ def equip_patches() -> tuple[CaveCode | AsmPatch | Patch, ...]:
                 loop + WORN_HIDE_LOOP_SIZE,
                 WORN_HIDE_FIRST,
                 WORN_HIDE_LAST,
-                _worn_hide_asm(loop + WORN_HIDE_LOOP_SIZE),
+                _worn_hide_asm(loop + WORN_HIDE_LOOP_SIZE, cards),
                 "equip page: the worn icon hidden by the slot the page compares with",
             )
             for loop in WORN_HIDE_LOOPS

@@ -73,19 +73,23 @@ def _vanilla() -> bytes:
     return VANILLA_ARM9.read_bytes()
 
 
-def _item_edits(arm9: bytes) -> dict[int, int]:
-    """Byte edits to the item table: the "who" bits, and each boss passive's stats and gear effect."""
+def _item_edits(arm9: bytes, rings: bool, cards: bool) -> dict[int, int]:
+    """Byte edits to the item table: the "who" bits (dragon rings, cards), and each boss passive's stats and gear
+    effect (cards)."""
     edits: dict[int, int] = {}
 
     def put(addr: int, fmt: str, value: int) -> None:
         for i, byte in enumerate(struct.pack(fmt, value)):
             edits[addr + i] = byte
 
-    for item in sorted(SLOTTABLE | frozenset(RING_ITEMS)):
+    items = (SLOTTABLE if cards else frozenset()) | (
+        frozenset(RING_ITEMS) if rings else frozenset()
+    )
+    for item in sorted(items):
         entry = ITEM_TABLE + item * ITEM_SIZE
         kind = struct.unpack_from("<H", arm9, entry - ARM9_BASE)[0]
         put(entry, "<H", kind | WHO_BITS)
-    for passive in BOSS_PASSIVES:
+    for passive in BOSS_PASSIVES if cards else ():
         entry = ITEM_TABLE + passive.card * ITEM_SIZE
         put(entry + ITEM_EFFECT, "<H", passive.gear_effect)
         for i, value in enumerate(passive.stats):
@@ -97,16 +101,28 @@ def _item_edits(arm9: bytes) -> dict[int, int]:
 # r2 = the member's equipment): r1 = the slot. A dragon ring goes to the ring slot. A ring or a card is one of a
 # kind: if the member already wears it, it comes off (r4 = 0 is written); if no copy is free, it is taken from
 # the first member who wears it (only that one: the second Earth Ring stays where it is).
-EQUIP_SLOT_ASM = f"""
-    push  {{r0, r2, r3, r6, r7, lr}}
-    and   r1, r3, #{ITEM_TYPE_SLOT:#x}
-    sub   r0, r4, #{FIRST_RING:#x}
+def equip_slot_asm(rings: bool, cards: bool) -> str:
+    """The slot an equipped item goes in, for a mix of the ring slot and the card overhaul."""
+    ring = (
+        f"""    sub   r0, r4, #{FIRST_RING:#x}
     cmp   r0, #{RING_SPAN}
     movls r1, #{RING_SLOT}
     bls   eq_unique
-    cmp   r1, #{CARD_SLOT}
+"""
+        if rings
+        else ""
+    )
+    card = (
+        f"""    cmp   r1, #{CARD_SLOT}
     bne   eq_done
-eq_unique:
+"""
+        if cards
+        else "    b     eq_done\n"
+    )
+    return f"""
+    push  {{r0, r2, r3, r6, r7, lr}}
+    and   r1, r3, #{ITEM_TYPE_SLOT:#x}
+{ring}{card}eq_unique:
     ldr   r6, eq_slots
     mov   r7, #{CHAR_RECORD_SIZE:#x}
     mla   r6, r5, r7, r6
@@ -147,17 +163,25 @@ eq_bag:
     .word {BAG:#x}
 """
 
+
 # func_0206b880 rewritten: r0 = item -> r0 = how many of the five members wear it, in the slot it goes in.
-WEARERS_ASM = f"""
+def wearers_asm(rings: bool) -> str:
+    """func_0206b880 rewritten; with the ring slot, a dragon ring is looked for in slot 6."""
+    ring = (
+        f"""    sub   r1, r0, #{FIRST_RING:#x}
+    cmp   r1, #{RING_SPAN}
+    movls r2, #{RING_SLOT}
+"""
+        if rings
+        else ""
+    )
+    return f"""
     ldr   r1, wearers_items
     mov   r2, #{ITEM_SIZE:#x}
     mla   r1, r0, r2, r1
     ldrh  r1, [r1]
     and   r2, r1, #{ITEM_TYPE_SLOT:#x}
-    sub   r1, r0, #{FIRST_RING:#x}
-    cmp   r1, #{RING_SPAN}
-    movls r2, #{RING_SLOT}
-    mov   r3, #0
+{ring}    mov   r3, #0
     cmp   r2, #{SLOT_COUNT}
     bhs   wearers_done
     ldr   r1, wearers_slots
@@ -208,13 +232,34 @@ load_slots:
 """
 
 
-def slot_patches() -> tuple[Patch | AsmPatch | CaveCode, ...]:
-    arm9 = _vanilla()
+def ring_slot_patches() -> tuple[Patch | AsmPatch | CaveCode, ...]:
+    """The ring slot's own patches: rings for anyone, old saves' rings moved, and the reset keeps the slot."""
     return (
         *byte_patches(
-            arm9,
-            _item_edits(arm9),
-            "cards and dragon rings for anyone; boss card passives",
+            _vanilla(), _item_edits(_vanilla(), True, False), "dragon rings for anyone"
+        ),
+        CaveCode(
+            "cave_card_load_rings",
+            LOAD_ASM,
+            "old saves: a worn dragon ring moves to the ring slot",
+        ),
+        hook(
+            LOAD_DONE,
+            LOAD_DONE_WORD,
+            "bl ${cave_card_load_rings}",
+            "old saves: a worn dragon ring moves to the ring slot",
+        ),
+        Patch(RESET_SLOT6, 0xE1C15FB4, NOP, "the keep-EXP reset keeps the ring slot"),
+    )
+
+
+def card_slot_patches() -> tuple[Patch | AsmPatch | CaveCode, ...]:
+    """The card slot's own patches: cards for anyone, boss passives, a card can be equipped, the reset keeps it."""
+    return (
+        *byte_patches(
+            _vanilla(),
+            _item_edits(_vanilla(), False, True),
+            "cards for anyone; boss card passives",
         ),
         Patch(
             CAN_EQUIP_LIMIT,
@@ -222,9 +267,18 @@ def slot_patches() -> tuple[Patch | AsmPatch | CaveCode, ...]:
             0xE3520006,
             "a card (slot number 5) can be equipped",
         ),
+        Patch(RESET_SLOT5, 0xE1C15FB2, NOP, "the keep-EXP reset keeps the card slot"),
+    )
+
+
+def shared_slot_patches(
+    rings: bool, cards: bool
+) -> tuple[Patch | AsmPatch | CaveCode, ...]:
+    """What the two slots share, for a mix of them: the equip routing, the worn count, and seven-slot loops."""
+    return (
         CaveCode(
             "cave_card_equip_slot",
-            EQUIP_SLOT_ASM,
+            equip_slot_asm(rings, cards),
             "a dragon ring goes to the ring slot",
         ),
         hook(
@@ -238,24 +292,11 @@ def slot_patches() -> tuple[Patch | AsmPatch | CaveCode, ...]:
             WEARERS_END,
             0xE3A01014,
             0x020B05B0,
-            WEARERS_ASM,
+            wearers_asm(rings),
             "worn count: the card and ring slots",
         ),
         Patch(WEARS_LIMIT, 0xE35C0005, 0xE35C0007, "is it worn: seven slots"),
         Patch(TOTALS_LIMIT, 0xE35E0005, 0xE35E0007, "stat totals: seven slots"),
         Patch(MP_GEAR_LIMIT, 0xE3570004, 0xE3570006, "MP cost gear: seven slots"),
         Patch(EFFECTS_LIMIT, 0xE3590004, 0xE3590006, "gear effects: seven slots"),
-        CaveCode(
-            "cave_card_load_rings",
-            LOAD_ASM,
-            "old saves: a worn dragon ring moves to the ring slot",
-        ),
-        hook(
-            LOAD_DONE,
-            LOAD_DONE_WORD,
-            "bl ${cave_card_load_rings}",
-            "old saves: a worn dragon ring moves to the ring slot",
-        ),
-        Patch(RESET_SLOT5, 0xE1C15FB2, NOP, "the keep-EXP reset keeps the card slot"),
-        Patch(RESET_SLOT6, 0xE1C15FB4, NOP, "the keep-EXP reset keeps the ring slot"),
     )

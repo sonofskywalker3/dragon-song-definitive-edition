@@ -39,9 +39,10 @@ JIAN_FILES = 0x020953D4  # r4 = the caster's row of the character file table (0x
 # listed in battle for a member with a usable worn card
 # (cave_card_usable); for a ring spell, r6 = 1 when the member (r5) wears that ring in the ring slot, else
 # 0; then the compare. Keeps every register but r6.
-LISTED_ASM = f"""
-    push  {{r0-r3, lr}}
-    cmp   r8, #{STEAL_SPELL}
+LISTED_HEAD = """
+    push  {r0-r3, lr}
+"""
+LISTED_CARDS = f"""    cmp   r8, #{STEAL_SPELL}
     beq   rl_steal
     cmp   r8, #{CARD_SPELL}
     bne   rl_spell
@@ -64,8 +65,8 @@ rl_steal:
     cmp   r2, #{MORUS}
     moveq r6, #1
     b     rl_done
-rl_spell:
-    ldr   r0, rl_table
+"""
+LISTED_RINGS = f"""    ldr   r0, rl_table
     mov   r1, #{SPELL_ENTRY_SIZE:#x}
     mla   r0, r8, r1, r0
     ldr   r0, [r0]
@@ -87,14 +88,26 @@ rl_ring:
     cmp   r2, r1
     moveq r6, #1
     movne r6, #0
-rl_done:
+"""
+LISTED_TAIL = f"""rl_done:
     cmp   r6, #1
     pop   {{r0-r3, pc}}
-rl_table:
-    .word {SPELL_TABLE:#x}
 rl_slots:
     .word {CHAR_RECORDS + EQUIP_OFFSET:#x}
 """
+LISTED_TABLE = f"""rl_table:
+    .word {SPELL_TABLE:#x}
+"""
+
+
+def listed_asm(rings: bool, cards: bool) -> str:
+    """In place of `cmp r6, #1` for a mix: Steal and the card spell (cards); a ring's spell for its wearer
+    (rings). With no ring slot, a ring spell keeps the game's own listing."""
+    cards_asm = LISTED_CARDS if cards else ""
+    rings_asm = LISTED_RINGS if rings else ""
+    table = LISTED_TABLE if rings else ""
+    tail = LISTED_TAIL.replace("rl_slots:", table + "rl_slots:")
+    return LISTED_HEAD + cards_asm + "rl_spell:\n" + rings_asm + tail
 
 
 # In place of `sub r1, r1, #0xa`: the switch puts Jian's Dragon Magic file (btldata 19 to 22, his body in the
@@ -111,11 +124,12 @@ look_jian:
 """
 
 
-def ring_patches() -> tuple:
+def listed_patches(rings: bool, cards: bool) -> tuple:
+    """The spell listing for a mix of the ring slot and the card overhaul."""
     return (
         CaveCode(
             "cave_ring_listed",
-            LISTED_ASM,
+            listed_asm(rings, cards),
             "a ring's spell is listed for whoever wears the ring",
         ),
         hook(
@@ -124,6 +138,12 @@ def ring_patches() -> tuple:
             "bl ${cave_ring_listed}",
             "a ring's spell is listed for whoever wears it",
         ),
+    )
+
+
+def ring_patches() -> tuple:
+    """The ring slot's own: a ring's spell cast in the wearer's own pose."""
+    return (
         CaveCode("cave_ring_look", LOOK_ASM, "a ring's spell in the caster's own pose"),
         hook(
             LOOK_SWITCH,

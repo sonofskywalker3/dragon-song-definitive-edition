@@ -5,7 +5,7 @@ from types import MappingProxyType
 
 from dsde.boss_exp import boss_exp, check_tables
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
-from dsde.feat_cards import CARDS
+from dsde.feat_cards import CARDS, RING_SLOT, SLOTS_MIX, slots_mix
 from dsde.feat_bestiary import BESTIARY
 from dsde.feat_poison_turns import POISON_TURNS_FEATURE
 from dsde.feat_battle_end import (
@@ -316,6 +316,7 @@ FEATURES: tuple[Feature, ...] = (
     MP_ITEMS,
     SPELL_LEVELS_FEATURE,
     SKILLS_FEATURE,
+    RING_SLOT,
     CARDS,
     BESTIARY,
     SKILL_ICONS,
@@ -382,7 +383,8 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     MP_ITEMS.name,
     SPELL_LEVELS_FEATURE.name,
     SKILLS_FEATURE.name,
-    CARDS.name,  # ring and card slots (docs/plan-cards.md)
+    RING_SLOT.name,  # the dragon ring slot (docs/plan-cards.md)
+    CARDS.name,  # the card slot and the card overhaul (docs/plan-cards.md)
     BESTIARY.name,  # the System list's Bestiary plank: the card viewer as a bestiary
     SKILL_ICONS.name,  # a picture in each Special list box
     POISON_TURNS_FEATURE.name,  # poison wears off after 2 to 4 turns
@@ -446,6 +448,7 @@ GLUE: tuple[Glue, ...] = (
         all_of=(CARDS.name,),
     ),
     *mixes(TEXT_SPEED_MIX, text_speed_hook),
+    *mixes(SLOTS_MIX, slots_mix),
     Glue(
         SILVER_LINE,
         any_of=(RESULT_SCREENS.name,),

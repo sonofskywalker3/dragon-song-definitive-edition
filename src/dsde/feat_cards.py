@@ -1,5 +1,9 @@
 """The card overhaul (docs/plan-cards.md): a card slot and a dragon ring slot for every member.
 
+Two switches: ring-slot (the dragon ring slot and a ring's Dragon Magic for whoever wears it) and cards (the card
+overhaul). What the two slots share (the equip routing, the worn count, the equip page's worn item, the Status
+page's box, and the spell listing) is glue built for the mix chosen (slots_mix, features.GLUE).
+
 Put together from:
 - feat_card_slots.py: the two slots in the character record and the equipment code that reads them;
 - feat_card_equip.py: cards and dragon rings equipped on the Item page;
@@ -23,22 +27,26 @@ from dsde.feat_card_bosses import boss_patches
 from dsde.feat_card_boost import boost_patches
 from dsde.feat_card_changes import change_patches
 from dsde.feat_card_drops import drop_patches
-from dsde.feat_card_equip import equip_patches
-from dsde.feat_card_slots import slot_patches
+from dsde.feat_card_equip import equip_patches, shared_equip_patches
+from dsde.feat_card_slots import (
+    card_slot_patches,
+    ring_slot_patches,
+    shared_slot_patches,
+)
 from dsde.feat_card_rules import rule_patches
-from dsde.feat_card_status import status_patches
+from dsde.feat_card_status import ring_icon_patches, status_patches
 from dsde.feat_card_targets import target_patches
 from dsde.feat_card_use import use_patches
-from dsde.feat_ring_slot import ring_patches
+from dsde.feat_ring_slot import listed_patches, ring_patches
 from dsde.patching import Feature
 
+CARDS_NAME = "cards"
+RING_SLOT_NAME = "ring-slot"
 CARDS = Feature(
-    "cards",
+    CARDS_NAME,
     (
-        *slot_patches(),
+        *card_slot_patches(),
         *equip_patches(),
-        *status_patches(),
-        *ring_patches(),
         *use_patches(),
         *rule_patches(),
         *target_patches(),
@@ -49,3 +57,21 @@ CARDS = Feature(
         *card_text_patches(),
     ),
 )
+RING_SLOT = Feature(
+    RING_SLOT_NAME, (*ring_slot_patches(), *ring_icon_patches(), *ring_patches())
+)
+SLOTS_MIX = (RING_SLOT_NAME, CARDS_NAME)
+
+
+def slots_mix(mix: frozenset[str]) -> Feature:
+    """What the ring slot and the card slot share, for the mix chosen."""
+    rings, cards = RING_SLOT_NAME in mix, CARDS_NAME in mix
+    return Feature(
+        "card-ring-slots",
+        (
+            *shared_slot_patches(rings, cards),
+            *shared_equip_patches(rings, cards),
+            *status_patches(rings, cards),
+            *listed_patches(rings, cards),
+        ),
+    )

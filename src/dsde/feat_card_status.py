@@ -60,7 +60,20 @@ ENTRY_FRAMES = (
     RING_FRAME,
     12,
 )  # weapon, armor, gloves, hat, accessory, ring, card
-MAX_OFFSET = len(SLOT_ORDER) - 5
+SHOWN_ROWS = 5
+CARD_ENTRY = SLOT_ORDER.index(5)
+RING_ENTRY = SLOT_ORDER.index(6)
+
+
+def box_entries(rings: bool, cards: bool) -> tuple[tuple[int, ...], tuple[int, ...]]:
+    """The box's (slot order, icon frames) for a mix: the five slots, then the ring slot, then the card slot."""
+    keep = [
+        i
+        for i in range(len(SLOT_ORDER))
+        if (i != RING_ENTRY or rings) and (i != CARD_ENTRY or cards)
+    ]
+    return tuple(SLOT_ORDER[i] for i in keep), tuple(ENTRY_FRAMES[i] for i in keep)
+
 
 STATE7_FIRST = 0x0205AEE0  # `mov r0, #0x400`, the first instruction of state 7
 STATE7_FIRST_WORD = 0xE3A00B01
@@ -165,7 +178,7 @@ def _cells_with_ring() -> tuple[bytes, bytes]:
     return cells, header + new_frames + new_pieces + tail
 
 
-def _entry_asm(reg: str, icon: bool) -> str:
+def _entry_asm(reg: str, icon: bool, rings: bool, cards: bool) -> str:
     """Return entry (sb + offset) of the box's list in `reg`, which points at slot sb's halfword - 0xE8; with
     `icon`, also set row sb's icon to the entry's frame."""
     icon_asm = (
@@ -181,6 +194,7 @@ def _entry_asm(reg: str, icon: bool) -> str:
         if icon
         else ""
     )
+    order, frames = box_entries(rings, cards)
     return f"""
     push  {{r2, r3}}
     ldr   r3, se_offset
@@ -198,9 +212,9 @@ se_offset:
 se_icons:
     .word {ICON_SET + FIRST_ROW_ICON * 0x30:#x}
 se_order:
-    .byte {", ".join(str(s) for s in SLOT_ORDER)}
+    .byte {", ".join(str(s) for s in order)}
 se_frames:
-    .byte {", ".join(str(f) for f in ENTRY_FRAMES)}
+    .byte {", ".join(str(f) for f in frames)}
     .align 2
 """
 
@@ -215,7 +229,10 @@ sr_offset:
     .word ${cave_card_box_offset}
 """
 
-KEYS_ASM = f"""
+
+def keys_asm(max_offset: int) -> str:
+    """Up and Down scroll the box (offset 0 to max_offset); a member switch the same frame wins."""
+    return f"""
     push  {{r0, r2, r3, lr}}
     ldr   r2, ss_pad
     ldrh  r2, [r2]
@@ -232,7 +249,7 @@ KEYS_ASM = f"""
 ss_down:
     tst   r2, #{KEY_DOWN:#x}
     beq   ss_done
-    cmp   r0, #{MAX_OFFSET}
+    cmp   r0, #{max_offset}
     bge   ss_done
     add   r0, r0, #1
 ss_redraw:
@@ -252,9 +269,13 @@ ss_offset:
     .word ${{cave_card_box_offset}}
 """
 
+
 # After the rows: an arrow at the box's top right when entries are hidden above, at its bottom right when some
 # are hidden below. Ends with the instruction it replaces.
-ARROWS_ASM = f"""
+def arrows_asm(max_offset: int) -> str:
+    """After the rows: an arrow at the box's top right when entries are hidden above, at its bottom right when
+    some are hidden below. Ends with the instruction it replaces."""
+    return f"""
     push  {{r4-r7, lr}}
     ldr   r4, [sp, #{HANDLE_AT + 20:#x}]
     ldr   r5, sa_offset
@@ -265,7 +286,7 @@ ARROWS_ASM = f"""
     mov   r1, #{ARROW_TOP_ROW}
     bl    sa_draw
 sa_no_up:
-    cmp   r5, #{MAX_OFFSET}
+    cmp   r5, #{max_offset}
     bge   sa_done
     mov   r0, #{GLYPH_DOWN}
     mov   r1, #{ARROW_BOTTOM_ROW}
@@ -312,7 +333,8 @@ sa_text:
 """
 
 
-def status_patches() -> tuple[CaveCode | AsmPatch | DataPatch, ...]:
+def ring_icon_patches() -> tuple[DataPatch, ...]:
+    """The ring row's icon in the menu icons (the ring slot's own)."""
     art_old, art_new = _art_with_ring()
     cells_old, cells_new = _cells_with_ring()
     return (
@@ -334,6 +356,13 @@ def status_patches() -> tuple[CaveCode | AsmPatch | DataPatch, ...]:
             "menu icons: frames for the ring icon",
             whole=True,
         ),
+    )
+
+
+def status_patches(rings: bool, cards: bool) -> tuple[CaveCode | AsmPatch, ...]:
+    """The Status page's box for a mix: one row more for each new slot, and the scroll over them."""
+    max_offset = len(box_entries(rings, cards)[0]) - SHOWN_ROWS
+    return (
         CaveCode(
             "cave_card_box_offset",
             "    .word 0",
@@ -344,17 +373,23 @@ def status_patches() -> tuple[CaveCode | AsmPatch | DataPatch, ...]:
         ),
         CaveCode(
             "cave_card_box_r0",
-            _entry_asm("r0", True),
+            _entry_asm("r0", True, rings, cards),
             "Status page: a row's entry and icon",
         ),
         CaveCode(
-            "cave_card_box_r1", _entry_asm("r1", False), "Status page: a row's entry"
+            "cave_card_box_r1",
+            _entry_asm("r1", False, rings, cards),
+            "Status page: a row's entry",
         ),
         CaveCode(
-            "cave_card_box_keys", KEYS_ASM, "Status page: Up and Down scroll the box"
+            "cave_card_box_keys",
+            keys_asm(max_offset),
+            "Status page: Up and Down scroll the box",
         ),
         CaveCode(
-            "cave_card_box_arrows", ARROWS_ASM, "Status page: arrows for more rows"
+            "cave_card_box_arrows",
+            arrows_asm(max_offset),
+            "Status page: arrows for more rows",
         ),
         hook(
             STATE7_FIRST,
