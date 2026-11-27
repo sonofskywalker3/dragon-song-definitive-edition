@@ -2,13 +2,13 @@
 # points (0x020B4892); first temple battle, the enemies' HP pinned. Her card entry opens the enemy grid (shot ye_grid);
 # A uses it on the highlighted monster. The random state is set to 24 (roll 3, under 25) at the steal's first roll
 # (cave_skill_steal + 0x48). Expect: points 1800 -> 1700, the battle flags gain that monster's robbed bit, the stolen
-# item in cave_skill_stolen (0x01FFBB64 in this build), "Stole <item>!" on the message line (shots ye_msg_*).
+# item in cave_skill_stolen (0x01FFB7C0 in this build), "Stole <item>!" on the message line (shots ye_msg_*).
 # Run with --save.
 include party2_strong
 poke u8 0x0213ba0e 1
 poke u16 0x020b4892 1800
 poke u16 0x020b46fe 223
-execpoke 0x01FFBC68 u32 0x020A0238 24
+execpoke 0x01FFB8C4 u32 0x020A0238 24
 pin u32 0x0228ea24 500
 pin u32 0x0228ea90 500
 pin u32 0x0228eafc 500
@@ -17,7 +17,7 @@ pin u32 0x0228ec40 500
 pin u32 0x0228ecac 500
 wait 270
 watch u32 0x02282940 flags
-watch u16 0x01FFBB64 stolen
+watch u16 0x01FFB7C0 stolen
 watch u16 0x020b4892 points
 press A 8
 wait 50

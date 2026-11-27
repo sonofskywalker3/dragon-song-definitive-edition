@@ -9,7 +9,9 @@ include party_gabryel
 pin u32 0x020B471C 38
 pinptr u32 0x020B8620 0x18 50
 wait 270
+# a poked poison also gets its turn count (record +0x4C), or poison-turns ends it on the monster's next turn
 poke u8 0x0228ea84 6
+poke u16 0x0228eac8 5
 peek u32 0x020B8620 records
 watch u32 0x0228e878 gabryel_mp
 watch u8 0x0228ea18 status4

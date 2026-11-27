@@ -5,7 +5,7 @@
 include party2_strong
 poke u8 0x0213ba2d 1
 poke u16 0x020b46a2 254
-execpoke 0x1ffdc28 u32 0x020A0238 24
+execpoke 0x01FFD358 u32 0x020A0238 24
 pin u32 0x0228ea24 500
 pin u32 0x0228ea90 500
 pin u32 0x0228eafc 500

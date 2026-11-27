@@ -26,12 +26,19 @@ press A 8
 wait 60
 press A 8
 wait 60
+# a poked poison also gets its turn count (record +0x4C), or poison-turns ends it on the monster's next turn
 poke u8 0x0228ea18 6
+poke u16 0x0228ea5c 5
 poke u8 0x0228ea84 6
+poke u16 0x0228eac8 5
 poke u8 0x0228eaf0 6
+poke u16 0x0228eb34 5
 poke u8 0x0228ebc8 6
+poke u16 0x0228ec0c 5
 poke u8 0x0228ec34 6
+poke u16 0x0228ec78 5
 poke u8 0x0228eca0 6
+poke u16 0x0228ece4 5
 press Right 8
 wait 50
 press A 8

@@ -977,3 +977,39 @@ a card that came in the loot is already full. `test_card_first_win` again: "Item
 1, Bealzebub 1, and Light Feather 2, and the cards arrive with the loot (frame 3763, not at the end). The bestiary
 (2.7) is still to build.
 
+
+### 11.18 The release test pass (2026-11-27)
+
+Every card, skill, ring, boost, bestiary, poison, and steal plan (129, all but `test_break` and `test_steal_dbg`,
+which boot through an old intro) ran on both release builds, Classic and Retold, with nothing else on; party chat
+was checked on its own (docs/plan-memory.md 4). Each run's logged values were compared with the last verified run
+of the same plan and between the editions. Every plan finished in both editions, and the two editions logged the
+same values in all of them but `test_steal` (an old enemy-theft diagnostic that boots through the intro, which
+differs between the editions). 86 matched their last verified run outright. The rest:
+
+- **Plans brought up to date** (the game was right; the plan was not):
+  - `test_card_moran`, `test_card_orcus`, the five `test_card_steal*`, and `test_card_yeti` poke the random state
+    or watch the stolen item at fixed ITCM addresses, which moved as caves were added: now cave_card_on_hit + 0x8C
+    = 0x01FFD358, cave_skill_steal + 0x48 = 0x01FFB8C4, cave_skill_stolen = 0x01FFB7C0 (both checked to be the
+    `bl` to the random function). Rerun: all eight match their verified runs.
+  - `test_skill_binding_rain_refuse`, `test_skill_blinding_gale`, `test_skill_gabryel_back_row` poke poison into a
+    monster's status without a turn count, so since `poison-turns` the monster's own next turn cleared it (the
+    counter at +0x4C goes from 0 to -1). The pokes now also set the count to 5. Rerun: all three match.
+  - `test_skill_boss_blind` and `test_skill_boss_venom` were written before bosses took blind and poison 80% of the
+    time; unforced, both casts missed on the 20%, MP taken (as `test_boss_venom_miss` shows for a forced miss). With
+    the random state set to 24 at the effect: status 2 and 6 on Sasquatch.
+- **Plans removed with the behaviour they covered**: `test_card_upgrade`, `test_card_rules`, and the eight
+  `test_card_pair_*upgraded*` plans used a card from the Special list as a member who knows its skill, which 11.10
+  replaced (that member is not offered the card; the card enhances the skill, covered by `test_boost_*`, all of
+  which match). `emu/gen_card_pair_plans.py` writes only the basic cases now.
+- **Different from an old run, as the docs record them now**: `test_card_equip_poke` (11.2: ATK +2, DEF +4, INT +5,
+  Inferno castable, MP 10 to 0), `test_card_equip_menu` and `test_card_equip_move` (their old runs were on builds
+  without cards), `test_card_recharge` (the Thanatos card arrives on the first win, 11.17),
+  `test_skill_gabryel_list` (Savage Rush first, 18), `test_card_boss_drop` (no points watch for a boss card).
+  `test_card_status` and `test_card_slot_battle` differ only in a menu state's timing; the shots and slots agree.
+- **No earlier run, checked against the plan's own expectations**: the seven basic `test_card_pair_*` (the 11.8
+  table), `test_skill_feral_ally`, `test_skill_rally`, `test_skill_rally_next_battle`, `test_skill_rufus_orders`,
+  the three `test_skill_water_bind*`, and `test_bestiary_no_use`: all as expected.
+
+Not covered by this pass: real hardware (the 3DS), `test_card_leave` (11.4: the plan no longer reaches its leave),
+Shaitan, Phantom on a boss, and a card's blind or poison missing a boss.

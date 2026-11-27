@@ -101,7 +101,9 @@ wait 20
 shot bs_pick
 press A 8
 wait 10
+# a poked poison also gets its turn count (record +0x4C), or poison-turns ends it on the monster's next turn
 poke u8 0x0228eaf0 6
+poke u16 0x0228eb34 5
 wait 150
 wait 16
 shot bs_00

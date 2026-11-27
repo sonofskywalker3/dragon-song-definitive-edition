@@ -1,13 +1,13 @@
 # cards: a Steal falls back to the other drop slot (docs/plan-cards.md 5). As test_card_steal's first round, the
 # target (battler 4, a Bealzebub, row 45) with its rarer slot emptied (drop row 0x020977A4 + 0xA = 0), and the random
 # state set to 2 at the steal's first roll (cave_skill_steal + 0x48): 8 (under 50, a steal), then 17 (under 35: the
-# rarer slot, empty). Expect: the slot-0 item stolen (cave_skill_stolen 0x01FFBB64), "Stole <item>!" (sf_msg_*).
+# rarer slot, empty). Expect: the slot-0 item stolen (cave_skill_stolen 0x01FFB7C0), "Stole <item>!" (sf_msg_*).
 # Run with --save.
 include party2_strong
 poke u8 0x0213ba33 1
 poke u16 0x020b46a2 260
 poke u16 0x020977AE 0
-execpoke 0x01FFBC68 u32 0x020A0238 2
+execpoke 0x01FFB8C4 u32 0x020A0238 2
 pin u32 0x0228ea24 500
 pin u32 0x0228ea90 500
 pin u32 0x0228eafc 500
@@ -17,7 +17,7 @@ pin u32 0x0228ecac 500
 wait 270
 battlers
 watch u32 0x02282940 flags
-watch u16 0x01FFBB64 stolen
+watch u16 0x01FFB7C0 stolen
 watch u32 0x0228e878 jian_mp
 press A 8
 wait 50

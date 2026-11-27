@@ -17,7 +17,7 @@ poke u8 0x0228E868 5
 watch u8 0x0228E868 jian_status
 battlers
 watch u32 0x02282940 flags
-watch u16 0x01FFBB64 stolen
+watch u16 0x01FFB7C0 stolen
 watch u32 0x0228e878 jian_mp
 press A 8
 wait 50

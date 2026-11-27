@@ -1,8 +1,9 @@
-"""Writes the test_card_pair_* plans (docs/plan-cards.md 3.1): every paired card, basic and upgraded.
+"""Writes the test_card_pair_* plans (docs/plan-cards.md 3.1): every paired card's basic version.
 
 Each plan is one round of the first Delrich Temple battle with the enemies' HP pinned. The wearer is in party
 slot 1 (Jian in slot 0) unless the card is Jian's own pair; the wearer's level index is set so the card is
-basic (Lucia at level 1) or upgraded (the learner at a level where the paired skill is known). The Special
+basic (Lucia at level 1). A wearer who knows the paired skill is not offered the card any more: the card enhances
+the skill instead (docs/plan-cards.md 11.10, the test_boost_* plans), so the upgraded cases are gone. The Special
 list's card entry is the last one; its place in the 3 x 2 grid was found with the diag_card_map_* plans.
 Watches log the effect: a stat stage, a status (record + 8), HP, or the battle flags.
 """
@@ -70,16 +71,6 @@ CASES = (
         "Lucia (not Jian): one enemy's DEF down",
     ),
     Case(
-        "abadon_upgraded",
-        225,
-        JIAN,
-        24,
-        "sixth",
-        0,
-        f"stage:{DEF}",
-        "Jian at 25 (Armor Break): every enemy's DEF down",
-    ),
-    Case(
         "ikontabipu_basic",
         231,
         LUCIA,
@@ -88,16 +79,6 @@ CASES = (
         1,
         "status",
         "Lucia: sleep (1) on one enemy, 70%",
-    ),
-    Case(
-        "ikontabipu_upgraded",
-        231,
-        JIAN,
-        24,
-        "sixth",
-        0,
-        "status",
-        "Jian at 25 (Knockout Kick): sleep on every enemy, each 70%",
     ),
     Case(
         "shreeker_basic",
@@ -110,16 +91,6 @@ CASES = (
         "Lucia: poison (6) on one enemy",
     ),
     Case(
-        "shreeker_upgraded",
-        218,
-        GABRYEL,
-        25,
-        "seventh",
-        0,
-        "status",
-        "Gabryel at 26 (Venom Claw): poison on every enemy",
-    ),
-    Case(
         "asmodee_basic",
         247,
         LUCIA,
@@ -128,16 +99,6 @@ CASES = (
         1,
         "status",
         "Lucia: blind (2) on one enemy",
-    ),
-    Case(
-        "asmodee_upgraded",
-        247,
-        GABRYEL,
-        25,
-        "seventh",
-        0,
-        "status",
-        "Gabryel at 26 (Blinding Swipe): blind on every enemy",
     ),
     Case(
         "tick_basic",
@@ -160,36 +121,6 @@ CASES = (
         "Flora at 20 (Water Bind, which Tick does not power up): the card entry, paralysis on one enemy, 70%",
     ),
     Case(
-        "tick_upgraded_gabryel",
-        226,
-        GABRYEL,
-        25,
-        "seventh",
-        0,
-        "status",
-        "Gabryel at 26 (Howl): paralysis on every enemy, each 70%",
-    ),
-    Case(
-        "comet_upgraded",
-        237,
-        RUFUS,
-        18,
-        "sixth",
-        0,
-        f"stage:{INT}",
-        "Rufus at 19 (Stratagem): INT up on both allies",
-    ),
-    Case(
-        "namia_upgraded",
-        219,
-        LUCIA,
-        12,
-        "sixth",
-        0,
-        "flags",
-        "Lucia at 13 (Divine Rain): Namia's 10% bit 0x08",
-    ),
-    Case(
         "vitra_basic",
         235,
         LUCIA,
@@ -198,16 +129,6 @@ CASES = (
         1,
         "hp",
         "Lucia at 1: Jian (HP 100) picked, back to full; Lucia's HP stays 100",
-    ),
-    Case(
-        "vitra_upgraded",
-        235,
-        LUCIA,
-        12,
-        "sixth",
-        0,
-        "hp",
-        "Lucia at 13 (Tender Rain): both to full HP",
     ),
 )
 
