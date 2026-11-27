@@ -1,11 +1,12 @@
-"""MP economy (design 8): cheaper spells, flat MP items, Mental Gum
-in shops, and healing statues that also cure status. Research: docs/re-mp-jobs-rings.md section 1.
+"""MP economy (design 8), two switches: cheaper spells (spell-costs), and flat MP items with Mental Gum in
+shops (mp-items). The healing statues' status cure, once here, is in feat_statue.py. Research:
+docs/re-mp-jobs-rings.md section 1.
 
 New costs change only what casting takes (func_0206aabc, which also applies the Holy Umbrella and Magic Booster
 reductions): spells are learned by level (feat_spell_levels.py), not when max MP reaches the cost.
 """
 
-from dsde.patching import ARM_NOP, AsmPatch, CaveCode, Feature, Patch
+from dsde.patching import AsmPatch, Feature, Patch
 
 
 SPELL_COST_TABLE = 0x0209497C  # u32 cost at +4 of each 0x0C-byte spell entry
@@ -95,34 +96,24 @@ def _shop_patches() -> tuple[Patch, ...]:
     return tuple(patches)
 
 
-# Healing statues (map object 0x37D, field loop func_0201e6a0) refill HP and MP of the three party
-# members; the copy now also clears the status (character record +0x08, low 4 bits, as Cure items do).
-STATUE_COPY = 0x0201F370
-STATUE_COPY_END = 0x0201F380
-STATUE_FIRST_WORD = 0xE5910014
-STATUE_LAST_WORD = 0xE5810018
-STATUS_MASK = 0xF
-# Using a statue pans the camera to centre it (field state 0x3C), waits for the pan, sparkles, then pans
-# back to Jian (0x0201FDF0) and waits again: about two seconds of camera for a statue Jian is already
-# standing at (Jeff, 2026-10-07). Both calls of the camera move (func_0201d878, 60 frames) go, so the
-# waits after them pass at once; the code is shared, so every statue in the game is affected.
-STATUE_CAMERA_CALLS = (
-    (0x0201FA98, 0xEBFFF776),  # bl func_0201d878: centre the statue
-    (0x0201FDF0, 0xEBFFF6A0),  # bl func_0201d878: back to Jian
+# Spells cost about 40% of their MP (spell-costs).
+SPELL_COSTS = Feature(
+    "spell-costs",
+    tuple(
+        Patch(
+            SPELL_COST_TABLE + index * SPELL_ENTRY_SIZE,
+            old,
+            new,
+            f"{name} costs {new} MP",
+        )
+        for index, (name, old, new) in NEW_SPELL_COSTS.items()
+    ),
 )
 
-MP_ECONOMY = Feature(
-    "mp-economy",
+# MP items restore a flat amount, and Mental Gum is sold for 1000 (mp-items).
+MP_ITEMS = Feature(
+    "mp-items",
     (
-        *(
-            Patch(
-                SPELL_COST_TABLE + index * SPELL_ENTRY_SIZE,
-                old,
-                new,
-                f"{name} costs {new} MP",
-            )
-            for index, (name, old, new) in NEW_SPELL_COSTS.items()
-        ),
         AsmPatch(
             MP_ITEM_BLOCK,
             MP_ITEM_BLOCK_END,
@@ -138,36 +129,5 @@ MP_ECONOMY = Feature(
             "Mental Gum costs 1000",
         ),
         *_shop_patches(),
-        CaveCode(
-            "cave_statue",
-            f"""
-    ldr   r0, [r1, #0x14]
-    str   r0, [r1, #0x10]
-    ldr   r0, [r1, #0x1c]
-    str   r0, [r1, #0x18]
-    ldr   r0, [r1, #8]
-    bic   r0, r0, #{STATUS_MASK:#x}
-    str   r0, [r1, #8]
-    bx    lr
-""",
-            "statue refill also cures status",
-        ),
-        AsmPatch(
-            STATUE_COPY,
-            STATUE_COPY_END,
-            STATUE_FIRST_WORD,
-            STATUE_LAST_WORD,
-            f"""
-    bl    ${{cave_statue}}
-    .word {ARM_NOP:#x}
-    .word {ARM_NOP:#x}
-    .word {ARM_NOP:#x}
-""",
-            "healing statue also cures status",
-        ),
-        *(
-            Patch(addr, word, ARM_NOP, "healing statue: no camera pan")
-            for addr, word in STATUE_CAMERA_CALLS
-        ),
     ),
 )

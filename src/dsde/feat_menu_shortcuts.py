@@ -18,7 +18,7 @@
 Research: docs/re-field-menu.md.
 """
 
-from dsde.patching import AsmPatch, CaveCode
+from dsde.patching import AsmPatch, CaveCode, Feature
 
 FIELD_X_TEST = 0x0201F0AC  # ands r1, r7, #0x400 (X opens the menu), followed by beq
 FIELD_X_TEST_WORD = 0xE2171B01
@@ -104,14 +104,16 @@ fs_mode:
     .word {MODE_STATES:#x}
 """
 
-# Replaces `bl func_0201a3b8` at the menu's entry, every menu frame. r0 = pad.
-MENU_ASM = f"""
-    push  {{r4-r6, lr}}
-    mov   r5, r0
-    ldr   r6, mk_flags
-    ldr   r1, mk_mode
-    ldr   r4, [r1, #{MODE_STATE_OFFSET:#x}]
-    cmp   r4, #{STATE_LOAD}
+MENU_SAVE = "menu-select-save"
+MENU_EXIT = "menu-select-exit"
+
+
+def menu_keys_asm(save: bool, leave: bool) -> str:
+    """Replaces `bl func_0201a3b8` at the menu's entry, every menu frame (r0 = pad), for one mix of the
+    two shortcuts: leave, Select going straight to the exit; save, the open-at-save stages."""
+    flags = "    ldr   r6, mk_flags\n" if save else ""
+    clear_log = (
+        f"""    cmp   r4, #{STATE_LOAD}
     bne   mk_keys
     ldr   r1, mk_log
     mov   r2, #0
@@ -121,7 +123,13 @@ mk_clear:
     add   r2, r2, #1
     cmp   r2, #{HEAP_LOG_SIZE}
     blt   mk_clear
-mk_keys:
+"""
+        if leave
+        else ""
+    )
+    forget = "    mov   r1, #0\n    str   r1, [r6]\n" if save else ""
+    exit_keys = (
+        f"""mk_keys:
     ldrh  r3, [r5, #{PAD_NEW}]
     tst   r3, #{KEY_SELECT:#x}
     beq   mk_open
@@ -136,10 +144,13 @@ mk_keys:
     ldr   r1, mk_mode
     mov   r2, #{STATE_EXIT:#x}
     str   r2, [r1, #{MODE_STATE_OFFSET:#x}]
-    mov   r1, #0
-    str   r1, [r6]
-    pop   {{r4-r6, pc}}
-mk_open:
+{forget}    pop   {{r4-r6, pc}}
+"""
+        if leave
+        else ""
+    )
+    open_stages = (
+        f"""mk_open:
     ldr   r1, [r6]
     cmp   r1, #0
     popeq {{r4-r6, pc}}
@@ -213,19 +224,27 @@ mk_arrive:
     mov   r2, #{FADE_IN_FRAMES}
     bl    {FADE:#x}
     pop   {{r4-r6, pc}}
-mk_mode:
-    .word {MODE_STATES:#x}
-mk_flags:
-    .word ${{cave_menu_flags}}
-mk_log:
-    .word ${{cave_heap_log}}
-mk_work:
-    .word {MENU_WORK:#x}
-mk_save_flag:
-    .word {SAVE_FLAG:#x}
-mk_cursor:
-    .word {MENU_CURSOR:#x}
 """
+        if save
+        else "mk_open:\n    pop   {r4-r6, pc}\n"
+    )
+    literals = "mk_mode:\n" + f"    .word {MODE_STATES:#x}\n"
+    if save:
+        literals += "mk_flags:\n    .word ${cave_menu_flags}\n"
+    if leave:
+        literals += "mk_log:\n    .word ${cave_heap_log}\n"
+    if save:
+        literals += (
+            f"mk_work:\n    .word {MENU_WORK:#x}\n"
+            f"mk_save_flag:\n    .word {SAVE_FLAG:#x}\n"
+            f"mk_cursor:\n    .word {MENU_CURSOR:#x}\n"
+        )
+    return f"""
+    push  {{r4-r6, lr}}
+    mov   r5, r0
+{flags}    ldr   r1, mk_mode
+    ldr   r4, [r1, #{MODE_STATE_OFFSET:#x}]
+{clear_log}{exit_keys}{open_stages}{literals}"""
 
 
 # Frees every block the menu's screens still hold (the heap log, less the menu's own buffer).
@@ -311,30 +330,28 @@ def _replace(addr: int, word: int, asm: str, note: str) -> AsmPatch:
     return AsmPatch(addr, addr + 4, word, word, asm, note)
 
 
-SHORTCUT_PATCHES = (
+# Select in the field opens the menu at the save screen (menu-select-save).
+SAVE_PATCHES = (
     CaveCode("cave_menu_flags", "    .word 0", "menu shortcut flags"),
-    CaveCode(
-        "cave_heap_log",
-        "\n".join(["    .word 0"] * HEAP_LOG_SIZE),
-        "blocks the menu holds",
-    ),
     CaveCode("cave_field_select", FIELD_ASM, "field: Select opens the menu at Save"),
-    CaveCode("cave_menu_keys", MENU_ASM, "menu: Select exits; open at the save screen"),
-    CaveCode("cave_menu_release", RELEASE_ASM, "menu: free what open screens hold"),
-    CaveCode("cave_heap_alloc", ALLOC_ASM, "log the menu's heap blocks"),
-    CaveCode("cave_heap_free", FREE_ASM, "unlog freed heap blocks"),
     _replace(
         FIELD_X_TEST,
         FIELD_X_TEST_WORD,
         "bl ${cave_field_select}",
         "field: X or Select opens the menu",
     ),
-    _replace(
-        MENU_PAD_CALL,
-        MENU_PAD_CALL_WORD,
-        "bl ${cave_menu_keys}",
-        "menu: Select shortcuts",
+)
+
+# Select anywhere in the menu goes straight back to the map (menu-select-exit).
+EXIT_PATCHES = (
+    CaveCode(
+        "cave_heap_log",
+        "\n".join(["    .word 0"] * HEAP_LOG_SIZE),
+        "blocks the menu holds",
     ),
+    CaveCode("cave_menu_release", RELEASE_ASM, "menu: free what open screens hold"),
+    CaveCode("cave_heap_alloc", ALLOC_ASM, "log the menu's heap blocks"),
+    CaveCode("cave_heap_free", FREE_ASM, "unlog freed heap blocks"),
     _replace(
         HEAP_ALLOC,
         HEAP_ENTRY_WORD,
@@ -345,3 +362,29 @@ SHORTCUT_PATCHES = (
         HEAP_FREE, HEAP_ENTRY_WORD, "b ${cave_heap_free}", "unlog freed heap blocks"
     ),
 )
+
+MENU_KEYS_MIX = (MENU_SAVE, MENU_EXIT)
+
+
+def menu_keys_hook(mix: frozenset[str]) -> Feature:
+    """The menu's per-frame key hook for a mix of the two shortcuts (glue, features.GLUE)."""
+    return Feature(
+        "menu-keys-hook",
+        (
+            CaveCode(
+                "cave_menu_keys",
+                menu_keys_asm(MENU_SAVE in mix, MENU_EXIT in mix),
+                "menu: Select exits; open at the save screen",
+            ),
+            _replace(
+                MENU_PAD_CALL,
+                MENU_PAD_CALL_WORD,
+                "bl ${cave_menu_keys}",
+                "menu: Select shortcuts",
+            ),
+        ),
+    )
+
+
+MENU_SELECT_SAVE = Feature(MENU_SAVE, SAVE_PATCHES)
+MENU_SELECT_EXIT = Feature(MENU_EXIT, EXIT_PATCHES)

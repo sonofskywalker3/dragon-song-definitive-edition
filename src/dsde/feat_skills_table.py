@@ -3,7 +3,7 @@
 Spell entries. The spell table (0x02094978) has one blank row after the game's 38 entries, and the stat
 growth table starts right behind it (0x02094B4C, six blocks of 0x60 bytes, read only as base + character *
 0x60 through two pool words). The growth table moves into the cave and its old bytes become spell entries 39
-and up, so the spell table itself, and the features that edit it in place (mp-economy, spell-levels), stay
+and up, so the spell table itself, and the features that edit it in place (spell-costs, spell-levels), stay
 where they are. The loops over the table run to the new count, except the field Magic page's.
 
 Names. The battle string list has room for one more name (entry 91, Weapon Break) and for "No effect!"

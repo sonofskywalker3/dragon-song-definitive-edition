@@ -18,8 +18,8 @@ ITEM_PAGE, which the game handles exactly like 99 (wait for A, then leave). With
 the battle as in the original game. Boss battles (mode -1) take the same path, since boss-exp
 gives them the EXP page.
 
-The silver amount comes from the silver-drops feature (cave_silver_gained), so result-screens
-needs silver-drops."""
+The silver amount comes from the silver-drops feature (cave_silver_gained), so the Silver line
+(feat_results_silver) is built only when silver-drops is chosen too."""
 
 from dsde.feat_results_silver import (
     END_EXP_WINDOW,
@@ -128,6 +128,8 @@ RESULT_SCREENS = Feature(
             "bl ${cave_result_input}",
             "A on the EXP page opens the item page",
         ),
-        *SILVER_LINE_PATCHES,
     ),
 )
+# The Silver line shows silver-drops' amount, so it is glue built only with both (features.GLUE); without
+# silver-drops the EXP page keeps the original pool window.
+SILVER_LINE = Feature("result-silver-line", SILVER_LINE_PATCHES)

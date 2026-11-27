@@ -52,6 +52,10 @@ STATE_AUTO_BEFORE = 3
 STATE_ASM = f"""
     .byte {DEFAULT_SETTING}, 0, 0, 0
 """
+# The setting is read by battle-speed and by every Fast change (battle-pace, battle-flow, kill-on-hit, the enemy
+# speeds), so it is a piece of its own, built with any of them (features.GLUE). Without battle-speed nothing
+# changes it, and battles stay on Fast.
+SPEED_STATE = CaveCode("cave_speed_state", STATE_ASM, "battle speed setting")
 LEVELS_ASM = "    .byte " + ", ".join(str(level) for level in SPEED_LEVELS) + ", 0"
 
 # Replaces `str r2, [r1]` (the per-frame speed level reset). In: r4 = keys held. Keeps r4..r11.
@@ -127,7 +131,6 @@ spd_work:
 BATTLE_SPEED = Feature(
     "battle-speed",
     (
-        CaveCode("cave_speed_state", STATE_ASM, "battle speed setting"),
         CaveCode("cave_speed_levels", LEVELS_ASM, "speed level per setting"),
         CaveCode("cave_speed", SPEED_ASM, "R cycles the battle speed"),
         *LABEL_CAVES,

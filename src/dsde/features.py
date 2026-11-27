@@ -8,28 +8,39 @@ from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
 from dsde.feat_cards import CARDS
 from dsde.feat_bestiary import BESTIARY
 from dsde.feat_poison_turns import POISON_TURNS_FEATURE
-from dsde.feat_battle_end import BATTLE_END_RULES
+from dsde.feat_battle_end import (
+    BENCHED_EXP_FEATURE,
+    END_MIX,
+    GEAR_RETURN_FEATURE,
+    end_hook,
+)
 from dsde.feat_battle_flow import BATTLE_FLOW
-from dsde.feat_battle_kill import KILL_ON_HIT
+from dsde.feat_battle_kill import KILL_ON_HIT, KILL_TIMERS
 from dsde.feat_battle_pace import BATTLE_PACE
 from dsde.feat_battle_run import HOLD_LR_TO_RUN
-from dsde.feat_battle_speed import BATTLE_SPEED
+from dsde.feat_battle_speed import BATTLE_SPEED, SPEED_STATE
 from dsde.feat_curse import NO_CURSE_PENALTY
 from dsde.feat_curse_healing import CURSE_NO_HEALING
 from dsde.feat_enemy_moves import ENEMY_QUICK_STEPS, ENEMY_SHORT_MOVES
 from dsde.feat_enemy_preload import ENEMY_PRELOAD
 from dsde.feat_enemy_speed import ENEMY_SPELL_SPEED, ENEMY_SPRITE_SPEED
 from dsde.feat_experience_name import EXPERIENCE_NAME
-from dsde.feat_field_menu import FIELD_MENU
+from dsde.feat_field_menu import FLOOR_MIX, MENU_SPEED_FEATURE, menu_floor
 from dsde.feat_gad import GAD_EXPRESS
 from dsde.feat_guidebook import GUIDEBOOK
 from dsde.feat_hud import STILL_HUD
 from dsde.feat_mic_sign import MIC_SIGN
-from dsde.feat_mp import MP_ECONOMY
+from dsde.feat_menu_shortcuts import (
+    MENU_KEYS_MIX,
+    MENU_SELECT_EXIT,
+    MENU_SELECT_SAVE,
+    menu_keys_hook,
+)
+from dsde.feat_mp import MP_ITEMS, SPELL_COSTS
 from dsde.feat_opening import OPENING, OPENING_FLAGS, OPENING_TEXT
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_party_chat import PARTY_CHAT
-from dsde.feat_results import RESULT_SCREENS
+from dsde.feat_results import RESULT_SCREENS, SILVER_LINE
 from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN
 from dsde.feat_skill_icons import card_icon_patches, icon_patches
 from dsde.feat_skills import SKILLS_FEATURE
@@ -286,7 +297,8 @@ FEATURES: tuple[Feature, ...] = (
     FIX_SAVE_GLITCH,
     SILVER_DROPS,
     BOSS_EXP,
-    BATTLE_END_RULES,
+    GEAR_RETURN_FEATURE,
+    BENCHED_EXP_FEATURE,
     MANUAL_TARGETING,
     TEXT_FIXES,
     TEXT_EDITS_FEATURE,
@@ -298,7 +310,8 @@ FEATURES: tuple[Feature, ...] = (
     BATTLE_PACE,
     KILL_ON_HIT,
     BATTLE_FLOW,
-    MP_ECONOMY,
+    SPELL_COSTS,
+    MP_ITEMS,
     SPELL_LEVELS_FEATURE,
     SKILLS_FEATURE,
     CARDS,
@@ -319,7 +332,9 @@ FEATURES: tuple[Feature, ...] = (
     TITLE_SEAL_RETOLD,
     TOWN_MENU,
     TOWN_MENU_BACK,
-    FIELD_MENU,
+    MENU_SELECT_SAVE,
+    MENU_SELECT_EXIT,
+    MENU_SPEED_FEATURE,
     GUIDEBOOK,
     STILL_HUD,
     STATUE_ANY_SIDE,
@@ -349,7 +364,8 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     SILVER_DROPS.name,
     BOSS_EXP.name,
     RESULT_SCREENS.name,
-    BATTLE_END_RULES.name,
+    GEAR_RETURN_FEATURE.name,
+    BENCHED_EXP_FEATURE.name,
     MANUAL_TARGETING.name,
     TEXT_FIXES.name,
     HOLD_LR_TO_RUN.name,
@@ -360,7 +376,8 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     BATTLE_PACE.name,
     KILL_ON_HIT.name,
     BATTLE_FLOW.name,
-    MP_ECONOMY.name,
+    SPELL_COSTS.name,
+    MP_ITEMS.name,
     SPELL_LEVELS_FEATURE.name,
     SKILLS_FEATURE.name,
     CARDS.name,  # ring and card slots (docs/plan-cards.md)
@@ -377,7 +394,9 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     TITLE_SEAL.name,
     TOWN_MENU.name,
     TOWN_MENU_BACK.name,
-    FIELD_MENU.name,
+    MENU_SELECT_SAVE.name,
+    MENU_SELECT_EXIT.name,
+    MENU_SPEED_FEATURE.name,
     GUIDEBOOK.name,
     STILL_HUD.name,
     STATUE_ANY_SIDE.name,
@@ -425,6 +444,32 @@ GLUE: tuple[Glue, ...] = (
         all_of=(CARDS.name,),
     ),
     *mixes(TEXT_SPEED_MIX, text_speed_hook),
+    Glue(
+        SILVER_LINE,
+        any_of=(RESULT_SCREENS.name,),
+        all_of=(SILVER_DROPS.name,),
+    ),
+    # The battle speed setting and the death timers, read by more than one feature.
+    Glue(
+        Feature("battle-speed-state", (SPEED_STATE,)),
+        any_of=(
+            BATTLE_SPEED.name,
+            BATTLE_PACE.name,
+            BATTLE_FLOW.name,
+            KILL_ON_HIT.name,
+            ENEMY_SPRITE_SPEED.name,
+            ENEMY_SPELL_SPEED.name,
+            ENEMY_SHORT_MOVES.name,
+            ENEMY_QUICK_STEPS.name,
+        ),
+    ),
+    Glue(
+        Feature("kill-timers", (KILL_TIMERS,)),
+        any_of=(KILL_ON_HIT.name, BATTLE_FLOW.name),
+    ),
+    *mixes(MENU_KEYS_MIX, menu_keys_hook),
+    *mixes(FLOOR_MIX, menu_floor),
+    *mixes(END_MIX, end_hook),
 )
 
 

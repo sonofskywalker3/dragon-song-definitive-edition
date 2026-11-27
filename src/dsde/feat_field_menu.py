@@ -1,13 +1,16 @@
 """Field menu speed and shortcuts (Jeff, 2026-10-07 and 2026-10-08 playtests; research in docs/re-field-menu.md).
 
-- Select in the field opens the save screen, and Select anywhere in the menu goes straight back to the map
-  (feat_menu_shortcuts.py).
-- The menu is quicker: screen changes wait 6 frames instead of 19 (none while Select opens the save screen) and
-  no longer wait for the icon and tab animations, the fades into and out of the menu take 10 frames instead of
-  30, and a held key repeats after 12 frames, then every 4 (was 30, then every frame).
+Three switches:
+- menu-select-save: Select in the field opens the save screen (feat_menu_shortcuts.py).
+- menu-select-exit: Select anywhere in the menu goes straight back to the map (feat_menu_shortcuts.py).
+- menu-speed: the menu is quicker: screen changes wait 6 frames instead of 19 and no longer wait for the icon
+  and tab animations, the fades into and out of the menu take 10 frames instead of 30, and a held key repeats
+  after 12 frames, then every 4 (was 30, then every frame).
+The shortcuts share the menu's key hook, and the open-at-save shortcut changes screens with no wait at all,
+so the key hook and the screen change wait are glue, one version per mix (features.GLUE).
 """
 
-from dsde.feat_menu_shortcuts import SHORTCUT_PATCHES
+from dsde.feat_menu_shortcuts import MENU_SAVE
 from dsde.patching import AsmPatch, CaveCode, Feature, Patch
 
 CHANGE_FLOOR_TEST = (
@@ -15,20 +18,26 @@ CHANGE_FLOOR_TEST = (
 )
 BACK_FLOOR_TEST = 0x02061E2C  # state 0x5B (going back): cmp r0, #0x13
 FLOOR_TEST_WORD = 0xE3500013
-FLOOR = 6  # frames a screen change waits (vanilla 19); 0 while a shortcut runs
+FLOOR = 6  # frames a screen change waits with menu-speed (vanilla 19); 0 while a shortcut runs
+VANILLA_FLOOR = 0x13
+MENU_SPEED_NAME = "menu-speed"
+FLOOR_MIX = (MENU_SAVE, MENU_SPEED_NAME)
 
-# Replaces `cmp r0, #0x13` in both screen change states (r0 = frames waited); r2 is free there.
-FLOOR_ASM = f"""
+
+def floor_asm(floor: int) -> str:
+    """Replaces `cmp r0, #0x13` in both screen change states (r0 = frames waited); r2 is free there."""
+    return f"""
     ldr   r2, fl_flags
     ldr   r2, [r2]
     cmp   r2, #0
-    moveq r2, #{FLOOR}
+    moveq r2, #{floor}
     movne r2, #0
     cmp   r0, r2
     bx    lr
 fl_flags:
     .word ${{cave_menu_flags}}
 """
+
 
 # (address, old word, new word, note): measured in docs/re-field-menu.md
 MENU_SPEED = (
@@ -52,26 +61,46 @@ MENU_SPEED = (
     (0x020595BC, 0xE3A0201E, 0xE3A02008, "then every 4 frames"),
 )
 
-FIELD_MENU = Feature(
-    "field-menu",
-    (
-        *SHORTCUT_PATCHES,
-        CaveCode(
-            "cave_menu_floor",
-            FLOOR_ASM,
-            "menu: screen changes wait 6 frames, none in a shortcut",
+
+def menu_floor(mix: frozenset[str]) -> Feature:
+    """The screen change wait for a mix of menu-select-save and menu-speed (glue, features.GLUE)."""
+    floor = FLOOR if MENU_SPEED_NAME in mix else VANILLA_FLOOR
+    note = f"menu: screen changes wait {floor} frames, none in a shortcut"
+    if MENU_SAVE not in mix:
+        return Feature(
+            "menu-floor",
+            tuple(
+                AsmPatch(
+                    addr,
+                    addr + 4,
+                    FLOOR_TEST_WORD,
+                    FLOOR_TEST_WORD,
+                    f"cmp r0, #{floor}",
+                    f"menu: screen changes wait {floor} frames",
+                )
+                for addr in (CHANGE_FLOOR_TEST, BACK_FLOOR_TEST)
+            ),
+        )
+    return Feature(
+        "menu-floor",
+        (
+            CaveCode("cave_menu_floor", floor_asm(floor), note),
+            *(
+                AsmPatch(
+                    addr,
+                    addr + 4,
+                    FLOOR_TEST_WORD,
+                    FLOOR_TEST_WORD,
+                    "bl ${cave_menu_floor}",
+                    note,
+                )
+                for addr in (CHANGE_FLOOR_TEST, BACK_FLOOR_TEST)
+            ),
         ),
-        *(
-            AsmPatch(
-                addr,
-                addr + 4,
-                FLOOR_TEST_WORD,
-                FLOOR_TEST_WORD,
-                "bl ${cave_menu_floor}",
-                "menu: screen changes wait 6 frames, none in a shortcut",
-            )
-            for addr in (CHANGE_FLOOR_TEST, BACK_FLOOR_TEST)
-        ),
-        *(Patch(addr, old, new, note) for addr, old, new, note in MENU_SPEED),
-    ),
+    )
+
+
+MENU_SPEED_FEATURE = Feature(
+    MENU_SPEED_NAME,
+    tuple(Patch(addr, old, new, note) for addr, old, new, note in MENU_SPEED),
 )

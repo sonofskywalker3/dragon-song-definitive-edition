@@ -81,10 +81,13 @@ bs_data:
     .word ${cave_bs_data}
 """
 
-END_ASM = """
+GEAR_RETURN = "gear-return"
+BENCHED_EXP = "benched-exp"
+END_HEAD = """
     push  {r4-r10, lr}
     bl    0x02052888
-    ldr   r4, char_equip
+"""
+END_GEAR = """    ldr   r4, char_equip
     ldr   r5, bs_snap
     mov   r6, #0
 char_loop:
@@ -122,11 +125,13 @@ slot_next:
     add   r6, r6, #1
     cmp   r6, #5
     blt   char_loop
-    ldr   r0, result
+"""
+END_RESULT = """    ldr   r0, result
     ldrsh r0, [r0]
     cmp   r0, #1
     bhi   forget
-    ldr   r0, work_ptr
+"""
+END_BENCHED = """    ldr   r0, work_ptr
     ldr   r0, [r0]
     ldr   r8, [r0, #0x144]
     cmp   r8, #0
@@ -164,7 +169,8 @@ benched_next:
     add   r6, r6, #1
     cmp   r6, #5
     blt   benched_loop
-benched_done:
+"""
+END_GIVE_BACK = """benched_done:
     ldr   r4, bs_data
     mov   r5, #16
 give_back:
@@ -187,7 +193,8 @@ clear_loop:
     subs  r2, r2, #1
     bne   clear_loop
     pop   {r4-r10, pc}
-char_equip:
+"""
+END_GEAR_LITERALS = """char_equip:
     .word 0x020B4698
 bs_snap:
     .word ${cave_bs_data} + 0x40
@@ -197,7 +204,8 @@ inventory:
     .word 0x0213B930
 bs_data:
     .word ${cave_bs_data}
-result:
+"""
+END_WIN_LITERALS = """result:
     .word 0x020B85C4
 work_ptr:
     .word 0x020B8550
@@ -207,23 +215,32 @@ char_base:
     .word 0x020B4658
 """
 
+
+def end_asm(gear: bool, benched: bool) -> str:
+    """The battle end hook for a mix: gear, undo breaks and (on a win) return stolen items; benched, EXP for
+    the members not in the party (on a win)."""
+    if gear:
+        middle = END_GEAR + END_RESULT + (END_BENCHED if benched else "")
+        literals = END_GEAR_LITERALS + END_WIN_LITERALS
+        return END_HEAD + middle + END_GIVE_BACK + literals
+    won = END_RESULT.replace("bhi   forget", "bhi   benched_done")
+    done = "benched_done:\n    pop   {r4-r10, pc}\n"
+    return END_HEAD + won + END_BENCHED + done + END_WIN_LITERALS
+
+
 BATTLE_START_HOOK = 0x02029BF0  # bl 0x02054494, battler setup
 STEAL_HOOK = 0x02030F28  # bl 0x0206B98C, inventory -1 for the stolen item
 BATTLE_END_HOOK = 0x0202AC54  # bl 0x02052888, every battle outcome
 
-BATTLE_END_RULES = Feature(
-    "battle-end-rules",
+# Broken and stolen gear back after a win (gear-return): the steal table and gear snapshot, kept from the start.
+GEAR_RETURN_FEATURE = Feature(
+    GEAR_RETURN,
     (
         CaveCode("cave_bs_data", DATA_ASM, "steal table and gear snapshot"),
         CaveCode(
             "cave_bs_start", START_ASM, "battle start: clear thefts, snapshot gear"
         ),
         CaveCode("cave_bs_steal", STEAL_ASM, "record stolen item"),
-        CaveCode(
-            "cave_bs_end",
-            END_ASM,
-            "battle end: undo breaks; a win returns stolen items and gives benched characters EXP",
-        ),
         AsmPatch(
             BATTLE_START_HOOK,
             BATTLE_START_HOOK + 4,
@@ -240,13 +257,29 @@ BATTLE_END_RULES = Feature(
             "bl ${cave_bs_steal}",
             "steal hook",
         ),
-        AsmPatch(
-            BATTLE_END_HOOK,
-            BATTLE_END_HOOK + 4,
-            0xEB009F0B,
-            0xEB009F0B,
-            "bl ${cave_bs_end}",
-            "battle end hook",
-        ),
     ),
 )
+BENCHED_EXP_FEATURE = Feature(BENCHED_EXP, ())
+END_MIX = (GEAR_RETURN, BENCHED_EXP)
+
+
+def end_hook(mix: frozenset[str]) -> Feature:
+    """The battle end hook for a mix of gear-return and benched-exp (glue, features.GLUE)."""
+    return Feature(
+        "battle-end-hook",
+        (
+            CaveCode(
+                "cave_bs_end",
+                end_asm(GEAR_RETURN in mix, BENCHED_EXP in mix),
+                "battle end: undo breaks; a win returns stolen items and gives benched characters EXP",
+            ),
+            AsmPatch(
+                BATTLE_END_HOOK,
+                BATTLE_END_HOOK + 4,
+                0xEB009F0B,
+                0xEB009F0B,
+                "bl ${cave_bs_end}",
+                "battle end hook",
+            ),
+        ),
+    )

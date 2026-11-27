@@ -1,4 +1,5 @@
-"""Healing statues answer A from any side (Jeff, 2026-10-08: "You can't activate a statue from the sides or back").
+"""Healing statues answer A from any side (Jeff, 2026-10-08: "You can't activate a statue from the sides or back"),
+heal without the camera pan, and also cure status (these two were part of mp-economy until the installer split).
 
 The field's A-button object search (func_0201e6a0, 0x0201F2A4) runs two checks before a statue (talk object,
 kind 1, id 0x37D) heals:
@@ -54,6 +55,57 @@ FACING_VECTORS = (
 FIXED_SHIFT = 12  # positions are 20.12
 
 _VECTOR_WORDS = "\n".join(f"    .short {x}, {y}" for x, y in FACING_VECTORS)
+
+# Healing statues (map object 0x37D, field loop func_0201e6a0) refill HP and MP of the three party
+# members; the copy now also clears the status (character record +0x08, low 4 bits, as Cure items do).
+STATUE_COPY = 0x0201F370
+STATUE_COPY_END = 0x0201F380
+STATUE_FIRST_WORD = 0xE5910014
+STATUE_LAST_WORD = 0xE5810018
+STATUS_MASK = 0xF
+# Using a statue pans the camera to centre it (field state 0x3C), waits for the pan, sparkles, then pans
+# back to Jian (0x0201FDF0) and waits again: about two seconds of camera for a statue Jian is already
+# standing at (Jeff, 2026-10-07). Both calls of the camera move (func_0201d878, 60 frames) go, so the
+# waits after them pass at once; the code is shared, so every statue in the game is affected.
+STATUE_CAMERA_CALLS = (
+    (0x0201FA98, 0xEBFFF776),  # bl func_0201d878: centre the statue
+    (0x0201FDF0, 0xEBFFF6A0),  # bl func_0201d878: back to Jian
+)
+
+STATUE_REFILL_PATCHES = (
+    CaveCode(
+        "cave_statue",
+        f"""
+    ldr   r0, [r1, #0x14]
+    str   r0, [r1, #0x10]
+    ldr   r0, [r1, #0x1c]
+    str   r0, [r1, #0x18]
+    ldr   r0, [r1, #8]
+    bic   r0, r0, #{STATUS_MASK:#x}
+    str   r0, [r1, #8]
+    bx    lr
+""",
+        "statue refill also cures status",
+    ),
+    AsmPatch(
+        STATUE_COPY,
+        STATUE_COPY_END,
+        STATUE_FIRST_WORD,
+        STATUE_LAST_WORD,
+        f"""
+    bl    ${{cave_statue}}
+    .word {ARM_NOP:#x}
+    .word {ARM_NOP:#x}
+    .word {ARM_NOP:#x}
+""",
+        "healing statue also cures status",
+    ),
+    *(
+        Patch(addr, word, ARM_NOP, "healing statue: no camera pan")
+        for addr, word in STATUE_CAMERA_CALLS
+    ),
+)
+
 
 STATUE_ANY_SIDE = Feature(
     "statue-any-side",
@@ -121,5 +173,6 @@ statue_vectors:
             ARM_NOP,
             "statue heals whichever way Jian faces it",
         ),
+        *STATUE_REFILL_PATCHES,
     ),
 )

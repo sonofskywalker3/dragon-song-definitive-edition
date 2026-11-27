@@ -174,14 +174,17 @@ def _call(addr: int, word: int, cave: str, note: str) -> AsmPatch:
     return AsmPatch(addr, addr + 4, word, word, f"bl ${{{cave}}}", note)
 
 
+# The death timers are read by battle-flow's sparkle wait as well, so they are a piece of their own, built with
+# either (features.GLUE). Without kill-on-hit no timer starts, and battle-flow never waits on one.
+KILL_TIMERS = CaveCode(
+    "cave_kill_timers",
+    "\n".join(["    .byte 0"] * BATTLER_SLOTS),
+    "death timer per battler",
+)
+
 KILL_ON_HIT = Feature(
     "kill-on-hit",
     (
-        CaveCode(
-            "cave_kill_timers",
-            "\n".join(["    .byte 0"] * BATTLER_SLOTS),
-            "death timer per battler",
-        ),
         CaveCode(
             "cave_kill_on_hit", KILL_ON_HIT_ASM, "enemies die on their killing hit"
         ),
