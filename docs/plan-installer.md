@@ -4,7 +4,7 @@ Approved build list point 8 (docs/plan-cards.md 8): a third download beside the 
 builds a patch from a list of switches. The story is one switch (all or none); every engine and gameplay change is
 its own switch, as fine as Jeff's examples (HP drain while running; B in a town menu selecting Leave town);
 dependencies switch on or grey out; the defaults equal the full release. Jeff hopes it replaces the two edition
-patches in time. Nothing here is built.
+patches in time. Built: section 5.
 
 **Decided (Jeff, 2026-11-26): the linker route, and the project is MIT licensed** (LICENSE added). Keystone stays
 a build tool on our side only; the installer ships no Keystone, so nothing in it is GPL. Questions 2 and 3 in
@@ -136,7 +136,28 @@ From `features.REQUIRES` (build order) and what each change needs to make sense:
 - In the window a switch whose need is off is greyed out with the reason; switching a need off switches its
   dependents off.
 
-## 5. Questions for Jeff, one at a time
+## 5. Built (2026-11-26)
+
+- **Switches**: `src/dsde/installer_switches.py`, the 48 switches with tooltips, features, needs, and defaults
+  (the defaults build exactly the Retold edition's features). ALWAYS: title-seal, fix-save-glitch.
+- **Pack** (our side, Keystone): `uv run python -m dsde.installer_pack` -> `build/installer/pack.json.gz`
+  (about 140 KB): every feature and glue piece pre-assembled, with its address references (branch to a symbol,
+  branch from cave code to a fixed address, symbol word, own-cave word) found by assembling each piece at two
+  addresses and with two symbol tables. Data patches are BPS deltas from the bytes they replace, checked by SHA-1.
+- **Engine** (pure Python, no Keystone, no dsd): `dsde.linker` (layout, relocation, arm9, ITCM, archives, exactly
+  as `dsde.patching`), `dsde.ndsrom` (reads the ROM and writes it back in the original's layout; the original
+  round-trips byte for byte; the secure area checksum is updated without the BIOS key, since only unencrypted
+  bytes change), `dsde.installer` (command line: `uv run python -m dsde.installer ROM OUT [--off N ...] [--bps P]`).
+- **Web page**: `uv run python -m dsde.installer_web` -> `build/installer/dsde-installer.html`, one file (about
+  260 KB) from `installer/template.html`; it runs the same engine in the browser with Pyodide (loaded from its
+  CDN), so the ROM never leaves the player's computer. Switches grouped, a ? tooltip on each, needs greyed with
+  the reason, the Retold details panel, an optional .bps of the result.
+- **Checked**: the default install equals a dsd build of the same features, the whole 32 MB file; 290 random
+  switch mixes give the same arm9, ITCM, and archive entries as the build pipeline; installer-built ROMs boot and
+  battle in the emulator (defaults, a mixed set, everything off); the page in Chrome builds the same ROM
+  (same SHA-1) in about 5 seconds.
+
+## 6. Questions for Jeff, one at a time
 
 1. Platform and license (section 2).
 2. The switch list (section 3): which splits matter enough to build before the release.

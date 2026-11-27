@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dragon Song: Definitive Edition installer</title>
+<style>
+  :root { --ink: #222; --muted: #666; --line: #ddd; --accent: #1f5fa8; --bg: #fafaf7; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.45 system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+  main { max-width: 860px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 1.6rem; margin: 0 0 4px; }
+  h2 { font-size: 1.15rem; margin: 28px 0 8px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+  .lead { color: var(--muted); margin: 0 0 20px; }
+  .step { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin: 16px 0; }
+  .status { margin-top: 8px; font-size: 0.95rem; }
+  .ok { color: #1a7f37; } .bad { color: #b42318; }
+  .switch { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+  .switch:last-child { border-bottom: 0; }
+  .switch input { margin-top: 4px; width: 18px; height: 18px; flex: none; }
+  .switch label { flex: 1; cursor: pointer; }
+  .switch.off-need label { color: #999; cursor: not-allowed; }
+  .why { display: block; font-size: 0.85rem; color: #b45309; }
+  .tip { flex: none; position: relative; }
+  .tip button { border: 1px solid var(--line); background: #fff; border-radius: 50%; width: 24px; height: 24px;
+    font-weight: bold; color: var(--accent); cursor: help; padding: 0; }
+  .tip .bubble { display: none; position: absolute; right: 0; top: 28px; width: min(320px, 80vw); z-index: 2;
+    background: #fff; border: 1px solid #bbb; border-radius: 6px; padding: 8px 10px; font-size: 0.9rem;
+    box-shadow: 0 4px 14px rgba(0,0,0,.12); white-space: pre-line; }
+  .tip:hover .bubble, .tip:focus-within .bubble { display: block; }
+  .details { margin: 6px 0 0 26px; font-size: 0.92rem; color: #333; background: #f5f7fb; border-left: 3px solid var(--accent);
+    padding: 8px 10px; white-space: pre-line; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  button.main { background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 10px 18px; font-size: 1rem; cursor: pointer; }
+  button.main:disabled { background: #9db3cf; cursor: default; }
+  button.plain { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+  footer { color: var(--muted); font-size: 0.85rem; margin-top: 32px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Dragon Song: Definitive Edition</h1>
+  <p class="lead">Build your own patch: pick the changes you want, and this page patches your copy of Lunar: Dragon Song.
+    Your ROM never leaves your computer.</p>
+
+  <div class="step">
+    <strong>1. Your ROM</strong> (Lunar: Dragon Song, USA, SHA-1 <code id="want-sha"></code>)<br>
+    <input type="file" id="rom" accept=".nds">
+    <div class="status" id="rom-status"></div>
+  </div>
+
+  <div class="step">
+    <div class="bar">
+      <strong>2. The changes</strong>
+      <button class="plain" id="defaults">Back to the defaults</button>
+      <button class="plain" id="none">Switch everything off</button>
+    </div>
+    <div id="switches"></div>
+  </div>
+
+  <div class="step">
+    <strong>3. Build</strong>
+    <div class="bar" style="margin-top:8px">
+      <button class="main" id="build" disabled>Build the patched ROM</button>
+      <label><input type="checkbox" id="want-bps"> also save a .bps patch</label>
+    </div>
+    <div class="status" id="build-status"></div>
+  </div>
+
+  <footer>Version @@VERSION@@. The patching runs in your browser with <a href="https://pyodide.org">Pyodide</a>
+    (Mozilla Public License 2.0), loaded from its CDN the first time.</footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v@@PYODIDE@@/full/pyodide.js"></script>
+<script>
+"use strict";
+const PACK_B64 = "@@PACK@@";
+const MODULES = @@MODULES@@;
+const SWITCHES = @@SWITCHES@@;
+const ROM_SHA1 = "@@ROM_SHA1@@";
+
+const byNumber = new Map(SWITCHES.map(s => [s.number, s]));
+const on = new Set(SWITCHES.filter(s => s.default).map(s => s.number));
+let romBytes = null;
+let selection = 0;  // bumped on every file choice, so a slower earlier check never wins
+
+document.getElementById("want-sha").textContent = ROM_SHA1;
+
+function dependents(number) {
+  const found = new Set(), todo = [number];
+  while (todo.length) {
+    const need = todo.pop();
+    for (const s of SWITCHES) if (s.needs.includes(need) && !found.has(s.number)) { found.add(s.number); todo.push(s.number); }
+  }
+  return found;
+}
+function missing(s) { return s.needs.filter(n => !on.has(n)); }
+
+function render() {
+  const root = document.getElementById("switches");
+  root.textContent = "";
+  let group = null, box = null;
+  for (const s of SWITCHES) {
+    if (s.group !== group) {
+      group = s.group;
+      const h = document.createElement("h2"); h.textContent = group; root.append(h);
+      box = document.createElement("div"); root.append(box);
+    }
+    const row = document.createElement("div");
+    const lacking = missing(s);
+    row.className = "switch" + (lacking.length ? " off-need" : "");
+    const id = "sw" + s.number;
+    const input = document.createElement("input");
+    input.type = "checkbox"; input.id = id; input.checked = on.has(s.number) && !lacking.length;
+    input.disabled = lacking.length > 0;
+    input.addEventListener("change", () => {
+      if (input.checked) on.add(s.number);
+      else { on.delete(s.number); for (const d of dependents(s.number)) on.delete(d); }
+      render();
+    });
+    const label = document.createElement("label");
+    label.htmlFor = id; label.textContent = s.label; label.title = s.tooltip;
+    if (lacking.length) {
+      const why = document.createElement("span"); why.className = "why";
+      why.textContent = "Needs: " + lacking.map(n => byNumber.get(n).label).join("; ");
+      label.append(why);
+    }
+    const tip = document.createElement("span"); tip.className = "tip";
+    const q = document.createElement("button"); q.type = "button"; q.textContent = "?";
+    q.setAttribute("aria-label", "What this does");
+    const bubble = document.createElement("span"); bubble.className = "bubble"; bubble.textContent = s.tooltip;
+    tip.append(q, bubble);
+    row.append(input, label, tip);
+    box.append(row);
+    if (s.details) {
+      const d = document.createElement("div"); d.className = "details"; d.textContent = s.details; box.append(d);
+    }
+  }
+}
+
+function active() {
+  // A switch whose need is off is off too (installer_switches.resolve_switches).
+  const result = new Set(on);
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const n of [...result]) if (byNumber.get(n).needs.some(m => !result.has(m))) { result.delete(n); changed = true; }
+  }
+  return [...result].sort((a, b) => a - b);
+}
+
+document.getElementById("defaults").addEventListener("click", () => {
+  on.clear(); for (const s of SWITCHES) if (s.default) on.add(s.number); render();
+});
+document.getElementById("none").addEventListener("click", () => { on.clear(); render(); });
+
+document.getElementById("rom").addEventListener("change", async ev => {
+  const status = document.getElementById("rom-status");
+  const f = ev.target.files[0];
+  const mine = ++selection;
+  romBytes = null; document.getElementById("build").disabled = true;
+  if (!f) { status.textContent = ""; return; }
+  status.className = "status"; status.textContent = "Checking...";
+  let bytes, hex;
+  try {
+    bytes = new Uint8Array(await f.arrayBuffer());
+    const digest = await crypto.subtle.digest("SHA-1", bytes);
+    hex = [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
+  } catch (err) {
+    if (mine === selection) { status.className = "status bad"; status.textContent = "Could not read that file: " + err; }
+    return;
+  }
+  if (mine !== selection) return;
+  if (hex === ROM_SHA1) {
+    romBytes = bytes; status.className = "status ok"; status.textContent = "This is the right ROM.";
+    document.getElementById("build").disabled = false;
+  } else {
+    status.className = "status bad";
+    status.textContent = "This is not a clean dump of Lunar: Dragon Song (USA) (SHA-1 " + hex + "). Other dumps and regions will not work.";
+  }
+});
+
+let pyodide = null;
+async function engine(say) {
+  if (pyodide) return pyodide;
+  say("Loading the patcher (the first time takes a moment)...");
+  const py = await loadPyodide();
+  py.FS.mkdirTree("/engine/dsde");
+  for (const [name, source] of Object.entries(MODULES)) py.FS.writeFile("/engine/dsde/" + name, source);
+  const pack = Uint8Array.from(atob(PACK_B64), c => c.charCodeAt(0));
+  py.FS.writeFile("/engine/pack.json.gz", pack);
+  py.runPython(`
+import sys
+sys.path.insert(0, "/engine")
+from pathlib import Path
+from dsde.bps import create as bps_create
+from dsde.installer import install, load_pack
+from dsde.installer_switches import feature_names
+PACK = load_pack(Path("/engine/pack.json.gz"))
+
+def build(rom_js, switches_on, want_bps):
+    rom = bytes(rom_js.to_py())
+    names = feature_names(frozenset(switches_on.to_py()), tuple(PACK["order"]))
+    patched = install(rom, names, PACK)
+    return patched, (bps_create(rom, patched) if want_bps else b"")
+`);
+  pyodide = py;  // only once it is fully set up
+  return pyodide;
+}
+
+function download(bytes, name) {
+  const url = URL.createObjectURL(new Blob([bytes], { type: "application/octet-stream" }));
+  const a = document.createElement("a"); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+document.getElementById("build").addEventListener("click", async () => {
+  const status = document.getElementById("build-status");
+  const button = document.getElementById("build");
+  const say = t => { status.className = "status"; status.textContent = t; };
+  button.disabled = true;
+  try {
+    const py = await engine(say);
+    say("Building...");
+    await new Promise(r => setTimeout(r, 30));
+    const build = py.globals.get("build");
+    const result = build(romBytes, active(), document.getElementById("want-bps").checked);
+    build.destroy();
+    const [patched, patch] = result.toJs();
+    result.destroy();
+    download(patched, "Dragon Song Definitive Edition (custom).nds");
+    if (patch.length) download(patch, "Dragon Song Definitive Edition (custom).bps");
+    status.className = "status ok";
+    status.textContent = "Done: your patched ROM is downloading. Switches on: " + active().join(", ") + ".";
+  } catch (err) {
+    status.className = "status bad";
+    const text = String(err);
+    const last = text.trim().split("\n").pop();
+    status.textContent = last.includes("LinkError") || last.includes("RomError")
+      ? last.replace(/^.*?Error: /, "") : "Something went wrong: " + text;
+  } finally {
+    button.disabled = !romBytes;
+  }
+});
+
+render();
+</script>
+</body>
+</html>
