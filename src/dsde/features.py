@@ -44,7 +44,7 @@ from dsde.feat_opening import OPENING, OPENING_FLAGS, OPENING_TEXT
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_party_chat import PARTY_CHAT
 from dsde.feat_results import RESULT_SCREENS, SILVER_LINE
-from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN, watch_hand
+from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, POCKETWATCH_PATCHES, TIMED_RUN
 from dsde.feat_skill_icons import card_icon_patches, icon_patches
 from dsde.feat_skills import SKILLS_FEATURE
 from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
@@ -450,9 +450,9 @@ GLUE: tuple[Glue, ...] = (
     ),
     *mixes(TEXT_SPEED_MIX, text_speed_hook),
     Glue(
-        watch_hand,
+        Feature("pocketwatch-gauge", POCKETWATCH_PATCHES),
         any_of=(POCKETWATCH.name,),
-        uses=(NO_VIRTUE_CLOCK.name,),
+        all_of=(NO_VIRTUE_CLOCK.name,),
     ),
     *mixes(SLOTS_MIX, slots_mix),
     Glue(card_boosts, any_of=(CARDS.name,), uses=(POISON_TURNS_FEATURE.name,)),

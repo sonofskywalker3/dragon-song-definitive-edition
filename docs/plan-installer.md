@@ -112,8 +112,9 @@ in the README's Story section; update it as the rewrite grows):
 
 **Found in the code (step 1 of the build, 2026-11-26).** The Feature column above is the split being built. What the
 code showed beyond the approved list, and what was done:
-- 3 does not need 6 (Jeff, 2026-11-26): the watch hand's code replaced the Virtue clock's tick, so with 6 off the
-  hand keeps the tick (feat_watch.CLOCK_TICK_ASM) and enemies still return on the timer.
+- 3 does not need 6 (Jeff, 2026-11-26), but does nothing without it: while enemies return on the Virtue clock,
+  the watch stays the clock, so a player racing it sees the time left (the gauge was only a use for a screen
+  element the hack had made idle; Lunar 1 and 2 had no run gauge).
 - 12 needs 14 (Jeff, 2026-11-26): without the faster menus the open-at-save shortcut sat black on the original
   menu's waits.
 - 8 takes the statues' status cure and the dropped camera pan, which lived in mp-economy; Mental Gum at 1000 in

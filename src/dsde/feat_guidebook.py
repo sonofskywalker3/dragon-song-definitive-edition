@@ -68,7 +68,13 @@ NO_VIRTUE_CLOCK = "no-virtue-clock"
 BOSS_EXP = "boss-exp"
 NO_CLEAR_REFILL = "no-clear-refill"
 PAGE_USES: dict[Page, tuple[str, ...]] = {
-    TOWNS_TOP: (NO_RUN_HP_COST, TIMED_RUN, POCKETWATCH, STATUE_ANY_SIDE),
+    TOWNS_TOP: (
+        NO_RUN_HP_COST,
+        TIMED_RUN,
+        POCKETWATCH,
+        NO_VIRTUE_CLOCK,
+        STATUE_ANY_SIDE,
+    ),
     TOWNS_BOTTOM: (MENU_SELECT_SAVE,),
     FIELDS_TOP: (ONE_BATTLE_MODE, BOSS_EXP, SILVER_DROPS, BATTLE_SPEED, HOLD_LR_TO_RUN),
     FIELDS_BOTTOM: (
@@ -87,6 +93,7 @@ def _towns_top(mix: frozenset[str]) -> list[PanelText]:
         free = (
             "Once the pocketwatch closes, run freely."
             if POCKETWATCH in mix
+            and NO_VIRTUE_CLOCK in mix  # the gauge is built only then
             else "Where no enemies are left, run freely."
         )
         out.append(

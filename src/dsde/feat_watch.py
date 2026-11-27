@@ -13,7 +13,7 @@ has no timer wherever the watch is closed. func_02071c4c itself stays as it is: 
 enemy graphics loading also call it.
 """
 
-from dsde.patching import AsmPatch, CaveCode, Feature
+from dsde.patching import AsmPatch, CaveCode
 
 ENEMY_MAP_TEST = 0x02071C4C  # func_02071c4c(-1): spawn points, map 0..0x96, not map 4
 ENEMY_AREA_ENTRY = 0x0206EC54  # func_0206ec54(): this area's enemy entry or 0
@@ -64,55 +64,10 @@ AFTER_BATTLE_PANEL_WORD = 0xEB0143A7  # bl func_0207184c
 HUD_BUILD = 0x0206F3A4
 
 
-# The Virtue clock's tick, which the hand block replaces (0x02021F78..0x02021FD8, r4 = the area's enemy entry):
-# the clock counts up (entry +0) to its period (+2), then a beaten enemy comes back (kills +4, one less) with a
-# sound and the kill boxes redrawn. Kept when no-virtue-clock is off, so the watch shows the run gauge while
-# enemies still return on the timer (Jeff, 2026-11-26: the gauge does not need switch 6).
-CLOCK_SOUND_ARG = 0x020B05B0  # the literal vanilla loads at 0x02021FBC
-PLAY_SOUND = 0x02018A40
-DRAW_KILL_BOXES = 0x020719DC
-CLOCK_TICK_ASM = f"""
-    push  {{r5, lr}}
-    ldrb  r1, [r4, #{AREA_KILLS}]
-    cmp   r1, #0
-    beq   tick_done
-    ldrb  r0, [r4, #{AREA_TOTAL}]
-    cmp   r1, r0
-    bhs   tick_done
-    ldrh  r0, [r4]
-    add   r0, r0, #1
-    strh  r0, [r4]
-    ldrh  r1, [r4]
-    ldrh  r0, [r4, #2]
-    cmp   r1, r0
-    bls   tick_done
-    mov   r2, #0
-    strh  r2, [r4]
-    add   r5, r4, #{AREA_KILLS}
-    ldrb  r3, [r5]
-    ldr   r0, tick_sound
-    mov   r1, #6
-    sub   r3, r3, #1
-    strb  r3, [r5]
-    bl    {PLAY_SOUND:#x}
-    ldrb  r1, [r4, #{AREA_TOTAL}]
-    ldrb  r2, [r4, #{AREA_KILLS}]
-    bl    {DRAW_KILL_BOXES:#x}
-tick_done:
-    pop   {{r5, pc}}
-tick_sound:
-    .word {CLOCK_SOUND_ARG:#x}
-"""
-
-
-def hand_asm(
-    run_state: int, run_ticks: int, cooldown_ticks: int, tick: bool = False
-) -> str:
-    """Hand angle from the run state: one turn over the dash, wound back over the cooldown; with `tick`, the
-    Virtue clock's tick runs first."""
-    call = "    bl    ${cave_clock_tick}\n" if tick else ""
+def hand_asm(run_state: int, run_ticks: int, cooldown_ticks: int) -> str:
+    """Hand angle from the run state: one turn over the dash, wound back over the cooldown."""
     return f"""
-{call}    ldr   r0, run_state
+    ldr   r0, run_state
     ldr   r0, [r0]
     mov   r0, r0, lsl #19
     mov   r0, r0, lsr #24
@@ -131,47 +86,36 @@ cooldown_step:
 """
 
 
-def hand_patch(
-    run_state: int, run_ticks: int, cooldown_ticks: int, tick: bool
-) -> tuple[AsmPatch | CaveCode, ...]:
-    """The watch hand, with the Virtue clock's tick kept when `tick` (no-virtue-clock off)."""
-    patch = AsmPatch(
-        HAND_BLOCK,
-        HAND_BLOCK_END,
-        HAND_BLOCK_FIRST,
-        HAND_BLOCK_LAST,
-        hand_asm(run_state, run_ticks, cooldown_ticks, tick),
-        "watch hand = run gauge",
-    )
-    if not tick:
-        return (patch,)
+def pocketwatch_patches(
+    run_state: int, run_ticks: int, cooldown_ticks: int
+) -> tuple[AsmPatch, ...]:
+    """The watch as danger sign and run gauge. Built only with no-virtue-clock (glue, features.GLUE): while the
+    Virtue clock still brings enemies back, the watch stays the original clock, so a player racing the timer sees
+    the time left (Jeff, 2026-11-26: the gauge was a use for a screen element the hack made idle, and Lunar 1 and
+    2 had no run gauge). The pocketwatch switch then changes nothing."""
     return (
-        CaveCode("cave_clock_tick", CLOCK_TICK_ASM, "the Virtue clock still ticks"),
-        patch,
-    )
-
-
-def pocketwatch(run_state: int, run_ticks: int, cooldown_ticks: int) -> Feature:
-    """The pocketwatch feature for the timed run's state address and lengths (needs timed-run). Its hand is glue
-    (features.GLUE: hand_patch), since it keeps the Virtue clock's tick only when no-virtue-clock is off."""
-    return Feature(
-        "pocketwatch",
-        (
-            AsmPatch(
-                HUD_WATCH_TEST,
-                HUD_WATCH_TEST + 4,
-                HUD_WATCH_TEST_WORD,
-                HUD_WATCH_TEST_WORD,
-                "bl ${cave_watch_open}",
-                "HUD: watch closed once the area is cleared",
-            ),
-            AsmPatch(
-                AFTER_BATTLE_PANEL,
-                AFTER_BATTLE_PANEL + 4,
-                AFTER_BATTLE_PANEL_WORD,
-                AFTER_BATTLE_PANEL_WORD,
-                f"bl {HUD_BUILD:#x}",
-                "rebuild the HUD after a battle: the clearing win closes the watch",
-            ),
+        AsmPatch(
+            HUD_WATCH_TEST,
+            HUD_WATCH_TEST + 4,
+            HUD_WATCH_TEST_WORD,
+            HUD_WATCH_TEST_WORD,
+            "bl ${cave_watch_open}",
+            "HUD: watch closed once the area is cleared",
+        ),
+        AsmPatch(
+            HAND_BLOCK,
+            HAND_BLOCK_END,
+            HAND_BLOCK_FIRST,
+            HAND_BLOCK_LAST,
+            hand_asm(run_state, run_ticks, cooldown_ticks),
+            "watch hand = run gauge",
+        ),
+        AsmPatch(
+            AFTER_BATTLE_PANEL,
+            AFTER_BATTLE_PANEL + 4,
+            AFTER_BATTLE_PANEL_WORD,
+            AFTER_BATTLE_PANEL_WORD,
+            f"bl {HUD_BUILD:#x}",
+            "rebuild the HUD after a battle: the clearing win closes the watch",
         ),
     )

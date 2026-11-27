@@ -64,7 +64,8 @@ SWITCHES: tuple[Switch, ...] = (
         EXPLORING,
         "Run gauge in the pocketwatch",
         "The pocketwatch is open while an area has enemies, and its hand shows the dash and the cooldown. It "
-        "closes once every enemy in the area is beaten.",
+        "closes once every enemy in the area is beaten. Only with switch 6 on: while enemies come back on a timer, "
+        "the watch stays the timer.",
         ("pocketwatch",),
         needs=(2,),
     ),
