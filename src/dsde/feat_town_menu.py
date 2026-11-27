@@ -15,7 +15,7 @@ four), +0x38 number of visible entries. Research and tests: docs/re-field-battle
   moves the Jian icon to the place and shows YES/NO, ready for A.
 - The free-cursor test (`ands r0, held, #0xF0`) sees no D-pad, so a held key does not drag the icon.
 
-B (and the NO button) picks the way out in a town (Jeff, 2026-11-22). In the original it went back to the
+B (and the NO button) picks the way out in a town (Jeff, 2026-11-22; its own feature, town-menu-leave). In the original it went back to the
 entry for the place you had just left, which you seldom want again; now it selects "Leave town" (the first
 listed entry that leads to a world map hub, 0x104..0x11C), ready for A. A town part with no such entry
 (Zethos Castle) gets its entry to the neighboring part instead. On the world map, and in a town whose
@@ -200,7 +200,7 @@ tb_town:
     .word {FIRST_TOWN_HUB:#x}
 """
 
-TOWN_MENU_PATCHES = (
+TOWN_BACK_PATCHES = (
     CaveCode("cave_town_back", TOWN_BACK_ASM, "town menus: B picks the way out"),
     *(
         AsmPatch(
@@ -221,6 +221,9 @@ TOWN_MENU_PATCHES = (
         "nop",
         "town menus: B picks the way out even from the previous place",
     ),
+)
+
+TOWN_MENU_PATCHES = (
     CaveCode("cave_town_keys", TOWN_KEYS_ASM, "map menus: D-pad picks rows and tabs"),
     AsmPatch(
         TOUCH_HIT_CALL,

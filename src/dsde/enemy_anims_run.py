@@ -36,7 +36,7 @@ from dsde.emu import START_SAVE, run_plan
 from dsde.enemy_anims import ARM9_BIN, EnemyAction, Step, read_actions, read_steps
 from dsde.enemy_anims_plans import SETUP_FORCED_ROWS, make_plan
 from dsde.feat_enemy_moves import CUT_SETS, cut_scripts, label
-from dsde.features import DEFAULT_FEATURES, FEATURES
+from dsde.features import DEFAULT_FEATURES, resolve
 from dsde.patching import layout_cave
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -91,8 +91,7 @@ class Setup:
 
 
 def make_setup(rom: Path, out: Path, extra: tuple[str, ...]) -> Setup:
-    by_name = {f.name: f for f in FEATURES}
-    symbols = layout_cave([by_name[name] for name in [*DEFAULT_FEATURES, *extra]])
+    symbols = layout_cave(resolve([*DEFAULT_FEATURES, *extra]))
     cuts: dict[int, tuple[int, list[Step]]] = {}
     for prefix, cut_set in CUT_SETS.items():
         for script, raws in cut_scripts(cut_set).items():
@@ -109,8 +108,7 @@ def make_setup(rom: Path, out: Path, extra: tuple[str, ...]) -> Setup:
 def speed_pin(variant: str, setup: Setup) -> str | None:
     if variant not in SPEED_SETTING:
         return None
-    features = {f.name: f for f in FEATURES}
-    symbols = layout_cave([features[name] for name in setup.features])
+    symbols = layout_cave(resolve(setup.features))
     return f"pin u8 {symbols['cave_speed_state']:#010x} {SPEED_SETTING[variant]}"
 
 

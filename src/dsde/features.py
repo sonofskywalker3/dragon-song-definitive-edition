@@ -31,18 +31,27 @@ from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_party_chat import PARTY_CHAT
 from dsde.feat_results import RESULT_SCREENS
 from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN
-from dsde.feat_skill_icons import icon_patches
+from dsde.feat_skill_icons import card_icon_patches, icon_patches
 from dsde.feat_skills import SKILLS_FEATURE
 from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
 from dsde.feat_statue import STATUE_ANY_SIDE
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_EDITS_FEATURE, TEXT_FIXES
-from dsde.feat_text_speed import TEXT_SPEED
+from dsde.feat_text_speed import HOLD_A, HOLD_B, TEXT_SPEED_MIX, text_speed_hook
 from dsde.feat_title_seal import TITLE_SEAL, TITLE_SEAL_RETOLD
 from dsde.feat_town_brackets import TOWN_BRACKET_PATCHES
-from dsde.feat_town_menu import TOWN_MENU_PATCHES
-from dsde.feat_walk import WALK_SPEED
-from dsde.patching import ARM_NOP, AsmPatch, CaveCode, DataPatch, Feature, Patch
+from dsde.feat_town_menu import TOWN_BACK_PATCHES, TOWN_MENU_PATCHES
+from dsde.feat_walk import NO_RAMP_SLOWDOWN, WALK_SPEED
+from dsde.patching import (
+    ARM_NOP,
+    AsmPatch,
+    CaveCode,
+    DataPatch,
+    Feature,
+    Glue,
+    Patch,
+    mixes,
+)
 
 # One battle mode, see docs/re-field-battle.md section 2.9. Mode flag 0x020B4848: 1 = Virtue (EXP).
 ONE_BATTLE_MODE = Feature(
@@ -264,6 +273,7 @@ BOSS_EXP = Feature(
 
 SKILL_ICONS = Feature("skill-icons", icon_patches())
 TOWN_MENU = Feature("town-menu-dpad", TOWN_MENU_PATCHES + TOWN_BRACKET_PATCHES)
+TOWN_MENU_BACK = Feature("town-menu-leave", TOWN_BACK_PATCHES)
 
 FEATURES: tuple[Feature, ...] = (
     NO_RUN_HP_COST,
@@ -296,16 +306,19 @@ FEATURES: tuple[Feature, ...] = (
     SKILL_ICONS,
     POISON_TURNS_FEATURE,
     WALK_SPEED,
+    NO_RAMP_SLOWDOWN,
     GAD_EXPRESS,
     MIC_SIGN,
     OPENING_FLAGS,
     OPENING,
     OPENING_TEXT,
-    TEXT_SPEED,
+    HOLD_A,
+    HOLD_B,
     EXPERIENCE_NAME,
     TITLE_SEAL,
     TITLE_SEAL_RETOLD,
     TOWN_MENU,
+    TOWN_MENU_BACK,
     FIELD_MENU,
     GUIDEBOOK,
     STILL_HUD,
@@ -326,6 +339,7 @@ FEATURES: tuple[Feature, ...] = (
 # dialogue or narration says anything different (UI labels for changed mechanics are in: guidebook, mic-sign,
 # experience-name). Retold: the Classic edition plus every wording change and the story features.
 CLASSIC_FEATURES: tuple[str, ...] = (
+    NO_RUN_HP_COST.name,
     TIMED_RUN.name,
     ONE_BATTLE_MODE.name,
     NO_VIRTUE_CLOCK.name,
@@ -354,13 +368,15 @@ CLASSIC_FEATURES: tuple[str, ...] = (
     SKILL_ICONS.name,  # a picture in each Special list box
     POISON_TURNS_FEATURE.name,  # poison wears off after 2 to 4 turns
     WALK_SPEED.name,
+    NO_RAMP_SLOWDOWN.name,
     GAD_EXPRESS.name,
     MIC_SIGN.name,
-    TEXT_SPEED.name,
-    OPENING_FLAGS.name,  # the vanilla intro, then the flags that send Jian straight to Lucia
+    HOLD_A.name,
+    HOLD_B.name,
     EXPERIENCE_NAME.name,
     TITLE_SEAL.name,
     TOWN_MENU.name,
+    TOWN_MENU_BACK.name,
     FIELD_MENU.name,
     GUIDEBOOK.name,
     STILL_HUD.name,
@@ -374,6 +390,9 @@ RETOLD_FEATURES: tuple[str, ...] = (
     CLASSIC_FEATURES
     + (
         TEXT_EDITS_FEATURE.name,
+        # The intro's flags that send Jian straight to Lucia change the story path: Retold only (Jeff,
+        # 2026-11-26); the Classic edition plays the original intro and path.
+        OPENING_FLAGS.name,
         OPENING.name,  # the walk-out and its flags: Retold only (Jeff, 2026-10-09: the Classic intro is vanilla)
         OPENING_TEXT.name,
         TITLE_SEAL_RETOLD.name,
@@ -388,12 +407,31 @@ DEFAULT_FEATURES = CLASSIC_FEATURES
 # Features that patch (or call) another feature's bytes, and so must be built after them.
 REQUIRES = MappingProxyType(
     {
-        OPENING.name: (TEXT_SPEED.name, OPENING_FLAGS.name),
+        TIMED_RUN.name: (NO_RUN_HP_COST.name,),
+        POCKETWATCH.name: (TIMED_RUN.name,),
+        OPENING.name: (OPENING_FLAGS.name,),
         OPENING_TEXT.name: (OPENING.name,),
         TITLE_SEAL_RETOLD.name: (TITLE_SEAL.name,),
         SKILLS_FEATURE.name: (MANUAL_TARGETING.name,),
         CARDS.name: (SKILLS_FEATURE.name,),
         BESTIARY.name: (CARDS.name,),
-        SKILL_ICONS.name: (SKILLS_FEATURE.name, MANUAL_TARGETING.name),
     }
 )
+# Patches built only with a certain mix of features (patching.Glue), after every chosen feature.
+GLUE: tuple[Glue, ...] = (
+    Glue(
+        Feature("skill-icons-card", card_icon_patches()),
+        any_of=(SKILL_ICONS.name,),
+        all_of=(CARDS.name,),
+    ),
+    *mixes(TEXT_SPEED_MIX, text_speed_hook),
+)
+
+
+def resolve(names: list[str]) -> list[Feature]:
+    """The named features in their order, then the glue their mix calls for."""
+    by_name = {f.name: f for f in FEATURES}
+    chosen = frozenset(names)
+    return [by_name[name] for name in names] + [
+        glue.feature for glue in GLUE if glue.wanted(chosen)
+    ]

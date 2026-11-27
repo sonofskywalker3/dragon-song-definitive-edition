@@ -501,9 +501,7 @@ def opening_flags_patches() -> tuple[DataPatch, ...]:
 
 
 OPENING_FLAGS = Feature("opening-flags", opening_flags_patches())
-# Retold edition: the walk-out and the flags (opening-run, after opening-flags and text-speed, the asides'
-# auto-close cave), then opening-text, which must come after opening-run.
-OPENING = Feature(
-    "opening-run", tuple(opening_patches())
-)  # needs text-speed (the auto-close cave)
+# Retold edition: the walk-out and the flags (opening-run, after opening-flags; the asides' auto-close check
+# comes with it in the text-speed hook, features.GLUE), then opening-text, which must come after opening-run.
+OPENING = Feature("opening-run", tuple(opening_patches()))
 OPENING_TEXT = Feature("opening-text", opening_text_patches())

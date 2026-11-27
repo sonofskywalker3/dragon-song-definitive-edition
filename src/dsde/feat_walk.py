@@ -21,7 +21,9 @@ WALK_STEP_LOAD_WORD = 0xE19010F1
 WALK_SLIDE_LOAD = 0x02025070  # ldrsh r2, [r0, r2]: y of the slide step (x in r3)
 WALK_SLIDE_LOAD_WORD = 0xE19020F2
 STEP_SHIFT = 1  # step += step >> 1: 1.5 times as fast
-SLOPE_SPEED_INDEX = 0x02024D88  # mov r6, r5 (r5 = 1): slope regions use speed table entry 1 (0.65)
+SLOPE_SPEED_INDEX = (
+    0x02024D88  # mov r6, r5 (r5 = 1): slope regions use speed table entry 1 (0.65)
+)
 SLOPE_SPEED_INDEX_WORD = 0xE1A06005
 
 WALK_SPEED = Feature(
@@ -63,6 +65,12 @@ WALK_SPEED = Feature(
             "bl ${cave_walk_slide}",
             "field slide step x1.5",
         ),
+    ),
+)
+
+NO_RAMP_SLOWDOWN = Feature(
+    "no-ramp-slowdown",
+    (
         AsmPatch(
             SLOPE_SPEED_INDEX,
             SLOPE_SPEED_INDEX + 4,

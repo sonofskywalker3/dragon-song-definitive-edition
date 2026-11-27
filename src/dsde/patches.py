@@ -3,7 +3,7 @@
 uv run python -m dsde.patches                      # Classic edition -> build/dsde.nds
 uv run python -m dsde.patches --edition retold     # Retold edition -> build/dsde-retold.nds
 uv run python -m dsde.patches --with party-chat    # an edition plus extra features
-uv run python -m dsde.patches timed-run walk-speed # exactly these features
+uv run python -m dsde.patches no-run-hp-cost timed-run walk-speed  # exactly these features
 """
 
 import argparse
@@ -14,7 +14,7 @@ import subprocess
 from pathlib import Path
 from types import MappingProxyType
 
-from dsde.features import EDITION_ALIASES, EDITIONS, FEATURES, REQUIRES
+from dsde.features import EDITION_ALIASES, EDITIONS, FEATURES, REQUIRES, resolve
 from dsde.patching import PatchError, apply_arm9, apply_data, build_itcm, layout_cave
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -50,7 +50,7 @@ def build(
                 or feature_names.index(needed) > feature_names.index(name)
             ):
                 raise PatchError(f"{name} needs {needed} built before it")
-    chosen = [wanted[name] for name in feature_names]
+    chosen = resolve(feature_names)
     mod_extract = output.parent / f"{output.stem}_extract"
     if mod_extract.exists():
         shutil.rmtree(mod_extract)

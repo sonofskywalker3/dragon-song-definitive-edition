@@ -1,0 +1,28 @@
+# Running with and without the timed dash (no-run-hp-cost alone, or with timed-run): Delrich Temple with its
+# enemies held away (the watch is open there), B held for 10 seconds back and forth. Logs Jian's HP (no drain
+# either way), the run state (player flags bits 5..12: stays 0 without timed-run; 1..90 dash, then cooldown
+# with it), and Jian's x every second (2 px a frame while running, walking speed during a cooldown).
+include boot_from_save
+include diag_ramp_warp6
+poke u32 0x020B6CB4 0x21C000
+poke u32 0x020B6CB8 0x159000
+wait 30
+watch u16 0x020B4668 jian_hp
+watch u32 0x020B6CF0 pflags
+peek u32 0x020B6CB4 x0
+press B,Left 60
+peek u32 0x020B6CB4 x1
+press B,Right 60
+peek u32 0x020B6CB4 x2
+press B,Left 60
+peek u32 0x020B6CB4 x3
+press B,Right 60
+peek u32 0x020B6CB4 x4
+press B,Left 60
+peek u32 0x020B6CB4 x5
+press B,Right 60
+peek u32 0x020B6CB4 x6
+press B,Left 60
+peek u32 0x020B6CB4 x7
+press B,Right 60
+peek u32 0x020B6CB4 x8

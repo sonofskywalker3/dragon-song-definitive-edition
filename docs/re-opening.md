@@ -8,7 +8,8 @@ text while he runs. Dialogue in the prototype is placeholder text (tone rules: d
 Now three features in `src/dsde/feat_opening.py` (docs/plan-two-editions.md, 2026-10-09; the editions are
 Classic and Retold, first named Engine and Story):
 
-- `opening-flags` (Classic edition): the vanilla intro unchanged; the 12 bytes at 0x63C4..0x63CF (the stop after
+- `opening-flags` (Retold edition since 2026-11-26, when Jeff moved it out of Classic because it changes the
+  story path; Classic was built with it before): the vanilla intro unchanged; the 12 bytes at 0x63C4..0x63CF (the stop after
   "Right then!" and the dead goto_map) become `set_flag 0xC`, `set_flag 0xD`, `stop`, so Lucia waits at Fountain
   Square (map 164's vanilla 0xD check) and Cherenkov and Jack say their vanilla lines for that state.
 

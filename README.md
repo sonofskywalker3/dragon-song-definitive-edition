@@ -105,8 +105,8 @@ Each release has two patches. Both have every change to the systems, battles, me
 differ only in what the characters say.
 
 - **Classic** (`Dragon Song Definitive Edition vX.Y.Z (Classic).bps`): the original story and dialogue, word
-  for word, and the original opening scene for scene, except that Lucia already waits at Fountain Square when
-  Jian wakes (no detour to find Jack first; Cherenkov and Jack can still be talked to). The only text changes
+  for word, and the original opening scene for scene. Classic no longer skips to Lucia: as in the original, she
+  waits at Fountain Square only after you have talked to Cherenkov and found Jack. The only text changes
   are name tags fixed to match the job menu, and the labels of changed controls and menus. Pick this if you liked the original's story or want
   to judge the gameplay fixes on their own.
 - **Retold** (`... (Retold).bps`): the Classic edition plus the rewrite: a new opening narration retranslated

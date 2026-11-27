@@ -8,6 +8,7 @@ import logging
 import string
 import struct
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -85,6 +86,39 @@ class Feature:
 
     name: str
     patches: tuple[Patch | AsmPatch | DataPatch | CaveCode, ...]
+
+
+@dataclass(frozen=True)
+class Glue:
+    """Patches built only with a certain mix of features: a part two features share, or what joins two.
+
+    Built when at least one of any_of, every one of all_of, and none of none_of is chosen. A hook two
+    features share is one Glue per mix (one, the other, both), each with its own version of the code.
+    """
+
+    feature: Feature
+    any_of: tuple[str, ...]
+    all_of: tuple[str, ...] = ()
+    none_of: tuple[str, ...] = ()
+
+    def wanted(self, chosen: frozenset[str]) -> bool:
+        return (
+            any(name in chosen for name in self.any_of)
+            and all(name in chosen for name in self.all_of)
+            and not any(name in chosen for name in self.none_of)
+        )
+
+
+def mixes(
+    names: tuple[str, ...], make: Callable[[frozenset[str]], Feature]
+) -> tuple[Glue, ...]:
+    """One Glue for every non-empty mix of names, its patches made by make(mix)."""
+    glue = []
+    for bits in range(1, 1 << len(names)):
+        mix = tuple(name for i, name in enumerate(names) if bits >> i & 1)
+        rest = tuple(name for name in names if name not in mix)
+        glue.append(Glue(make(frozenset(mix)), any_of=mix, all_of=mix, none_of=rest))
+    return tuple(glue)
 
 
 def byte_patches(arm9: bytes, edits: dict[int, int], note: str) -> tuple[Patch, ...]:

@@ -29,9 +29,6 @@ the design are in [docs/design.md](docs/design.md).
   and no longer pan the camera over to the statue and back.
 - **Healing statues work from any side.** Press A facing the statue from the front, either side, or behind it.
   The original only answered from in front of it.
-- **Lucia is at Fountain Square** as soon as Jian is up (both editions). The original only put her there after
-  you had talked to Cherenkov and then found Jack in his house, and nothing in the game points you to him.
-  Both can still be talked to.
 - **The Underground Tunnel save glitch is fixed.** Talking to Flora twice there no longer locks out saving.
 - **Town and world map menus work with the D-pad.** In a "Select place to go" menu, Up and Down pick a place,
   Left and Right switch tabs, and A goes there. Touch works as before, and the D-pad no longer drags the map
@@ -225,6 +222,9 @@ original's, scene for scene.
 - **A new wake-up.** Instead of Jian introducing himself to an empty room, Cherenkov shouts up the stairs to get
   him out of bed, and Jian walks out of the inn, his thoughts introducing him on the way. Each thought closes by
   itself as he reaches the next door.
+- **Lucia is at Fountain Square** as soon as Jian is up. The original only put her there after you had talked
+  to Cherenkov and then found Jack in his house, and nothing in the game points you to him. Both can still be
+  talked to. This changes the story's path, so it is Retold only; the Classic edition keeps the original's.
 - **Cherenkov's lobby line** points you to Fountain Square.
 - The Y-button think-aloud no longer opens with a stray "Anyway...".
 
@@ -258,6 +258,8 @@ published as Engine and Story; the names changed the same day.)
 - The battle speed is shown on a plank under the status bar.
 - B in a town menu selects "Leave town".
 - A battle ends the dash and refills the run gauge, instead of freezing both until the battle is over.
+- Classic plays the original intro path again: Lucia waits at Fountain Square only after Cherenkov and Jack, as
+  in the original. The shortcut is Retold only.
 
 ### v0.1.6 (2026-10-09)
 

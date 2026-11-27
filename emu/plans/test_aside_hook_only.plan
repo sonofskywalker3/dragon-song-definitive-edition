@@ -1,0 +1,19 @@
+# Opening asides close by themselves with no text speed switch on (the opening's own hook): New Game to the
+# bedroom, then no input; Jian must reach the town map (285) on his own.
+include view_bedroom
+wait 150
+shot an_1
+wait 150
+shot an_2
+wait 150
+shot an_3
+wait 150
+shot an_4
+wait 150
+shot an_5
+wait 150
+shot an_6
+wait 150
+shot an_7
+wait 150
+shot an_8

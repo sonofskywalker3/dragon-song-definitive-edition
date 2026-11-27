@@ -217,6 +217,7 @@ si_slots:
 
 
 def icon_patches() -> tuple:
+    """The images themselves: data only, so they need no other feature."""
     vanilla = decompress(_entries()[SPELL_IMAGES_ENTRY])
     return (
         DataPatch(
@@ -228,6 +229,12 @@ def icon_patches() -> tuple:
             "skill images on the item icons' palette, one for every listed spell",
             whole=True,
         ),
+    )
+
+
+def card_icon_patches() -> tuple:
+    """The card entry's image: built only with the cards feature, which puts the card entry in the list."""
+    return (
         CaveCode(
             "cave_skill_icon", COPY_ASM, "the card entry's image is its card's icon"
         ),

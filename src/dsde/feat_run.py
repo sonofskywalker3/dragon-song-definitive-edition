@@ -137,6 +137,7 @@ NO_RUN_HP_COST = Feature(
     ),
 )
 
+# The timed dash and cooldown: needs no-run-hp-cost built before it.
 TIMED_RUN = Feature(
     "timed-run",
     (
@@ -152,16 +153,11 @@ TIMED_RUN = Feature(
             "bl ${cave_run_battle}",
             "a battle ends the run",
         ),
-        Patch(
-            0x020251A8,
-            0x1A00001E,
-            0xEA00001E,
-            "bne -> b: skip the drain counter and 180-frame HP drain",
-        ),
+        # Built after no-run-hp-cost, which already skips the HP drain and turned this beq into a b.
         AsmPatch(
             0x02024BF8,
             0x02024C58,
-            0x0A000016,
+            0xEA000016,
             0xBAFFFFEA,
             TIMED_RUN_ASM_ENTRY,
             "load run state",
