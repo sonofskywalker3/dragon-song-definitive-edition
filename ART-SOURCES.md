@@ -81,7 +81,7 @@ changes each piece is linked so you can see what it does.
 | The "Bubble" icon for the Blue Dragon's summons in the target picker | [feat_targeting_names.py](src/dsde/feat_targeting_names.py) | one frame of the bubbles' battle sprite, recolored to the icon palette by the AI-written script |
 | The ring slot icon on the Status page, and its greyed copy | [feat_card_status.py](src/dsde/feat_card_status.py) | the game's Ring item icon, recolored to the menu palette by the AI-written script |
 | The flying stone of Stone Throw | [feat_skills_stone.py](src/dsde/feat_skills_stone.py) | the stone from Jian's unused throw animation, moved into its own sprite file by the AI-written script, unchanged |
-| The redone Adventure Guidebook pages: new text, headings, and heading pills | [feat_guidebook.py](src/dsde/feat_guidebook.py), [guidebook_font.py](src/dsde/guidebook_font.py) | letters cut from the guidebook's own pages by the AI-written script; a few letters (E F H N O T 3 j M) and the pills drawn in code by AI |
+| The redone Adventure Guidebook pages: new text, headings, and heading pills | [feat_guidebook.py](src/dsde/feat_guidebook.py), [guidebook_font.py](src/dsde/guidebook_font.py) | letters cut from the guidebook's own pages by the AI-written script; letters the pages never show (E F H N O T j M, and from 2026-11-26 V W I D G K, the digits 0 to 9, and %) and the pills drawn in code by AI ([guidebook_pages.py](src/dsde/guidebook_pages.py), HANDMADE) |
 | A job's title shown in red in Gad's job list | [feat_gad_jobs.py](src/dsde/feat_gad_jobs.py) | a red copy of the title text palette, made by the AI-written script |
 
 ## Contributing art

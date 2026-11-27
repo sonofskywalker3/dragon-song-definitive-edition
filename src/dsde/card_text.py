@@ -24,7 +24,7 @@ from dsde.cards_common import (
     FIRST_CARD,
     LAST_CARD,
 )
-from dsde.cards_data import BOOSTS, GAME_SPELLS
+from dsde.cards_data import GAME_SPELLS, active_boosts
 from dsde.feat_spell_levels import SCHEDULE
 from dsde.patching import CaveCode, DataPatch
 from dsde.skills_common import encode, hook
@@ -156,14 +156,16 @@ def _learns(member: int, spell: int) -> int | None:
 
 
 @cache
-def _power_ups() -> tuple[list[tuple[int, int, int, int]], list[bytes]]:
+def _power_ups(
+    poison_turns: bool = True,
+) -> tuple[list[tuple[int, int, int, int]], list[bytes]]:
     """(table entries, extra records): per card and member, the card's skills in their kit, highest first; the
     lowest shows from level index 0, so a member who will learn the skill sees it named before they do. A member
     without any of them sees "Powers up" and the card's first skill (Jeff, 2026-11-26: no member names)."""
     names = list(LINES)
     entries: list[tuple[int, int, int, int]] = []
     extra: list[bytes] = []
-    for card, spells in BOOSTS.items():
+    for card, spells in active_boosts(poison_turns).items():
         first_line = LINES[names[card - FIRST_CARD]][0]
         for member in range(CHARACTERS):
             kit = sorted(
@@ -196,7 +198,7 @@ def _vanilla() -> bytes:
     return decompress(read_archive(VANILLA_SYSMENUPACK.read_bytes())[DESCRIPTIONS])
 
 
-def _descriptions() -> bytes:
+def _descriptions(poison_turns: bool) -> bytes:
     if len(LINES) != LAST_CARD - FIRST_CARD + 1:
         raise ValueError("card text needs one entry per card")
     data = _vanilla()
@@ -204,7 +206,7 @@ def _descriptions() -> bytes:
     end_cards = start + len(LINES) * RECORD
     end_records = FIRST_RECORD + GAME_RECORDS * RECORD
     cards = b"".join(record(lines) for lines in LINES.values())
-    _, extra = _power_ups()
+    _, extra = _power_ups(poison_turns)
     return (
         data[:start]
         + cards
@@ -214,8 +216,8 @@ def _descriptions() -> bytes:
     )
 
 
-def _table_asm() -> str:
-    entries, _ = _power_ups()
+def _table_asm(poison_turns: bool) -> str:
+    entries, _ = _power_ups(poison_turns)
     rows = [f"    .byte {c}, {m}, {lv}, {k}" for c, m, lv, k in entries]
     return "\n".join(rows) + f"\n    .byte {TABLE_END}, 0, 0, 0"
 
@@ -275,8 +277,9 @@ ct_first_extra:
 """
 
 
-def card_text_patches() -> tuple[CaveCode | DataPatch, ...]:
-    entries, _ = _power_ups()
+def card_text_patches(poison_turns: bool = True) -> tuple[CaveCode | DataPatch, ...]:
+    """What each card says; the power-up lines follow cards_data.active_boosts, so this is glue on poison-turns."""
+    entries, _ = _power_ups(poison_turns)
     if len(entries) > TABLE_END:
         raise ValueError("too many power-up texts for the byte-sized table")
     return (
@@ -285,13 +288,13 @@ def card_text_patches() -> tuple[CaveCode | DataPatch, ...]:
             DESCRIPTIONS,
             0,
             _vanilla(),
-            _descriptions(),
+            _descriptions(poison_turns),
             "what each card does, and the skill it powers up for the member shown",
             whole=True,
         ),
         CaveCode(
             "cave_card_text_table",
-            _table_asm(),
+            _table_asm(poison_turns),
             "card text: which power-up line for which member",
         ),
         CaveCode(

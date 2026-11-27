@@ -24,7 +24,7 @@ Needs skills (the Special list, the learn levels, and the rules a card shares wi
 
 from dsde.card_text import card_text_patches
 from dsde.feat_card_bosses import boss_patches
-from dsde.feat_card_boost import boost_patches
+from dsde.feat_card_boost import boost_patches, boost_table_patch
 from dsde.feat_card_changes import change_patches
 from dsde.feat_card_drops import drop_patches
 from dsde.feat_card_equip import equip_patches, shared_equip_patches
@@ -35,7 +35,7 @@ from dsde.feat_card_slots import (
 )
 from dsde.feat_card_rules import rule_patches
 from dsde.feat_card_status import ring_icon_patches, status_patches
-from dsde.feat_card_targets import target_patches
+from dsde.feat_card_targets import learners_patch, target_patches
 from dsde.feat_card_use import use_patches
 from dsde.feat_ring_slot import listed_patches, ring_patches
 from dsde.patching import Feature
@@ -54,9 +54,21 @@ CARDS = Feature(
         *change_patches(),
         *boss_patches(),
         *drop_patches(),
-        *card_text_patches(),
     ),
 )
+POISON_TURNS_NAME = "poison-turns"
+
+
+def card_boosts(mix: frozenset[str]) -> Feature:
+    """The enhancing cards' table, who upgrades each card, and the card text, for whether poison-turns is chosen
+    (glue, features.GLUE)."""
+    poison = POISON_TURNS_NAME in mix
+    return Feature(
+        "card-boosts",
+        (boost_table_patch(poison), learners_patch(poison), *card_text_patches(poison)),
+    )
+
+
 RING_SLOT = Feature(
     RING_SLOT_NAME, (*ring_slot_patches(), *ring_icon_patches(), *ring_patches())
 )

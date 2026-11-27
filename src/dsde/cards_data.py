@@ -145,7 +145,9 @@ PAIRS: tuple[CardPair, ...] = (
     ),
     CardPair(
         TICK,
-        ((GABRYEL, HOWL),),  # Howl only (Jeff, 2026-11-26): Flora's Water Bind is not paired
+        (
+            (GABRYEL, HOWL),
+        ),  # Howl only (Jeff, 2026-11-26): Flora's Water Bind is not paired
         Target.ENEMY_ONE,
         Kind.STATUS,
         STATUS_PARALYSIS,
@@ -182,6 +184,18 @@ BOOSTS: dict[int, tuple[int, ...]] = {
     VITRA: (TENDER_RAIN,),
     BEALZEBUB: (FOCUS,),
 }
+
+
+def active_boosts(poison_turns: bool) -> dict[int, tuple[int, ...]]:
+    """The enhancing cards for a build. Without poison-turns no card enhances a poison skill: its strong poison
+    (10% a turn) would last the whole battle (Jeff, 2026-11-26), so Shreeker is then a plain card."""
+    return {
+        card: spells
+        for card, spells in BOOSTS.items()
+        if poison_turns or card != SHREEKER
+    }
+
+
 NAMIA_BASIC_REGEN = (
     5  # percent of max HP a turn: Divine Rain's, for a wearer who has not learned it
 )

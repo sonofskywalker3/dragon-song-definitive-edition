@@ -5,7 +5,8 @@ from types import MappingProxyType
 
 from dsde.boss_exp import boss_exp, check_tables
 from dsde.enemies import ENEMY_ROW_SIZE, ENEMY_TABLE, read_enemies
-from dsde.feat_cards import CARDS, RING_SLOT, SLOTS_MIX, slots_mix
+from dsde.feat_cards import CARDS, RING_SLOT, SLOTS_MIX, card_boosts, slots_mix
+from dsde.feat_skills_boost import STRONG_POISON_PATCHES
 from dsde.feat_bestiary import BESTIARY
 from dsde.feat_poison_turns import POISON_TURNS_FEATURE
 from dsde.feat_battle_end import (
@@ -43,7 +44,7 @@ from dsde.feat_opening import OPENING, OPENING_FLAGS, OPENING_TEXT
 from dsde.feat_party import LEAVE_DROPS_GEAR
 from dsde.feat_party_chat import PARTY_CHAT
 from dsde.feat_results import RESULT_SCREENS, SILVER_LINE
-from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN
+from dsde.feat_run import NO_RUN_HP_COST, POCKETWATCH, TIMED_RUN, watch_hand
 from dsde.feat_skill_icons import card_icon_patches, icon_patches
 from dsde.feat_skills import SKILLS_FEATURE
 from dsde.feat_spell_levels import SPELL_LEVELS_FEATURE
@@ -448,7 +449,18 @@ GLUE: tuple[Glue, ...] = (
         all_of=(CARDS.name,),
     ),
     *mixes(TEXT_SPEED_MIX, text_speed_hook),
+    Glue(
+        watch_hand,
+        any_of=(POCKETWATCH.name,),
+        uses=(NO_VIRTUE_CLOCK.name,),
+    ),
     *mixes(SLOTS_MIX, slots_mix),
+    Glue(card_boosts, any_of=(CARDS.name,), uses=(POISON_TURNS_FEATURE.name,)),
+    Glue(
+        Feature("strong-poison", STRONG_POISON_PATCHES),
+        any_of=(SKILLS_FEATURE.name,),
+        all_of=(POISON_TURNS_FEATURE.name,),
+    ),
     Glue(
         SILVER_LINE,
         any_of=(RESULT_SCREENS.name,),

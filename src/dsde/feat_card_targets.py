@@ -30,7 +30,15 @@ from dsde.cards_common import (
     ITEM_SIZE,
     ITEM_TABLE,
 )
-from dsde.cards_data import GAME_SPELLS, PAIRS, TICK, YETI, CardPair
+from dsde.cards_data import (
+    BOOSTS,
+    GAME_SPELLS,
+    PAIRS,
+    TICK,
+    YETI,
+    CardPair,
+    active_boosts,
+)
 from dsde.feat_spell_levels import SCHEDULE
 from dsde.patching import CaveCode
 from dsde.skills_cards import CARD_SPELL
@@ -202,8 +210,15 @@ def _records_asm(arm9: bytes) -> str:
     return _bytes_asm(records)
 
 
-def _learners_asm() -> str:
-    by_card = {pair.card: pair for pair in PAIRS}
+def _learners_asm(poison_turns: bool = True) -> str:
+    """Who upgrades each card: the members who learn its paired skill, and only for a card that enhances
+    (cards_data.active_boosts), so without poison-turns Shreeker stays a plain card for everyone."""
+    enhancing = active_boosts(poison_turns)
+    by_card = {
+        pair.card: pair
+        for pair in PAIRS
+        if pair.card not in BOOSTS or pair.card in enhancing
+    }
     rows = b"".join(
         learners(by_card.get(card)) for card in range(FIRST_CARD, FIRST_BOSS_CARD)
     )
@@ -530,7 +545,6 @@ def target_patches() -> tuple:
         CaveCode(
             "cave_card_records", _records_asm(arm9), "each card's targets and test"
         ),
-        CaveCode("cave_card_learners", _learners_asm(), "who upgrades each card"),
         CaveCode("cave_card_basic", BASIC_ASM, "a card's basic version by wearer"),
         CaveCode("cave_card_targets", TARGETS_ASM, "a card's targets by wearer"),
         CaveCode("cave_card_namia", NAMIA_ASM, "Namia's basic version: 5% regen"),
@@ -572,4 +586,11 @@ def target_patches() -> tuple:
             "bl ${cave_skill_pick}",
             "a one-enemy card uses the picked enemy",
         ),
+    )
+
+
+def learners_patch(poison_turns: bool) -> CaveCode:
+    """The learners table, which follows poison-turns (glue, feat_cards.card_boosts)."""
+    return CaveCode(
+        "cave_card_learners", _learners_asm(poison_turns), "who upgrades each card"
     )

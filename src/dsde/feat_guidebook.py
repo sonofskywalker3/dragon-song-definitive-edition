@@ -87,7 +87,7 @@ def _towns_top(mix: frozenset[str]) -> list[PanelText]:
         free = (
             "Once the pocketwatch closes, run freely."
             if POCKETWATCH in mix
-            else "Once no enemies are left, run freely."
+            else "Where no enemies are left, run freely."
         )
         out.append(
             PanelText(
@@ -175,7 +175,7 @@ def _fields_bottom(mix: frozenset[str]) -> list[PanelText]:
         refill = (
             ""
             if NO_CLEAR_REFILL in mix
-            else " Clearing an area also restores some HP and MP."
+            else " Clearing an area also restores 30% of HP and MP."
         )
         out.append(
             PanelText(
@@ -191,15 +191,14 @@ def _fields_bottom(mix: frozenset[str]) -> list[PanelText]:
             PanelText(
                 FIELDS_BOTTOM,
                 1,
-                "Clear a map of every monster in the Althena Conduct mode and check every box, and "
-                "the blue boxes will open.",
+                "Clear the map of all monsters in Virtue mode and check every box, and the blue "
+                "boxes will open.",
             )
         )
     return out
 
 
-# Oxford comma, lowercase "experience" (docs/style-rules.md). The font has only the letters of font(): no W,
-# V, I, D, G, or K capitals, and no digits but 3. Blue Chest panel: Jeff's wording, 2026-10-08.
+# Oxford comma, lowercase "experience" (docs/style-rules.md). Blue Chest panel: Jeff's wording, 2026-10-08.
 def panels(page: Page, mix: frozenset[str]) -> tuple[PanelText, ...]:
     """The panels of page rewritten for the chosen switches in mix (PAGE_USES[page])."""
     by_page = {

@@ -1,6 +1,6 @@
 """Field running (design 1): no HP cost, and a timed run with a cooldown. See docs/re-field-battle.md section 1."""
 
-from dsde.feat_watch import WATCH_OPEN_CAVE, pocketwatch
+from dsde.feat_watch import WATCH_OPEN_CAVE, hand_patch, pocketwatch
 from dsde.patching import AsmPatch, CaveCode, Feature, Patch
 
 # Field running, see docs/re-field-battle.md section 1. The run state lives in the player's
@@ -174,3 +174,12 @@ TIMED_RUN = Feature(
 )
 
 POCKETWATCH = pocketwatch(RUN_STATE, RUN_TICKS, COOLDOWN_TICKS)
+NO_VIRTUE_CLOCK_NAME = "no-virtue-clock"
+
+
+def watch_hand(mix: frozenset[str]) -> Feature:
+    """The pocketwatch's hand for whether no-virtue-clock is chosen (glue, features.GLUE)."""
+    tick = NO_VIRTUE_CLOCK_NAME not in mix
+    return Feature(
+        "pocketwatch-hand", hand_patch(RUN_STATE, RUN_TICKS, COOLDOWN_TICKS, tick)
+    )

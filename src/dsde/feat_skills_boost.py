@@ -252,13 +252,6 @@ BOOST_PATCHES: tuple[CaveCode | AsmPatch, ...] = (
         "bl ${cave_skill_status_exit}",
         "an enhanced status",
     ),
-    CaveCode("cave_skill_poison_rate", POISON_RATE_ASM, "a strong poison takes 10%"),
-    hook(
-        POISON_RATE_SITE,
-        POISON_RATE_WORD,
-        "bl ${cave_skill_poison_rate}",
-        "a strong poison takes 10%",
-    ),
     CaveCode("cave_skill_heal", HEAL_ASM, "an enhanced Tender Rain heals to full"),
     hook(
         HEAL_SITE,
@@ -281,5 +274,17 @@ BOOST_PATCHES: tuple[CaveCode | AsmPatch, ...] = (
         REGEN_WORD,
         "bl ${cave_skill_regen}",
         "an enhanced Divine Rain regen is 10%",
+    ),
+)
+
+# A strong poison takes 10% a turn only with poison-turns (glue, features.GLUE): without it poison lasts the battle,
+# and no card enhances a poison skill (cards_data.active_boosts).
+STRONG_POISON_PATCHES: tuple[CaveCode | AsmPatch, ...] = (
+    CaveCode("cave_skill_poison_rate", POISON_RATE_ASM, "a strong poison takes 10%"),
+    hook(
+        POISON_RATE_SITE,
+        POISON_RATE_WORD,
+        "bl ${cave_skill_poison_rate}",
+        "a strong poison takes 10%",
     ),
 )

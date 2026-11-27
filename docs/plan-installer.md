@@ -48,7 +48,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 |---|---|---|
 | 1 | No HP drain while running | no-run-hp-cost |
 | 2 | Timed dash with cooldown (needs 1) | timed-run (needs 1) |
-| 3 | Run gauge in the pocketwatch (needs 2) | pocketwatch (needs 2 and 6) |
+| 3 | Run gauge in the pocketwatch (needs 2) | pocketwatch (needs 2) |
 | 4 | Walking and running 50% faster | walk-speed |
 | 5 | No slowdown on ramps and stairs | no-ramp-slowdown |
 | 6 | Enemies return when you enter an area, not on a timer | restock-on-entry, no-virtue-clock |
@@ -62,7 +62,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 
 | # | Group | Switch | Feature |
 |---|---|---|---|
-| 12 | Menus and text | Select opens Save | menu-select-save |
+| 12 | Menus and text | Select opens Save | menu-select-save (needs 14) |
 | 13 | | Select leaves the menu from any screen | menu-select-exit |
 | 14 | | Faster menus (shorter waits, fades, and key repeat) | menu-speed |
 | 15 | | Hold A for fast text | text-hold-a |
@@ -94,7 +94,7 @@ builder reports any line that cannot be separated cleanly instead of forcing it.
 | 41 | | Special list icons for every spell and skill (off: the blank boxes). Needs nothing: the icons are data; only the card entry's icon hook needs 43, and the build's REQUIRES entry naming skills goes | skill-icons |
 | 42 | | Poison wears off after 2 to 4 turns | poison-turns |
 | 43 | Cards | Dragon ring slot: a ring slot for every member, and a ring's Dragon Magic for whoever wears it | ring-slot |
-| 44 | | Card system overhaul (tooltip, short: equip monster cards to use them in battle or power up skills; they recharge as you fight). The card slot, cards used from the Special list, power-ups, changed cards, boss passives and Morus's Steal, drops and recharge, and what each card does on the equip page; one switch (Jeff, 2026-11-26: too granular otherwise; nobody wants to equip a card without its text). Needs 40 | cards (needs 40 and 42) |
+| 44 | | Card system overhaul (tooltip, short: equip monster cards to use them in battle or power up skills; they recharge as you fight). The card slot, cards used from the Special list, power-ups, changed cards, boss passives and Morus's Steal, drops and recharge, and what each card does on the equip page; one switch (Jeff, 2026-11-26: too granular otherwise; nobody wants to equip a card without its text). Needs 40 | cards (needs 40) |
 | 45 | | The bestiary (the System list's Bestiary plank) (needs 44) | bestiary (needs 44) |
 | 46 | Fixes and extras | Gad's Express jobs grow with the journey | gad-express |
 | 47 | | Retold party chat on Y (default off; the original game's think-aloud is party chat too, so the name says which) | party-chat |
@@ -112,15 +112,19 @@ in the README's Story section; update it as the rewrite grows):
 
 **Found in the code (step 1 of the build, 2026-11-26).** The Feature column above is the split being built. What the
 code showed beyond the approved list, and what was done:
-- 3 needs 6: the watch hand's code replaces the Virtue clock's tick, so with the gauge on and 6 off, enemies would
-  come back neither on a timer nor on entry.
+- 3 does not need 6 (Jeff, 2026-11-26): the watch hand's code replaced the Virtue clock's tick, so with 6 off the
+  hand keeps the tick (feat_watch.CLOCK_TICK_ASM) and enemies still return on the timer.
+- 12 needs 14 (Jeff, 2026-11-26): without the faster menus the open-at-save shortcut sat black on the original
+  menu's waits.
 - 8 takes the statues' status cure and the dropped camera pan, which lived in mp-economy; Mental Gum at 1000 in
   shops goes with 38.
 - 23's Silver line reads 21's amount: the line is built only when 21 is on.
 - 26 to 30 read 25's speed setting, and 26's no wait for the sparkles reads 27's death timers: both live in a
   small shared piece built with any of 25 to 30. With 25 off the setting stays at Fast.
 - 17's pages each follow their own switch, so the guidebook never describes a rule that is off.
-- 44 needs 42 (section 4: no whole-battle poison at 10%).
+- 44 does not need 42 (Jeff, 2026-11-26): without poison-turns no card enhances a poison skill (Shreeker is a
+  plain card, cards_data.active_boosts) and the 10% strong poison is not built, so there is no whole-battle
+  poison at 10%.
 - 48 no longer needs 15 or 16: the opening's aside check gets its own hook when both are off.
 - Hooks two or three switches share (12 to 14; 15, 16, and the opening; 32 and 33; 43 and 44) are built in one
   version per mix of those switches (`patching.Glue`, `features.GLUE`).
@@ -130,8 +134,8 @@ code showed beyond the approved list, and what was done:
 From `features.REQUIRES` (build order) and what each change needs to make sense:
 - skills needs manual-targeting; cards needs skills; skill-icons needs nothing (its card hook is built only with
   cards).
-- The timed dash needs no HP drain; the run gauge needs the timed dash and enemies returning on entry (6).
-- Card enhancement of poison (10% a turn) needs poison-turns (Jeff: no whole-battle poison at 10%).
+- The timed dash needs no HP drain; the run gauge needs the timed dash.
+- Card enhancement of poison (10% a turn) is built only with poison-turns (Jeff: no whole-battle poison at 10%).
 - The opening's walk-out needs opening-flags.
 - In the window a switch whose need is off is greyed out with the reason; switching a need off switches its
   dependents off.

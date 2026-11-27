@@ -26,7 +26,7 @@ from dsde.cards_common import (
     FIRST_CARD,
     POINTS_PER_USE,
 )
-from dsde.cards_data import BOOSTS, GAME_SPELLS
+from dsde.cards_data import GAME_SPELLS, active_boosts
 from dsde.feat_skills_boost import (
     BOOST_LIMIT,
     NO_ACTOR,
@@ -78,11 +78,11 @@ def _all_targets(spell: int) -> bool:
     return bool(BY_SPELL[spell].target & ALL_TARGETS)
 
 
-def boost_table() -> bytes:
+def boost_table(poison_turns: bool = True) -> bytes:
     """Two bytes per spell id: the card that enhances it (card - FIRST_CARD, 0xFF for none) and the uses an
     enhanced cast takes."""
     rows = [(NO_CARD, 0)] * SPELL_COUNT
-    for card, spells in BOOSTS.items():
+    for card, spells in active_boosts(poison_turns).items():
         for spell in spells:
             uses = ALL_TARGET_USES if _all_targets(spell) else ONE_TARGET_USES
             rows[spell] = (card - FIRST_CARD, uses)
@@ -238,13 +238,17 @@ bn_buffer:
 """
 
 
+def boost_table_patch(poison_turns: bool) -> CaveCode:
+    """The enhancing cards' table, which depends on poison-turns (cards_data.active_boosts): glue."""
+    return CaveCode(
+        "cave_card_boosts",
+        f"    .byte {byte_list(boost_table(poison_turns))}\n    .align 2\n",
+        "the skills each card enhances",
+    )
+
+
 def boost_patches() -> tuple:
     return (
-        CaveCode(
-            "cave_card_boosts",
-            f"    .byte {byte_list(boost_table())}\n    .align 2\n",
-            "the skills each card enhances",
-        ),
         CaveCode("cave_card_boost_cost", COST_ASM, "an enhanced cast's points"),
         CaveCode("cave_card_boost_charge", CHARGE_ASM, "an enhanced cast takes points"),
         hook(

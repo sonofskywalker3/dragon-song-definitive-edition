@@ -66,7 +66,7 @@ SWITCHES: tuple[Switch, ...] = (
         "The pocketwatch is open while an area has enemies, and its hand shows the dash and the cooldown. It "
         "closes once every enemy in the area is beaten.",
         ("pocketwatch",),
-        needs=(2, 6),
+        needs=(2,),
     ),
     Switch(
         4,
@@ -132,6 +132,7 @@ SWITCHES: tuple[Switch, ...] = (
         "Select opens Save",
         "Select in the field opens the save screen directly.",
         ("menu-select-save",),
+        needs=(14,),
     ),
     Switch(
         13,
@@ -365,7 +366,7 @@ SWITCHES: tuple[Switch, ...] = (
         "Card system overhaul",
         "Equip monster cards to use them in battle or power up skills; they recharge as you fight.",
         ("cards",),
-        needs=(40, 42),
+        needs=(40,),
     ),
     Switch(
         45,
