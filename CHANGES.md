@@ -132,6 +132,19 @@ the design are in [docs/design.md](docs/design.md).
 - **Mental Gum restores 20 MP and Mental Drop 50 MP**, instead of a small share of max MP. Mental Gum costs 1000
   silver and is sold in every item shop from the third town on; Mental Drop is still a rare reward.
 
+## Cards and rings
+
+- **Every member has a ring slot and a card slot**, on the Item page's equip screen and on the Status page (which
+  now scrolls with Up and Down to show them). Old saves move a dragon ring worn as an accessory to the ring slot.
+- **Dragon Magic for whoever wears the ring.** A member wearing a dragon ring casts its spell from Special in their
+  own pose, with the ring's effect on the enemies. Jian no longer needs the ring in an accessory slot.
+- **Cards are used from Special**, not the Item command: the worn card shows in the list with its uses left, each
+  use takes 100 of its points and no MP, and a card at 0 points stays in the bag. The battle Item command opens
+  the item list directly.
+- **Cards follow the skill rules**: one stage per stat change, a 70% chance for sleep, paralysis, or stone, and a
+  pick that would change nothing is refused. See Skills for how a card enhances a matching skill.
+- **The bestiary** (the System list's Bestiary plank) shows the cards you have found, with each card's level.
+
 ## Skills
 
 Jian, Gabryel, Rufus, and Flora learn skills by level, in both editions. They are cast from Special for MP, like
@@ -246,6 +259,12 @@ published as Engine and Story; the names changed the same day.)
 
 ### v0.1.7 (not released yet)
 
+- **The card overhaul** (see Cards and rings, and Skills): a ring slot and a card slot for every member, Dragon
+  Magic for whoever wears the ring, cards used from Special for points and recharged by fighting, cards that
+  enhance matching skills, boss cards with passives, Steal, and the bestiary.
+- **A third download, the custom installer**: a web page that builds the patch from a list of switches, so you can
+  keep the fixes and leave out the battle changes you do not want. It runs in your browser; the ROM never leaves
+  your computer. Retold's party chat on Y is one of its switches (off by default).
 - Skills learned by level for Jian, Gabryel, Rufus, and Flora, in both editions (see Skills). Jian's Stone
   Throw uses his throwing animation and Gabryel's Savage Rush her double claw, both in the original game but
   never used.
