@@ -227,9 +227,10 @@ two paths (same leaf twice). The DSDE note marks lines the `party-chat` seed res
   and set matrix 6 to vanilla's pulse (scale 0x1000 + sin(phase) / 8, phase += 0x800 per frame:
   func_0201ace4(*0x020AFF50, 6, scale, 0, 0)); otherwise flags 0x8000 (no matrix: still) and phase 0.
   The Menu note and the portrait keep matrix 5, which still-hud holds at scale 1, so only the figures
-  move. The pick runs every field frame (about 110 table rows; ITCM code).
-- **Cost:** ITCM 3.2 KB (code 0.7 KB, table 2.5 KB), of the about 17 KB free; script 018 grows by the
-  new chats' code and text.
+  move. The pick runs every field frame (about 110 table rows; code in the main RAM block).
+- **Cost:** 3.2 KB of the main RAM block (code 0.7 KB, table 2.5 KB; docs/plan-memory.md). It was ITCM until
+  2026-11-27, when the full release had grown too big for both to fit. Script 018 grows by the new chats' code
+  and text.
 
 ## 6. How to add a chat
 
@@ -269,7 +270,7 @@ Chat(
 - Read marks: appending keeps the marks in existing saves; inserting a chat in the middle shifts the marks
   of the chats after it (they bounce again once; harmless).
 - Limits: 249 read flags, 99 taken by the vanilla lines, so 150 new chats (4 used now: the two
-  examples and the two placeholders). Choices have their own 28 flags (section 9). Each table row costs 12 bytes plus 2 per flag (plus 2 per flag kind) of ITCM;
+  examples and the two placeholders). Choices have their own 28 flags (section 9). Each table row costs 12 bytes plus 2 per flag (plus 2 per flag kind) of the main RAM block;
   about 14 KB is left. One row per map range of a place.
 
 ## 7. Confirmed and uncertain

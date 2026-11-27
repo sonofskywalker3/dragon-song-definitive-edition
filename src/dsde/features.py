@@ -52,6 +52,7 @@ from dsde.feat_statue import STATUE_ANY_SIDE
 from dsde.feat_targeting import MANUAL_TARGETING
 from dsde.feat_text import TEXT_EDITS_FEATURE, TEXT_FIXES
 from dsde.feat_text_speed import HOLD_A, HOLD_B, TEXT_SPEED_MIX, text_speed_hook
+from dsde.feat_main_ram import main_ram_boot, uses_main_ram
 from dsde.feat_title_seal import TITLE_SEAL, TITLE_SEAL_RETOLD
 from dsde.feat_town_brackets import TOWN_BRACKET_PATCHES
 from dsde.feat_town_menu import TOWN_BACK_PATCHES, TOWN_MENU_PATCHES
@@ -496,6 +497,11 @@ GLUE: tuple[Glue, ...] = (
     *mixes(MENU_KEYS_MIX, menu_keys_hook),
     *mixes(FLOOR_MIX, menu_floor),
     *mixes(END_MIX, end_hook),
+    # Last: the boot step of the main RAM block, with any feature that has cave code there.
+    Glue(
+        main_ram_boot(),
+        any_of=tuple(f.name for f in FEATURES if uses_main_ram(f)),
+    ),
 )
 
 

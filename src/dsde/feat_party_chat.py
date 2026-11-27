@@ -11,7 +11,7 @@ docs/re-party-chat.md has the research and the table format. Three hooks:
   matrix 6 and pulse like vanilla's figures (scale 1 + sin / 8, 32 frames); otherwise they are drawn
   without a matrix and stand still. Works with or without still-hud (which stills matrix 5).
 
-The entry table is in ITCM (halfwords): per entry [length, map lo, map hi, read flag, code / 4, chain
+The entry table and the chat code are in the main RAM block (docs/plan-memory.md); the table is halfwords: per entry [length, map lo, map hi, read flag, code / 4, chain
 bit], then clauses [kind << 12 | count, flags...]; a zero length ends it. The chats' code and text are
 appended to script 018 after the messages text-edits moves there (same bytes, as feat_opening does).
 """
@@ -330,20 +330,28 @@ def party_chat_patches() -> tuple[DataPatch | CaveCode | AsmPatch, ...]:
             "cave_chat_select",
             SELECT_ASM,
             "party chat: pick the entry for this map and these flags",
+            main=True,
         ),
         CaveCode(
-            "cave_chat_start", START_ASM, "party chat: start 018 at the chosen entry"
+            "cave_chat_start",
+            START_ASM,
+            "party chat: start 018 at the chosen entry",
+            main=True,
         ),
         CaveCode(
             "cave_chat_frame",
             FRAME_ASM,
             "party chat: figures bounce for an unread chat",
+            main=True,
         ),
-        CaveCode("cave_chat_phase", "    .word 0", "party chat: bounce phase"),
+        CaveCode(
+            "cave_chat_phase", "    .word 0", "party chat: bounce phase", main=True
+        ),
         CaveCode(
             "cave_chat_table",
             table + "\n    .align 2",
             f"party chat: {len(rows)} entries",
+            main=True,
         ),
         _hook(
             HINT_START_FIELD,

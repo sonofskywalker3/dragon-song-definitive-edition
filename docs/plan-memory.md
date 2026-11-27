@@ -1,6 +1,7 @@
 # Room for new code and new text
 
-Status: research done, waiting for Jeff's yes before building (2026-11-26).
+Status: approved by Jeff (2026-11-27) and built: party chat runs from the main RAM block (section 4). Real
+hardware not yet tested.
 
 ## Short answer
 
@@ -90,8 +91,10 @@ is the one to test, with saving, sleep and wake, and a soft reset.
   the return address) to a few instructions in ITCM that write the data cache back (the game's own routine at
   0x02004AF8 cleans it all), drain the write buffer (0x02004BA4), and clear the instruction cache, then return.
   That runs once, at boot. Block sizes stay multiples of 4, as the copy loop moves whole words.
-- **Fencing it off.** The main area's end pointer still says 0x023C0000, so the game could in theory hand out the
-  gap. It never does, but the same boot hook sets the end to 0x02340540 (0x027FFDC4), so nothing ever can.
+- **Not fenced off.** The main area's end pointer still says 0x023C0000. Lowering it to the heap's end was
+  considered and dropped: the game reloads it from one `mov r0, #0x23C0000` (0x02004DE4), and 0x02340540 cannot
+  be written as one ARM immediate. Nothing takes memory from the area after main's one 2 MB take (the only call
+  of func_02004c18), so the fence would only guard against code that does not exist.
 - **Speed.** Code in main RAM runs slower than in ITCM (it goes through the cache). Per-frame hooks that run in
   every frame of a battle stay in ITCM; bulky code and data that runs now and then moves out.
 - **Tried:** a Retold build with a 256-byte test block added this way (config.yaml `unknown_autoloads:` with
@@ -161,9 +164,9 @@ offset, so this is a contained change).
 
 Item and card descriptions are sysmenupack 058 (26,276 bytes) and 057 (20,644). They load into the heap when the
 menu opens (the field menu's low point was 712 KB free). Their strings are found through 16-bit offsets
-from the string start, so the text can grow to about 64 KB, 2.4 times 058's. Memory is not a limit, but the
-drawing code may be: a description draw path uses a fixed 61-byte stride (0x0205D5DC passes 0x3D to the
-`mla` at 0x02066C70). Trace what it indexes before making descriptions longer.
+from the string start, so the text can grow to about 64 KB, 2.4 times 058's. Memory is not a limit; the box is:
+the equip page draws a description as two lines of 30 from a fixed 61-byte record (docs/plan-cards.md 7.7;
+0x0205D5DC passes 0x3D to the `mla` at 0x02066C70).
 
 ### 2.3 Menu, battle, shop, and item words (the program's own tables)
 
@@ -191,3 +194,22 @@ linker.py, and the installer change; move party chat there; build and check part
 both editions, in the emulator, then once on the 3DS. Text needs nothing now. Before the full Retold rewrite: make the text tool
 rebuild each script's text instead of appending, and measure the largest boss fights; the string tables move
 when their words grow.
+
+## 4. Built (2026-11-27)
+
+- **Two caves.** `CaveCode(..., main=True)` puts a block in the main RAM block (patching.MAIN_CAVE 0x02340600 to
+  MAIN_END 0x02370000) instead of ITCM; layout_cave lays out each region in feature order, build_main makes the
+  block, and patches.add_main_autoload writes arm9/main.bin, main.yaml (`kind: !Unknown 2`), and the config's
+  `unknown_autoloads` entry. A build with no main cave is unchanged: the Retold build is byte for byte the same
+  ROM as before.
+- **Boot step** (feat_main_ram.py, glue `main-ram-boot`, built with any feature that has a main cave): the
+  autoload-done `bx lr` at 0x02000A10 becomes `b cave_main_sync` (ITCM, 28 bytes), which cleans the data cache
+  (func_02004af8), drains the write buffer (func_02004ba4), and clears the instruction cache.
+- **Party chat** moved there whole: selection, start, figure pulse, phase word, and the 108-entry table, 3,188
+  bytes. Retold and Classic, each with party chat, build with the full release; ITCM ends at 0x01FFFDEC (Retold).
+- **Emulator** (both editions with party chat): chat_room_searis (room hint, the icon stops at 0x8000; Fountain
+  Square chat with its YES/NO question; Classic keeps the vanilla "Anyway..." wording), chat_choice_yes (flag word
+  0x48 = 0x10, saved), chat_choice_reload on that save (word 0x48 = 0x10 loaded, "Next time, set two alarms...").
+  The plan's later peeks predate choices and stop mid-chat.
+- **Installer**: see docs/plan-installer.md section 5; the install equals the dsd build in both editions.
+- **Still to do**: the 3DS (boot, a chat, save, sleep and wake, soft reset).

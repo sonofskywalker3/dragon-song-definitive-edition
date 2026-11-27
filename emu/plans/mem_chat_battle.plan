@@ -1,0 +1,17 @@
+# Party chat from the main RAM block, then a battle (docs/plan-memory.md 4); run with --save on a party-chat build.
+include boot_from_save
+wait 60
+press Y 3
+wait 150
+shot mcb_chat
+press A 3
+wait 60
+press A 3
+wait 60
+heap after_chat
+include cheats_strong
+include warp6
+heapwatch
+include battle_auto
+heapmin battle
+shot mcb_after

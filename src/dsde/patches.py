@@ -15,7 +15,15 @@ from pathlib import Path
 from types import MappingProxyType
 
 from dsde.features import EDITION_ALIASES, EDITIONS, FEATURES, REQUIRES, resolve
-from dsde.patching import PatchError, apply_arm9, apply_data, build_itcm, layout_cave
+from dsde.patching import (
+    MAIN_CAVE,
+    PatchError,
+    apply_arm9,
+    apply_data,
+    build_itcm,
+    build_main,
+    layout_cave,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 EXTRACT = PROJECT_ROOT / "extract"
@@ -31,6 +39,9 @@ EDITION_OUTPUTS = MappingProxyType(
 # Your own DS ARM7 BIOS dump (16 KB). With it dsd encrypts the secure area and writes its checksum
 # (header 0x6C); without it the checksum stays 0, which emulators ignore and real hardware may not.
 ARM7_BIOS = PROJECT_ROOT / "tools" / "bios7.bin"
+# The main RAM cave is the arm9's third autoload, after ITCM and DTCM (docs/plan-memory.md)
+MAIN_AUTOLOAD_INDEX = 2
+OVERLAYS_LINE = "arm9_overlays: null"
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +79,7 @@ def build(
     itcm_yaml.write_text(
         re.sub(r"code_size: \d+", f"code_size: {len(itcm)}", itcm_yaml.read_text())
     )
+    add_main_autoload(mod_extract, build_main(chosen, symbols))
     apply_data(mod_extract / "files", chosen)
     config = mod_extract / "config.yaml"
     command = [str(DSD), "rom", "build", "-c", str(config), "-o", str(output)]
@@ -81,6 +93,28 @@ def build(
     subprocess.run(command, check=True)
     logger.info("built %s with %s", output, ", ".join(feature_names) or "no features")
     return output
+
+
+def add_main_autoload(mod_extract: Path, block: bytes) -> None:
+    """List the main RAM block in the dsd config as the third autoload (nothing to do when it is empty)."""
+    if not block:
+        return
+    (mod_extract / "arm9" / "main.bin").write_bytes(block)
+    (mod_extract / "arm9" / "main.yaml").write_text(
+        f"base_address: {MAIN_CAVE}\ncode_size: {len(block)}\nbss_size: 0\n"
+        f"kind: !Unknown {MAIN_AUTOLOAD_INDEX}\n"
+    )
+    config = mod_extract / "config.yaml"
+    text = config.read_text()
+    if text.count(OVERLAYS_LINE) != 1:
+        raise PatchError(f"config.yaml has no single {OVERLAYS_LINE!r} line")
+    config.write_text(
+        text.replace(
+            OVERLAYS_LINE,
+            f"unknown_autoloads:\n- index: {MAIN_AUTOLOAD_INDEX}\n  bin: arm9/main.bin\n"
+            f"  config: arm9/main.yaml\n{OVERLAYS_LINE}",
+        )
+    )
 
 
 def main() -> None:

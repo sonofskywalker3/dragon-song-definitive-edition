@@ -20,8 +20,10 @@ from dsde.bps import create as bps_create
 from dsde.installer_switches import ALWAYS, defaults, feature_names
 from dsde.linker import (
     ITCM_BASE,
+    MAIN_CAVE,
     LinkError,
     build_itcm,
+    build_main,
     choose,
     patch_archives,
     patch_arm9,
@@ -68,6 +70,10 @@ def install(rom_bytes: bytes, names: list[str], pack: dict) -> bytes:
     if address != ITCM_BASE:
         raise LinkError("the first autoload is not the ITCM")
     rom.autoloads[0] = (address, build_itcm(itcm, linked), bss)
+    block = build_main(linked)
+    if block:
+        # the main RAM block is the third autoload, after ITCM and DTCM (patches.add_main_autoload)
+        rom.autoloads.append((MAIN_CAVE, block, 0))
     archives = {
         name[: -len(ARCHIVE_SUFFIX)]: file(rom, name)
         for name in rom.names

@@ -176,7 +176,12 @@ def piece(feature: Feature, glue: Glue | None, any_of, all_of=(), none_of=()) ->
         if isinstance(patch, CaveCode):
             assembled, relocs = find_relocs(patch.asm, None)
             caves.append(
-                {"label": patch.label, "code": _b64(assembled), "relocs": relocs}
+                {
+                    "label": patch.label,
+                    "code": _b64(assembled),
+                    "relocs": relocs,
+                    "main": patch.main,
+                }
             )
         elif isinstance(patch, AsmPatch):
             assembled, relocs = find_relocs(patch.asm, patch.addr)

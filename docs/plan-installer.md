@@ -161,6 +161,10 @@ From `features.REQUIRES` (build order) and what each change needs to make sense:
   switch mixes give the same arm9, ITCM, and archive entries as the build pipeline; installer-built ROMs boot and
   battle in the emulator (defaults, a mixed set, everything off); the page in Chrome builds the same ROM
   (same SHA-1) in about 5 seconds.
+- **Main RAM caves** (2026-11-27, docs/plan-memory.md): a cave can live in the main RAM block, the arm9's third
+  autoload (pack caves carry `"main": true`; `linker.build_main`; the installer appends the autoload). With party
+  chat on, the install equals the dsd build in both editions (whole file, same SHA-1), and 400 random switch
+  mixes, most with the block in use, give the same arm9, ITCM, and main block as the build pipeline.
 
 ## 6. Questions for Jeff, one at a time
 

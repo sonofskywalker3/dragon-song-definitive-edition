@@ -24,6 +24,11 @@ WORD = 4
 ITCM_BASE = 0x01FF8000
 ITCM_CAVE = 0x01FF8300
 ITCM_END = 0x02000000
+# Code too big for ITCM goes in main RAM between the end of the game's fixed 2 MB heap (0x02340540) and
+# 0x02370000, where one nds-bootstrap mode parks its own code; a third autoload copies it there at boot
+# (docs/plan-memory.md).
+MAIN_CAVE = 0x02340600
+MAIN_END = 0x02370000
 LAYOUT_PLACEHOLDER = ITCM_CAVE
 
 logger = logging.getLogger(__name__)
@@ -73,11 +78,12 @@ class DataPatch:
 
 @dataclass(frozen=True)
 class CaveCode:
-    """New ARM code placed in ITCM. Other asm refers to it as ${label}."""
+    """New ARM code placed in ITCM, or in main RAM with main=True. Other asm refers to it as ${label}."""
 
     label: str
     asm: str
     note: str
+    main: bool = False
 
 
 @dataclass(frozen=True)
@@ -153,32 +159,49 @@ def substitute(asm: str, symbols: dict[str, int]) -> str:
 
 
 def layout_cave(features: list[Feature]) -> dict[str, int]:
-    """Give every CaveCode block an ITCM address (4-byte aligned, in feature order)."""
+    """Give every CaveCode block an address (4-byte aligned, in feature order): ITCM, or main RAM if main."""
     caves = _caves(features)
     placeholder = {c.label: LAYOUT_PLACEHOLDER for c in caves}
     symbols: dict[str, int] = {}
-    addr = ITCM_CAVE
+    ends = {False: ITCM_CAVE, True: MAIN_CAVE}
     for cave in caves:
         if cave.label in symbols:
             raise PatchError(f"cave label {cave.label} is used twice")
+        addr = ends[cave.main]
         symbols[cave.label] = addr
         addr += len(assemble(substitute(cave.asm, placeholder), addr))
-        addr = (addr + 3) & ~3
-    if addr > ITCM_END:
-        raise PatchError(f"cave code overflows ITCM by {addr - ITCM_END} bytes")
+        ends[cave.main] = (addr + 3) & ~3
+    if ends[False] > ITCM_END:
+        raise PatchError(f"cave code overflows ITCM by {ends[False] - ITCM_END} bytes")
+    if ends[True] > MAIN_END:
+        raise PatchError(
+            f"cave code overflows the main RAM block by {ends[True] - MAIN_END} bytes"
+        )
     return symbols
 
 
 def build_itcm(itcm: bytes, features: list[Feature], symbols: dict[str, int]) -> bytes:
-    """Return itcm.bin with every CaveCode block assembled at its address."""
-    caves = _caves(features)
+    """Return itcm.bin with every ITCM CaveCode block assembled at its address."""
+    caves = [cave for cave in _caves(features) if not cave.main]
     if not caves:
         return itcm
     image = bytearray(itcm) + bytearray(ITCM_CAVE - ITCM_BASE - len(itcm))
+    return _place(image, ITCM_BASE, caves, symbols)
+
+
+def build_main(features: list[Feature], symbols: dict[str, int]) -> bytes:
+    """The main RAM block (loaded at MAIN_CAVE), or nothing when no CaveCode is main."""
+    caves = [cave for cave in _caves(features) if cave.main]
+    return _place(bytearray(), MAIN_CAVE, caves, symbols) if caves else b""
+
+
+def _place(
+    image: bytearray, base: int, caves: list[CaveCode], symbols: dict[str, int]
+) -> bytes:
     for cave in caves:
         addr = symbols[cave.label]
         code = assemble(substitute(cave.asm, symbols), addr)
-        offset = addr - ITCM_BASE
+        offset = addr - base
         image += bytearray(offset - len(image))
         image[offset : offset + len(code)] = code
         logger.info(

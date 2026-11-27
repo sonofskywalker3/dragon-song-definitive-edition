@@ -24,6 +24,10 @@ ARM9_BASE = 0x02000000
 ITCM_BASE = 0x01FF8000
 ITCM_CAVE = 0x01FF8300
 ITCM_END = 0x02000000
+MAIN_CAVE = (
+    0x02340600  # the main RAM block, the arm9's third autoload (patching.MAIN_CAVE)
+)
+MAIN_END = 0x02370000
 WORD = 4
 ARM_PC_AHEAD = 8
 BRANCH_OFFSET_MASK = 0x00FFFFFF
@@ -54,6 +58,7 @@ class Cave:
     label: str
     code: bytes
     relocs: tuple[Reloc, ...]
+    main: bool = False  # in the main RAM block instead of ITCM
 
 
 @dataclass(frozen=True)
@@ -133,7 +138,12 @@ def pieces_from_pack(pack: dict) -> list[Piece]:
                 all_of=tuple(raw["all_of"]),
                 none_of=tuple(raw["none_of"]),
                 caves=tuple(
-                    Cave(c["label"], base64.b64decode(c["code"]), _relocs(c["relocs"]))
+                    Cave(
+                        c["label"],
+                        base64.b64decode(c["code"]),
+                        _relocs(c["relocs"]),
+                        c.get("main", False),
+                    )
                     for c in raw["caves"]
                 ),
                 code=tuple(
@@ -180,21 +190,24 @@ def choose(pieces: list[Piece], names: list[str]) -> Linked:
 
 
 def layout(pieces: list[Piece]) -> dict[str, int]:
-    """Give every cave an ITCM address, 4-byte aligned, in piece order (patching.layout_cave)."""
+    """Give every cave an address, 4-byte aligned, in piece order: ITCM, or the main RAM block for a main
+    cave (patching.layout_cave)."""
     symbols: dict[str, int] = {}
-    addr = ITCM_CAVE
+    ends = {False: ITCM_CAVE, True: MAIN_CAVE}
     for piece in pieces:
         for cave in piece.caves:
             if cave.label in symbols:
                 raise LinkError(f"cave label {cave.label} is used twice")
+            addr = ends[cave.main]
             symbols[cave.label] = addr
             addr += len(cave.code)
-            addr = (addr + WORD - 1) & ~(WORD - 1)
-    if addr > ITCM_END:
+            ends[cave.main] = (addr + WORD - 1) & ~(WORD - 1)
+    over = max(ends[False] - ITCM_END, ends[True] - MAIN_END)
+    if over > 0:
         raise LinkError(
-            f"These changes do not all fit: together they need {addr - ITCM_END} bytes more of the DS's fast "
-            "code memory than there is. Switch one or more of the larger ones off (Retold party chat, the card "
-            "system, skills, or the bestiary)."
+            f"These changes do not all fit: together they need {over} bytes more of the DS's code memory "
+            "than there is. Switch one or more of the larger ones off (the card system, skills, or the "
+            "bestiary)."
         )
     return symbols
 
@@ -255,15 +268,27 @@ def patch_arm9(arm9: bytearray, linked: Linked) -> None:
 
 
 def build_itcm(itcm: bytes, linked: Linked) -> bytes:
-    """itcm.bin with every cave placed at its address (patching.build_itcm)."""
-    caves = [cave for piece in linked.pieces for cave in piece.caves]
+    """itcm.bin with every ITCM cave placed at its address (patching.build_itcm)."""
+    caves = [c for piece in linked.pieces for c in piece.caves if not c.main]
     if not caves:
         return itcm
     image = bytearray(itcm) + bytearray(ITCM_CAVE - ITCM_BASE - len(itcm))
+    return _place(image, ITCM_BASE, caves, linked.symbols)
+
+
+def build_main(linked: Linked) -> bytes:
+    """The main RAM block, loaded at MAIN_CAVE, or nothing without main caves (patching.build_main)."""
+    caves = [c for piece in linked.pieces for c in piece.caves if c.main]
+    return _place(bytearray(), MAIN_CAVE, caves, linked.symbols) if caves else b""
+
+
+def _place(
+    image: bytearray, base: int, caves: list[Cave], symbols: dict[str, int]
+) -> bytes:
     for cave in caves:
-        addr = linked.symbols[cave.label]
-        code = relocate(cave.code, addr, cave.relocs, linked.symbols)
-        offset = addr - ITCM_BASE
+        addr = symbols[cave.label]
+        code = relocate(cave.code, addr, cave.relocs, symbols)
+        offset = addr - base
         image += bytearray(offset - len(image))
         image[offset : offset + len(code)] = code
     return bytes(image + bytearray(-len(image) % WORD))

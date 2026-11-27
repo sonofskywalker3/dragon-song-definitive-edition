@@ -208,6 +208,9 @@ original ROM, secure area checksum 0x1413 included.
 
 Hardware notes: nds-bootstrap (TWiLight Menu++ on a DSi or 3DS) only puts code in ITCM for a few DSiWare
 titles and has no fix patch for this game (ALNE), so our ITCM cave at 0x01FF8300 does not collide with it.
+Code that does not fit in ITCM (party chat) goes in a block of main RAM the game never uses, 0x02340600 up to
+0x02370000, copied there at boot as a third autoload ([docs/plan-memory.md](docs/plan-memory.md)). It stops
+below 0x02370000, where nds-bootstrap's B4DS mode (DS flash carts) stages its own code during startup.
 The patched ROM runs on a 3DS with TWiLight Menu++.
 
 ## Layout of the game
