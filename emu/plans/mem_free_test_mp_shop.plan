@@ -1,0 +1,38 @@
+# Free main RAM check around test_mp_shop.plan (docs/plan-memory.md). Run with --save.
+include boot_from_save
+fill 0x02340600 0x3FA00 0xA5
+heapwatch
+pin u16 0x020B77EC 0xBA
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+peek u16 0x020B6BE4 map
+poke u32 0x020B4824 5000
+shot sh_town
+poke u16 0x020B7838 3
+poke u32 0x020B0010 0x68
+wait 120
+shot sh_open
+press A 8
+wait 60
+shot sh_buy
+peek u8 0x0213BA45 gum_before
+press Right 8
+wait 30
+shot sh_gum
+press A 8
+wait 60
+shot sh_qty
+press A 8
+wait 60
+shot sh_confirm
+press A 8
+wait 90
+shot sh_bought
+peek u32 0x020B4824 silver_after
+peek u8 0x0213BA45 gum_after
+changed 0x02340600 0x3FA00 0xA5 after
+heapmin after

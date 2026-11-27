@@ -17,6 +17,11 @@
 --   unpin                        drop all pins
 --   trace ADDR LABEL             log CPU registers whenever ADDR is written
 --   find HEXBYTES LABEL          log every main RAM address where the byte pattern occurs
+--   fill ADDR LEN BYTE           fill main RAM ADDR..ADDR+LEN with BYTE
+--   changed ADDR LEN BYTE LABEL  log the ranges of ADDR..ADDR+LEN that no longer hold BYTE
+--   heap LABEL                   log OS heap 0: free bytes, largest free block, used bytes
+--   heapwatch / heapmin LABEL    track heap 0's lowest free and smallest largest block every frame;
+--                                heapmin logs them and starts over
 --   speed PERCENT                emulation speed (default 800)
 --   include NAME                 run emu/plans/NAME.plan (same folder as the plan) inline
 --   execpoke ADDR KIND TARGET VALUE   whenever the CPU executes ADDR, write VALUE to TARGET first
@@ -111,6 +116,46 @@ local writers = {
 	u32 = function(a, v) memory.write_u32_le(a, v, BUS) end,
 }
 
+-- OS heap 0 (the game's 2 MB main heap): the heap info sits at the main arena's start, 0x02140500
+-- ({current, count, start, end, descs}); a desc is {size, free list, allocated list}, a cell {prev, next, size}.
+local HEAP_INFO = 0x02140500
+local heapmeter = nil -- per-frame low-water marks (see `heapwatch`)
+
+local function heap_stats()
+	local desc = memory.read_u32_le(HEAP_INFO + 0x10, BUS)
+	local free_total, largest, cells = 0, 0, 0
+	local cell = memory.read_u32_le(desc + 4, BUS)
+	while valid_ptr(cell) and cells < 4096 do
+		local size = memory.read_s32_le(cell + 8, BUS)
+		free_total = free_total + size
+		if size > largest then
+			largest = size
+		end
+		cells = cells + 1
+		cell = memory.read_u32_le(cell + 4, BUS)
+	end
+	local used, blocks = 0, 0
+	cell = memory.read_u32_le(desc + 8, BUS)
+	while valid_ptr(cell) and blocks < 8192 do
+		used = used + memory.read_s32_le(cell + 8, BUS)
+		blocks = blocks + 1
+		cell = memory.read_u32_le(cell + 4, BUS)
+	end
+	return free_total, largest, cells, used, blocks
+end
+
+local function heap_frame()
+	local free_total, largest = heap_stats()
+	if free_total < heapmeter.free then
+		heapmeter.free = free_total
+		heapmeter.free_frame = frame
+	end
+	if largest < heapmeter.largest then
+		heapmeter.largest = largest
+		heapmeter.largest_frame = frame
+	end
+end
+
 local function step(input, analog)
 	local merged = {}
 	for b, v in pairs(held) do
@@ -140,6 +185,9 @@ local function step(input, analog)
 	frame = frame + 1
 	if rec then
 		rec_frame()
+	end
+	if heapmeter then
+		heap_frame()
 	end
 	for _, w in ipairs(watches) do
 		local v = readers[w.kind](w.addr)
@@ -243,6 +291,51 @@ for line in io.lines(path) do
 			end
 		end
 		say("find " .. (words[3] or words[2]) .. " " .. table.concat(hits, " "))
+	elseif cmd == "fill" then
+		-- fill main RAM ADDR..ADDR+LEN with one byte value (to see later whether anything wrote there)
+		local base = tonumber(words[2]) - 0x02000000
+		local len = tonumber(words[3])
+		local value = tonumber(words[4])
+		local bytes = {}
+		for i = 1, len do
+			bytes[i] = value
+		end
+		memory.write_bytes_as_array(base, bytes, "Main RAM")
+		say(string.format("fill %08X +%X = %02X", base + 0x02000000, len, value))
+	elseif cmd == "changed" then
+		-- log the ranges of ADDR..ADDR+LEN that no longer hold the fill byte VALUE
+		local base = tonumber(words[2]) - 0x02000000
+		local len = tonumber(words[3])
+		local value = tonumber(words[4])
+		local ram = memory.read_bytes_as_array(base, len, "Main RAM")
+		local ranges = {}
+		local total = 0
+		local start = nil
+		for i = 1, len + 1 do
+			local diff = i <= len and ram[i] ~= value
+			if diff then
+				total = total + 1
+				if start == nil then
+					start = i
+				end
+			elseif start ~= nil then
+				ranges[#ranges + 1] = string.format("%08X+%X", 0x02000000 + base + start - 1, i - start)
+				start = nil
+			end
+		end
+		local shown = {}
+		for i = 1, math.min(#ranges, 40) do
+			shown[i] = ranges[i]
+		end
+		say(string.format("changed %s %d bytes in %d ranges: %s", words[5] or "", total, #ranges, table.concat(shown, " ")))
+	elseif cmd == "heap" then
+		local free_total, largest, cells, used, blocks = heap_stats()
+		say(string.format("heap %s free %d (largest %d, %d free cells) used %d in %d blocks", words[2] or "", free_total, largest, cells, used, blocks))
+	elseif cmd == "heapwatch" then
+		heapmeter = { free = math.huge, largest = math.huge, free_frame = frame, largest_frame = frame }
+	elseif cmd == "heapmin" then
+		say(string.format("heapmin %s lowest free %d (frame %d), smallest largest block %d (frame %d)", words[2] or "", heapmeter.free, heapmeter.free_frame, heapmeter.largest, heapmeter.largest_frame))
+		heapmeter = { free = math.huge, largest = math.huge, free_frame = frame, largest_frame = frame }
 	elseif cmd == "trace" then
 		-- log CPU registers on every write to ADDR
 		local label = words[3] or words[2]

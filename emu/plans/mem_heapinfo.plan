@@ -1,0 +1,2 @@
+include boot_from_save
+dump 0x02140500 0x40 heapinfo

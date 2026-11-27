@@ -1,0 +1,39 @@
+# Free main RAM check around test_gad_accept.plan (docs/plan-memory.md). Run with --save.
+include boot_from_save
+fill 0x02340600 0x3FA00 0xA5
+heapwatch
+pin u16 0x020B77EC 0x9A
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+poke u8 0x020B4871 1
+poke u8 0x20B486A 1
+poke u8 0x20B486B 1
+dump 0x020B486A 8 unlocks
+exec 0x0206CEE8 fee_store
+poke u16 0x020B7838 0
+poke u32 0x020B0010 0x68
+wait 120
+press A 8
+wait 60
+dump 0x02139E28 0x90 offers
+shot go_list
+press Down 8
+wait 20
+press Down 8
+wait 20
+press Down 8
+wait 20
+shot ga_pick
+press A 8
+wait 60
+shot ga_confirm
+press A 8
+wait 90
+shot ga_taken
+dump 0x020B4858 12 current_job
+changed 0x02340600 0x3FA00 0xA5 after
+heapmin after

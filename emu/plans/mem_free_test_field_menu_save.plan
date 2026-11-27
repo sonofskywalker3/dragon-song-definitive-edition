@@ -1,0 +1,22 @@
+# Free main RAM check around test_field_menu_save.plan (docs/plan-memory.md). Run with --save.
+include boot_from_save
+fill 0x02340600 0x3FA00 0xA5
+heapwatch
+wait 250
+watch u32 0x020B0010 state
+press Select 3
+wait 100
+press A 3
+wait 40
+shot fsave_1
+press A 3
+wait 60
+shot fsave_2
+press A 3
+wait 120
+shot fsave_3
+press A 3
+wait 60
+shot fsave_4
+changed 0x02340600 0x3FA00 0xA5 after
+heapmin after

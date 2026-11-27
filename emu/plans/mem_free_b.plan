@@ -1,0 +1,5 @@
+# Free main RAM check from power-on: fill 0x02340600..0x0237FFFF, play the title, the opening, and the intro to Jian's room (docs/plan-memory.md)
+fill 0x02340600 0x3FA00 0xA5
+include boot_to_field
+changed 0x02340600 0x3FA00 0xA5 after_intro
+peek u32 0x027FFDA0 arena0_lo

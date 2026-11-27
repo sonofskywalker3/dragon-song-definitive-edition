@@ -1,0 +1,54 @@
+# Free main RAM check (docs/plan-memory.md): after loading a save, fill 0x02340600..0x0237FFFF with 0xA5,
+# then play the field menu, a battle, map changes, and a scripted boss fight, checking after each which
+# bytes of the range anything wrote. Run with --save.
+include boot_from_save
+peek u32 0x027FFDA0 arena0_lo
+peek u32 0x027FFDC4 arena0_hi
+peek u32 0x027FFDA8 arena2_lo
+peek u32 0x027FFDCC arena2_hi
+changed 0x02340000 0x40000 0 nonzero_at_boot
+fill 0x02340600 0x3FA00 0xA5
+heap field_start
+heapwatch
+wait 250
+press X 3
+wait 10
+wait 20
+wait 60
+press A 3
+wait 60
+press B 3
+wait 60
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Right 3
+wait 30
+press Down 3
+wait 30
+press Down 3
+wait 30
+press B 3
+wait 90
+wait 60
+changed 0x02340600 0x3FA00 0xA5 after_menu
+heapmin after_menu
+include cheats_strong
+include warp6
+include battle_auto
+changed 0x02340600 0x3FA00 0xA5 after_battle
+heapmin after_battle
+pin u16 0x020B77EC 5
+press Right 40
+press Down,Right 40
+press Right 40
+press Down 80
+wait 200
+unpin
+changed 0x02340600 0x3FA00 0xA5 after_map_change
+heapmin after_map_change

@@ -1,0 +1,4 @@
+include boot_from_save
+dump 0x02340A00 0x10 block
+peek u32 0x027FFDA0 arena0_lo
+shot t3_field

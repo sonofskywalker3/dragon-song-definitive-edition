@@ -1,0 +1,14 @@
+# Does the map script stay loaded through a battle? (docs/plan-memory.md) ctx = [0x020B4640] = 0x02204620 after this save loads.
+include boot_from_save
+peek u32 0x020B4640 ctx
+watch u32 0x020B4640 ctx
+watch u32 0x022048B4 script_buf
+watch u16 0x022048B8 script_id
+heap before
+include cheats_strong
+include warp6
+heap temple
+watch u16 0x020B85C0 battle_mode
+wait 400
+heap in_battle
+peek u32 0x022048B4 script_buf_in_battle
