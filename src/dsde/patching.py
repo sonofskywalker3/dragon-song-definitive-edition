@@ -94,12 +94,21 @@ class Glue:
 
     Built when at least one of any_of, every one of all_of, and none of none_of is chosen. A hook two
     features share is one Glue per mix (one, the other, both), each with its own version of the code.
+    feature may instead be a function of the features in `uses` that are chosen (data that describes
+    them, such as a guidebook page): it is called with those, so it has one result per mix of `uses`.
     """
 
-    feature: Feature
+    feature: Feature | Callable[[frozenset[str]], Feature]
     any_of: tuple[str, ...]
     all_of: tuple[str, ...] = ()
     none_of: tuple[str, ...] = ()
+    uses: tuple[str, ...] = ()
+
+    def build(self, chosen: frozenset[str]) -> Feature:
+        """The patches for this mix of chosen features."""
+        if isinstance(self.feature, Feature):
+            return self.feature
+        return self.feature(frozenset(name for name in self.uses if name in chosen))
 
     def wanted(self, chosen: frozenset[str]) -> bool:
         return (

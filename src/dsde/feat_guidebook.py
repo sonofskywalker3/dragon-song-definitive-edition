@@ -9,6 +9,7 @@ its text. Pictures, icons, and unchanged panels stay as they are.
 """
 
 from dataclasses import dataclass
+from functools import cache
 
 from dsde.guidebook_font import WIDTH, Glyph, Picture, font, line_top
 from dsde.guidebook_pages import (
@@ -50,52 +51,164 @@ class PanelText:
     heading: str | None = None
 
 
-# Oxford comma, lowercase "experience" (docs/style-rules.md). Blue Chest panel: Jeff's wording, 2026-10-08.
-PANELS = (
-    PanelText(
-        TOWNS_TOP,
-        0,
-        "Press the B Button to dash for about 3 seconds, then catch your breath. Running costs no HP. "
-        "Once the pocketwatch closes, run freely.",
+# The switches a page describes (features.py names). Each page is glue built from the ones chosen
+# (features.GLUE), so the guidebook never describes a rule that is off; a panel whose rules are all off keeps the
+# original text.
+NO_RUN_HP_COST = "no-run-hp-cost"
+TIMED_RUN = "timed-run"
+POCKETWATCH = "pocketwatch"
+STATUE_ANY_SIDE = "statue-any-side"
+MENU_SELECT_SAVE = "menu-select-save"
+ONE_BATTLE_MODE = "one-battle-mode"
+SILVER_DROPS = "silver-drops"
+BATTLE_SPEED = "battle-speed"
+HOLD_LR_TO_RUN = "hold-lr-to-run"
+RESTOCK_ON_ENTRY = "restock-on-entry"
+NO_VIRTUE_CLOCK = "no-virtue-clock"
+BOSS_EXP = "boss-exp"
+NO_CLEAR_REFILL = "no-clear-refill"
+PAGE_USES: dict[Page, tuple[str, ...]] = {
+    TOWNS_TOP: (NO_RUN_HP_COST, TIMED_RUN, POCKETWATCH, STATUE_ANY_SIDE),
+    TOWNS_BOTTOM: (MENU_SELECT_SAVE,),
+    FIELDS_TOP: (ONE_BATTLE_MODE, BOSS_EXP, SILVER_DROPS, BATTLE_SPEED, HOLD_LR_TO_RUN),
+    FIELDS_BOTTOM: (
+        RESTOCK_ON_ENTRY,
+        NO_VIRTUE_CLOCK,
+        ONE_BATTLE_MODE,
+        NO_CLEAR_REFILL,
     ),
-    PanelText(
-        TOWNS_TOP,
-        1,
-        "Althena Statues can be seen in many places. Press the A Button beside one to fully heal and cure.",
-    ),
-    PanelText(
-        TOWNS_BOTTOM,
-        0,
-        "save. Or press Select to jump straight to saving. You can save up to 3 games.",
-        first=6,
-    ),
-    PanelText(
-        FIELDS_TOP,
-        0,
-        "Every battle gives experience, items, and silver.",
-        heading="Battles",
-    ),
-    PanelText(
-        FIELDS_TOP,
-        1,
-        "Tap R in battle to cycle Fast (the default), Faster, and Normal. Hold L+R to run away. "
-        "The mic is ignored.",
-        heading="Speed",
-    ),
-    PanelText(
-        FIELDS_BOTTOM,
-        0,
-        "Beaten enemies stay gone until you leave the area and come back.",
-        heading="Enemies",
-    ),
-    PanelText(
-        FIELDS_BOTTOM,
-        1,
-        "Blue chests remain locked until every monster in the area is killed. Monster count is tracked "
-        "below the pocketwatch.",
-        heading="Blue Chest",
-    ),
-)
+}
+SPEED_TEXT = "Tap R in battle to cycle Fast (the default), Faster, and Normal."
+
+
+def _towns_top(mix: frozenset[str]) -> list[PanelText]:
+    out = []
+    if TIMED_RUN in mix:
+        free = (
+            "Once the pocketwatch closes, run freely."
+            if POCKETWATCH in mix
+            else "Once no enemies are left, run freely."
+        )
+        out.append(
+            PanelText(
+                TOWNS_TOP,
+                0,
+                "Press the B Button to dash for about 3 seconds, then catch your breath. "
+                f"Running costs no HP. {free}",
+            )
+        )
+    elif NO_RUN_HP_COST in mix:
+        out.append(
+            PanelText(
+                TOWNS_TOP,
+                0,
+                "Hold the B Button when moving to run. Running costs no HP.",
+            )
+        )
+    if STATUE_ANY_SIDE in mix:
+        out.append(
+            PanelText(
+                TOWNS_TOP,
+                1,
+                "Althena Statues can be seen in many places. Press the A Button beside one to fully "
+                "heal and cure.",
+            )
+        )
+    return out
+
+
+def _towns_bottom(mix: frozenset[str]) -> list[PanelText]:
+    if MENU_SELECT_SAVE not in mix:
+        return []
+    return [
+        PanelText(
+            TOWNS_BOTTOM,
+            0,
+            "save. Or press Select to jump straight to saving. You can save up to 3 games.",
+            first=6,
+        )
+    ]
+
+
+def _fields_top(mix: frozenset[str]) -> list[PanelText]:
+    # With the two battle modes, both panels explain them, as in the original.
+    if ONE_BATTLE_MODE not in mix:
+        return []
+    rewards = (
+        "experience, items, and silver"
+        if SILVER_DROPS in mix
+        else "experience and items"
+    )
+    which = "Every battle" if BOSS_EXP in mix else "Every battle but a boss fight"
+    battles = PanelText(FIELDS_TOP, 0, f"{which} gives {rewards}.", heading="Battles")
+    if BATTLE_SPEED in mix:
+        run = (
+            "Hold L+R to run away. The mic is ignored."
+            if HOLD_LR_TO_RUN in mix
+            else "Blow into the mic to run away."
+        )
+        return [
+            battles,
+            PanelText(FIELDS_TOP, 1, f"{SPEED_TEXT} {run}", heading="Speed"),
+        ]
+    run = (
+        "Hold L+R in battle to run away. The mic is ignored."
+        if HOLD_LR_TO_RUN in mix
+        else "Blow into the mic in battle to run away."
+    )
+    return [battles, PanelText(FIELDS_TOP, 1, run, heading="Running")]
+
+
+def _fields_bottom(mix: frozenset[str]) -> list[PanelText]:
+    out = []
+    # Both halves of the rule: no return on the clock, a return on entry.
+    if RESTOCK_ON_ENTRY in mix and NO_VIRTUE_CLOCK in mix:
+        out.append(
+            PanelText(
+                FIELDS_BOTTOM,
+                0,
+                "Beaten enemies stay gone until you leave the area and come back.",
+                heading="Enemies",
+            )
+        )
+    if ONE_BATTLE_MODE in mix:
+        refill = (
+            ""
+            if NO_CLEAR_REFILL in mix
+            else " Clearing an area also restores some HP and MP."
+        )
+        out.append(
+            PanelText(
+                FIELDS_BOTTOM,
+                1,
+                "Blue chests remain locked until every monster in the area is killed. Monster count "
+                f"is tracked below the pocketwatch.{refill}",
+                heading="Blue Chest",
+            )
+        )
+    elif NO_CLEAR_REFILL in mix:
+        out.append(
+            PanelText(
+                FIELDS_BOTTOM,
+                1,
+                "Clear a map of every monster in the Althena Conduct mode and check every box, and "
+                "the blue boxes will open.",
+            )
+        )
+    return out
+
+
+# Oxford comma, lowercase "experience" (docs/style-rules.md). The font has only the letters of font(): no W,
+# V, I, D, G, or K capitals, and no digits but 3. Blue Chest panel: Jeff's wording, 2026-10-08.
+def panels(page: Page, mix: frozenset[str]) -> tuple[PanelText, ...]:
+    """The panels of page rewritten for the chosen switches in mix (PAGE_USES[page])."""
+    by_page = {
+        TOWNS_TOP: _towns_top,
+        TOWNS_BOTTOM: _towns_bottom,
+        FIELDS_TOP: _fields_top,
+        FIELDS_BOTTOM: _fields_bottom,
+    }
+    return tuple(by_page[page](mix))
 
 
 def text_width(glyphs: dict[str, Glyph], text: str) -> int:
@@ -270,14 +383,12 @@ OUTLINE = 2  # outline thickness
 OUTLINE_REACH = 5  # squared distance the outline reaches: a rounded 2-pixel ring
 
 
-def redraw(page: Page, background_page: Page) -> bytes:
-    """A page with its PANELS redrawn; background_page has the same frame with short headings."""
+def redraw(page: Page, background_page: Page, texts: tuple[PanelText, ...]) -> bytes:
+    """A page with texts redrawn; background_page has the same frame with short headings."""
     glyphs = font()
     canvas = Canvas(Picture(page))
     background = Picture(background_page)
-    for text in PANELS:
-        if text.page != page:
-            continue
+    for text in texts:
         lines = wrap(glyphs, text)
         for slot in range(text.first, page.slots):
             _wipe_line(canvas, page, text.panel, slot)
@@ -303,21 +414,20 @@ BACKGROUNDS = {  # page -> a page with the same frame whose headings are short
 }
 
 
-def guidebook_patches() -> tuple[DataPatch, ...]:
-    patches = []
-    for page in (TOWNS_TOP, TOWNS_BOTTOM, FIELDS_TOP, FIELDS_BOTTOM):
-        old = bytes(Picture(page).pixels)
-        patches.append(
-            DataPatch(
-                ARCHIVE,
-                page.picture,
-                0,
-                old,
-                redraw(page, BACKGROUNDS[page]),
-                "guidebook page",
-            )
-        )
-    return tuple(patches)
+@cache
+def guidebook_page(page: Page, mix: frozenset[str]) -> Feature:
+    """One page redrawn for the chosen switches in mix; no patch when none of its panels changes."""
+    name = f"guidebook-{page.picture:#x}"
+    texts = panels(page, mix)
+    if not texts:
+        return Feature(name, ())
+    old = bytes(Picture(page).pixels)
+    new = redraw(page, BACKGROUNDS[page], texts)
+    return Feature(
+        name, (DataPatch(ARCHIVE, page.picture, 0, old, new, "guidebook page"),)
+    )
 
 
-GUIDEBOOK = Feature("guidebook", guidebook_patches())
+# The switch; its pages are glue (features.GLUE), each built from the switches it describes.
+GUIDEBOOK = Feature("guidebook", ())
+GUIDEBOOK_PAGES = (TOWNS_TOP, TOWNS_BOTTOM, FIELDS_TOP, FIELDS_BOTTOM)

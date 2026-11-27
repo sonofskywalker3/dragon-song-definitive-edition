@@ -27,7 +27,9 @@ from dsde.feat_enemy_speed import ENEMY_SPELL_SPEED, ENEMY_SPRITE_SPEED
 from dsde.feat_experience_name import EXPERIENCE_NAME
 from dsde.feat_field_menu import FLOOR_MIX, MENU_SPEED_FEATURE, menu_floor
 from dsde.feat_gad import GAD_EXPRESS
-from dsde.feat_guidebook import GUIDEBOOK
+from functools import partial
+
+from dsde.feat_guidebook import GUIDEBOOK, GUIDEBOOK_PAGES, PAGE_USES, guidebook_page
 from dsde.feat_hud import STILL_HUD
 from dsde.feat_mic_sign import MIC_SIGN
 from dsde.feat_menu_shortcuts import (
@@ -449,6 +451,15 @@ GLUE: tuple[Glue, ...] = (
         any_of=(RESULT_SCREENS.name,),
         all_of=(SILVER_DROPS.name,),
     ),
+    # The guidebook's pages, each drawn for the switches it describes.
+    *(
+        Glue(
+            partial(guidebook_page, page),
+            any_of=(GUIDEBOOK.name,),
+            uses=PAGE_USES[page],
+        )
+        for page in GUIDEBOOK_PAGES
+    ),
     # The battle speed setting and the death timers, read by more than one feature.
     Glue(
         Feature("battle-speed-state", (SPEED_STATE,)),
@@ -478,5 +489,5 @@ def resolve(names: list[str]) -> list[Feature]:
     by_name = {f.name: f for f in FEATURES}
     chosen = frozenset(names)
     return [by_name[name] for name in names] + [
-        glue.feature for glue in GLUE if glue.wanted(chosen)
+        glue.build(chosen) for glue in GLUE if glue.wanted(chosen)
     ]
