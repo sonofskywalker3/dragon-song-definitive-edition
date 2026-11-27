@@ -1005,7 +1005,7 @@ differs between the editions). 86 matched their last verified run outright. The 
 - **Different from an old run, as the docs record them now**: `test_card_equip_poke` (11.2: ATK +2, DEF +4, INT +5,
   Inferno castable, MP 10 to 0), `test_card_equip_menu` and `test_card_equip_move` (their old runs were on builds
   without cards), `test_card_recharge` (the Thanatos card arrives on the first win, 11.17),
-  `test_skill_gabryel_list` (Savage Rush first, 18), `test_card_boss_drop` (no points watch for a boss card).
+  `test_skill_gabryel_list` (Savage Rush listed, docs/plan-weapon-break.md 18), `test_card_boss_drop` (no points watch for a boss card).
   `test_card_status` and `test_card_slot_battle` differ only in a menu state's timing; the shots and slots agree.
 - **No earlier run, checked against the plan's own expectations**: the seven basic `test_card_pair_*` (the 11.8
   table), `test_skill_feral_ally`, `test_skill_rally`, `test_skill_rally_next_battle`, `test_skill_rufus_orders`,
