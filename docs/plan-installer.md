@@ -170,4 +170,7 @@ From `features.REQUIRES` (build order) and what each change needs to make sense:
 
 1. Platform and license (section 2).
 2. The switch list (section 3): which splits matter enough to build before the release.
-3. Where it ships: GitHub releases beside the two patches, and the README's "Which patch to pick".
+3. Where it ships: answered (Jeff, 2026-11-28): the installer is the release, alone; no more patches. Its page
+   offers Classic (the default), Retold (labeled in progress, with a report of its story, dialogue, and route
+   changes so far, `installer_switches.RETOLD_REPORT`), and Custom (the switches).
+   `uv run python -m dsde.installer_web --release X.Y.Z` writes the release file.

@@ -35,13 +35,24 @@
   button.main:disabled { background: #9db3cf; cursor: default; }
   button.plain { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
   footer { color: var(--muted); font-size: 0.85rem; margin-top: 32px; }
+  .choice { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 12px; margin: 8px 0; cursor: pointer; background: #fff; }
+  .choice.picked { border-color: var(--accent); background: #f5f8fd; }
+  .choice input { margin-top: 5px; width: 18px; height: 18px; flex: none; }
+  .choice .what { color: var(--muted); font-size: 0.95rem; }
+  .badge { display: inline-block; font-size: 0.75rem; font-weight: bold; color: #8a4b00; background: #fff1d6;
+    border: 1px solid #f0c36d; border-radius: 10px; padding: 0 8px; margin-left: 6px; vertical-align: 2px; }
+  .report { display: block; margin: 8px 0 0; padding: 10px 14px; background: #fbfaf5; border-left: 3px solid #f0c36d; font-size: 0.93rem; }
+  .report h3 { font-size: 0.95rem; margin: 8px 0 2px; }
+  .report ul { margin: 0; padding-left: 20px; }
+  #custom-box[hidden], #report[hidden] { display: none; }
 </style>
 </head>
 <body>
 <main>
   <h1>Dragon Song: Definitive Edition</h1>
-  <p class="lead">Build your own patch: pick the changes you want, and this page patches your copy of Lunar: Dragon Song.
-    Your ROM never leaves your computer.</p>
+  <p class="lead">This page patches your own copy of Lunar: Dragon Song. Pick Classic, Retold, or your own mix of
+    changes. Your ROM never leaves your computer.</p>
 
   <div class="step">
     <strong>1. Your ROM</strong> (Lunar: Dragon Song, USA, SHA-1 <code id="want-sha"></code>)<br>
@@ -50,12 +61,26 @@
   </div>
 
   <div class="step">
-    <div class="bar">
-      <strong>2. The changes</strong>
-      <button class="plain" id="defaults">Back to the defaults</button>
-      <button class="plain" id="none">Switch everything off</button>
+    <strong>2. Which version</strong>
+    <label class="choice picked" id="pick-classic"><input type="radio" name="edition" value="classic" checked>
+      <span><strong>Classic</strong> (recommended)<br><span class="what">Every gameplay, battle, menu, and pacing
+      change, with the original story and dialogue word for word.</span></span></label>
+    <label class="choice" id="pick-retold"><input type="radio" name="edition" value="retold">
+      <span><strong>Retold</strong><span class="badge">IN PROGRESS</span><br><span class="what">Classic plus the
+      story rewrite, which has only just begun: most of the game still has the original dialogue.</span><br>
+      <button class="plain" type="button" id="show-report" style="margin-top:6px">What has changed so far</button>
+      <span class="report" id="report" hidden></span></span></label>
+    <label class="choice" id="pick-custom"><input type="radio" name="edition" value="custom">
+      <span><strong>Custom</strong><br><span class="what">Pick each change yourself, for example to keep the fixes
+      and leave out the new card system.</span></span></label>
+    <div id="custom-box" hidden>
+      <div class="bar" style="margin-top:12px">
+        <button class="plain" id="from-classic">Start from Classic</button>
+        <button class="plain" id="from-retold">Start from Retold</button>
+        <button class="plain" id="none">Switch everything off</button>
+      </div>
+      <div id="switches"></div>
     </div>
-    <div id="switches"></div>
   </div>
 
   <div class="step">
@@ -78,9 +103,13 @@ const PACK_B64 = "@@PACK@@";
 const MODULES = @@MODULES@@;
 const SWITCHES = @@SWITCHES@@;
 const ROM_SHA1 = "@@ROM_SHA1@@";
+const EDITIONS = @@EDITIONS@@;
+const REPORT = @@REPORT@@;
+const NAMES = { classic: "Classic", retold: "Retold, in progress", custom: "custom" };
 
 const byNumber = new Map(SWITCHES.map(s => [s.number, s]));
-const on = new Set(SWITCHES.filter(s => s.default).map(s => s.number));
+const on = new Set(EDITIONS.classic);
+let edition = "classic";
 let romBytes = null;
 let selection = 0;  // bumped on every file choice, so a slower earlier check never wins
 
@@ -149,10 +178,38 @@ function active() {
   return [...result].sort((a, b) => a - b);
 }
 
-document.getElementById("defaults").addEventListener("click", () => {
-  on.clear(); for (const s of SWITCHES) if (s.default) on.add(s.number); render();
-});
+function startFrom(name) { on.clear(); for (const n of EDITIONS[name]) on.add(n); render(); }
+document.getElementById("from-classic").addEventListener("click", () => startFrom("classic"));
+document.getElementById("from-retold").addEventListener("click", () => startFrom("retold"));
 document.getElementById("none").addEventListener("click", () => { on.clear(); render(); });
+
+for (const input of document.querySelectorAll('input[name="edition"]')) {
+  input.addEventListener("change", () => {
+    edition = input.value;
+    for (const name of ["classic", "retold", "custom"])
+      document.getElementById("pick-" + name).classList.toggle("picked", name === edition);
+    document.getElementById("custom-box").hidden = edition !== "custom";
+  });
+}
+
+(function fillReport() {
+  const root = document.getElementById("report");
+  for (const [head, items] of REPORT) {
+    const h = document.createElement("strong"); h.textContent = head;
+    h.style.display = "block"; h.style.marginTop = "6px"; root.append(h);
+    const ul = document.createElement("ul");
+    for (const item of items) { const li = document.createElement("li"); li.textContent = item; ul.append(li); }
+    root.append(ul);
+  }
+})();
+document.getElementById("show-report").addEventListener("click", ev => {
+  ev.preventDefault();  // inside the Retold label: show the list without picking Retold
+  const report = document.getElementById("report");
+  report.hidden = !report.hidden;
+  ev.target.textContent = report.hidden ? "What has changed so far" : "Hide the list";
+});
+
+function chosen() { return edition === "custom" ? active() : [...EDITIONS[edition]].sort((a, b) => a - b); }
 
 document.getElementById("rom").addEventListener("change", async ev => {
   const status = document.getElementById("rom-status");
@@ -224,14 +281,18 @@ document.getElementById("build").addEventListener("click", async () => {
     say("Building...");
     await new Promise(r => setTimeout(r, 30));
     const build = py.globals.get("build");
-    const result = build(romBytes, active(), document.getElementById("want-bps").checked);
+    const switches = chosen();
+    const result = build(romBytes, switches, document.getElementById("want-bps").checked);
     build.destroy();
     const [patched, patch] = result.toJs();
     result.destroy();
-    download(patched, "Dragon Song Definitive Edition (custom).nds");
-    if (patch.length) download(patch, "Dragon Song Definitive Edition (custom).bps");
+    const file = "Dragon Song Definitive Edition (" + NAMES[edition] + ")";
+    download(patched, file + ".nds");
+    if (patch.length) download(patch, file + ".bps");
     status.className = "status ok";
-    status.textContent = "Done: your patched ROM is downloading. Switches on: " + active().join(", ") + ".";
+    status.textContent = edition === "custom"
+      ? "Done: your patched ROM is downloading. Switches on: " + switches.join(", ") + "."
+      : "Done: your " + (edition === "retold" ? "Retold (in progress)" : "Classic") + " ROM is downloading.";
   } catch (err) {
     status.className = "status bad";
     const text = String(err);

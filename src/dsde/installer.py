@@ -3,8 +3,9 @@
 Pure Python with no dependencies beyond this package's linker, archive, bps, and ndsrom modules; the front ends
 (a window or a web page) call `install`. From the command line, for testing:
 
-    uv run python -m dsde.installer ROM OUT                     # the defaults (the full release)
-    uv run python -m dsde.installer ROM OUT --off 47 48         # these switches off
+    uv run python -m dsde.installer ROM OUT                     # Classic, the page's default
+    uv run python -m dsde.installer ROM OUT --edition retold    # Retold (in progress)
+    uv run python -m dsde.installer ROM OUT --off 47 48         # the defaults (Retold) with these switches off
     uv run python -m dsde.installer ROM OUT --features a b c    # exactly these features (and ALWAYS)
     uv run python -m dsde.installer ROM OUT --bps out.bps       # also write a patch of the result
 """
@@ -17,7 +18,7 @@ import logging
 from pathlib import Path
 
 from dsde.bps import create as bps_create
-from dsde.installer_switches import ALWAYS, defaults, feature_names
+from dsde.installer_switches import ALWAYS, defaults, edition_switches, feature_names
 from dsde.linker import (
     ITCM_BASE,
     MAIN_CAVE,
@@ -95,8 +96,12 @@ def main() -> None:
     parser.add_argument("rom", type=Path)
     parser.add_argument("out", type=Path)
     parser.add_argument("--pack", type=Path, default=PACK)
+    parser.add_argument("--edition", choices=("classic", "retold"), default="classic")
     parser.add_argument(
-        "--off", type=int, nargs="+", default=[], help="switches to turn off"
+        "--off",
+        type=int,
+        nargs="+",
+        help="the defaults (Retold) with these switches off, instead of an edition",
     )
     parser.add_argument(
         "--features", nargs="+", help="exactly these features (plus ALWAYS)"
@@ -108,8 +113,10 @@ def main() -> None:
     pack = load_pack(args.pack)
     if args.features:
         names = [*ALWAYS, *args.features]
-    else:
+    elif args.off is not None:
         names = switch_features(pack, set(args.off))
+    else:
+        names = feature_names(edition_switches(args.edition), tuple(pack["order"]))
     source = args.rom.read_bytes()
     patched = install(source, names, pack)
     args.out.write_bytes(patched)

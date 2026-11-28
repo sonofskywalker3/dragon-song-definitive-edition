@@ -251,7 +251,8 @@ original's, scene for scene.
 
 ## Version history
 
-**Editions.** From v0.1.6 each release has two patches (README, "Which patch to pick"). **Classic** has every
+**Editions.** From v0.1.7 a release is one installer page with a Classic, a Retold, and a Custom choice (README,
+"Which version to pick"); v0.1.6 had two patches. **Classic** has every
 gameplay, interface, and pacing change and keeps the original story and dialogue word for word. **Retold** is
 the Classic edition plus the rewrite: the new narration, the new wake-up, and the story work to come. Earlier
 releases were a single patch with the rewritten opening, like today's Retold edition. (The editions were first
@@ -262,9 +263,11 @@ published as Engine and Story; the names changed the same day.)
 - **The card overhaul** (see Cards and rings, and Skills): a ring slot and a card slot for every member, Dragon
   Magic for whoever wears the ring, cards used from Special for points and recharged by fighting, cards that
   enhance matching skills, boss cards with passives, Steal, and the bestiary.
-- **A third download, the custom installer**: a web page that builds the patch from a list of switches, so you can
-  keep the fixes and leave out the battle changes you do not want. It runs in your browser; the ROM never leaves
-  your computer. Retold's party chat on Y is one of its switches (off by default).
+- **Releases are now one installer** in place of the two patches: a web page that patches your own ROM in your
+  browser (the ROM never leaves your computer). Pick **Classic** (the default), **Retold** (marked in progress, with a
+  list of what its rewrite has changed so far), or **Custom**, where every change is a switch, so you can keep the
+  fixes and leave out the battle changes you do not want. Retold's party chat on Y is one of the switches (off by
+  default). The page can still save a .bps patch of what it builds.
 - Skills learned by level for Jian, Gabryel, Rufus, and Flora, in both editions (see Skills). Jian's Stone
   Throw uses his throwing animation and Gabryel's Savage Rush her double claw, both in the original game but
   never used.

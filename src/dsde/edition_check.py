@@ -81,7 +81,7 @@ def changes(vanilla_dat: bytes, built_dat: bytes) -> list[Change]:
     return out
 
 
-def _is_fix(change: Change) -> bool:
+def is_fix(change: Change) -> bool:
     if change.old is None or change.new is None:
         return False
     fixed = change.old
@@ -112,7 +112,7 @@ def main() -> None:
     found = changes(VANILLA_SCRIPTS.read_bytes(), args.script_dat.read_bytes())
     bad = 0
     for change in found:
-        fix = _is_fix(change)
+        fix = is_fix(change)
         bad += not fix
         kind = "fix" if fix else "CHANGE"
         logger.info(

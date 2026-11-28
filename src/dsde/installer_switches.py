@@ -2,7 +2,8 @@
 
 Each switch names the features it builds (features.py), the switches it needs, and whether it is on by default.
 The defaults equal the full release: every switch on except Retold party chat. ALWAYS is built whatever the
-switches say. A switch whose need is off is greyed out with the reason, and switching a need off switches its
+switches say. The page offers three choices (Jeff, 2026-11-28): Classic (the default; every default switch but the
+Retold story), Retold (the defaults; in progress, with RETOLD_REPORT listing its story changes so far), and Custom. A switch whose need is off is greyed out with the reason, and switching a need off switches its
 dependents off (`resolve_switches`).
 """
 
@@ -21,6 +22,45 @@ GROUPS = (EXPLORING, MENUS, BATTLES, SPELLS, CARDS, EXTRAS, STORY)
 # Built in every patch: the title seal says which build this is, and the save glitch fix (Jeff, 2026-11-26).
 ALWAYS: tuple[str, ...] = ("title-seal", "fix-save-glitch")
 
+RETOLD_STORY = 48  # the switch that makes Retold out of Classic
+# What Retold changes so far in the story, the dialogue, and the route through it (the page's report). Keep it in
+# step with CHANGES.md, "Story and text".
+RETOLD_REPORT: tuple[tuple[str, tuple[str, ...]], ...] = (
+    (
+        "Story",
+        (
+            "A new opening narration, retranslated from the Japanese release and checked against Lunar 1 and 2: "
+            "the Dragonmaster is Althena's champion, not her servant; Althena is the source of the world's magic; "
+            "and the Beastmen hold power over the Humans, in a peace that lasts only while the two races keep apart.",
+        ),
+    ),
+    (
+        "Dialogue",
+        (
+            "A new wake-up: Cherenkov shouts up the stairs to get Jian out of bed, in place of Jian introducing "
+            "himself to an empty room.",
+            "Jian's thoughts introduce him as he walks out of the inn, each closing by itself at the next door.",
+            "Cherenkov's line in the inn lobby points you to Fountain Square.",
+            'Jian\'s first Y-button thought no longer opens with a stray "Anyway...".',
+        ),
+    ),
+    (
+        "Route",
+        (
+            "Lucia waits at Fountain Square as soon as Jian is up. In the original she only went there after you "
+            "had talked to Cherenkov and then found Jack in his house, which nothing in the game points you to. "
+            "Both can still be talked to.",
+            "A new game has Jian walk out of the inn on his own; you take over at the Port Searis town map.",
+        ),
+    ),
+    (
+        "Not changed yet",
+        (
+            "Everything after the opening is the original English dialogue, word for word. More of the rewrite "
+            "arrives with each release.",
+        ),
+    ),
+)
 RETOLD_DETAILS = (
     "I'm rewriting the game's dialogue to be truer to Lunar: The Silver Star and Lunar 2: Eternal Blue, the "
     "canon this story leads into. The rewrite rests on research into every earlier script of both games and the "
@@ -395,7 +435,7 @@ SWITCHES: tuple[Switch, ...] = (
     Switch(
         48,
         STORY,
-        "Retold story",
+        "Retold story (in progress)",
         "The rewritten dialogue, the intro that sends Jian straight to Lucia, the walk-out opening, and the blue "
         "title seal.",
         (
@@ -413,6 +453,15 @@ BY_NUMBER = MappingProxyType({switch.number: switch for switch in SWITCHES})
 
 def defaults() -> frozenset[int]:
     return frozenset(switch.number for switch in SWITCHES if switch.default)
+
+
+def edition_switches(edition: str) -> frozenset[int]:
+    """The switches of the page's Classic or Retold choice."""
+    if edition == "retold":
+        return defaults()
+    if edition == "classic":
+        return defaults() - {RETOLD_STORY}
+    raise ValueError(f"unknown edition {edition!r}")
 
 
 def dependents(number: int) -> frozenset[int]:

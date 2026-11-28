@@ -4,9 +4,10 @@
 items, and silver, you pick your own targets, battles are faster, spells cost less MP, and the microphone
 is gone.
 
-**[Download the latest patch](../../releases/latest)** (a `.bps` file; you need your own USA ROM, see
-[How to play it](#how-to-play-it)). It comes in two editions: **Classic** keeps the original story and
-dialogue word for word, and **Retold** adds the rewrite (see [Which patch to pick](#which-patch-to-pick)).
+**[Download the latest installer](../../releases/latest)** (one web page that patches your own USA ROM in your
+browser, see [How to play it](#how-to-play-it)). Pick **Classic**, which keeps the original story and dialogue
+word for word, **Retold**, which adds the rewrite (still in progress), or **Custom**, your own mix of changes (see
+[Which version to pick](#which-version-to-pick)).
 
 <p align="center">
   <img src="docs/screenshots/battle-speeds.gif" alt="The same battle side by side on Normal, Fast, and Faster" width="776"><br>
@@ -99,31 +100,35 @@ how each one was built and tested is in [docs/status.md](docs/status.md).
   contradictions with Lunar 1 and 2. So far: a new opening narration, retranslated from the Japanese release,
   and a new wake-up scene.
 
-## Which patch to pick
+## Which version to pick
 
-Each release has two patches. Both have every change to the systems, battles, menus, and pacing above; they
-differ only in what the characters say.
+The installer offers three choices. Classic and Retold have every change to the systems, battles, menus, and
+pacing above; they differ only in what the characters say.
 
-- **Classic** (`Dragon Song Definitive Edition vX.Y.Z (Classic).bps`): the original story and dialogue, word
-  for word, and the original opening scene for scene. Classic no longer skips to Lucia: as in the original, she
-  waits at Fountain Square only after you have talked to Cherenkov and found Jack. The only text changes
-  are name tags fixed to match the job menu, and the labels of changed controls and menus. Pick this if you liked the original's story or want
-  to judge the gameplay fixes on their own.
-- **Retold** (`... (Retold).bps`): the Classic edition plus the rewrite: a new opening narration retranslated
-  from the Japanese, a new wake-up scene in which Jian walks out of the inn, and, as it lands, better character work and fixes to the contradictions
-  with Lunar 1 and 2.
+- **Classic** (the default): the original story and dialogue, word for word, and the original opening scene for
+  scene. Classic no longer skips to Lucia: as in the original, she waits at Fountain Square only after you have
+  talked to Cherenkov and found Jack. The only text changes are name tags fixed to match the job menu, and the
+  labels of changed controls and menus. Pick this if you liked the original's story or want to judge the
+  gameplay fixes on their own.
+- **Retold** (in progress): Classic plus the rewrite. So far that is a new opening narration retranslated from
+  the Japanese, a new wake-up scene in which Jian walks out of the inn, and Lucia waiting at Fountain Square from
+  the start; the rest of the game still has the original dialogue. The installer's "What has changed so far"
+  lists every story, dialogue, and route change.
+- **Custom**: every change is a switch, so you can keep the fixes and leave out, say, the new card system. It also has the extras that are off by default, such as Retold's party chat on Y.
 
 The title screen seal says which edition you are playing: red for Classic, blue for Retold. Saves work across both editions and the original.
 
 ## How to play it
 
-You need your own copy of Lunar: Dragon Song (USA). Releases contain a patch, never the game.
+You need your own copy of Lunar: Dragon Song (USA). Releases contain the installer, never the game.
 
 1. Check your ROM: SHA-1 `e5ac472b2a5de04215e54ab098c94247a88e1c08`. Other dumps or other regions will not
    work.
-2. Download the Classic or Retold `.bps` patch from the [releases](../../releases) page.
-3. Apply it with any BPS patcher, for example [Floating IPS](https://www.smwcentral.net/?p=section&a=details&id=11474)
-   or the [ROM Patcher JS](https://www.marcrobledo.com/RomPatcher.js/) website, to get the patched `.nds`.
+2. Download `Dragon Song Definitive Edition vX.Y.Z installer.html` from the [releases](../../releases) page and
+   open it in your browser. It works straight from your downloads folder, but needs an internet connection to
+   load the patcher.
+3. Choose your ROM, pick Classic, Retold, or Custom, and build. Your patched `.nds` downloads; the ROM never
+   leaves your computer. If you would rather keep a patch, tick "also save a .bps patch".
 4. Play it in a DS emulator, or on a DSi or 3DS with TWiLight Menu++ (tested on a 3DS).
 
 Start a **New Game** to see the new opening. Saves from the original game work, but a few changes (such as
@@ -177,19 +182,19 @@ You need your own copy of the game. This repo never contains the ROM or anything
    uv run python -m dsde.patches --edition retold
    ```
 
-5. Make a release patch. One command builds both editions and writes
-   `build/release/Dragon Song Definitive Edition vX.Y.Z (Classic).bps` and `(Retold).bps`, checks that each
-   patch rebuilds its ROM, and logs the SHA-1s for the release notes:
+5. Make a release. One command writes `build/release/Dragon Song Definitive Edition vX.Y.Z installer.html` (a
+   fresh pack in the page), checks that its Classic choice changes no dialogue beyond the name tags, and logs the
+   SHA-1s of its Classic and Retold ROMs for the release notes:
 
    ```
-   uv run python -m dsde.bps release "rom/Lunar - Dragon Song (USA).nds" 0.1.6
+   uv run python -m dsde.installer_web --release 0.1.7
    ```
 
-   To check that the Classic edition changes no dialogue (it lists every changed script message and fails
-   unless each is a name-tag fix):
+   The Classic dialogue check on its own, for any build (it lists every changed script message and fails unless
+   each is a name-tag fix):
 
    ```
-   uv run python -m dsde.edition_check build/release/dsde-classic_extract/files/script.dat --classic
+   uv run python -m dsde.edition_check build/dsde_extract/files/script.dat --classic
    ```
 
    A patch for a single ROM: `uv run python -m dsde.bps create <original.nds> <patched.nds> <out.bps>`.

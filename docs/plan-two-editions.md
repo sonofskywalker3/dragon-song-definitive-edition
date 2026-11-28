@@ -82,6 +82,7 @@ uv run python -m dsde.patches                          # Classic edition -> buil
 uv run python -m dsde.patches --edition retold         # Retold edition -> build/dsde-retold.nds
 uv run python -m dsde.patches --edition retold --with party-chat --output build/x.nds
 uv run python -m dsde.bps release "rom/Lunar - Dragon Song (USA).nds" 0.1.6
+# (until v0.1.6; from v0.1.7 releases are the installer page: uv run python -m dsde.installer_web --release X.Y.Z)
     # -> build/release/Dragon Song Definitive Edition v0.1.6 (Classic).bps and (Retold).bps, SHA-1s logged
 uv run python -m dsde.edition_check build/release/dsde-classic_extract/files/script.dat --classic
     # lists every changed script message; fails unless each is a text-fixes rename
