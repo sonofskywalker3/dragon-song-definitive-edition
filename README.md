@@ -154,6 +154,12 @@ The ones in this release are placeholders. If you'd like to collaborate, each ic
 [art/icons/](art/icons/), listed with what it should show in [ART-SOURCES.md](ART-SOURCES.md): replace one,
 several, or the whole set, and you'll be credited in full.
 
+## AI disclosure
+
+I design and test this hack; the code is written with Claude Code (Anthropic) under my direction and checked by
+me. The game's story, characters, and art are the original's; new artwork, including palette swaps and edits,
+is listed piece by piece in [ART-SOURCES.md](ART-SOURCES.md).
+
 ## License
 
 The code in this repository is released under the [MIT License](LICENSE): use it, change it, and share it, keeping
