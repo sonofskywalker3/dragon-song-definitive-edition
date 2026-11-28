@@ -157,8 +157,12 @@ several, or the whole set, and you'll be credited in full.
 ## AI disclosure
 
 I design and test this hack; the code is written with Claude Code (Anthropic) under my direction and checked by
-me. The game's story, characters, and art are the original's; new artwork, including palette swaps and edits,
-is listed piece by piece in [ART-SOURCES.md](ART-SOURCES.md).
+me. The game's story, characters, and art are the original's.
+
+The only AI-made art is the new artwork I need and can't make myself: I'm not an artist, and this is a free fan
+project with no income, so I can't pay anyone to draw it. Every piece, down to palette swaps and small edits, is
+listed with how it was made in [ART-SOURCES.md](ART-SOURCES.md). I'd be thrilled if anyone wants to draw
+replacements: send them in, and they'll go in with full credit to you.
 
 ## License
 

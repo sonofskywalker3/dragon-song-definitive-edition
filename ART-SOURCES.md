@@ -1,8 +1,9 @@
 # Art sources
 
-Every piece of artwork this hack adds or changes, and how it was made. I'm not an artist, so some of it was
-made with AI. If you would like to draw a replacement for anything here, I would love to use real art and will
-credit you in full (see the end of this file).
+Every piece of artwork this hack adds or changes, and how it was made. I only use AI for art I need and can't
+make myself: I'm not an artist, and this is a free fan project with no income, so I can't pay anyone to draw it.
+If you would like to draw a replacement for anything here, I'd be thrilled to use real art and will credit you in
+full (see the end of this file).
 
 Art copied from your own copy of the game at build time is not listed unless the build changes it.
 
